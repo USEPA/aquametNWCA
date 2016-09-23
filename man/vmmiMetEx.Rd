@@ -1,0 +1,32 @@
+\name{vmmiMetEx}
+\alias{vmmiMetEx}
+\concept{Example VMMI Metrics}
+\docType{data}
+\title{
+Example VMMI metric data
+}
+\description{
+A dataset containing metrics used in VMMI calculation for use in example.
+}
+\usage{data(vmmiMetEx)}
+\format{
+  A data frame with 10 observations on the following 8 variables.
+  \describe{
+    \item{UID}{A unique site visit ID}
+    \item{NWCA_ECO4}{Aggregated ecoregions as used in NWCA 2011}
+    \item{NWCA_WET_GRP}{Wetland type group as used in NWCA 2011}
+    \item{ECO_X_WETGRP}{Combination of NWCA_ECO4 and NWCA_WET_GRP as used in NWCA 2011}
+    \item{FQAI_ALL}{Floristic Quality Assessment Index based on all species}
+    \item{N_TOL}{Number of tolerant species, based on C-Value (NWCA_CC)}
+    \item{RIMP_NATSPP}{Relative importance of native species}
+    \item{XRCOV_MONOCOTS_NAT}{Relative mean cover of native monocots}
+  }
+}
+\note{
+This dataset is a small subset of actual NWCA 2011 data, with UIDs recoded.
+}
+\examples{
+data(vmmiMetEx)
+str(vmmiMetEx)
+}
+\keyword{datasets}

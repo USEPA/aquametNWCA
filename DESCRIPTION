@@ -1,0 +1,32 @@
+Package: aquametNWCA2
+Type: Package
+Title: NWCA 2011 Metrics and Indices
+Version: 2.0
+Depends: R (>= 2.10)
+Imports:
+    dplyr,
+    plyr,
+    reshape2,
+    ecodist,
+    Hmisc,
+    gtools,
+    car
+Date: 2016-06-25
+Author: Karen Blocksom
+Maintainer: Karen Blocksom <blocksom.karen@epa.gov>
+Description: This package calculates metrics and
+    indices associated with NWCA 2011, including
+    vegetation, buffer, and hydrology metrics,
+    using field data and trait information for
+    vegetation. Functions for vegetation are broken
+    into vascular plants, trees, and vegetation types
+    and ground cover. Updated from version 1 by adding
+    increased flexibility in inputs to functions.
+License: GPL (>= 2)
+LazyData: true
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr
+RoxygenNote: 5.0.1

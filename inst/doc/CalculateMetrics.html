@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Karen Blocksom" />
+
+<meta name="date" content="2016-07-14" />
+
+<title>Calculate Metrics</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+
+
+
+<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%7D%0Apre%20%7B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Calculate Metrics</h1>
+<h4 class="author"><em>Karen Blocksom</em></h4>
+<h4 class="date"><em>July 14, 2016</em></h4>
+
+
+
+<div id="preliminaries" class="section level1">
+<h1>1 Preliminaries</h1>
+<p>One of the main goals of this package is to calculate vegetation metrics as used in the National Wetlands Condition Assessment conducted in 2011 by EPA’s Office of Water. Vegetation data were collected in the field on three forms: V-2 (vascular plants), V-3 (Trees), and V-4 (Vegetation types and ground cover). There is one wrapper function for data from each field form, each of which calls other functions that calculate a subset of metrics by type. When the outputs of the three functions are combined, the result is the full set of candidate metrics examined in developing the Vegetation Multimetric Index (VMMI) and the Non-native Plant Species Index (NPSI). This vignette will describe how to use the various functions along with the example datasets provided and the included taxa lists, to obtain this full set of metrics or a subset of them based on metric type.</p>
+<p>The functions in this package assume a specific data structure for input datasets, with standardized names, as described in the help files for individual functions. The data used in this vignette come from the NWCA 2011 study, and so are formatted as expected. Functions will look for specific types of inconsistencies, like missing variables, and either provide a warning or will fail to run, depending on the issue.</p>
+<hr />
+</div>
+<div id="calculating-vascular-plant-metrics" class="section level1">
+<h1>2 Calculating vascular plant metrics</h1>
+<p>There are two main approaches to calculating vascular plant metrics. One may either calculate all vascular plant metrics, or various subsets (e.g., duration metrics, richness metrics, etc.). In the first approach, the function <code>calcVascPlantMets</code> serves as a wrapper for a number of other functions and simplifies the data preparation and metric calculation. The other approach involves additional data preparation prior to calling the functions for specific metric types.</p>
+<div id="all-metrics-at-once" class="section level2">
+<h2>2.1 All metrics at once</h2>
+<p>Use the example plant data included in the package, <code>VascPlantEx</code>, along with the included taxalists for taxonomy and basic characteristics (<code>taxaNWCA</code>), Coefficient of Conservatism and native status values (<code>ccNatNWCA</code>), and Wetland Indicator Status values (<code>wisNWCA</code>).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(aquametNWCA2)
+
+<span class="kw">head</span>(VascPlantEx)</code></pre>
+<pre><code>##   UID STATE USAC_REGION PLOT             USDA_NAME COVER
+## 1   7    FL  CSTL_PLAIN    2 SAGITTARIA LANCIFOLIA    28
+## 2   7    FL  CSTL_PLAIN    3 SAGITTARIA LANCIFOLIA     6
+## 3   7    FL  CSTL_PLAIN    4 SAGITTARIA LANCIFOLIA     5
+## 4   7    FL  CSTL_PLAIN    5 SAGITTARIA LANCIFOLIA    20
+## 5   7    FL  CSTL_PLAIN    5       SPARTINA PATENS     0
+## 6   7    FL  CSTL_PLAIN    1      PANICUM VIRGATUM     0</code></pre>
+<p>This is the expected input format for vegetation data from form V-2. To run <code>calcVascPlantMets</code>, the taxalists <code>taxaNWCA</code>, <code>ccNatNWCA</code>, and <code>wisNWCA</code> will be called by default by the function if not specified. In this example, we explicitly include the arguments that specify these taxalists in the function call. However, the user may either leave them blank or call their own versions of these taxalists, so long as the field names are as expected.</p>
+<pre class="sourceCode r"><code class="sourceCode r">outdf &lt;-<span class="st"> </span><span class="kw">calcVascPlantMets</span>(<span class="dt">dfIn=</span>VascPlantEx,<span class="dt">taxaIn=</span>taxaNWCA,<span class="dt">taxaCC=</span>ccNatNWCA,<span class="dt">taxaWIS=</span>wisNWCA)</code></pre>
+<pre><code>## [1] &quot;Done with plot summing&quot;
+## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with plot summing&quot;
+## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with plot summing&quot;
+## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done preparing datasets&quot;
+## [1] &quot;Initial datasets prepared for metric calculation.&quot;
+## [1] &quot;Done calculating richness metrics.&quot;
+## [1] &quot;Ready to start calculating trait metrics.&quot;
+## [1] &quot;Done with diversity indices.&quot;
+## [1] &quot;Done with duration metrics.&quot;
+## [1] &quot;Done with growth habit metrics.&quot;
+## [1] &quot;Done with category metrics.&quot;
+## [1] &quot;Done with WIS metrics.&quot;
+## [1] &quot;Done with CC metrics.&quot;
+## [1] &quot;Done with native status metrics.&quot;
+## [1] &quot;Done with Bray-Curtis distance.&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(outdf)</code></pre>
+<pre><code>##   [1] &quot;UID&quot;                   &quot;XTOTABCOV&quot;            
+##   [3] &quot;MEDN_AC&quot;               &quot;MEDN_ADVSPP&quot;          
+##   [5] &quot;MEDN_ALIENSPP&quot;         &quot;MEDN_CRYPSPP&quot;         
+##   [7] &quot;MEDN_FAM&quot;              &quot;MEDN_GEN&quot;             
+##   [9] &quot;MEDN_INTRSPP&quot;          &quot;MEDN_NATSPP&quot;          
+##  [11] &quot;MEDN_SPP&quot;              &quot;SDN_AC&quot;               
+##  [13] &quot;SDN_ADVSPP&quot;            &quot;SDN_ALIENSPP&quot;         
+##  [15] &quot;SDN_CRYPSPP&quot;           &quot;SDN_FAM&quot;              
+##  [17] &quot;SDN_GEN&quot;               &quot;SDN_INTRSPP&quot;          
+##  [19] &quot;SDN_NATSPP&quot;            &quot;SDN_SPP&quot;              
+##  [21] &quot;TOTN_AC&quot;               &quot;TOTN_ADVSPP&quot;          
+##  [23] &quot;TOTN_ALIENSPP&quot;         &quot;TOTN_CRYPSPP&quot;         
+##  [25] &quot;TOTN_FAM&quot;              &quot;TOTN_GEN&quot;             
+##  [27] &quot;TOTN_INTRSPP&quot;          &quot;TOTN_NATSPP&quot;          
+##  [29] &quot;TOTN_SPP&quot;              &quot;XN_AC&quot;                
+##  [31] &quot;XN_ADVSPP&quot;             &quot;XN_ALIENSPP&quot;          
+##  [33] &quot;XN_CRYPSPP&quot;            &quot;XN_FAM&quot;               
+##  [35] &quot;XN_GEN&quot;                &quot;XN_INTRSPP&quot;           
+##  [37] &quot;XN_NATSPP&quot;             &quot;XN_SPP&quot;               
+##  [39] &quot;D_AC&quot;                  &quot;D_ALIEN&quot;              
+##  [41] &quot;D_ALL&quot;                 &quot;D_NAT&quot;                
+##  [43] &quot;H_AC&quot;                  &quot;H_ALIEN&quot;              
+##  [45] &quot;H_ALL&quot;                 &quot;H_NAT&quot;                
+##  [47] &quot;J_AC&quot;                  &quot;J_ALIEN&quot;              
+##  [49] &quot;J_ALL&quot;                 &quot;J_NAT&quot;                
+##  [51] &quot;N_ANN_BIEN&quot;            &quot;N_ANN_PEREN&quot;          
+##  [53] &quot;N_ANNUAL&quot;              &quot;N_PERENNIAL&quot;          
+##  [55] &quot;PCTN_ANN_BIEN&quot;         &quot;PCTN_ANN_PEREN&quot;       
+##  [57] &quot;PCTN_ANNUAL&quot;           &quot;PCTN_PERENNIAL&quot;       
+##  [59] &quot;XABCOV_ANN_BIEN&quot;       &quot;XABCOV_ANN_PEREN&quot;     
+##  [61] &quot;XABCOV_ANNUAL&quot;         &quot;XABCOV_PERENNIAL&quot;     
+##  [63] &quot;XRCOV_ANN_BIEN&quot;        &quot;XRCOV_ANN_PEREN&quot;      
+##  [65] &quot;XRCOV_ANNUAL&quot;          &quot;XRCOV_PERENNIAL&quot;      
+##  [67] &quot;N_ANNUAL_NAT&quot;          &quot;PCTN_ANNUAL_NAT&quot;      
+##  [69] &quot;XABCOV_ANNUAL_NAT&quot;     &quot;XRCOV_ANNUAL_NAT&quot;     
+##  [71] &quot;N_ANNUAL_AC&quot;           &quot;PCTN_ANNUAL_AC&quot;       
+##  [73] &quot;XABCOV_ANNUAL_AC&quot;      &quot;XRCOV_ANNUAL_AC&quot;      
+##  [75] &quot;N_ANN_BIEN_NAT&quot;        &quot;PCTN_ANN_BIEN_NAT&quot;    
+##  [77] &quot;XABCOV_ANN_BIEN_NAT&quot;   &quot;XRCOV_ANN_BIEN_NAT&quot;   
+##  [79] &quot;N_ANN_BIEN_AC&quot;         &quot;PCTN_ANN_BIEN_AC&quot;     
+##  [81] &quot;XABCOV_ANN_BIEN_AC&quot;    &quot;XRCOV_ANN_BIEN_AC&quot;    
+##  [83] &quot;N_ANN_PEREN_NAT&quot;       &quot;PCTN_ANN_PEREN_NAT&quot;   
+##  [85] &quot;XABCOV_ANN_PEREN_NAT&quot;  &quot;XRCOV_ANN_PEREN_NAT&quot;  
+##  [87] &quot;N_ANN_PEREN_AC&quot;        &quot;PCTN_ANN_PEREN_AC&quot;    
+##  [89] &quot;XABCOV_ANN_PEREN_AC&quot;   &quot;XRCOV_ANN_PEREN_AC&quot;   
+##  [91] &quot;N_PERENNIAL_NAT&quot;       &quot;PCTN_PERENNIAL_NAT&quot;   
+##  [93] &quot;XABCOV_PERENNIAL_NAT&quot;  &quot;XRCOV_PERENNIAL_NAT&quot;  
+##  [95] &quot;N_PERENNIAL_AC&quot;        &quot;PCTN_PERENNIAL_AC&quot;    
+##  [97] &quot;XABCOV_PERENNIAL_AC&quot;   &quot;XRCOV_PERENNIAL_AC&quot;   
+##  [99] &quot;N_FORB&quot;                &quot;N_GRAMINOID&quot;          
+## [101] &quot;N_SHRUB&quot;               &quot;N_SSHRUB_FORB&quot;        
+## [103] &quot;N_SSHRUB_SHRUB&quot;        &quot;N_TREE&quot;               
+## [105] &quot;N_TREE_SHRUB&quot;          &quot;N_VINE&quot;               
+## [107] &quot;N_VINE_SHRUB&quot;          &quot;PCTN_FORB&quot;            
+## [109] &quot;PCTN_GRAMINOID&quot;        &quot;PCTN_SHRUB&quot;           
+## [111] &quot;PCTN_SSHRUB_FORB&quot;      &quot;PCTN_SSHRUB_SHRUB&quot;    
+## [113] &quot;PCTN_TREE&quot;             &quot;PCTN_TREE_SHRUB&quot;      
+## [115] &quot;PCTN_VINE&quot;             &quot;PCTN_VINE_SHRUB&quot;      
+## [117] &quot;XABCOV_FORB&quot;           &quot;XABCOV_GRAMINOID&quot;     
+## [119] &quot;XABCOV_SHRUB&quot;          &quot;XABCOV_SSHRUB_FORB&quot;   
+## [121] &quot;XABCOV_SSHRUB_SHRUB&quot;   &quot;XABCOV_TREE&quot;          
+## [123] &quot;XABCOV_TREE_SHRUB&quot;     &quot;XABCOV_VINE&quot;          
+## [125] &quot;XABCOV_VINE_SHRUB&quot;     &quot;XRCOV_FORB&quot;           
+## [127] &quot;XRCOV_GRAMINOID&quot;       &quot;XRCOV_SHRUB&quot;          
+## [129] &quot;XRCOV_SSHRUB_FORB&quot;     &quot;XRCOV_SSHRUB_SHRUB&quot;   
+## [131] &quot;XRCOV_TREE&quot;            &quot;XRCOV_TREE_SHRUB&quot;     
+## [133] &quot;XRCOV_VINE&quot;            &quot;XRCOV_VINE_SHRUB&quot;     
+## [135] &quot;N_TREE_COMB&quot;           &quot;PCTN_TREE_COMB&quot;       
+## [137] &quot;XABCOV_TREE_COMB&quot;      &quot;XRCOV_TREE_COMB&quot;      
+## [139] &quot;N_SHRUB_COMB&quot;          &quot;PCTN_SHRUB_COMB&quot;      
+## [141] &quot;XABCOV_SHRUB_COMB&quot;     &quot;XRCOV_SHRUB_COMB&quot;     
+## [143] &quot;N_HERB&quot;                &quot;PCTN_HERB&quot;            
+## [145] &quot;XABCOV_HERB&quot;           &quot;XRCOV_HERB&quot;           
+## [147] &quot;N_GRAMINOID_AC&quot;        &quot;PCTN_GRAMINOID_AC&quot;    
+## [149] &quot;XABCOV_GRAMINOID_AC&quot;   &quot;XRCOV_GRAMINOID_AC&quot;   
+## [151] &quot;N_GRAMINOID_NAT&quot;       &quot;PCTN_GRAMINOID_NAT&quot;   
+## [153] &quot;XABCOV_GRAMINOID_NAT&quot;  &quot;XRCOV_GRAMINOID_NAT&quot;  
+## [155] &quot;N_FORB_AC&quot;             &quot;PCTN_FORB_AC&quot;         
+## [157] &quot;XABCOV_FORB_AC&quot;        &quot;XRCOV_FORB_AC&quot;        
+## [159] &quot;N_FORB_NAT&quot;            &quot;PCTN_FORB_NAT&quot;        
+## [161] &quot;XABCOV_FORB_NAT&quot;       &quot;XRCOV_FORB_NAT&quot;       
+## [163] &quot;N_HERB_AC&quot;             &quot;PCTN_HERB_AC&quot;         
+## [165] &quot;XABCOV_HERB_AC&quot;        &quot;XRCOV_HERB_AC&quot;        
+## [167] &quot;N_HERB_NAT&quot;            &quot;PCTN_HERB_NAT&quot;        
+## [169] &quot;XABCOV_HERB_NAT&quot;       &quot;XRCOV_HERB_NAT&quot;       
+## [171] &quot;N_SHRUB_COMB_AC&quot;       &quot;PCTN_SHRUB_COMB_AC&quot;   
+## [173] &quot;XABCOV_SHRUB_COMB_AC&quot;  &quot;XRCOV_SHRUB_COMB_AC&quot;  
+## [175] &quot;N_SHRUB_COMB_NAT&quot;      &quot;PCTN_SHRUB_COMB_NAT&quot;  
+## [177] &quot;XABCOV_SHRUB_COMB_NAT&quot; &quot;XRCOV_SHRUB_COMB_NAT&quot; 
+## [179] &quot;N_TREE_COMB_AC&quot;        &quot;PCTN_TREE_COMB_AC&quot;    
+## [181] &quot;XABCOV_TREE_COMB_AC&quot;   &quot;XRCOV_TREE_COMB_AC&quot;   
+## [183] &quot;N_TREE_COMB_NAT&quot;       &quot;PCTN_TREE_COMB_NAT&quot;   
+## [185] &quot;XABCOV_TREE_COMB_NAT&quot;  &quot;XRCOV_TREE_COMB_NAT&quot;  
+## [187] &quot;N_VINE_AC&quot;             &quot;PCTN_VINE_AC&quot;         
+## [189] &quot;XABCOV_VINE_AC&quot;        &quot;XRCOV_VINE_AC&quot;        
+## [191] &quot;N_VINE_NAT&quot;            &quot;PCTN_VINE_NAT&quot;        
+## [193] &quot;XABCOV_VINE_NAT&quot;       &quot;XRCOV_VINE_NAT&quot;       
+## [195] &quot;N_VINE_SHRUB_AC&quot;       &quot;PCTN_VINE_SHRUB_AC&quot;   
+## [197] &quot;XABCOV_VINE_SHRUB_AC&quot;  &quot;XRCOV_VINE_SHRUB_AC&quot;  
+## [199] &quot;N_VINE_SHRUB_NAT&quot;      &quot;PCTN_VINE_SHRUB_NAT&quot;  
+## [201] &quot;XABCOV_VINE_SHRUB_NAT&quot; &quot;XRCOV_VINE_SHRUB_NAT&quot; 
+## [203] &quot;N_DICOT&quot;               &quot;N_FERN&quot;               
+## [205] &quot;N_GYMNOSPERM&quot;          &quot;N_HORSETAIL&quot;          
+## [207] &quot;N_MONOCOT&quot;             &quot;PCTN_DICOT&quot;           
+## [209] &quot;PCTN_FERN&quot;             &quot;PCTN_GYMNOSPERM&quot;      
+## [211] &quot;PCTN_HORSETAIL&quot;        &quot;PCTN_MONOCOT&quot;         
+## [213] &quot;XABCOV_DICOT&quot;          &quot;XABCOV_FERN&quot;          
+## [215] &quot;XABCOV_GYMNOSPERM&quot;     &quot;XABCOV_HORSETAIL&quot;     
+## [217] &quot;XABCOV_MONOCOT&quot;        &quot;XRCOV_DICOT&quot;          
+## [219] &quot;XRCOV_FERN&quot;            &quot;XRCOV_GYMNOSPERM&quot;     
+## [221] &quot;XRCOV_HORSETAIL&quot;       &quot;XRCOV_MONOCOT&quot;        
+## [223] &quot;N_DICOTS_NAT&quot;          &quot;PCTN_DICOTS_NAT&quot;      
+## [225] &quot;XABCOV_DICOTS_NAT&quot;     &quot;XRCOV_DICOTS_NAT&quot;     
+## [227] &quot;N_DICOTS_ALIEN&quot;        &quot;PCTN_DICOTS_ALIEN&quot;    
+## [229] &quot;XABCOV_DICOTS_ALIEN&quot;   &quot;XRCOV_DICOTS_ALIEN&quot;   
+## [231] &quot;N_DICOTS_CRYP&quot;         &quot;PCTN_DICOTS_CRYP&quot;     
+## [233] &quot;XABCOV_DICOTS_CRYP&quot;    &quot;XRCOV_DICOTS_CRYP&quot;    
+## [235] &quot;N_DICOTS_AC&quot;           &quot;PCTN_DICOTS_AC&quot;       
+## [237] &quot;XABCOV_DICOTS_AC&quot;      &quot;XRCOV_DICOTS_AC&quot;      
+## [239] &quot;N_FERNS_NAT&quot;           &quot;PCTN_FERNS_NAT&quot;       
+## [241] &quot;XABCOV_FERNS_NAT&quot;      &quot;XRCOV_FERNS_NAT&quot;      
+## [243] &quot;N_FERNS_INTR&quot;          &quot;PCTN_FERNS_INTR&quot;      
+## [245] &quot;XABCOV_FERNS_INTR&quot;     &quot;XRCOV_FERNS_INTR&quot;     
+## [247] &quot;N_MONOCOTS_NAT&quot;        &quot;PCTN_MONOCOTS_NAT&quot;    
+## [249] &quot;XABCOV_MONOCOTS_NAT&quot;   &quot;XRCOV_MONOCOTS_NAT&quot;   
+## [251] &quot;N_MONOCOTS_ALIEN&quot;      &quot;PCTN_MONOCOTS_ALIEN&quot;  
+## [253] &quot;XABCOV_MONOCOTS_ALIEN&quot; &quot;XRCOV_MONOCOTS_ALIEN&quot; 
+## [255] &quot;N_MONOCOTS_CRYP&quot;       &quot;PCTN_MONOCOTS_CRYP&quot;   
+## [257] &quot;XABCOV_MONOCOTS_CRYP&quot;  &quot;XRCOV_MONOCOTS_CRYP&quot;  
+## [259] &quot;N_MONOCOTS_AC&quot;         &quot;PCTN_MONOCOTS_AC&quot;     
+## [261] &quot;XABCOV_MONOCOTS_AC&quot;    &quot;XRCOV_MONOCOTS_AC&quot;    
+## [263] &quot;N_FAC&quot;                 &quot;N_FACU&quot;               
+## [265] &quot;N_FACW&quot;                &quot;N_OBL&quot;                
+## [267] &quot;N_UPL&quot;                 &quot;PCTN_FAC&quot;             
+## [269] &quot;PCTN_FACU&quot;             &quot;PCTN_FACW&quot;            
+## [271] &quot;PCTN_OBL&quot;              &quot;PCTN_UPL&quot;             
+## [273] &quot;XABCOV_FAC&quot;            &quot;XABCOV_FACU&quot;          
+## [275] &quot;XABCOV_FACW&quot;           &quot;XABCOV_OBL&quot;           
+## [277] &quot;XABCOV_UPL&quot;            &quot;XRCOV_FAC&quot;            
+## [279] &quot;XRCOV_FACU&quot;            &quot;XRCOV_FACW&quot;           
+## [281] &quot;XRCOV_OBL&quot;             &quot;XRCOV_UPL&quot;            
+## [283] &quot;WETIND_COV_ALL&quot;        &quot;WETIND_FREQ_ALL&quot;      
+## [285] &quot;WETIND_COV_NAT&quot;        &quot;WETIND_FREQ_NAT&quot;      
+## [287] &quot;N_OBLFACW_AC&quot;          &quot;XABCOV_OBLFACW_AC&quot;    
+## [289] &quot;XRCOV_OBLFACW_AC&quot;      &quot;XC_ALL&quot;               
+## [291] &quot;FQAI_ALL&quot;              &quot;XC_FREQ_ALL&quot;          
+## [293] &quot;FQAI_FREQ_ALL&quot;         &quot;XC_COV_ALL&quot;           
+## [295] &quot;FQAI_COV_ALL&quot;          &quot;N_SEN&quot;                
+## [297] &quot;PCTN_SEN&quot;              &quot;XABCOV_SEN&quot;           
+## [299] &quot;XRCOV_SEN&quot;             &quot;N_TOL&quot;                
+## [301] &quot;PCTN_TOL&quot;              &quot;XABCOV_TOL&quot;           
+## [303] &quot;XRCOV_TOL&quot;             &quot;N_ISEN&quot;               
+## [305] &quot;PCTN_ISEN&quot;             &quot;XABCOV_ISEN&quot;          
+## [307] &quot;XRCOV_ISEN&quot;            &quot;N_HTOL&quot;               
+## [309] &quot;PCTN_HTOL&quot;             &quot;XABCOV_HTOL&quot;          
+## [311] &quot;XRCOV_HTOL&quot;            &quot;N_HSEN&quot;               
+## [313] &quot;PCTN_HSEN&quot;             &quot;XABCOV_HSEN&quot;          
+## [315] &quot;XRCOV_HSEN&quot;            &quot;XC_NAT&quot;               
+## [317] &quot;FQAI_NAT&quot;              &quot;XC_FREQ_NAT&quot;          
+## [319] &quot;FQAI_FREQ_NAT&quot;         &quot;XC_COV_NAT&quot;           
+## [321] &quot;FQAI_COV_NAT&quot;          &quot;PCTN_ADVSPP&quot;          
+## [323] &quot;PCTN_CRYPSPP&quot;          &quot;PCTN_INTRSPP&quot;         
+## [325] &quot;PCTN_NATSPP&quot;           &quot;XABCOV_ADVSPP&quot;        
+## [327] &quot;XABCOV_CRYPSPP&quot;        &quot;XABCOV_INTRSPP&quot;       
+## [329] &quot;XABCOV_NATSPP&quot;         &quot;XRCOV_ADVSPP&quot;         
+## [331] &quot;XRCOV_CRYPSPP&quot;         &quot;XRCOV_INTRSPP&quot;        
+## [333] &quot;XRCOV_NATSPP&quot;          &quot;RFREQ_ADVSPP&quot;         
+## [335] &quot;RFREQ_CRYPSPP&quot;         &quot;RFREQ_INTRSPP&quot;        
+## [337] &quot;RFREQ_NATSPP&quot;          &quot;RIMP_ADVSPP&quot;          
+## [339] &quot;RIMP_CRYPSPP&quot;          &quot;RIMP_INTRSPP&quot;         
+## [341] &quot;RIMP_NATSPP&quot;           &quot;PCTN_ALIENSPP&quot;        
+## [343] &quot;RFREQ_ALIENSPP&quot;        &quot;RIMP_ALIENSPP&quot;        
+## [345] &quot;XABCOV_ALIENSPP&quot;       &quot;XRCOV_ALIENSPP&quot;       
+## [347] &quot;PCTN_AC&quot;               &quot;RFREQ_AC&quot;             
+## [349] &quot;RIMP_AC&quot;               &quot;XABCOV_AC&quot;            
+## [351] &quot;XRCOV_AC&quot;              &quot;XBCDIST_SPP&quot;          
+## [353] &quot;XBCDIST_NATSPP&quot;</code></pre>
+<p>The definitions of all metrics can be found in the help document <strong>Vascular_Plant_Metric_Descriptions.pdf</strong> found in this package.</p>
+</div>
+<div id="subsets-of-metrics" class="section level2">
+<h2>2.2 Subsets of metrics</h2>
+<p>Suppose only richness, category, and Bray-Curtis metrics are of interest. Then we only need to use the functions that calculate those metrics: <code>calcRichness()</code>, <code>calcCategory()</code>, and <code>calcBCmets()</code>. However, we need to prepare the data for use in these functions because certain summary variables are expected as inputs to these functions. For each of these functions, the output data frame is in long format, unlike the output of <code>calcVascPlantMets()</code>, and must be cast wide to see metrics as columns.</p>
+<p>Other vascular plant metric subset functions include <code>calcDuration()</code>, <code>calcCC()</code>, <code>calcDiversity()</code>, <code>calcGrowthHabit()</code>, <code>calcNative()</code>, and <code>calcWIS()</code>. For each of these functions, if the variable <code>NWCA_NATSTAT</code> is included in the <code>taxaCC</code> input data frame, native status versions of metrics will also be calculated.</p>
+<div id="data-preparation" class="section level3">
+<h3>2.2.1 Data preparation</h3>
+<p>Data are expected to be in a specific format with specific summary variables, and it is possible to create input datasets outside of R, but the easiest approach is to use <code>prepareData()</code> to create input datasets for these functions. The <code>calcRichness()</code> function expects datasets summarized by both UID and by UID and PLOT at the species, genus, and family levels. The <code>prepareData()</code> function performs all necessary summarization and creates a single list object containing 6 data frames that reflect all of these summarizations of data.</p>
+<p>First, run <code>prepareData()</code> to create a list containing 6 data frames that can be used in all other functions:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sumdf &lt;-<span class="st"> </span><span class="kw">prepareData</span>(<span class="dt">indf=</span>VascPlantEx, <span class="dt">inTaxa=</span>taxaNWCA, <span class="dt">inNatCC=</span>ccNatNWCA, <span class="dt">inWIS=</span>wisNWCA)</code></pre>
+<pre><code>## [1] &quot;Done with plot summing&quot;
+## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with plot summing&quot;
+## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with plot summing&quot;
+## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done preparing datasets&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(sumdf)</code></pre>
+<pre><code>## List of 6
+##  $ byUIDspp :'data.frame':   238 obs. of  30 variables:
+##   ..$ TAXON            : chr [1:238] &quot;ACER RUBRUM&quot; &quot;APIOS AMERICANA&quot; &quot;CAREX&quot; &quot;CEPHALANTHUS OCCIDENTALIS&quot; ...
+##   ..$ USAC_REGION      : chr [1:238] &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; ...
+##   ..$ STATE            : chr [1:238] &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; ...
+##   ..$ UID              : int [1:238] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ NUM              : num [1:238] 5 1 1 3 3 1 5 1 1 5 ...
+##   ..$ XABCOV           : num [1:238] 57 0.02 0.02 3.04 4.4 ...
+##   ..$ NPLOTS           : int [1:238] 5 5 5 5 5 5 5 5 5 5 ...
+##   ..$ DISTINCT         : num [1:238] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ SPECIES_NAME_ID.x: int [1:238] 866 5290 15640 18268 21709 28486 34059 43555 49369 49683 ...
+##   ..$ DIVISION         : chr [1:238] &quot;MAGNOLIOPHYTA&quot; &quot;MAGNOLIOPHYTA&quot; &quot;MAGNOLIOPHYTA&quot; &quot;MAGNOLIOPHYTA&quot; ...
+##   ..$ ORDER            : chr [1:238] &quot;SAPINDALES&quot; &quot;FABALES&quot; &quot;CYPERALES&quot; &quot;RUBIALES&quot; ...
+##   ..$ FAMILY           : chr [1:238] &quot;ACERACEAE&quot; &quot;FABACEAE&quot; &quot;CYPERACEAE&quot; &quot;RUBIACEAE&quot; ...
+##   ..$ GENUS            : chr [1:238] &quot;ACER&quot; &quot;APIOS&quot; &quot;CAREX&quot; &quot;CEPHALANTHUS&quot; ...
+##   ..$ SPECIES          : chr [1:238] &quot;RUBRUM&quot; &quot;AMERICANA&quot; &quot;&quot; &quot;OCCIDENTALIS&quot; ...
+##   ..$ SUBSPECIES       : chr [1:238] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##   ..$ VARIETY          : chr [1:238] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##   ..$ CATEGORY         : chr [1:238] &quot;DICOT&quot; &quot;DICOT&quot; &quot;MONOCOT&quot; &quot;DICOT&quot; ...
+##   ..$ GROWTH_HABIT     : chr [1:238] &quot;TREE&quot; &quot;VINE, FORB/HERB&quot; &quot;GRAMINOID&quot; &quot;TREE, SHRUB&quot; ...
+##   ..$ DURATION         : chr [1:238] &quot;PERENNIAL&quot; &quot;PERENNIAL&quot; &quot;PERENNIAL&quot; &quot;PERENNIAL&quot; ...
+##   ..$ SPECIES_NAME_ID.y: int [1:238] 866 5290 15640 18268 21709 28486 34059 43555 49369 49683 ...
+##   ..$ NWCA_CC          : chr [1:238] &quot;2&quot; &quot;5&quot; &quot;7&quot; &quot;6&quot; ...
+##   ..$ NWCA_NATSTAT     : chr [1:238] &quot;NAT&quot; &quot;NAT&quot; &quot;NAT&quot; &quot;NAT&quot; ...
+##   ..$ SPECIES_NAME_ID  : int [1:238] 866 5290 NA 18268 21709 28486 34059 43555 49369 49683 ...
+##   ..$ WIS              : chr [1:238] &quot;FAC&quot; &quot;FACW&quot; NA &quot;OBL&quot; ...
+##   ..$ TOTN             : int [1:238] 18 18 18 18 18 18 18 18 18 18 ...
+##   ..$ XTOTABCOV        : num [1:238] 204 204 204 204 204 ...
+##   ..$ TOTFREQ          : num [1:238] 920 920 920 920 920 920 920 920 920 920 ...
+##   ..$ sXRCOV           : num [1:238] 28.00157 0.00983 0.00983 1.49342 2.16152 ...
+##   ..$ FREQ             : num [1:238] 100 20 20 60 60 20 100 20 20 100 ...
+##   ..$ sRFREQ           : num [1:238] 10.87 2.17 2.17 6.52 6.52 ...
+##  $ byPlotspp:'data.frame':   1190 obs. of  10 variables:
+##   ..$ STATE          : chr [1:1190] &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; ...
+##   ..$ TAXON          : chr [1:1190] &quot;ACER RUBRUM&quot; &quot;ACER RUBRUM&quot; &quot;ACER RUBRUM&quot; &quot;ACER RUBRUM&quot; ...
+##   ..$ UID            : int [1:1190] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ USAC_REGION    : chr [1:1190] &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; ...
+##   ..$ PLOT           : int [1:1190] 1 4 5 2 3 5 3 4 2 1 ...
+##   ..$ COVER          : num [1:1190] 50 50 15 80 90 0 0.1 0 0 0 ...
+##   ..$ DISTINCT       : num [1:1190] 1 1 1 1 1 0 1 0 0 0 ...
+##   ..$ SPECIES_NAME_ID: int [1:1190] 866 866 866 866 866 5290 5290 5290 5290 5290 ...
+##   ..$ NWCA_CC        : chr [1:1190] &quot;2&quot; &quot;2&quot; &quot;2&quot; &quot;2&quot; ...
+##   ..$ NWCA_NATSTAT   : chr [1:1190] &quot;NAT&quot; &quot;NAT&quot; &quot;NAT&quot; &quot;NAT&quot; ...
+##  $ byUIDgen :'data.frame':   204 obs. of  8 variables:
+##   ..$ UID        : int [1:204] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ STATE      : chr [1:204] &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; ...
+##   ..$ USAC_REGION: chr [1:204] &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; ...
+##   ..$ TAXON      : chr [1:204] &quot;ACER&quot; &quot;APIOS&quot; &quot;CAREX&quot; &quot;CEPHALANTHUS&quot; ...
+##   ..$ NUM        : num [1:204] 5 1 1 3 3 1 5 1 1 5 ...
+##   ..$ XABCOV     : num [1:204] 57 0.02 0.02 3.04 4.4 ...
+##   ..$ NPLOTS     : int [1:204] 5 5 5 5 5 5 5 5 5 5 ...
+##   ..$ DISTINCT   : num [1:204] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ byPlotgen:'data.frame':   1020 obs. of  7 variables:
+##   ..$ UID        : int [1:1020] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ STATE      : chr [1:1020] &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; ...
+##   ..$ USAC_REGION: chr [1:1020] &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; ...
+##   ..$ PLOT       : int [1:1020] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ TAXON      : chr [1:1020] &quot;ACER&quot; &quot;APIOS&quot; &quot;CAREX&quot; &quot;CEPHALANTHUS&quot; ...
+##   ..$ COVER      : num [1:1020] 50 0 0 15 0 0 10 15 0 80 ...
+##   ..$ DISTINCT   : num [1:1020] 1 0 0 1 0 0 1 1 0 1 ...
+##  $ byUIDfam :'data.frame':   147 obs. of  8 variables:
+##   ..$ UID        : int [1:147] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ STATE      : chr [1:147] &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; ...
+##   ..$ USAC_REGION: chr [1:147] &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; ...
+##   ..$ TAXON      : chr [1:147] &quot;ACERACEAE&quot; &quot;AQUIFOLIACEAE&quot; &quot;CLETHRACEAE&quot; &quot;CORNACEAE&quot; ...
+##   ..$ NUM        : num [1:147] 5 1 3 4 1 1 5 1 1 5 ...
+##   ..$ XABCOV     : num [1:147] 57 3 4.4 24.42 0.02 ...
+##   ..$ NPLOTS     : int [1:147] 5 5 5 5 5 5 5 5 5 5 ...
+##   ..$ DISTINCT   : num [1:147] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ byPlotfam:'data.frame':   735 obs. of  7 variables:
+##   ..$ UID        : int [1:735] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ STATE      : chr [1:735] &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; ...
+##   ..$ USAC_REGION: chr [1:735] &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; &quot;E_MTNS&quot; ...
+##   ..$ PLOT       : int [1:735] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ TAXON      : chr [1:735] &quot;ACERACEAE&quot; &quot;AQUIFOLIACEAE&quot; &quot;CLETHRACEAE&quot; &quot;CORNACEAE&quot; ...
+##   ..$ COVER      : num [1:735] 50 15 0 2 0 0 18 0 0 80 ...
+##   ..$ DISTINCT   : num [1:735] 1 1 0 1 0 0 1 0 0 1 ...</code></pre>
+</div>
+<div id="metric-subset-functions" class="section level3">
+<h3>2.2.2 Metric Subset Functions</h3>
+<p>Now we can run functions for subsets, starting with <code>calcRichness()</code>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">outRich &lt;-<span class="st"> </span><span class="kw">calcRichness</span>(sumdf$byUIDspp,sumdf$byPlotspp,sumdf$byUIDgen,sumdf$byPlotgen,sumdf$byUIDfam,sumdf$byPlotfam)
+<span class="kw">head</span>(outRich)</code></pre>
+<pre><code>##   UID PARAMETER RESULT
+## 1   1   MEDN_AC      0
+## 2   2   MEDN_AC      1
+## 3   3   MEDN_AC      1
+## 4   4   MEDN_AC      0
+## 5   5   MEDN_AC      0
+## 6   6   MEDN_AC      2</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outRich$PARAMETER)</code></pre>
+<pre><code>##  [1] &quot;MEDN_AC&quot;       &quot;MEDN_ADVSPP&quot;   &quot;MEDN_ALIENSPP&quot; &quot;MEDN_CRYPSPP&quot; 
+##  [5] &quot;MEDN_FAM&quot;      &quot;MEDN_GEN&quot;      &quot;MEDN_INTRSPP&quot;  &quot;MEDN_NATSPP&quot;  
+##  [9] &quot;MEDN_SPP&quot;      &quot;SDN_AC&quot;        &quot;SDN_ADVSPP&quot;    &quot;SDN_ALIENSPP&quot; 
+## [13] &quot;SDN_CRYPSPP&quot;   &quot;SDN_FAM&quot;       &quot;SDN_GEN&quot;       &quot;SDN_INTRSPP&quot;  
+## [17] &quot;SDN_NATSPP&quot;    &quot;SDN_SPP&quot;       &quot;TOTN_AC&quot;       &quot;TOTN_ADVSPP&quot;  
+## [21] &quot;TOTN_ALIENSPP&quot; &quot;TOTN_CRYPSPP&quot;  &quot;TOTN_FAM&quot;      &quot;TOTN_GEN&quot;     
+## [25] &quot;TOTN_INTRSPP&quot;  &quot;TOTN_NATSPP&quot;   &quot;TOTN_SPP&quot;      &quot;XN_AC&quot;        
+## [29] &quot;XN_ADVSPP&quot;     &quot;XN_ALIENSPP&quot;   &quot;XN_CRYPSPP&quot;    &quot;XN_FAM&quot;       
+## [33] &quot;XN_GEN&quot;        &quot;XN_INTRSPP&quot;    &quot;XN_NATSPP&quot;     &quot;XN_SPP&quot;</code></pre>
+<p>Now category metrics, which are called very similarly to all remaining metrics except Bray-Curtis:</p>
+<pre class="sourceCode r"><code class="sourceCode r">outCat &lt;-<span class="st"> </span><span class="kw">calcCategory</span>(sumdf$byUIDspp)
+<span class="kw">head</span>(outCat)</code></pre>
+<pre><code>##   UID PARAMETER RESULT
+## 1   1   N_DICOT     15
+## 2   2   N_DICOT     29
+## 3   3   N_DICOT      8
+## 4   4   N_DICOT     26
+## 5   5   N_DICOT      2
+## 6   6   N_DICOT     44</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outCat$PARAMETER) </code></pre>
+<pre><code>##  [1] &quot;N_DICOT&quot;               &quot;N_FERN&quot;               
+##  [3] &quot;N_GYMNOSPERM&quot;          &quot;N_HORSETAIL&quot;          
+##  [5] &quot;N_MONOCOT&quot;             &quot;PCTN_DICOT&quot;           
+##  [7] &quot;PCTN_FERN&quot;             &quot;PCTN_GYMNOSPERM&quot;      
+##  [9] &quot;PCTN_HORSETAIL&quot;        &quot;PCTN_MONOCOT&quot;         
+## [11] &quot;XABCOV_DICOT&quot;          &quot;XABCOV_FERN&quot;          
+## [13] &quot;XABCOV_GYMNOSPERM&quot;     &quot;XABCOV_HORSETAIL&quot;     
+## [15] &quot;XABCOV_MONOCOT&quot;        &quot;XRCOV_DICOT&quot;          
+## [17] &quot;XRCOV_FERN&quot;            &quot;XRCOV_GYMNOSPERM&quot;     
+## [19] &quot;XRCOV_HORSETAIL&quot;       &quot;XRCOV_MONOCOT&quot;        
+## [21] &quot;N_DICOTS_NAT&quot;          &quot;PCTN_DICOTS_NAT&quot;      
+## [23] &quot;XABCOV_DICOTS_NAT&quot;     &quot;XRCOV_DICOTS_NAT&quot;     
+## [25] &quot;N_DICOTS_ALIEN&quot;        &quot;PCTN_DICOTS_ALIEN&quot;    
+## [27] &quot;XABCOV_DICOTS_ALIEN&quot;   &quot;XRCOV_DICOTS_ALIEN&quot;   
+## [29] &quot;N_DICOTS_CRYP&quot;         &quot;PCTN_DICOTS_CRYP&quot;     
+## [31] &quot;XABCOV_DICOTS_CRYP&quot;    &quot;XRCOV_DICOTS_CRYP&quot;    
+## [33] &quot;N_DICOTS_AC&quot;           &quot;PCTN_DICOTS_AC&quot;       
+## [35] &quot;XABCOV_DICOTS_AC&quot;      &quot;XRCOV_DICOTS_AC&quot;      
+## [37] &quot;N_FERNS_NAT&quot;           &quot;PCTN_FERNS_NAT&quot;       
+## [39] &quot;XABCOV_FERNS_NAT&quot;      &quot;XRCOV_FERNS_NAT&quot;      
+## [41] &quot;N_FERNS_INTR&quot;          &quot;PCTN_FERNS_INTR&quot;      
+## [43] &quot;XABCOV_FERNS_INTR&quot;     &quot;XRCOV_FERNS_INTR&quot;     
+## [45] &quot;N_MONOCOTS_NAT&quot;        &quot;PCTN_MONOCOTS_NAT&quot;    
+## [47] &quot;XABCOV_MONOCOTS_NAT&quot;   &quot;XRCOV_MONOCOTS_NAT&quot;   
+## [49] &quot;N_MONOCOTS_ALIEN&quot;      &quot;PCTN_MONOCOTS_ALIEN&quot;  
+## [51] &quot;XABCOV_MONOCOTS_ALIEN&quot; &quot;XRCOV_MONOCOTS_ALIEN&quot; 
+## [53] &quot;N_MONOCOTS_CRYP&quot;       &quot;PCTN_MONOCOTS_CRYP&quot;   
+## [55] &quot;XABCOV_MONOCOTS_CRYP&quot;  &quot;XRCOV_MONOCOTS_CRYP&quot;  
+## [57] &quot;N_MONOCOTS_AC&quot;         &quot;PCTN_MONOCOTS_AC&quot;     
+## [59] &quot;XABCOV_MONOCOTS_AC&quot;    &quot;XRCOV_MONOCOTS_AC&quot;</code></pre>
+<p>Finally, calculate Bray-Curtis metrics using species-level plot data:</p>
+<pre class="sourceCode r"><code class="sourceCode r">outBC &lt;-<span class="st"> </span><span class="kw">calcBCmets</span>(sumdf$byPlotspp)
+<span class="kw">head</span>(outBC)</code></pre>
+<pre><code>##   UID   PARAMETER RESULT
+## 1   1 XBCDIST_SPP 0.5080
+## 2   2 XBCDIST_SPP 0.3721
+## 3   3 XBCDIST_SPP 0.5236
+## 4   4 XBCDIST_SPP 0.7047
+## 5   5 XBCDIST_SPP 0.4075
+## 6   6 XBCDIST_SPP 0.6477</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outBC$PARAMETER)</code></pre>
+<pre><code>## [1] &quot;XBCDIST_SPP&quot;    &quot;XBCDIST_NATSPP&quot;</code></pre>
+<p>To see all of these combined and in wide format:</p>
+<pre class="sourceCode r"><code class="sourceCode r">allVasc &lt;-<span class="st"> </span><span class="kw">rbind</span>(outRich, outCat, outBC)
+
+<span class="kw">library</span>(reshape2)
+outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~PARAMETER,<span class="dt">value.var=</span><span class="st">'RESULT'</span>)
+<span class="kw">head</span>(outVasc)</code></pre>
+<pre><code>##   UID MEDN_AC MEDN_ADVSPP MEDN_ALIENSPP MEDN_CRYPSPP MEDN_FAM MEDN_GEN
+## 1   1       0           0             0            0        8        9
+## 2   2       1           0             1            0       17       18
+## 3   3       1           0             1            0        6        9
+## 4   4       0           0             0            0       13       14
+## 5   5       0           0             0            0        3        5
+## 6   6       2           0             2            0       25       34
+##   MEDN_INTRSPP MEDN_NATSPP MEDN_SPP N_DICOT N_DICOTS_AC N_DICOTS_ALIEN
+## 1            0           9        9      15           0              0
+## 2            1          19       19      29           3              3
+## 3            1           9       10       8           1              1
+## 4            0          14       14      26           0              0
+## 5            0           5        5       2           0              0
+## 6            2          37       40      44           3              3
+##   N_DICOTS_CRYP N_DICOTS_NAT N_FERN N_FERNS_INTR N_FERNS_NAT N_GYMNOSPERM
+## 1             0           15      1            0           1            0
+## 2             0           26      5            0           5            0
+## 3             0            7      0            0           0            0
+## 4             0           26      2            0           2            1
+## 5             0            2      0            0           0            0
+## 6             0           41      0            0           0            0
+##   N_HORSETAIL N_MONOCOT N_MONOCOTS_AC N_MONOCOTS_ALIEN N_MONOCOTS_CRYP
+## 1           0         2             0                0               0
+## 2           0        15             1                1               0
+## 3           0        13             1                1               0
+## 4           0         4             0                0               0
+## 5           0         4             0                0               0
+## 6           2        23             3                2               1
+##   N_MONOCOTS_NAT PCTN_DICOT PCTN_DICOTS_AC PCTN_DICOTS_ALIEN
+## 1              2      83.33           0.00              0.00
+## 2             14      59.18           6.12              6.12
+## 3             12      38.10           4.76              4.76
+## 4              3      76.47           0.00              0.00
+## 5              4      33.33           0.00              0.00
+## 6             20      61.97           4.23              4.23
+##   PCTN_DICOTS_CRYP PCTN_DICOTS_NAT PCTN_FERN PCTN_FERNS_INTR
+## 1                0           83.33      5.56               0
+## 2                0           53.06     10.20               0
+## 3                0           33.33      0.00               0
+## 4                0           76.47      5.88               0
+## 5                0           33.33      0.00               0
+## 6                0           57.75      0.00               0
+##   PCTN_FERNS_NAT PCTN_GYMNOSPERM PCTN_HORSETAIL PCTN_MONOCOT
+## 1           5.56            0.00           0.00        11.11
+## 2          10.20            0.00           0.00        30.61
+## 3           0.00            0.00           0.00        61.90
+## 4           5.88            2.94           0.00        11.76
+## 5           0.00            0.00           0.00        66.67
+## 6           0.00            0.00           2.82        32.39
+##   PCTN_MONOCOTS_AC PCTN_MONOCOTS_ALIEN PCTN_MONOCOTS_CRYP
+## 1             0.00                0.00               0.00
+## 2             2.04                2.04               0.00
+## 3             4.76                4.76               0.00
+## 4             0.00                0.00               0.00
+## 5             0.00                0.00               0.00
+## 6             4.23                2.82               1.41
+##   PCTN_MONOCOTS_NAT SDN_AC SDN_ADVSPP SDN_ALIENSPP SDN_CRYPSPP SDN_FAM
+## 1             11.11   0.00          0         0.00        0.00    1.95
+## 2             28.57   1.67          0         1.67        0.00    5.97
+## 3             57.14   0.55          0         0.55        0.00    2.28
+## 4              8.82   0.00          0         0.00        0.00    3.51
+## 5             66.67   0.00          0         0.00        0.00    0.84
+## 6             28.17   1.79          0         1.58        0.45    5.81
+##   SDN_GEN SDN_INTRSPP SDN_NATSPP SDN_SPP TOTN_AC TOTN_ADVSPP TOTN_ALIENSPP
+## 1    1.92        0.00       1.92    1.92       0           0             0
+## 2    6.95        1.67       7.18    8.76       4           0             4
+## 3    3.94        0.55       3.35    3.77       2           0             2
+## 4    3.78        0.00       4.04    4.21       0           0             0
+## 5    0.84        0.00       0.84    0.84       0           0             0
+## 6   10.69        1.58      11.10   12.51       6           0             5
+##   TOTN_CRYPSPP TOTN_FAM TOTN_GEN TOTN_INTRSPP TOTN_NATSPP TOTN_SPP
+## 1            0       15       18            0          18       18
+## 2            0       32       38            4          45       49
+## 3            0       11       19            2          19       21
+## 4            0       26       30            0          32       34
+## 5            0        4        6            0           6        6
+## 6            1       31       55            5          63       71
+##   XABCOV_DICOT XABCOV_DICOTS_AC XABCOV_DICOTS_ALIEN XABCOV_DICOTS_CRYP
+## 1       201.94             0.00                0.00                  0
+## 2        92.20             1.00                1.00                  0
+## 3         0.24             0.04                0.04                  0
+## 4        98.60             0.00                0.00                  0
+## 5         0.84             0.00                0.00                  0
+## 6        77.64             0.14                0.14                  0
+##   XABCOV_DICOTS_NAT XABCOV_FERN XABCOV_FERNS_INTR XABCOV_FERNS_NAT
+## 1            201.94         0.4                 0              0.4
+## 2             91.20        87.2                 0             87.2
+## 3              0.20         0.0                 0              0.0
+## 4             98.60         1.0                 0              1.0
+## 5              0.84         0.0                 0              0.0
+## 6             77.50         0.0                 0              0.0
+##   XABCOV_GYMNOSPERM XABCOV_HORSETAIL XABCOV_MONOCOT XABCOV_MONOCOTS_AC
+## 1               0.0              0.0           1.22               0.00
+## 2               0.0              0.0           8.20               1.20
+## 3               0.0              0.0          96.98              10.00
+## 4               5.6              0.0           3.80               0.00
+## 5               0.0              0.0          50.70               0.00
+## 6               0.0             18.8          24.06               0.08
+##   XABCOV_MONOCOTS_ALIEN XABCOV_MONOCOTS_CRYP XABCOV_MONOCOTS_NAT
+## 1                  0.00                 0.00                1.22
+## 2                  1.20                 0.00                7.00
+## 3                 10.00                 0.00               86.98
+## 4                  0.00                 0.00                3.60
+## 5                  0.00                 0.00               50.70
+## 6                  0.06                 0.02               23.98
+##   XBCDIST_NATSPP XBCDIST_SPP XN_AC XN_ADVSPP XN_ALIENSPP XN_CRYPSPP XN_FAM
+## 1         0.5080      0.5080   0.0         0         0.0        0.0    7.4
+## 2         0.3668      0.3721   1.4         0         1.4        0.0   18.2
+## 3         0.5265      0.5236   1.4         0         1.4        0.0    6.2
+## 4         0.7047      0.7047   0.0         0         0.0        0.0   13.4
+## 5         0.4075      0.4075   0.0         0         0.0        0.0    2.8
+## 6         0.6475      0.6477   2.2         0         2.0        0.2   22.2
+##   XN_GEN XN_INTRSPP XN_NATSPP XN_SPP XRCOV_DICOT XRCOV_DICOTS_AC
+## 1    9.2        0.0       9.2    9.2       99.20            0.00
+## 2   20.4        1.4      21.0   22.4       49.15            0.53
+## 3    9.0        1.4       8.8   10.2        0.25            0.04
+## 4   14.4        0.0      14.4   15.2       89.47            0.00
+## 5    4.8        0.0       4.8    4.8        1.63            0.00
+## 6   31.4        2.0      32.8   36.0       64.38            0.12
+##   XRCOV_DICOTS_ALIEN XRCOV_DICOTS_CRYP XRCOV_DICOTS_NAT XRCOV_FERN
+## 1               0.00                 0            99.20       0.20
+## 2               0.53                 0            48.61      46.48
+## 3               0.04                 0             0.21       0.00
+## 4               0.00                 0            89.47       0.91
+## 5               0.00                 0             1.63       0.00
+## 6               0.12                 0            64.26       0.00
+##   XRCOV_FERNS_INTR XRCOV_FERNS_NAT XRCOV_GYMNOSPERM XRCOV_HORSETAIL
+## 1                0            0.20             0.00            0.00
+## 2                0           46.48             0.00            0.00
+## 3                0            0.00             0.00            0.00
+## 4                0            0.91             5.08            0.00
+## 5                0            0.00             0.00            0.00
+## 6                0            0.00             0.00           15.59
+##   XRCOV_MONOCOT XRCOV_MONOCOTS_AC XRCOV_MONOCOTS_ALIEN XRCOV_MONOCOTS_CRYP
+## 1          0.60              0.00                 0.00                0.00
+## 2          4.37              0.64                 0.64                0.00
+## 3         99.75             10.29                10.29                0.00
+## 4          3.45              0.00                 0.00                0.00
+## 5         98.37              0.00                 0.00                0.00
+## 6         19.95              0.07                 0.05                0.02
+##   XRCOV_MONOCOTS_NAT
+## 1               0.60
+## 2               3.73
+## 3              89.47
+## 4               3.27
+## 5              98.37
+## 6              19.88</code></pre>
+<hr />
+</div>
+</div>
+</div>
+<div id="calculating-tree-metrics" class="section level1">
+<h1>3 Calculating tree metrics</h1>
+<p>As with the vascular plant metrics, there is a wrapper function that calculates all tree metrics at once (<code>calcTreeMets()</code>). There are also functions that calculate subsets of metrics (<code>calcSnagMets()</code>, <code>calcTreeCntMets()</code>, <code>calcTreeCoverMets()</code>), which require no additional processing steps but do provide output data in long format as with vascular plant metric subset functions.</p>
+<div id="all-metrics-at-once-1" class="section level2">
+<h2>3.1 All metrics at once</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(TreesEx)</code></pre>
+<pre><code>##   UID PLOT PAGE LINE       PARAMETER RESULT
+## 1   7    1    1    2 SPECIES_NAME_ID  36494
+## 2   7    1    1    2       LMED_TREE      5
+## 3   7    5    1    3       LMED_TREE      0
+## 4   7    5    1    3      SMALL_TREE      1
+## 5   7    1    1    2       TALL_TREE      0
+## 6   7    1    1    2         JR_TREE      0</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">outTree &lt;-<span class="st"> </span><span class="kw">calcTreeMets</span>(TreesEx)</code></pre>
+<pre><code>## [1] &quot;Done with snag metrics&quot;
+## [1] &quot;Done with tree count metrics&quot;
+## [1] &quot;Done with tree species metrics&quot;
+## [1] &quot;Done with tree cover metrics&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outTree)</code></pre>
+<pre><code>##   UID FREQ_HMED_TREE FREQ_LMED_TREE FREQ_SMALL_TREE FREQ_TALL_TREE
+## 1   1             40              0              40             80
+## 2   2             80              0               0            100
+## 3   3              0              0               0              0
+## 4   4            100            100             100             80
+## 5   5              0              0               0              0
+## 6   6            100             20               0             80
+##   FREQ_TREE_GROUND FREQ_TREE_MID FREQ_TREE_UPPER FREQ_VSMALL_TREE
+## 1               40            40              80                0
+## 2                0            80             100                0
+## 3                0             0               0                0
+## 4              100           100              80               60
+## 5                0             0               0                0
+## 6                0           100              80                0
+##   FREQ_VTALL_TREE IMP_HMED_TREE IMP_LMED_TREE IMP_SMALL_TREE IMP_TALL_TREE
+## 1               0          23.0           0.0           20.7          92.0
+## 2               0          41.6           0.0            0.0          64.4
+## 3               0           0.0           0.0            0.0           0.0
+## 4               0          63.5          58.7           51.5          56.9
+## 5               0           0.0           0.0            0.0           0.0
+## 6               0          59.4          11.0            0.0          48.0
+##   IMP_TREE_GROUND IMP_TREE_MID IMP_TREE_UPPER IMP_VSMALL_TREE
+## 1            20.7         23.0           92.0             0.0
+## 2             0.0         41.6           64.4             0.0
+## 3             0.0          0.0            0.0             0.0
+## 4            56.6         72.2           56.9            35.1
+## 5             0.0          0.0            0.0             0.0
+## 6             0.0         60.4           48.0             0.0
+##   IMP_VTALL_TREE N_HMED_TREE N_LMED_TREE N_SMALL_TREE N_TALL_TREE
+## 1              0           3           0            2           3
+## 2              0           3           0            0           3
+## 3              0           0           0            0           0
+## 4              0           7           8            5           6
+## 5              0           0           0            0           0
+## 6              0           4           1            0           1
+##   N_TREE_GROUND N_TREE_MID N_TREE_UPPER N_TREESPP N_VSMALL_TREE
+## 1             2          3            3         3             0
+## 2             0          3            3         5             0
+## 3             0          0            0         0             0
+## 4             7          9            6        12             6
+## 5             0          0            0         0             0
+## 6             0          4            1         4             0
+##   N_VTALL_TREE PCTN_TREE_GROUND PCTN_TREE_MID PCTN_TREE_UPPER TOTN_JR_SNAG
+## 1            0            66.67           100             100            0
+## 2            0             0.00            60              60            0
+## 3            0             0.00             0               0            0
+## 4            0            58.33            75              50            0
+## 5            0             0.00             0               0            0
+## 6            0             0.00           100              25            0
+##   TOTN_JR_TREE TOTN_SNAGS TOTN_THICK_SNAG TOTN_THICK_TREE TOTN_THIN_SNAG
+## 1            3          0               0               0              0
+## 2            6          2               0               0              1
+## 3            0          0               0               0              0
+## 4           11          0               0               1              0
+## 5            0          0               0               0              0
+## 6            0          2               0               0              1
+##   TOTN_THIN_TREE TOTN_TREES TOTN_XTHICK_SNAG TOTN_XTHICK_TREE
+## 1              6         24                0                0
+## 2              9         28                0                0
+## 3              0          0                0                0
+## 4              6         79                0                0
+## 5              0          0                0                0
+## 6              5         45                0                0
+##   TOTN_XTHIN_SNAG TOTN_XTHIN_TREE TOTN_XXTHICK_TREE TOTN_XXTHIN_SNAG
+## 1               0              13                 0                0
+## 2               1              12                 0                0
+## 3               0               0                 0                0
+## 4               0              17                 0                0
+## 5               0               0                 0                0
+## 6               1              16                 0                0
+##   TOTN_XXTHIN_TREE XCOV_HMED_TREE XCOV_LMED_TREE XCOV_SMALL_TREE
+## 1                2            6.0            0.0             1.4
+## 2                1            3.2            0.0             0.0
+## 3                0            0.0            0.0             0.0
+## 4               44           27.0           17.4             3.0
+## 5                0            0.0            0.0             0.0
+## 6               24           18.8            2.0             0.0
+##   XCOV_TALL_TREE XCOV_TREE_GROUND XCOV_TREE_MID XCOV_TREE_UPPER
+## 1          104.0              1.4           6.0           104.0
+## 2           28.8              0.0           3.2            28.8
+## 3            0.0              0.0           0.0             0.0
+## 4           33.8             13.2          44.4            33.8
+## 5            0.0              0.0           0.0             0.0
+## 6           16.0              0.0          20.8            16.0
+##   XCOV_VSMALL_TREE XCOV_VTALL_TREE XN_JR_SNAG XN_JR_TREE XN_SNAGS
+## 1              0.0               0          0        0.6      0.0
+## 2              0.0               0          0        1.2      0.4
+## 3              0.0               0          0        0.0      0.0
+## 4             10.2               0          0        2.2      0.0
+## 5              0.0               0          0        0.0      0.0
+## 6              0.0               0          0        0.0      0.4
+##   XN_THICK_SNAG XN_THICK_TREE XN_THIN_SNAG XN_THIN_TREE XN_TREES
+## 1             0           0.0          0.0          1.2      4.8
+## 2             0           0.0          0.2          1.8      5.6
+## 3             0           0.0          0.0          0.0      0.0
+## 4             0           0.2          0.0          1.2     15.8
+## 5             0           0.0          0.0          0.0      0.0
+## 6             0           0.0          0.2          1.0      9.0
+##   XN_XTHICK_SNAG XN_XTHICK_TREE XN_XTHIN_SNAG XN_XTHIN_TREE
+## 1              0              0           0.0           2.6
+## 2              0              0           0.2           2.4
+## 3              0              0           0.0           0.0
+## 4              0              0           0.0           3.4
+## 5              0              0           0.0           0.0
+## 6              0              0           0.2           3.2
+##   XN_XXTHICK_TREE XN_XXTHIN_SNAG XN_XXTHIN_TREE
+## 1               0              0            0.4
+## 2               0              0            0.2
+## 3               0              0            0.0
+## 4               0              0            8.8
+## 5               0              0            0.0
+## 6               0              0            4.8</code></pre>
+</div>
+<div id="subsets-of-metrics-1" class="section level2">
+<h2>3.2 Subsets of metrics</h2>
+<p>To calculate only snag metrics, the same dataset can be used directly with the subset functions. In this example, we only want to calculate snag metrics.</p>
+<pre class="sourceCode r"><code class="sourceCode r">outSnag &lt;-<span class="st"> </span><span class="kw">calcSnagMets</span>(TreesEx)</code></pre>
+<pre><code>## [1] &quot;Done with snag metrics&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outSnag)</code></pre>
+<pre><code>##   UID  PARAMETER RESULT
+## 1   1 TOTN_SNAGS      0
+## 2   2 TOTN_SNAGS      2
+## 3   3 TOTN_SNAGS      0
+## 4   4 TOTN_SNAGS      0
+## 5   5 TOTN_SNAGS      0
+## 6   6 TOTN_SNAGS      2</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outSnag$PARAMETER)</code></pre>
+<pre><code>##  [1] &quot;TOTN_SNAGS&quot;       &quot;XN_SNAGS&quot;         &quot;TOTN_JR_SNAG&quot;    
+##  [4] &quot;TOTN_THICK_SNAG&quot;  &quot;TOTN_THIN_SNAG&quot;   &quot;TOTN_XTHICK_SNAG&quot;
+##  [7] &quot;TOTN_XTHIN_SNAG&quot;  &quot;TOTN_XXTHIN_SNAG&quot; &quot;XN_JR_SNAG&quot;      
+## [10] &quot;XN_THICK_SNAG&quot;    &quot;XN_THIN_SNAG&quot;     &quot;XN_XTHICK_SNAG&quot;  
+## [13] &quot;XN_XTHIN_SNAG&quot;    &quot;XN_XXTHIN_SNAG&quot;</code></pre>
+<hr />
+</div>
+</div>
+<div id="calculating-vegetation-type-and-ground-cover-metrics" class="section level1">
+<h1>4 Calculating vegetation type and ground cover metrics</h1>
+<p>Both vegetation type and ground cover data are collected on the same form (V-4) in NWCA, so these metrics are processed together. There is again a wrapper function (<code>calcVtype_GcovMets()</code>) that calculates several subsets of metrics and combines them into a single output data frame. The functions that calculate subsets of these metrics are <code>calcBareGround_LitterMets()</code>, <code>calcNonvascMets()</code>, <code>calcSandTMets()</code>, <code>calcVascStratMets()</code>, <code>calcWcovMets()</code>. These subset functions require one additional step to run, described below.</p>
+<div id="all-metrics-at-once-2" class="section level2">
+<h2>4.1 All metrics at once</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(Vtype_GrCovEx)</code></pre>
+<pre><code>##   UID PLOT       PARAMETER RESULT
+## 1   7    4   MINIMUM_DEPTH      8
+## 2   7    3 LITTER_DEPTH_NE      0
+## 3   7    5        TALL_VEG      0
+## 4   7    4     WATER_AQVEG      0
+## 5   7    5   MINIMUM_DEPTH      8
+## 6   7    5     WATER_NOVEG      0</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">outVG &lt;-<span class="st"> </span><span class="kw">calcVtype_GcovMets</span>(Vtype_GrCovEx)</code></pre>
+<pre><code>## [1] &quot;Done with veg heterogeneity metrics&quot;
+## [1] &quot;Done with vascular strata metrics&quot;
+## [1] &quot;Done with non-vascular strata metrics&quot;
+## [1] &quot;Done with water depth metrics&quot;
+## [1] &quot;Done with litter metrics&quot;
+## [1] &quot;Done with bare ground metrics&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outVG)</code></pre>
+<pre><code>##   UID D_SANDT D_VASC_STRATA DOM_SANDT FREQ_ALGAE FREQ_ARBOREAL FREQ_BAREGD
+## 1   1       0        0.6617       PFO          0            20           0
+## 2   2       0        0.5684       PFO          0           100         100
+## 3   3       0        0.4174       PEM          0             0          20
+## 4   4       0        0.7224       PFO          0            40         100
+## 5   5       0        0.3203       PEM        100             0           0
+## 6   6    0.32        0.7881       PFO          0             0          80
+##   FREQ_BRYOPHYTES FREQ_EXPOSED_GRAVEL FREQ_EXPOSED_ROCK FREQ_EXPOSED_SOIL
+## 1             100                   0                 0                 0
+## 2             100                  20                 0               100
+## 3              20                   0                 0                20
+## 4             100                   0                 0               100
+## 5               0                   0                 0                 0
+## 6              80                   0                 0                80
+##   FREQ_FLOATING_AQ FREQ_H2O FREQ_H2O_AQVEG FREQ_H2O_EMERGVEG
+## 1                0      100              0               100
+## 2                0       20              0                 0
+## 3                0      100              0               100
+## 4                0        0              0                 0
+## 5                0        0              0               100
+## 6               80      100             80               100
+##   FREQ_H2O_NOVEG FREQ_HMED_VEG FREQ_LIANAS FREQ_LICHENS FREQ_LITTER
+## 1            100            80          60            0          60
+## 2             20           100         100            0         100
+## 3            100             0           0            0         100
+## 4              0           100         100          100         100
+## 5            100             0           0            0           0
+## 6             80           100           0           80          80
+##   FREQ_MACROALGAE FREQ_MED_VEG FREQ_PEAT_MOSS_DOM FREQ_SMALL_VEG
+## 1               0          100                  0            100
+## 2               0          100                 20             80
+## 3               0          100                  0            100
+## 4               0          100                  0            100
+## 5               0            0                  0            100
+## 6               0          100                  0            100
+##   FREQ_SUBMERGED_AQ FREQ_TALL_VEG FREQ_VSMALL_VEG FREQ_VTALL_VEG
+## 1                 0           100              80              0
+## 2                 0           100             100              0
+## 3                 0             0              60              0
+## 4                 0           100              80              0
+## 5               100             0             100              0
+## 6                 0            80             100              0
+##   FREQ_WD_COARSE FREQ_WD_FINE H_SANDT H_VASC_STRATA IMP_ALGAE IMP_ARBOREAL
+## 1             20           20       0        1.2979         0        10.01
+## 2             80          100       0         1.117         0         50.8
+## 3              0            0       0        0.6366         0            0
+## 4            100          100       0         1.478         0         20.7
+## 5              0            0       0        0.5546        81            0
+## 6             80          100  0.5004        1.6526         0            0
+##   IMP_BAREGD IMP_BRYOPHYTES IMP_EXPOSED_GRAVEL IMP_EXPOSED_ROCK
+## 1          0          51.01                  0                0
+## 2       51.8           50.8                 11                0
+## 3       10.1           10.3                  0                0
+## 4       57.2           55.5                  0                0
+## 5          0              0                  0                0
+## 6         47           42.3                  0                0
+##   IMP_EXPOSED_SOIL IMP_FLOATING_AQ IMP_H2O IMP_H2O_AQVEG IMP_H2O_EMERGVEG
+## 1                0               0    83.8             0             56.8
+## 2             50.8               0    11.5             0                0
+## 3             10.1               0    71.7             0             70.5
+## 4             57.2               0       0             0                0
+## 5                0               0       0             0             76.5
+## 6               47            42.4    96.5          42.4             81.4
+##   IMP_H2O_NOVEG IMP_HMED_VEG IMP_LIANAS IMP_LICHENS IMP_LITTER
+## 1            77           48       30.5           0       40.5
+## 2          11.5         56.2       51.2           0       90.5
+## 3          51.2            0          0           0       74.5
+## 4             0         60.5       53.2        55.5       89.8
+## 5          73.5            0          0           0          0
+## 6          52.8           61          0        40.6       49.5
+##   IMP_MACROALGAE IMP_MED_VEG IMP_SMALL_VEG IMP_SUBMERGED_AQ IMP_TALL_VEG
+## 1              0        62.5          70.5                0         94.5
+## 2              0        52.8            41                0         66.5
+## 3              0        62.4          80.8                0            0
+## 4              0        65.5          52.2                0         83.5
+## 5              0           0          71.5             50.5            0
+## 6              0        58.9          60.2                0           48
+##   IMP_VSMALL_VEG IMP_VTALL_VEG IMP_WD_COARSE IMP_WD_FINE J_SANDT
+## 1          42.11             0          10.2        10.8       0
+## 2           92.5             0          40.9        55.1       0
+## 3           30.3             0             0           0       0
+## 4           51.5             0          60.5          56       0
+## 5           54.7             0             0           0       0
+## 6           70.1             0          43.2        50.6  0.7219
+##   J_VASC_STRATA LITTER_TYPE MAX_COV_H2O MAX_H2O_DEPTH MEDDEPTH_LITTER
+## 1        0.7244       DECID         100            47               0
+## 2        0.6234  DECID_FORB          15            20               3
+## 3        0.5795      THATCH          88            30              11
+## 4        0.8249       DECID           0             0               3
+## 5        0.5048      ABSENT           0            16               0
+## 6        0.9223       DECID         100            67               1
+##   MIN_COV_H2O MIN_H2O_DEPTH N_LITTER_TYPE N_PEAT_MOSS_DOM N_SANDT
+## 1          31             1             1               0       1
+## 2           0             0             2               1       1
+## 3           5             0             1               0       1
+## 4           0             0             1               0       1
+## 5           0             5             0               0       1
+## 6          85             0             2               0       2
+##   N_VASC_STRATA RG_VASC_STRATA XCOV_ALGAE XCOV_ARBOREAL XCOV_BAREGD
+## 1             6              2          0          0.02           0
+## 2             6              1          0           1.6         3.6
+## 3             3              1          0             0         0.2
+## 4             6              1          0           1.4        14.4
+## 5             3              0         62             0           0
+## 6             6              1          0             0          14
+##   XCOV_BRYOPHYTES XCOV_EXPOSED_GRAVEL XCOV_EXPOSED_ROCK XCOV_EXPOSED_SOIL
+## 1            2.02                   0                 0                 0
+## 2             1.6                   2                 0               1.6
+## 3             0.6                   0                 0               0.2
+## 4              11                   0                 0              14.4
+## 5               0                   0                 0                 0
+## 6             4.6                   0                 0                14
+##   XCOV_FLOATING_AQ XCOV_H2O XCOV_H2O_AQVEG XCOV_H2O_EMERGVEG
+## 1                0     67.6              0              13.6
+## 2                0        3              0                 0
+## 3                0     43.4              0                41
+## 4                0        0              0                 0
+## 5                0        0              0                53
+## 6              4.8       93            4.8              62.8
+##   XCOV_H2O_NOVEG XCOV_HMED_VEG XCOV_LIANAS XCOV_LICHENS XCOV_LITTER
+## 1             54            16           1            0          21
+## 2              3          12.4         2.4            0          81
+## 3            2.4             0           0            0          49
+## 4              0            21         6.4           11        79.6
+## 5             47             0           0            0           0
+## 6           25.6            22           0          1.2          19
+##   XCOV_MACROALGAE XCOV_MED_VEG XCOV_SMALL_VEG XCOV_SUBMERGED_AQ
+## 1               0           25             41                 0
+## 2               0          5.6              2                 0
+## 3               0         24.8           61.6                 0
+## 4               0           31            4.4                 0
+## 5               0            0             43                 1
+## 6               0         17.8           20.4                 0
+##   XCOV_TALL_VEG XCOV_VSMALL_VEG XCOV_VTALL_VEG XCOV_WD_COARSE XCOV_WD_FINE
+## 1            89            4.22              0            0.4          1.6
+## 2            33              85              0            1.8         10.2
+## 3             0             0.6              0              0            0
+## 4            67              23              0             21           12
+## 5             0             9.4              0              0            0
+## 6            16            40.2              0            6.4          1.2
+##   XDEPTH_LITTER XH2O_DEPTH XH2O_DEPTH_AA XN_VASC_STRATA XRCOV_FLOATING_AQ
+## 1           0.3         25            25            5.2                 0
+## 2             3         10             2            5.8                 0
+## 3           9.8        5.8           5.8            2.6                 0
+## 4           2.9          0             0            5.8                 0
+## 5             0         10            10              3                 0
+## 6             1       22.4          22.4            5.6              3.96
+##   XRCOV_HMED_VEG XRCOV_LIANAS XRCOV_MED_VEG XRCOV_SMALL_VEG
+## 1           9.08         0.57         14.19           23.27
+## 2           8.83         1.71          3.99            1.42
+## 3              0            0         28.51            70.8
+## 4          13.74         4.19         20.29            2.88
+## 5              0            0             0           80.52
+## 6          18.15            0         14.69           16.83
+##   XRCOV_SUBMERGED_AQ XRCOV_TALL_VEG XRCOV_VSMALL_VEG XRCOV_VTALL_VEG
+## 1                  0          50.51             2.39               0
+## 2                  0           23.5            60.54               0
+## 3                  0              0             0.69               0
+## 4                  0          43.85            15.05               0
+## 5               1.87              0             17.6               0
+## 6                  0           13.2            33.17               0
+##   XTOTCOV_VASC_STRATA
+## 1              176.22
+## 2               140.4
+## 3                  87
+## 4               152.8
+## 5                53.4
+## 6               121.2</code></pre>
+</div>
+<div id="subsets-of-metrics-2" class="section level2">
+<h2>4.2 Subsets of metrics</h2>
+<p>If we only want to calculate a subset of metrics, say S &amp; T metrics and vascular strata metrics, for example, we need to supply the number of plots sampled at each site along with the data from form V-4.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(plyr)</code></pre>
+<pre><code>## Warning: package 'plyr' was built under R version 3.2.5</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">nplots &lt;-<span class="st"> </span><span class="kw">ddply</span>(Vtype_GrCovEx,<span class="kw">c</span>(<span class="st">'UID'</span>),summarize,<span class="dt">NPLOTS=</span><span class="kw">length</span>(<span class="kw">unique</span>(PLOT)))
+
+outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_GrCovEx,nplots)</code></pre>
+<pre><code>## [1] &quot;Done with veg heterogeneity metrics&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outST)</code></pre>
+<pre><code>##   UID PARAMETER RESULT
+## 1   1   D_SANDT      0
+## 2   2   D_SANDT      0
+## 3   3   D_SANDT      0
+## 4   4   D_SANDT      0
+## 5   5   D_SANDT      0
+## 6   6   D_SANDT   0.32</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outST$PARAMETER)</code></pre>
+<pre><code>## [1] &quot;D_SANDT&quot;   &quot;H_SANDT&quot;   &quot;J_SANDT&quot;   &quot;DOM_SANDT&quot; &quot;N_SANDT&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">outVstrat &lt;-<span class="st"> </span><span class="kw">calcVascStratMets</span>(Vtype_GrCovEx,nplots)</code></pre>
+<pre><code>## [1] &quot;Done with vascular strata metrics&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outVstrat)</code></pre>
+<pre><code>##   UID        PARAMETER RESULT
+## 1   1 FREQ_FLOATING_AQ      0
+## 2   2 FREQ_FLOATING_AQ      0
+## 3   3 FREQ_FLOATING_AQ      0
+## 4   4 FREQ_FLOATING_AQ      0
+## 5   5 FREQ_FLOATING_AQ      0
+## 6   6 FREQ_FLOATING_AQ     80</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outVstrat$PARAMETER)</code></pre>
+<pre><code>##  [1] &quot;FREQ_FLOATING_AQ&quot;    &quot;FREQ_HMED_VEG&quot;       &quot;FREQ_LIANAS&quot;        
+##  [4] &quot;FREQ_MED_VEG&quot;        &quot;FREQ_SMALL_VEG&quot;      &quot;FREQ_SUBMERGED_AQ&quot;  
+##  [7] &quot;FREQ_TALL_VEG&quot;       &quot;FREQ_VSMALL_VEG&quot;     &quot;IMP_FLOATING_AQ&quot;    
+## [10] &quot;IMP_HMED_VEG&quot;        &quot;IMP_LIANAS&quot;          &quot;IMP_MED_VEG&quot;        
+## [13] &quot;IMP_SMALL_VEG&quot;       &quot;IMP_SUBMERGED_AQ&quot;    &quot;IMP_TALL_VEG&quot;       
+## [16] &quot;IMP_VSMALL_VEG&quot;      &quot;XCOV_FLOATING_AQ&quot;    &quot;XCOV_HMED_VEG&quot;      
+## [19] &quot;XCOV_LIANAS&quot;         &quot;XCOV_MED_VEG&quot;        &quot;XCOV_SMALL_VEG&quot;     
+## [22] &quot;XCOV_SUBMERGED_AQ&quot;   &quot;XCOV_TALL_VEG&quot;       &quot;XCOV_VSMALL_VEG&quot;    
+## [25] &quot;XRCOV_FLOATING_AQ&quot;   &quot;XRCOV_HMED_VEG&quot;      &quot;XRCOV_LIANAS&quot;       
+## [28] &quot;XRCOV_MED_VEG&quot;       &quot;XRCOV_SMALL_VEG&quot;     &quot;XRCOV_SUBMERGED_AQ&quot; 
+## [31] &quot;XRCOV_TALL_VEG&quot;      &quot;XRCOV_VSMALL_VEG&quot;    &quot;H_VASC_STRATA&quot;      
+## [34] &quot;J_VASC_STRATA&quot;       &quot;D_VASC_STRATA&quot;       &quot;FREQ_VTALL_VEG&quot;     
+## [37] &quot;IMP_VTALL_VEG&quot;       &quot;XCOV_VTALL_VEG&quot;      &quot;XRCOV_VTALL_VEG&quot;    
+## [40] &quot;N_VASC_STRATA&quot;       &quot;XTOTCOV_VASC_STRATA&quot; &quot;XN_VASC_STRATA&quot;     
+## [43] &quot;RG_VASC_STRATA&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Now we can combine these two outputs and cast them into wide format</span>
+outAllVG &lt;-<span class="st"> </span><span class="kw">rbind</span>(outST,outVstrat)
+outAllVG.wide &lt;-<span class="st"> </span><span class="kw">dcast</span>(outAllVG,UID~PARAMETER,<span class="dt">value.var=</span><span class="st">'RESULT'</span>)
+<span class="kw">head</span>(outAllVG.wide)</code></pre>
+<pre><code>##   UID D_SANDT D_VASC_STRATA DOM_SANDT FREQ_FLOATING_AQ FREQ_HMED_VEG
+## 1   1       0        0.6617       PFO                0            80
+## 2   2       0        0.5684       PFO                0           100
+## 3   3       0        0.4174       PEM                0             0
+## 4   4       0        0.7224       PFO                0           100
+## 5   5       0        0.3203       PEM                0             0
+## 6   6    0.32        0.7881       PFO               80           100
+##   FREQ_LIANAS FREQ_MED_VEG FREQ_SMALL_VEG FREQ_SUBMERGED_AQ FREQ_TALL_VEG
+## 1          60          100            100                 0           100
+## 2         100          100             80                 0           100
+## 3           0          100            100                 0             0
+## 4         100          100            100                 0           100
+## 5           0            0            100               100             0
+## 6           0          100            100                 0            80
+##   FREQ_VSMALL_VEG FREQ_VTALL_VEG H_SANDT H_VASC_STRATA IMP_FLOATING_AQ
+## 1              80              0       0        1.2979               0
+## 2             100              0       0         1.117               0
+## 3              60              0       0        0.6366               0
+## 4              80              0       0         1.478               0
+## 5             100              0       0        0.5546               0
+## 6             100              0  0.5004        1.6526            42.4
+##   IMP_HMED_VEG IMP_LIANAS IMP_MED_VEG IMP_SMALL_VEG IMP_SUBMERGED_AQ
+## 1           48       30.5        62.5          70.5                0
+## 2         56.2       51.2        52.8            41                0
+## 3            0          0        62.4          80.8                0
+## 4         60.5       53.2        65.5          52.2                0
+## 5            0          0           0          71.5             50.5
+## 6           61          0        58.9          60.2                0
+##   IMP_TALL_VEG IMP_VSMALL_VEG IMP_VTALL_VEG J_SANDT J_VASC_STRATA N_SANDT
+## 1         94.5          42.11             0       0        0.7244       1
+## 2         66.5           92.5             0       0        0.6234       1
+## 3            0           30.3             0       0        0.5795       1
+## 4         83.5           51.5             0       0        0.8249       1
+## 5            0           54.7             0       0        0.5048       1
+## 6           48           70.1             0  0.7219        0.9223       2
+##   N_VASC_STRATA RG_VASC_STRATA XCOV_FLOATING_AQ XCOV_HMED_VEG XCOV_LIANAS
+## 1             6              2                0            16           1
+## 2             6              1                0          12.4         2.4
+## 3             3              1                0             0           0
+## 4             6              1                0            21         6.4
+## 5             3              0                0             0           0
+## 6             6              1              4.8            22           0
+##   XCOV_MED_VEG XCOV_SMALL_VEG XCOV_SUBMERGED_AQ XCOV_TALL_VEG
+## 1           25             41                 0            89
+## 2          5.6              2                 0            33
+## 3         24.8           61.6                 0             0
+## 4           31            4.4                 0            67
+## 5            0             43                 1             0
+## 6         17.8           20.4                 0            16
+##   XCOV_VSMALL_VEG XCOV_VTALL_VEG XN_VASC_STRATA XRCOV_FLOATING_AQ
+## 1            4.22              0            5.2                 0
+## 2              85              0            5.8                 0
+## 3             0.6              0            2.6                 0
+## 4              23              0            5.8                 0
+## 5             9.4              0              3                 0
+## 6            40.2              0            5.6              3.96
+##   XRCOV_HMED_VEG XRCOV_LIANAS XRCOV_MED_VEG XRCOV_SMALL_VEG
+## 1           9.08         0.57         14.19           23.27
+## 2           8.83         1.71          3.99            1.42
+## 3              0            0         28.51            70.8
+## 4          13.74         4.19         20.29            2.88
+## 5              0            0             0           80.52
+## 6          18.15            0         14.69           16.83
+##   XRCOV_SUBMERGED_AQ XRCOV_TALL_VEG XRCOV_VSMALL_VEG XRCOV_VTALL_VEG
+## 1                  0          50.51             2.39               0
+## 2                  0           23.5            60.54               0
+## 3                  0              0             0.69               0
+## 4                  0          43.85            15.05               0
+## 5               1.87              0             17.6               0
+## 6                  0           13.2            33.17               0
+##   XTOTCOV_VASC_STRATA
+## 1              176.22
+## 2               140.4
+## 3                  87
+## 4               152.8
+## 5                53.4
+## 6               121.2</code></pre>
+<hr />
+</div>
+</div>
+<div id="reference" class="section level1">
+<h1>5 Reference</h1>
+<p>US Environmental Protection Agency. 2016. National Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US Environmental Protection Agency, Washington, DC.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

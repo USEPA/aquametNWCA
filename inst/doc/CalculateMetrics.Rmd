@@ -1,0 +1,138 @@
+---
+title: "Calculate Metrics"
+author: "Karen Blocksom"
+date: "July 14, 2016"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Calculate Metrics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# 1 Preliminaries
+
+One of the main goals of this package is to calculate vegetation metrics as used in the National Wetlands Condition Assessment conducted in 2011 by EPA's Office of Water. Vegetation data were collected in the field on three forms: V-2 (vascular plants), V-3 (Trees), and V-4 (Vegetation types and ground cover). There is one wrapper function for data from each field form, each of which calls other functions that calculate a subset of metrics by type. When the outputs of the three functions are combined, the result is the full set of candidate metrics examined in developing the Vegetation Multimetric Index (VMMI) and the Non-native Plant Species Index (NPSI). This vignette will describe how to use the various functions along with the example datasets provided and the included taxa lists, to obtain this full set of metrics or a subset of them based on metric type. 
+
+The functions in this package assume a specific data structure for input datasets, with standardized names, as described in the help files for individual functions. The data used in this vignette come from the NWCA 2011 study, and so are formatted as expected. Functions will look for specific types of inconsistencies, like missing variables, and either provide a warning or will fail to run, depending on the issue.  
+
+********
+# 2 Calculating vascular plant metrics 
+
+There are two main approaches to calculating vascular plant metrics. One may either calculate all vascular plant metrics, or various subsets (e.g., duration metrics, richness metrics, etc.). In the first approach, the function `calcVascPlantMets` serves as a wrapper for a number of other functions and simplifies the data preparation and metric calculation. The other approach involves additional data preparation prior to calling the functions for specific metric types. 
+
+## 2.1  All metrics at once
+
+Use the example plant data included in the package, `VascPlantEx`, along with the included taxalists for taxonomy and basic characteristics (`taxaNWCA`), Coefficient of Conservatism and native status values (`ccNatNWCA`), and Wetland Indicator Status values (`wisNWCA`).
+
+
+```{r allVasc.1}
+library(aquametNWCA2)
+
+head(VascPlantEx)
+```
+This is the expected input format for vegetation data from form V-2. To run `calcVascPlantMets`, the taxalists `taxaNWCA`, `ccNatNWCA`, and `wisNWCA` will be called by default by the function if not specified. In this example, we explicitly include the arguments that specify these taxalists in the function call. However, the user may either leave them blank or call their own versions of these taxalists, so long as the field names are as expected.
+```{r allVasc.2}
+outdf <- calcVascPlantMets(dfIn=VascPlantEx,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,taxaWIS=wisNWCA)
+
+names(outdf)
+```
+The definitions of all metrics can be found in the help document **Vascular\_Plant\_Metric\_Descriptions.pdf** found in this package.
+
+## 2.2  Subsets of metrics
+
+Suppose only richness, category, and Bray-Curtis metrics are of interest. Then we only need to use the functions that calculate those metrics: `calcRichness()`, `calcCategory()`, and `calcBCmets()`. However, we need to prepare the data for use in these functions because certain summary variables are expected as inputs to these functions. For each of these functions, the output data frame is in long format, unlike the output of `calcVascPlantMets()`, and must be cast wide to see metrics as columns.  
+
+Other vascular plant metric subset functions include `calcDuration()`, `calcCC()`, `calcDiversity()`, `calcGrowthHabit()`, `calcNative()`, and `calcWIS()`. For each of these functions, if the variable `NWCA_NATSTAT` is included in the `taxaCC` input data frame, native status versions of metrics will also be calculated.
+
+### 2.2.1 Data preparation
+
+Data are expected to be in a specific format with specific summary variables, and it is possible to create input datasets outside of R, but the easiest approach is to use `prepareData()` to create input datasets for these functions. The `calcRichness()` function expects datasets summarized by both UID and by UID and PLOT at the species, genus, and family levels. The `prepareData()` function performs all necessary summarization and creates a single list object containing 6 data frames that reflect all of these summarizations of data. 
+
+First, run `prepareData()` to create a list containing 6 data frames that can be used in all other functions:
+```{r subVasc.1}
+sumdf <- prepareData(indf=VascPlantEx, inTaxa=taxaNWCA, inNatCC=ccNatNWCA, inWIS=wisNWCA)
+str(sumdf)
+```
+
+### 2.2.2 Metric Subset Functions
+
+Now we can run functions for subsets, starting with `calcRichness()`:
+```{r subVasc.2}
+outRich <- calcRichness(sumdf$byUIDspp,sumdf$byPlotspp,sumdf$byUIDgen,sumdf$byPlotgen,sumdf$byUIDfam,sumdf$byPlotfam)
+head(outRich)
+unique(outRich$PARAMETER)
+```
+Now category metrics, which are called very similarly to all remaining metrics except Bray-Curtis:
+```{r subVasc.3}
+outCat <- calcCategory(sumdf$byUIDspp)
+head(outCat)
+unique(outCat$PARAMETER) 
+```
+Finally, calculate Bray-Curtis metrics using species-level plot data:
+```{r subVasc.4}
+outBC <- calcBCmets(sumdf$byPlotspp)
+head(outBC)
+unique(outBC$PARAMETER)
+```
+To see all of these combined and in wide format:
+```{r subVasc.5}
+allVasc <- rbind(outRich, outCat, outBC)
+
+library(reshape2)
+outVasc <- dcast(allVasc,UID~PARAMETER,value.var='RESULT')
+head(outVasc)
+```
+******
+# 3 Calculating tree metrics
+As with the vascular plant metrics, there is a wrapper function that calculates all tree metrics at once (`calcTreeMets()`). There are also functions that calculate subsets of metrics (`calcSnagMets()`, `calcTreeCntMets()`, `calcTreeCoverMets()`), which require no additional processing steps but do provide output data in long format as with vascular plant metric subset functions. 
+
+## 3.1 All metrics at once
+```{r allTree.1}
+head(TreesEx)
+
+outTree <- calcTreeMets(TreesEx)
+head(outTree)
+```
+## 3.2 Subsets of metrics
+To calculate only snag metrics, the same dataset can be used directly with the subset functions. In this example, we only want to calculate snag metrics. 
+```{r subTree.1}
+outSnag <- calcSnagMets(TreesEx)
+head(outSnag)
+unique(outSnag$PARAMETER)
+```
+*******************
+# 4 Calculating vegetation type and ground cover metrics
+Both vegetation type and ground cover data are collected on the same form (V-4) in NWCA, so these metrics are processed together. There is again a wrapper function (`calcVtype_GcovMets()`) that calculates several subsets of metrics and combines them into a single output data frame. The functions that calculate subsets of these metrics are `calcBareGround_LitterMets()`, `calcNonvascMets()`, `calcSandTMets()`, `calcVascStratMets()`, `calcWcovMets()`. These subset functions require one additional step to run, described below. 
+
+## 4.1 All metrics at once
+```{r allVG}
+head(Vtype_GrCovEx)
+
+outVG <- calcVtype_GcovMets(Vtype_GrCovEx)
+
+head(outVG)
+```
+## 4.2 Subsets of metrics
+If we only want to calculate a subset of metrics, say S & T metrics and vascular strata metrics, for example, we need to supply the number of plots sampled at each site along with the data from form V-4. 
+```{r subVG}
+library(plyr)
+nplots <- ddply(Vtype_GrCovEx,c('UID'),summarize,NPLOTS=length(unique(PLOT)))
+
+outST <- calcSandTMets(Vtype_GrCovEx,nplots)
+head(outST)
+unique(outST$PARAMETER)
+
+outVstrat <- calcVascStratMets(Vtype_GrCovEx,nplots)
+head(outVstrat)
+unique(outVstrat$PARAMETER)
+
+# Now we can combine these two outputs and cast them into wide format
+outAllVG <- rbind(outST,outVstrat)
+outAllVG.wide <- dcast(outAllVG,UID~PARAMETER,value.var='RESULT')
+head(outAllVG.wide)
+```
+************************
+# 5 Reference
+US Environmental Protection Agency. 2016. National Wetland Condition 
+Assessment: 2011 Technical Report. EPA-843-R-15-006. US Environmental 
+Protection Agency, Washington, DC.
