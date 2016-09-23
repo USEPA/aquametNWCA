@@ -4,7 +4,7 @@
 \alias{createDFs}
 \title{Create data frames for function input}
 \usage{
-createDFs(tvar, indf, taxa)
+createDFs(sampID = "UID", tvar, indf, taxa)
 }
 \arguments{
 \item{tvar}{String with the level of taxonomy
@@ -14,7 +14,8 @@ createDFs(tvar, indf, taxa)
 the following variables:
 \itemize{
 
-\item UID - Unique sample identifier
+\item sampID - A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item PLOT - Plot number of data (1 to 5 possible)
 
@@ -34,17 +35,17 @@ populated with abbreviations as found in UsDA PLANTS database.}
 }
 \value{
 A list containing two data frames. The first data frame
-summarizes data by UID and TAXON and contains UID, STATE,
-USAC_REGION, TAXON, NUM, XABCOV, DISTINCT, and NPLOTS. NUM is the
-number of plots in which taxon occurs, and XABCOV is the mean
-absolute COVER across plots. DISTINCT is the value 1 assigned to
-each row. NPLOTS is the number of plots sampled.
+summarizes data by sampID variables and TAXON and contains 
+sampID variables, STATE, USAC_REGION, TAXON, NUM, XABCOV, DISTINCT, 
+and NPLOTS. NUM is the number of plots in which taxon occurs, and 
+XABCOV is the mean absolute COVER across plots. DISTINCT is the value 
+1 assigned to each row. NPLOTS is the number of plots sampled.
 
-The second summarizes by UID, PLOT, and TAXON. Each data frame
-contains UID, PLOT, STATE, USAC_REGION, TAXON, COVER, and
+The second summarizes by sampID variables, PLOT, and TAXON. Each data frame
+contains sampID variables, PLOT, STATE, USAC_REGION, TAXON, COVER, and
 DISTINCT. DISTINCT assigns the value for each taxon as 1 if the
 taxon has COVER>0 or 0 if not. COVER is the sum of the COVER
-variable by UID, PLOT, and TAXON.
+variable by sampID variables, PLOT, and TAXON.
 }
 \description{
 This internal function merges the inputs of

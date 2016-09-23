@@ -2,10 +2,10 @@
 library(aquametNWCA2)
 
 head(VascPlantEx)
-exPlant <- prepareData(VascPlantEx)
+exPlant <- prepareData(VascPlantEx, sampID='UID')
 
 ## ----mets.2--------------------------------------------------------------
-mets <- calcVMMImets(exPlant$byUIDspp)
+mets <- calcVMMImets(exPlant$byUIDspp, sampID='UID')
 
 head(mets)
 
@@ -23,12 +23,12 @@ sites <- data.frame(UID=seq(1,10), NWCA_ECO4=c('CPL','CPL','IPL','CPL','CPL','IP
 
 mets.wide.1 <- merge(sites, mets.wide, by='UID')
 
-vmmi <- calcVMMI_fromMets(mets.wide.1)
+vmmi <- calcVMMI_fromMets(mets.wide.1, sampID='UID')
 head(vmmi)
 
 
 ## ----mmi.2---------------------------------------------------------------
-vmmi.alt <- calcVMMI_fromMets(mets.wide)
+vmmi.alt <- calcVMMI_fromMets(mets.wide, sampID='UID')
 
 head(vmmi.alt)
 

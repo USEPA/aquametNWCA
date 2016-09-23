@@ -4,12 +4,15 @@
 \alias{calcWcovMets}
 \title{Calculate water cover metrics}
 \usage{
-calcWcovMets(dataIn, nPlot)
+calcWcovMets(dataIn, nPlot, sampID = "UID")
 }
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
 \itemize{
-\item UID (unique sample identifier), PLOT (Sample plot from which data
+\item sampID - A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
+
+\item PLOT (Sample plot from which data
 were collected)
 
 \item PARAMETER (specific measurement type)
@@ -23,12 +26,12 @@ calculating tree metrics: 'TIME','MINIMUM_DEPTH',
 Additional parameters or variables are ignored.}
 
 \item{nPlot}{Number of plots sampled associated with each
-UID with variables UID and NPLOTS}
+sample with sampID variables and NPLOTS}
 }
 \value{
 Either a character string containing an error message
 when metric calculation is not successful, or a data frame. Data
-frame contains UID, PARAMETER, RESULT, where values of PARAMETER
+frame contains sampID variables, PARAMETER, RESULT, where values of PARAMETER
 consist of the metric name concatenated with trait value, with
 valid values of: MIN_H2O_DEPTH, MAX_H2O_DEPTH,
 XH2O_DEPTH_AA, MIN_COV_H2O, MAX_COV_H2O, FREQ_H2O,

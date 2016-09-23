@@ -354,5 +354,5 @@ calcTreeCoverMets <- function(dfIn,sampID='UID'){
   treeOut.1 <- merge(samples,treeOut,by='SAMPID') %>%
     dplyr::select(-SAMPID)
   
-  return(treeOut)
+  return(treeOut.1)
 }

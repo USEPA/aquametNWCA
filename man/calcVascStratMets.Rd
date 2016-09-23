@@ -4,14 +4,16 @@
 \alias{calcVascStratMets}
 \title{Calculate vascular strata metrics}
 \usage{
-calcVascStratMets(dataIn, nPlot)
+calcVascStratMets(dataIn, nPlot, sampID = "UID")
 }
 \arguments{
 \item{dataIn}{A data frame containing the following
 variables:
 \itemize{
-\item UID (unique sample identifier), PLOT (Sample plot
-from which data were collected)
+\item sampID - A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
+
+\item PLOT (Sample plot from which data were collected)
 
 \item PARAMETER (specific measurement type)
 
@@ -24,12 +26,12 @@ calculating tree metrics: 'SUBMERGED_AQ','FLOATING_AQ',
 Additional parameters or variables are ignored.}
 
 \item{nPlot}{Number of plots sampled associated with each
-UID with variables UID and NPLOTS}
+sample with sampID variables and NPLOTS}
 }
 \value{
 Either a character string containing an error message
 when metric calculation is not successful, or a data frame. Data
-frame contains UID, PARAMETER, RESULT, where values of PARAMETER
+frame contains sampID variables, PARAMETER, RESULT, where values of PARAMETER
 consist of the metric name concatenated with trait value, with
 valid values of: FREQ_FLOATING_AQ, FREQ_HMED_VEG,
 FREQ_LIANAS, FREQ_MED_VEG, FREQ_SMALL_VEG, FREQ_SUBMERGED_AQ,

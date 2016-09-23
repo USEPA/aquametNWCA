@@ -4,13 +4,14 @@
 \alias{calcVMMImets}
 \title{Calculate only metrics used in NWCA 2011 VMMI}
 \usage{
-calcVMMImets(indf)
+calcVMMImets(indf, sampID = "UID")
 }
 \arguments{
 \item{indf}{Data frame containing cover data summarized at the UID
 and TAXON level:
 \itemize{
-\item UID: Unique sample identifier
+ \item sampID: A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item TAXON: Taxon name
 
@@ -32,7 +33,7 @@ all taxa for a UID.
 }}
 }
 \value{
-Data frame containing UID, PARAMETER, RESULT, with the
+Data frame containing sampID variables, PARAMETER, RESULT, with the
 following PARAMETER values:
 \itemize{
 \item FQAI_ALL: Floristic Quality Assessment Index, based on all

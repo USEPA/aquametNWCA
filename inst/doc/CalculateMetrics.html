@@ -12,7 +12,7 @@
 
 <meta name="author" content="Karen Blocksom" />
 
-<meta name="date" content="2016-07-14" />
+<meta name="date" content="2016-09-23" />
 
 <title>Calculate Metrics</title>
 
@@ -52,7 +52,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 <h1 class="title toc-ignore">Calculate Metrics</h1>
 <h4 class="author"><em>Karen Blocksom</em></h4>
-<h4 class="date"><em>July 14, 2016</em></h4>
+<h4 class="date"><em>September 23, 2016</em></h4>
 
 
 
@@ -79,13 +79,13 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## 5   7    FL  CSTL_PLAIN    5       SPARTINA PATENS     0
 ## 6   7    FL  CSTL_PLAIN    1      PANICUM VIRGATUM     0</code></pre>
 <p>This is the expected input format for vegetation data from form V-2. To run <code>calcVascPlantMets</code>, the taxalists <code>taxaNWCA</code>, <code>ccNatNWCA</code>, and <code>wisNWCA</code> will be called by default by the function if not specified. In this example, we explicitly include the arguments that specify these taxalists in the function call. However, the user may either leave them blank or call their own versions of these taxalists, so long as the field names are as expected.</p>
-<pre class="sourceCode r"><code class="sourceCode r">outdf &lt;-<span class="st"> </span><span class="kw">calcVascPlantMets</span>(<span class="dt">dfIn=</span>VascPlantEx,<span class="dt">taxaIn=</span>taxaNWCA,<span class="dt">taxaCC=</span>ccNatNWCA,<span class="dt">taxaWIS=</span>wisNWCA)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">outdf &lt;-<span class="st"> </span><span class="kw">calcVascPlantMets</span>(<span class="dt">dfIn=</span>VascPlantEx,<span class="dt">taxaIn=</span>taxaNWCA,<span class="dt">taxaCC=</span>ccNatNWCA,<span class="dt">taxaWIS=</span>wisNWCA,<span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
 <pre><code>## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done preparing datasets&quot;
 ## [1] &quot;Initial datasets prepared for metric calculation.&quot;
 ## [1] &quot;Done calculating richness metrics.&quot;
@@ -270,11 +270,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## [337] &quot;RFREQ_NATSPP&quot;          &quot;RIMP_ADVSPP&quot;          
 ## [339] &quot;RIMP_CRYPSPP&quot;          &quot;RIMP_INTRSPP&quot;         
 ## [341] &quot;RIMP_NATSPP&quot;           &quot;PCTN_ALIENSPP&quot;        
-## [343] &quot;RFREQ_ALIENSPP&quot;        &quot;RIMP_ALIENSPP&quot;        
-## [345] &quot;XABCOV_ALIENSPP&quot;       &quot;XRCOV_ALIENSPP&quot;       
-## [347] &quot;PCTN_AC&quot;               &quot;RFREQ_AC&quot;             
-## [349] &quot;RIMP_AC&quot;               &quot;XABCOV_AC&quot;            
-## [351] &quot;XRCOV_AC&quot;              &quot;XBCDIST_SPP&quot;          
+## [343] &quot;XRCOV_ALIENSPP&quot;        &quot;RFREQ_ALIENSPP&quot;       
+## [345] &quot;RIMP_ALIENSPP&quot;         &quot;XABCOV_ALIENSPP&quot;      
+## [347] &quot;PCTN_AC&quot;               &quot;XRCOV_AC&quot;             
+## [349] &quot;RFREQ_AC&quot;              &quot;RIMP_AC&quot;              
+## [351] &quot;XABCOV_AC&quot;             &quot;XBCDIST_SPP&quot;          
 ## [353] &quot;XBCDIST_NATSPP&quot;</code></pre>
 <p>The definitions of all metrics can be found in the help document <strong>Vascular_Plant_Metric_Descriptions.pdf</strong> found in this package.</p>
 </div>
@@ -286,13 +286,13 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h3>2.2.1 Data preparation</h3>
 <p>Data are expected to be in a specific format with specific summary variables, and it is possible to create input datasets outside of R, but the easiest approach is to use <code>prepareData()</code> to create input datasets for these functions. The <code>calcRichness()</code> function expects datasets summarized by both UID and by UID and PLOT at the species, genus, and family levels. The <code>prepareData()</code> function performs all necessary summarization and creates a single list object containing 6 data frames that reflect all of these summarizations of data.</p>
 <p>First, run <code>prepareData()</code> to create a list containing 6 data frames that can be used in all other functions:</p>
-<pre class="sourceCode r"><code class="sourceCode r">sumdf &lt;-<span class="st"> </span><span class="kw">prepareData</span>(<span class="dt">indf=</span>VascPlantEx, <span class="dt">inTaxa=</span>taxaNWCA, <span class="dt">inNatCC=</span>ccNatNWCA, <span class="dt">inWIS=</span>wisNWCA)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">sumdf &lt;-<span class="st"> </span><span class="kw">prepareData</span>(<span class="dt">indf=</span>VascPlantEx, <span class="dt">sampID=</span><span class="st">'UID'</span>, <span class="dt">inTaxa=</span>taxaNWCA, <span class="dt">inNatCC=</span>ccNatNWCA, <span class="dt">inWIS=</span>wisNWCA)</code></pre>
 <pre><code>## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done preparing datasets&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(sumdf)</code></pre>
 <pre><code>## List of 6
@@ -376,7 +376,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="metric-subset-functions" class="section level3">
 <h3>2.2.2 Metric Subset Functions</h3>
 <p>Now we can run functions for subsets, starting with <code>calcRichness()</code>:</p>
-<pre class="sourceCode r"><code class="sourceCode r">outRich &lt;-<span class="st"> </span><span class="kw">calcRichness</span>(sumdf$byUIDspp,sumdf$byPlotspp,sumdf$byUIDgen,sumdf$byPlotgen,sumdf$byUIDfam,sumdf$byPlotfam)
+<pre class="sourceCode r"><code class="sourceCode r">outRich &lt;-<span class="st"> </span><span class="kw">calcRichness</span>(sumdf$byUIDspp,sumdf$byPlotspp,sumdf$byUIDgen,sumdf$byPlotgen,sumdf$byUIDfam,sumdf$byPlotfam
+                        ,<span class="dt">sampID=</span><span class="st">'UID'</span>)
 <span class="kw">head</span>(outRich)</code></pre>
 <pre><code>##   UID PARAMETER RESULT
 ## 1   1   MEDN_AC      0
@@ -396,7 +397,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## [29] &quot;XN_ADVSPP&quot;     &quot;XN_ALIENSPP&quot;   &quot;XN_CRYPSPP&quot;    &quot;XN_FAM&quot;       
 ## [33] &quot;XN_GEN&quot;        &quot;XN_INTRSPP&quot;    &quot;XN_NATSPP&quot;     &quot;XN_SPP&quot;</code></pre>
 <p>Now category metrics, which are called very similarly to all remaining metrics except Bray-Curtis:</p>
-<pre class="sourceCode r"><code class="sourceCode r">outCat &lt;-<span class="st"> </span><span class="kw">calcCategory</span>(sumdf$byUIDspp)
+<pre class="sourceCode r"><code class="sourceCode r">outCat &lt;-<span class="st"> </span><span class="kw">calcCategory</span>(sumdf$byUIDspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
 <span class="kw">head</span>(outCat)</code></pre>
 <pre><code>##   UID PARAMETER RESULT
 ## 1   1   N_DICOT     15
@@ -437,7 +438,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## [57] &quot;N_MONOCOTS_AC&quot;         &quot;PCTN_MONOCOTS_AC&quot;     
 ## [59] &quot;XABCOV_MONOCOTS_AC&quot;    &quot;XRCOV_MONOCOTS_AC&quot;</code></pre>
 <p>Finally, calculate Bray-Curtis metrics using species-level plot data:</p>
-<pre class="sourceCode r"><code class="sourceCode r">outBC &lt;-<span class="st"> </span><span class="kw">calcBCmets</span>(sumdf$byPlotspp)
+<pre class="sourceCode r"><code class="sourceCode r">outBC &lt;-<span class="st"> </span><span class="kw">calcBCmets</span>(sumdf$byPlotspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
 <span class="kw">head</span>(outBC)</code></pre>
 <pre><code>##   UID   PARAMETER RESULT
 ## 1   1 XBCDIST_SPP 0.5080
@@ -618,7 +619,7 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 4   7    5    1    3      SMALL_TREE      1
 ## 5   7    1    1    2       TALL_TREE      0
 ## 6   7    1    1    2         JR_TREE      0</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">outTree &lt;-<span class="st"> </span><span class="kw">calcTreeMets</span>(TreesEx)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">outTree &lt;-<span class="st"> </span><span class="kw">calcTreeMets</span>(TreesEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
 <pre><code>## [1] &quot;Done with snag metrics&quot;
 ## [1] &quot;Done with tree count metrics&quot;
 ## [1] &quot;Done with tree species metrics&quot;
@@ -740,22 +741,22 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 <div id="subsets-of-metrics-1" class="section level2">
 <h2>3.2 Subsets of metrics</h2>
 <p>To calculate only snag metrics, the same dataset can be used directly with the subset functions. In this example, we only want to calculate snag metrics.</p>
-<pre class="sourceCode r"><code class="sourceCode r">outSnag &lt;-<span class="st"> </span><span class="kw">calcSnagMets</span>(TreesEx)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">outSnag &lt;-<span class="st"> </span><span class="kw">calcSnagMets</span>(TreesEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
 <pre><code>## [1] &quot;Done with snag metrics&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outSnag)</code></pre>
-<pre><code>##   UID  PARAMETER RESULT
-## 1   1 TOTN_SNAGS      0
-## 2   2 TOTN_SNAGS      2
-## 3   3 TOTN_SNAGS      0
-## 4   4 TOTN_SNAGS      0
-## 5   5 TOTN_SNAGS      0
-## 6   6 TOTN_SNAGS      2</code></pre>
+<pre><code>##   UID        PARAMETER RESULT
+## 1   1       TOTN_SNAGS      0
+## 2   1   TOTN_THIN_SNAG      0
+## 3   1    XN_XTHIN_SNAG      0
+## 4   1  TOTN_THICK_SNAG      0
+## 5   1 TOTN_XXTHIN_SNAG      0
+## 6   1       XN_JR_SNAG      0</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outSnag$PARAMETER)</code></pre>
-<pre><code>##  [1] &quot;TOTN_SNAGS&quot;       &quot;XN_SNAGS&quot;         &quot;TOTN_JR_SNAG&quot;    
-##  [4] &quot;TOTN_THICK_SNAG&quot;  &quot;TOTN_THIN_SNAG&quot;   &quot;TOTN_XTHICK_SNAG&quot;
-##  [7] &quot;TOTN_XTHIN_SNAG&quot;  &quot;TOTN_XXTHIN_SNAG&quot; &quot;XN_JR_SNAG&quot;      
-## [10] &quot;XN_THICK_SNAG&quot;    &quot;XN_THIN_SNAG&quot;     &quot;XN_XTHICK_SNAG&quot;  
-## [13] &quot;XN_XTHIN_SNAG&quot;    &quot;XN_XXTHIN_SNAG&quot;</code></pre>
+<pre><code>##  [1] &quot;TOTN_SNAGS&quot;       &quot;TOTN_THIN_SNAG&quot;   &quot;XN_XTHIN_SNAG&quot;   
+##  [4] &quot;TOTN_THICK_SNAG&quot;  &quot;TOTN_XXTHIN_SNAG&quot; &quot;XN_JR_SNAG&quot;      
+##  [7] &quot;TOTN_JR_SNAG&quot;     &quot;TOTN_XTHIN_SNAG&quot;  &quot;XN_THIN_SNAG&quot;    
+## [10] &quot;XN_SNAGS&quot;         &quot;TOTN_XTHICK_SNAG&quot; &quot;XN_THICK_SNAG&quot;   
+## [13] &quot;XN_XXTHIN_SNAG&quot;   &quot;XN_XTHICK_SNAG&quot;</code></pre>
 <hr />
 </div>
 </div>
@@ -772,7 +773,7 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 4   7    4     WATER_AQVEG      0
 ## 5   7    5   MINIMUM_DEPTH      8
 ## 6   7    5     WATER_NOVEG      0</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">outVG &lt;-<span class="st"> </span><span class="kw">calcVtype_GcovMets</span>(Vtype_GrCovEx)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">outVG &lt;-<span class="st"> </span><span class="kw">calcVtype_GcovMets</span>(Vtype_GrCovEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
 <pre><code>## [1] &quot;Done with veg heterogeneity metrics&quot;
 ## [1] &quot;Done with vascular strata metrics&quot;
 ## [1] &quot;Done with non-vascular strata metrics&quot;
@@ -956,44 +957,44 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 <pre><code>## Warning: package 'plyr' was built under R version 3.2.5</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">nplots &lt;-<span class="st"> </span><span class="kw">ddply</span>(Vtype_GrCovEx,<span class="kw">c</span>(<span class="st">'UID'</span>),summarize,<span class="dt">NPLOTS=</span><span class="kw">length</span>(<span class="kw">unique</span>(PLOT)))
 
-outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_GrCovEx,nplots)</code></pre>
+outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_GrCovEx, nplots, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
 <pre><code>## [1] &quot;Done with veg heterogeneity metrics&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outST)</code></pre>
 <pre><code>##   UID PARAMETER RESULT
 ## 1   1   D_SANDT      0
-## 2   2   D_SANDT      0
-## 3   3   D_SANDT      0
-## 4   4   D_SANDT      0
-## 5   5   D_SANDT      0
-## 6   6   D_SANDT   0.32</code></pre>
+## 2   1   N_SANDT      1
+## 3   1   H_SANDT      0
+## 4   1   J_SANDT      0
+## 5   1 DOM_SANDT    PFO
+## 6   2 DOM_SANDT    PFO</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outST$PARAMETER)</code></pre>
-<pre><code>## [1] &quot;D_SANDT&quot;   &quot;H_SANDT&quot;   &quot;J_SANDT&quot;   &quot;DOM_SANDT&quot; &quot;N_SANDT&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">outVstrat &lt;-<span class="st"> </span><span class="kw">calcVascStratMets</span>(Vtype_GrCovEx,nplots)</code></pre>
+<pre><code>## [1] &quot;D_SANDT&quot;   &quot;N_SANDT&quot;   &quot;H_SANDT&quot;   &quot;J_SANDT&quot;   &quot;DOM_SANDT&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">outVstrat &lt;-<span class="st"> </span><span class="kw">calcVascStratMets</span>(Vtype_GrCovEx, nplots, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
 <pre><code>## [1] &quot;Done with vascular strata metrics&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outVstrat)</code></pre>
 <pre><code>##   UID        PARAMETER RESULT
-## 1   1 FREQ_FLOATING_AQ      0
-## 2   2 FREQ_FLOATING_AQ      0
-## 3   3 FREQ_FLOATING_AQ      0
-## 4   4 FREQ_FLOATING_AQ      0
-## 5   5 FREQ_FLOATING_AQ      0
-## 6   6 FREQ_FLOATING_AQ     80</code></pre>
+## 1   1 FREQ_FLOATING_AQ   0.00
+## 2   1    N_VASC_STRATA   6.00
+## 3   1    XRCOV_MED_VEG  14.19
+## 4   1   IMP_VSMALL_VEG  42.11
+## 5   1  XRCOV_VTALL_VEG   0.00
+## 6   1     XRCOV_LIANAS   0.57</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outVstrat$PARAMETER)</code></pre>
-<pre><code>##  [1] &quot;FREQ_FLOATING_AQ&quot;    &quot;FREQ_HMED_VEG&quot;       &quot;FREQ_LIANAS&quot;        
-##  [4] &quot;FREQ_MED_VEG&quot;        &quot;FREQ_SMALL_VEG&quot;      &quot;FREQ_SUBMERGED_AQ&quot;  
-##  [7] &quot;FREQ_TALL_VEG&quot;       &quot;FREQ_VSMALL_VEG&quot;     &quot;IMP_FLOATING_AQ&quot;    
-## [10] &quot;IMP_HMED_VEG&quot;        &quot;IMP_LIANAS&quot;          &quot;IMP_MED_VEG&quot;        
-## [13] &quot;IMP_SMALL_VEG&quot;       &quot;IMP_SUBMERGED_AQ&quot;    &quot;IMP_TALL_VEG&quot;       
-## [16] &quot;IMP_VSMALL_VEG&quot;      &quot;XCOV_FLOATING_AQ&quot;    &quot;XCOV_HMED_VEG&quot;      
-## [19] &quot;XCOV_LIANAS&quot;         &quot;XCOV_MED_VEG&quot;        &quot;XCOV_SMALL_VEG&quot;     
-## [22] &quot;XCOV_SUBMERGED_AQ&quot;   &quot;XCOV_TALL_VEG&quot;       &quot;XCOV_VSMALL_VEG&quot;    
-## [25] &quot;XRCOV_FLOATING_AQ&quot;   &quot;XRCOV_HMED_VEG&quot;      &quot;XRCOV_LIANAS&quot;       
-## [28] &quot;XRCOV_MED_VEG&quot;       &quot;XRCOV_SMALL_VEG&quot;     &quot;XRCOV_SUBMERGED_AQ&quot; 
-## [31] &quot;XRCOV_TALL_VEG&quot;      &quot;XRCOV_VSMALL_VEG&quot;    &quot;H_VASC_STRATA&quot;      
-## [34] &quot;J_VASC_STRATA&quot;       &quot;D_VASC_STRATA&quot;       &quot;FREQ_VTALL_VEG&quot;     
-## [37] &quot;IMP_VTALL_VEG&quot;       &quot;XCOV_VTALL_VEG&quot;      &quot;XRCOV_VTALL_VEG&quot;    
-## [40] &quot;N_VASC_STRATA&quot;       &quot;XTOTCOV_VASC_STRATA&quot; &quot;XN_VASC_STRATA&quot;     
-## [43] &quot;RG_VASC_STRATA&quot;</code></pre>
+<pre><code>##  [1] &quot;FREQ_FLOATING_AQ&quot;    &quot;N_VASC_STRATA&quot;       &quot;XRCOV_MED_VEG&quot;      
+##  [4] &quot;IMP_VSMALL_VEG&quot;      &quot;XRCOV_VTALL_VEG&quot;     &quot;XRCOV_LIANAS&quot;       
+##  [7] &quot;IMP_TALL_VEG&quot;        &quot;XCOV_VTALL_VEG&quot;      &quot;XRCOV_HMED_VEG&quot;     
+## [10] &quot;IMP_SUBMERGED_AQ&quot;    &quot;FREQ_HMED_VEG&quot;       &quot;XTOTCOV_VASC_STRATA&quot;
+## [13] &quot;XRCOV_SMALL_VEG&quot;     &quot;XCOV_FLOATING_AQ&quot;    &quot;FREQ_SMALL_VEG&quot;     
+## [16] &quot;IMP_FLOATING_AQ&quot;     &quot;XRCOV_VSMALL_VEG&quot;    &quot;FREQ_MED_VEG&quot;       
+## [19] &quot;RG_VASC_STRATA&quot;      &quot;XRCOV_TALL_VEG&quot;      &quot;FREQ_LIANAS&quot;        
+## [22] &quot;XN_VASC_STRATA&quot;      &quot;XRCOV_SUBMERGED_AQ&quot;  &quot;XCOV_HMED_VEG&quot;      
+## [25] &quot;FREQ_SUBMERGED_AQ&quot;   &quot;IMP_HMED_VEG&quot;        &quot;H_VASC_STRATA&quot;      
+## [28] &quot;XCOV_SMALL_VEG&quot;      &quot;XRCOV_FLOATING_AQ&quot;   &quot;IMP_SMALL_VEG&quot;      
+## [31] &quot;XCOV_MED_VEG&quot;        &quot;FREQ_VSMALL_VEG&quot;     &quot;IMP_MED_VEG&quot;        
+## [34] &quot;XCOV_LIANAS&quot;         &quot;FREQ_TALL_VEG&quot;       &quot;IMP_LIANAS&quot;         
+## [37] &quot;J_VASC_STRATA&quot;       &quot;XCOV_SUBMERGED_AQ&quot;   &quot;D_VASC_STRATA&quot;      
+## [40] &quot;FREQ_VTALL_VEG&quot;      &quot;IMP_VTALL_VEG&quot;       &quot;XCOV_TALL_VEG&quot;      
+## [43] &quot;XCOV_VSMALL_VEG&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Now we can combine these two outputs and cast them into wide format</span>
 outAllVG &lt;-<span class="st"> </span><span class="kw">rbind</span>(outST,outVstrat)
 outAllVG.wide &lt;-<span class="st"> </span><span class="kw">dcast</span>(outAllVG,UID~PARAMETER,<span class="dt">value.var=</span><span class="st">'RESULT'</span>)

@@ -4,12 +4,13 @@
 \alias{calcSnagMets}
 \title{Calculate snag metrics}
 \usage{
-calcSnagMets(dfIn)
+calcSnagMets(dfIn, sampID = "UID")
 }
 \arguments{
 \item{dfIn}{A data frame containing the following variables:
 \itemize{
-\item UID: unique sample identifier
+\item sampID - A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item PLOT: Sample plot from which data were collected
 
@@ -25,7 +26,7 @@ Additional parameters or variables are ignored.}
 \value{
 Either a character string containing an error message when
 metric calculation is not successful, or a data frame. The data frame
-contains UID, PARAMETER, RESULT, where PARAMETER values include:
+contains the sampID variables, PARAMETER, RESULT, where PARAMETER values include:
 TOTN_SNAGS, XN_SNAGS, TOTN_JR_SNAG, TOTN_THICK_SNAG,
 TOTN_THIN_SNAG, TOTN_XTHICK_SNAG, TOTN_XTHIN_SNAG, TOTN_XXTHIN_SNAG,
 XN_JR_SNAG, XN_THICK_SNAG, XN_THIN_SNAG, XN_XTHICK_SNAG, XN_XTHIN_SNAG,

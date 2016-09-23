@@ -4,12 +4,13 @@
 \alias{calcSandTMets}
 \title{Calculate metrics based on S&T (Status and Trends) categories}
 \usage{
-calcSandTMets(dataIn, nPlot)
+calcSandTMets(dataIn, nPlot, sampID = "UID")
 }
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
 \itemize{
-\item UID (unique sample identifier)
+\item sampID - A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item PLOT (Sample plot from which data were collected)
 
@@ -22,12 +23,12 @@ vegetation type metrics: 'SANDT_CLASS','PAL_FARMED'.
 Additional parameters or variables are ignored.}
 
 \item{nPlot}{Number of plots sampled associated with
-each UID, with variables UID and NPLOTS}
+each samples, with sampID variables and NPLOTS}
 }
 \value{
 Either a character string containing an error message
 when metric calculation is not successful, or a data frame.
-Data frame contains UID, PARAMETER, RESULT, where values of PARAMETER
+Data frame contains sampID variables, PARAMETER, RESULT, where values of PARAMETER
 consist of the metric name concatenated with trait value, with
 valid values of: N_SANDT, DOM_SANDT, D_SANDT, H_SANDT, J_SANDT. A list
 of metric descriptions is provided in the document named

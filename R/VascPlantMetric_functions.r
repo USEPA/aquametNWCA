@@ -27,17 +27,17 @@
 #' default if not specified. These variables are assumed to be
 #' populated with abbreviations as found in UsDA PLANTS database.
 #' @return A list containing two data frames. The first data frame
-#' summarizes data by UID and TAXON and contains UID, STATE,
-#' USAC_REGION, TAXON, NUM, XABCOV, DISTINCT, and NPLOTS. NUM is the
-#' number of plots in which taxon occurs, and XABCOV is the mean
-#' absolute COVER across plots. DISTINCT is the value 1 assigned to
-#' each row. NPLOTS is the number of plots sampled.
+#' summarizes data by sampID variables and TAXON and contains 
+#' sampID variables, STATE, USAC_REGION, TAXON, NUM, XABCOV, DISTINCT, 
+#' and NPLOTS. NUM is the number of plots in which taxon occurs, and 
+#' XABCOV is the mean absolute COVER across plots. DISTINCT is the value 
+#' 1 assigned to each row. NPLOTS is the number of plots sampled.
 #'
-#' The second summarizes by UID, PLOT, and TAXON. Each data frame
-#' contains UID, PLOT, STATE, USAC_REGION, TAXON, COVER, and
+#' The second summarizes by sampID variables, PLOT, and TAXON. Each data frame
+#' contains sampID variables, PLOT, STATE, USAC_REGION, TAXON, COVER, and
 #' DISTINCT. DISTINCT assigns the value for each taxon as 1 if the
 #' taxon has COVER>0 or 0 if not. COVER is the sum of the COVER
-#' variable by UID, PLOT, and TAXON.
+#' variable by sampID variables, PLOT, and TAXON.
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
 #' @examples
 #' head(VascPlantEx)
@@ -54,7 +54,7 @@ createDFs <- function(sampID='UID',tvar,indf,taxa){
   indf.1 <- plyr::mutate(indf.1,COVER=as.numeric(COVER)) # Make sure COVER is numeric
   # Set value for TAXON as either specified taxon level above species, or as USDA_NAME
   byPlot <- plyr::mutate(indf.1,TAXON=ifelse(!is.na(tobj) & tobj!='',tobj,USDA_NAME))
-  # Sum COVER by UID, PLOT, and TAXON to ensure there is only one row per species in input data, set DISTINCT as 1 to be
+  # Sum COVER by SAMPID, PLOT, and TAXON to ensure there is only one row per species in input data, set DISTINCT as 1 to be
   # taxon counter
   byPlot1 <- plyr::ddply(byPlot,c(sampID,'STATE','USAC_REGION','PLOT','TAXON'),summarise,COVER=sum(COVER)
                          ,DISTINCT=ifelse(COVER>0,1,0),.progress='tk')
@@ -75,13 +75,13 @@ createDFs <- function(sampID='UID',tvar,indf,taxa){
 #' @export
 #' @title Prepare data for calculating metrics
 #' @description Assemble datasets from data frame containing
-#' vegetation cover by UID and PLOT, and taxa lists containing
+#' vegetation cover by sampID variables and PLOT, and taxa lists containing
 #' variables used in metric calculation. Species-, genus-, and
-#' family-level datasets are summarized by plot and UID. For the
-#' species-level output data summarized by UID, various traits
+#' family-level datasets are summarized by plot and sample. For the
+#' species-level output data summarized by sampID variables, various traits
 #' are added to the output data set.
 #' @param indf Data frame containing cover data summarized at
-#' the UID, PLOT, and taxon value, with the following variable
+#' the sampID variables, PLOT, and taxon value, with the following variable
 #' names:
 #'  \itemize{
 #' \item sampID A character vector containing the name(s) of
@@ -148,7 +148,7 @@ createDFs <- function(sampID='UID',tvar,indf,taxa){
 #' or added for NWCA
 #' }
 #' @details This function calls the createDFs() function, which
-#' sums cover by UID, PLOT, TAXON, with sums > 100 truncated to
+#' sums cover by sampID variables, PLOT, TAXON, with sums > 100 truncated to
 #' 100 percent.
 #' @return A list containing six data frames:
 #' \itemize{
@@ -195,7 +195,7 @@ createDFs <- function(sampID='UID',tvar,indf,taxa){
 #' also contains (depending on the input taxa lists): CATEGORY,
 #' DURATION, GROWTH_HABIT, NWCA_CC, NWCA_NATSTAT, WIS.
 #'
-#' \item byPlotspp: Data frame with data summarized by UID, PLOT, and
+#' \item byPlotspp: Data frame with data summarized by sampID variables, PLOT, and
 #' TAXON at the species level. Each data frame contains:
 #'    \itemize{
 #'      \item sampID A character vector containing the name(s) of
@@ -214,21 +214,21 @@ createDFs <- function(sampID='UID',tvar,indf,taxa){
 #'      \item DISTINCT: Distinctness of taxon, value of 1 assigned to each row
 #' }
 #' 
-#' \item byUIDgen: Data frame with data summarized by UID and TAXON
+#' \item byUIDgen: Data frame with data summarized by sampID variables and TAXON
 #' at the genus level and contains \emph{sampID}, STATE, USAC_REGION,
 #' TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of
 #' plots in which taxon occurs, and XABCOV is the mean
 #' absolute COVER across plots. DISTINCT is the value 1
 #' assigned to each row.
 #'
-#' \item byPlotgen: Data frame with data summarized by UID, PLOT, and
-#' TAXON at the genus level. Each data frame contains \emph{sampID},
-#' PLOT, STATE, USAC_REGION, TAXON, COVER, and DISTINCT.
+#' \item byPlotgen: Data frame with data summarized by sampID variables, 
+#' PLOT, and TAXON at the genus level. Each data frame contains 
+#' \emph{sampID}, PLOT, STATE, USAC_REGION, TAXON, COVER, and DISTINCT.
 #' DISTINCT assigns the value for each taxon as 1 if the
 #' taxon has COVER>0 or 0 if not. COVER is the sum of the
 #' COVER variable.
 #'
-#' \item byUIDfam: Data frame with data summarized by UID and TAXON
+#' \item byUIDfam: Data frame with data summarized by sampID variables and TAXON
 #' at the family level and contains \emph{sampID}, STATE, USAC_REGION,
 #' TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of plots
 #' in which taxon occurs, and XABCOV is the mean absolute COVER
@@ -257,7 +257,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
   # If
   datNames <- c(sampID,'PLOT','USDA_NAME','COVER','STATE','USAC_REGION')
   if(any(datNames %nin% names(indf))){
-    print(paste("Missing key variables! Should be ",sampID," PLOT, USDA_NAME, and COVER.",sep='')
+    print(paste("Missing key variables! Should be ",sampID," PLOT, USDA_NAME, and COVER.",sep=''))
     return(NULL)
   }
   # Input taxa list with taxonomy and life history traits
@@ -303,7 +303,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 
   ## Create dfs for species level, genus, family, and order
   # First construct list object with by plot and by sampID summarizations
-  dfSPP <- createDFs('USDA_NAME',indf,inTaxa)
+  dfSPP <- createDFs(sampID,'USDA_NAME',indf,inTaxa)
   # For species-level data, run additional checks and add additional information
   # Merge cover data with taxalist
   dfSPP.byUID.1a <- merge(dfSPP[[1]],inTaxa,by.x='TAXON',by.y='USDA_NAME')
@@ -344,8 +344,8 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
   dfSPP[[2]] <- dfSPP.byPlot
 
   # Create datasets for genus and family levels which will only be used for richness metrics
-  dfGEN <- createDFs('GENUS',indf,inTaxa)
-  dfFAM <- createDFs('FAMILY',indf,inTaxa)
+  dfGEN <- createDFs(sampID,'GENUS',indf,inTaxa)
+  dfFAM <- createDFs(sampID,'FAMILY',indf,inTaxa)
 
   outDF <- list(byUIDspp=dfSPP[[1]],byPlotspp=dfSPP[[2]],byUIDgen=dfGEN[[1]],byPlotgen=dfGEN[[2]],byUIDfam=dfFAM[[1]],byPlotfam=dfFAM[[2]])
   print("Done preparing datasets")
@@ -365,8 +365,8 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' to serve as suffix to metric names ('SPP','GEN','FAM')
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
-#' @return Data frame containing UID, PARAMETER, and RESULT,
-#' with one row of results per parameter and UID. The values for
+#' @return Data frame containing sampID variables, PARAMETER, and RESULT,
+#' with one row of results per parameter and sample. The values for
 #' PARAMETER consist of the metric name concatenated with taxonomic
 #' level (represented as TAXLEVEL below):
 #'
@@ -381,7 +381,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' N_PLOTS: Number of plots sampled for sampID
 #'
 #' @author Karen Blocksom
-.calcRich <- function(x,y,tlevel,sampID='UID') {
+.calcRich <- function(x,y,tlevel,sampID) {
   xx1 <- plyr::ddply(x,sampID,summarise,TOTN_TAXA=sum(DISTINCT))
   ## Now calculate richness by plot to obtain average richness per plot
   yy1 <- merge(subset(y,select=c(sampID,'PLOT','DISTINCT')),xx1,by=sampID)
@@ -402,16 +402,16 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' @description This internal function calculates metrics using
 #' traits with more than two categories as values. Used in
 #' calculating metrics for growth habit and duration.
-#' @param indf Input data frame with UID, TAXON, TOTN, XABCOV,
+#' @param indf Input data frame with sampID variables, TAXON, TOTN, XABCOV,
 #' sXRCOV, and variable with name in argument trait. TOTN is the
-#' total number of taxa at the lowest level for a UID. XABCOV is
+#' total number of taxa at the lowest level for a sampID variables. XABCOV is
 #' the mean absolute cover of taxon. sXRCOV is the percentage of
-#' the total sum of absolute cover across all taxa for a UID.
+#' the total sum of absolute cover across all taxa for a sampID variables.
 #' @param trait Character string with name of variable containing
 #' traits of interest
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
-#' @return Data frame containing UID, PARAMETER, RESULT, where values
+#' @return Data frame containing sampID variables, PARAMETER, RESULT, where values
 #' of PARAMETER consist of the metric name concatenated with each
 #' value of the trait (represented as TRAITVAL below):
 #'
@@ -423,7 +423,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #'
 #' XRCOV_TRAITVAL: Sum of sXRCOV values across taxa with trait value
 #' @author Karen Blocksom
-.calcTraits_MultCat <- function(indf,trait,sampID='UID'){
+.calcTraits_MultCat <- function(indf,trait,sampID){
   indf1 <- subset(indf,!is.na(eval(as.name(trait))) & eval(as.name(trait))!='')
 
   indf2 <- plyr::ddply(indf1,c(sampID,trait),summarise,N=length(TAXON),PCTN=round(N/unique(TOTN)*100,2)
@@ -441,18 +441,18 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' @title Alternate metric calculations for traits with >2 categories
 #' @description This internal function calculates metrics using traits
 #' having >2 categories as values. Used for native status variables.
-#' @param indf Input data frame with UID, TAXON, TOTN, XABCOV, sXRCOV,
+#' @param indf Input data frame with sampID variables, TAXON, TOTN, XABCOV, sXRCOV,
 #' sRFREQ, and variable with name in argument trait. TOTN is the total
-#' number of taxa at the lowest level for a UID. XABCOV is the mean
+#' number of taxa at the lowest level for a sampID variables. XABCOV is the mean
 #' absolute cover of taxon. sXRCOV is the percentage of the total
-#' sum of absolute cover across all taxa for a UID. sRFREQ is the relative
+#' sum of absolute cover across all taxa for a sample. sRFREQ is the relative
 #' frequency of a taxon, calculated as the percentage of the total frequency
-#' of taxon occurrence across all taxa for a UID.
+#' of taxon occurrence across all taxa for a sample.
 #' @param trait Character string with name of variable containing
 #' traits of interest
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
-#' @return Data frame containing UID, PARAMETER, RESULT, where values
+#' @return Data frame containing sampID variables, PARAMETER, RESULT, where values
 #' of PARAMETER consist of the metric name concatenated with each
 #' value of the trait (represented as TRAITVAL below):
 #'
@@ -470,7 +470,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' of taxa with trait value
 #' @author Karen Blocksom
 
-.calcTraits_MultCat.alt <- function(indf,trait,sampID='UID'){
+.calcTraits_MultCat.alt <- function(indf,trait,sampID){
   indf1 <- subset(indf,!is.na(eval(as.name(trait))) & eval(as.name(trait))!='')
 
   indf2 <- plyr::ddply(indf1,c(sampID,trait),summarise,PCTN=round(length(TAXON)/unique(TOTN)*100,2)
@@ -494,7 +494,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' @description This internal function calculates metrics for traits
 #' that are indicator values (0 or 1). Not intended to be used on its
 #' own. Output feeds into combTraits function.
-#' @param indf Input data frame with variables UID, TAXON, TOTN, XABCOV,
+#' @param indf Input data frame with variables sampID variables, TAXON, TOTN, XABCOV,
 #' sXRCOV, and a binary variable with name in trait argument
 #' and possible values of 0 and 1, with 1 indicating trait
 #' present for taxon.
@@ -502,7 +502,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' traits of interest
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
-#' @return Data frame containing UID, PARAMETER, RESULT, where values
+#' @return Data frame containing sampID variables, PARAMETER, RESULT, where values
 #' of PARAMETER consist of the metric name concatenated with trait name
 #' (represented as TRAITNM below):
 #'
@@ -514,25 +514,25 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #'
 #' XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
 #' @author Karen Blocksom
-.calcTraits_Indicator <- function(indf,trait,sampID='UID'){
+.calcTraits_Indicator <- function(indf,trait,sampID){
   
   for(i in 1:length(sampID)){
-    if(i==1) inCts$SAMPID <- inCts[,sampID[i]]
-    else inCts$SAMPID <- paste(inCts$SAMPID,inCts[,sampID[i]],sep='.')
+    if(i==1) indf$SAMPID <- indf[,sampID[i]]
+    else indf$SAMPID <- paste(indf$SAMPID,indf[,sampID[i]],sep='.')
   }
-  samples <- unique(subset(inCts,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(indf,select=c(sampID,'SAMPID')))
     
   UIDs <- data.frame(SAMPID=unique(subset(indf,select='SAMPID')),stringsAsFactors=FALSE)
   indf1 <- subset(indf,eval(as.name(trait))==1)
   if(nrow(indf1)>0){
-    indf2 <- plyr::ddply(indf1,sampID,summarise,N=length(TAXON),PCTN=round(N/unique(TOTN)*100,2)
+    indf2 <- plyr::ddply(indf1,c('SAMPID'),summarise,N=length(TAXON),PCTN=round(N/unique(TOTN)*100,2)
                    ,XABCOV=round(sum(XABCOV),2),XRCOV=round(sum(sXRCOV),2))
 
     outdf <- reshape2::melt(indf2,id.vars='SAMPID')
     outdf$variable <- paste(outdf$variable,trait,sep='_')
 
     
-    outdf1 <- reshape2::melt(merge(UIDs,dcast(outdf,SAMPID~variable),by='SAMPID',all.x=TRUE),id.vars='UID',variable.name='PARAMETER'
+    outdf1 <- reshape2::melt(merge(UIDs,dcast(outdf,SAMPID~variable),by='SAMPID',all.x=TRUE),id.vars='SAMPID',variable.name='PARAMETER'
                    ,value.name='RESULT')
     outdf1 <- plyr::mutate(outdf1,RESULT=ifelse(is.na(RESULT),0,RESULT)) 
   }else{
@@ -550,13 +550,13 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' @description This internal function calls calcTraits_Indicator()
 #' repeatedly a set of traits provided in a character vector. Not
 #' intended for use on its own.
-#' @param indf Input data frame containing UID, TAXON, TOTN, XABCOV,
+#' @param indf Input data frame containing sampID variables, TAXON, TOTN, XABCOV,
 #' sXRCOV, and variables with all names matching those in traits argument.
 #' @param traits Character vector containing one or more traits variable
 #' names.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
-#' @return Data frame containing UID, PARAMETER, RESULT, where values of
+#' @return Data frame containing sampID variables, PARAMETER, RESULT, where values of
 #' PARAMETER consist of the metric name concatenated with each trait name
 #' (represented as TRAITNM below):
 #'
@@ -568,7 +568,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #'
 #' XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
 #' @author Karen Blocksom
-.combTraits <- function(indf,traits,sampID='UID'){
+.combTraits <- function(indf,traits,sampID){
   for(i in 1:length(traits)){
     tmpOut <- .calcTraits_Indicator(indf,traits[i],sampID)
     if(i==1){
@@ -585,19 +585,20 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' @description This internal function calculates metrics for traits
 #' that are indicator values (0 or 1), specifically for alien and
 #' cryptogenic species groups. Not intended to be used on its own.
-#' @param indf Input data frame with UID, TAXON, TOTN, XABCOV, sXRCOV,
+#' @param indf Input data frame with sampID variables, TAXON, TOTN, XABCOV, sXRCOV,
 #' sRFREQ, and variable with name in argument trait. TOTN is the total
-#' number of taxa at the lowest level for a UID. XABCOV is the mean
+#' number of taxa at the lowest level for each sample (combination of 
+#' sampID variables). XABCOV is the mean
 #' absolute cover of taxon. sXRCOV is the percentage of the total
-#' sum of absolute cover across all taxa for a UID. sRFREQ is the relative
+#' sum of absolute cover across all taxa for a sample. sRFREQ is the relative
 #' frequency of a taxon, calculated as the percentage of the total
-#' frequency of taxon occurrence across all taxa for a UID.
+#' frequency of taxon occurrence across all taxa for a sample.
 #' @param trait Character string containing name of binary trait variable.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
-#' @return Data frame containing UID, PARAMETER, RESULT, where values of
-#' PARAMETER consist of the metric name concatenated with trait name
-#' (represented as TRAITNM below):
+#' @return Data frame containing sampID variables, PARAMETER, RESULT, 
+#' where values of PARAMETER consist of the metric name concatenated 
+#' with trait name (represented as TRAITNM below):
 #'
 #' N_TRAITNM: Number of taxa with trait value
 #'
@@ -612,13 +613,13 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' RIMP_TRAITNM: Relative importance ((RFREQ_TRAITVAL + XRCOV_TRAITVAL)/2)
 #' of taxa with trait value
 #' @author Karen Blocksom
-.calcTraits_Indicator.alt <- function(indf,trait,sampID='UID'){
+.calcTraits_Indicator.alt <- function(indf,trait,sampID){
   
   for(i in 1:length(sampID)){
-    if(i==1) inCts$SAMPID <- inCts[,sampID[i]]
-    else inCts$SAMPID <- paste(inCts$SAMPID,inCts[,sampID[i]],sep='.')
+    if(i==1) indf$SAMPID <- indf[,sampID[i]]
+    else indf$SAMPID <- paste(indf$SAMPID,indf[,sampID[i]],sep='.')
   }
-  samples <- unique(subset(inCts,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(indf,select=c(sampID,'SAMPID')))
   
   UIDs <- data.frame(SAMPID=unique(subset(indf,select='SAMPID')),stringsAsFactors=FALSE)
   indf1 <- subset(indf,eval(as.name(trait))==1)
@@ -628,7 +629,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 
   outdf <- reshape2::melt(indf2,id.vars='SAMPID')
   outdf$variable <- paste(outdf$variable,trait,sep='_')
-  outdf1 <- reshape2::melt(merge(UIDs,dcast(outdf,SAMPID~variable),by='UID',all.x=TRUE),id.vars='SAMPID',variable.name='PARAMETER'
+  outdf1 <- reshape2::melt(merge(UIDs,dcast(outdf,SAMPID~variable),by='SAMPID',all.x=TRUE),id.vars='SAMPID',variable.name='PARAMETER'
                  ,value.name='RESULT')
   outdf1 <- plyr::mutate(outdf1,RESULT=ifelse(is.na(RESULT),0,RESULT))
   
@@ -653,7 +654,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' as suffix to metric name. Default value is NULL.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
-#' @return Data frame containing UID, PARAMETER, and RESULT, where values
+#' @return Data frame containing sampID variables, PARAMETER, and RESULT, where values
 #' for PARAMETER consist of name below concatenated with subgrp value as
 #' suffix (represented as SUBGRP below):
 #'
@@ -667,7 +668,7 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' proportion of species i
 #' @author Karen Blocksom
 
-.calcIndices <- function(indf,subgrp=NULL,sampID='UID'){
+.calcIndices <- function(indf,subgrp=NULL,sampID){
   
   ## Calculate mean CC and FQAI indices
   indf.1 <- plyr::ddply(indf,sampID,mutate,SUBXTOTABCOV=sum(XABCOV))
@@ -688,18 +689,18 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' @description This internal function calculates species richness
 #' of sample for subset based on native status values specified.
 #' Not intended for use on its own.
-#' @param x Data frame containing cover data summarized by UID, TAXON,
-#' NWCA_NATSTAT, and DISTINCT
-#' @param y Data frame containing cover data summarized by UID, PLOT,
-#' TAXON, NWCA_NATSTAT, and DISTINCT
+#' @param x Data frame containing cover data summarized by sampID 
+#' variables, TAXON, NWCA_NATSTAT, and DISTINCT
+#' @param y Data frame containing cover data summarized by sampID 
+#' variables, PLOT, TAXON, NWCA_NATSTAT, and DISTINCT
 #' @param natstat Character vector containing Values of NWCA_NATSTAT
 #' variable to include in rich metrics
 #' @param grpname String containing suffix to add to metric name to
 #' represent this group
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
-#' @return Data frame containing UID, PARAMETER, and RESULT, with one
-#' row of results per parameter and UID. The values for PARAMETER
+#' @return Data frame containing sampID variables, PARAMETER, and RESULT, with one
+#' row of results per parameter and sample. The values for PARAMETER
 #' consist of the metric name concatenated with grpname value
 #' (represented as GRP below):
 #'
@@ -711,10 +712,10 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #'
 #' SDN_GRP: Standard deviation of number of taxa per plot
 #' @author Karen Blocksom
-.calcRichNS <- function(x,y,natstat,grpname,sampID='UID') {
+.calcRichNS <- function(x,y,natstat,grpname,sampID) {
   xx1 <- plyr::ddply(subset(x,NWCA_NATSTAT %in% natstat),sampID,summarise,TOTN_TAXA=sum(DISTINCT))
   ## Now calculate richness by plot to obtain average richness per plot
-  yy1 <- merge(subset(y,NWCA_NATSTAT %in% natstat,select=c(sampID,'PLOT','DISTINCT')),xx1,by='UID')
+  yy1 <- merge(subset(y,NWCA_NATSTAT %in% natstat,select=c(sampID,'PLOT','DISTINCT')),xx1,by=sampID)
   yy2 <- plyr::ddply(yy1,c(sampID,'PLOT','TOTN_TAXA'),summarise,N_TAXA=sum(DISTINCT))
   yy3 <- plyr::ddply(yy2,c(sampID,'TOTN_TAXA'),summarise,XN_TAXA=round(mean(N_TAXA),2),MEDN_TAXA=median(N_TAXA)
                      ,SDN_TAXA=round(sd(N_TAXA),2))
@@ -740,17 +741,18 @@ prepareData <- function(indf,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWI
 #' COVER: Percentage vegetative cover for a given taxon
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
-#' @return Data frame consisting of UID and XCDIST_SPP, defined as:
+#' @return Data frame consisting of sampID variables and XCDIST_SPP, 
+#' defined as:
 #'
 #' Within AA dissimilarity based on species composition = Mean of
 #' between plot Bray-Curtis Distance (Dissimilarity)
 #' @author Karen Blocksom
-.calcXBC <- function(x,sampID='UID'){
+.calcXBC <- function(x,sampID){
   for(i in 1:length(sampID)){
-    if(i==1) inCts$SAMPID <- inCts[,sampID[i]]
-    else inCts$SAMPID <- paste(inCts$SAMPID,inCts[,sampID[i]],sep='.')
+    if(i==1) x$SAMPID <- x[,sampID[i]]
+    else x$SAMPID <- paste(x$SAMPID,x[,sampID[i]],sep='.')
   }
-  samples <- unique(subset(inCts,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(x,select=c(sampID,'SAMPID')))
   
   
   uidlist <- data.frame(SAMPID=unique(x$SAMPID),stringsAsFactors=FALSE)

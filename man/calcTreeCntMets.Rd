@@ -4,12 +4,13 @@
 \alias{calcTreeCntMets}
 \title{Calculate tree count metrics}
 \usage{
-calcTreeCntMets(dfIn)
+calcTreeCntMets(dfIn, sampID = "UID")
 }
 \arguments{
 \item{dfIn}{A data frame containing the following variables:
 \itemize{
-\item UID: unique sample identifier
+\item sampID - A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item PLOT: Sample plot from which data were collected
 
@@ -25,7 +26,7 @@ are ignored.}
 \value{
 Either a character string containing an error message when
 metric calculation is not successful, or a data frame. The data frame
-contains UID, PARAMETER, RESULT, where PARAMETER values include:
+contains the sampID variables, PARAMETER, RESULT, where PARAMETER values include:
 TOTN_TREES, XN_TREES, TOTN_JR_TREE, TOTN_THICK_TREE, TOTN_THIN_TREE,
 TOTN_XTHICK_TREE, TOTN_XTHIN_TREE, TOTN_XXTHICK_TREE, TOTN_XXTHIN_TREE,
 XN_JR_TREE, XN_THICK_TREE, XN_THIN_TREE, XN_XTHICK_TREE, XN_XTHIN_TREE,

@@ -1065,7 +1065,7 @@ calcVMMImets <- function(indf,sampID='UID'){
  allOut.1 <- merge(samples,allOut,by='SAMPID') %>% 
    dplyr::select(-SAMPID)
 
- return(allOut)
+ return(allOut.1)
 
 }
 

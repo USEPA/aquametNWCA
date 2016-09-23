@@ -5,12 +5,13 @@
 \title{Calculate NWCA 2011 vascular plant metrics based on form V-2}
 \usage{
 calcVascPlantMets(dfIn, taxaIn = taxaNWCA, taxaCC = ccNatNWCA,
-  taxaWIS = wisNWCA)
+  taxaWIS = wisNWCA, sampID = "UID")
 }
 \arguments{
 \item{dfIn}{A data frame with the following variables (at a minimum):
 \itemize{
-\item UID (unique sample identifier)
+\item sampID - A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item PLOT (numeric variable)
 

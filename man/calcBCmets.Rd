@@ -4,9 +4,12 @@
 \alias{calcBCmets}
 \title{Calculate Bray-Curtis metrics}
 \usage{
-calcBCmets(indf)
+calcBCmets(indf, sampID = "UID")
 }
 \arguments{
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
+
 \item{Data}{frame containing cover data summarized by UID, PLOT, and
 DISTINCT at the species level. Must also contain at least one of the
 following: USDA_NAME (taxon name) or SPECIES_NAME_ID (numeric code

@@ -4,14 +4,16 @@
 \alias{prepareData}
 \title{Prepare data for calculating metrics}
 \usage{
-prepareData(indf, inTaxa = taxaNWCA, inNatCC = ccNatNWCA, inWIS = wisNWCA)
+prepareData(indf, sampID = "UID", inTaxa = taxaNWCA, inNatCC = ccNatNWCA,
+  inWIS = wisNWCA)
 }
 \arguments{
 \item{indf}{Data frame containing cover data summarized at
-the UID, PLOT, and taxon value, with the following variable
+the sampID variables, PLOT, and taxon value, with the following variable
 names:
  \itemize{
-\item UID: Unique sample identifier
+\item sampID A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item PLOT: Plot number of data
 
@@ -81,10 +83,11 @@ or added for NWCA
 A list containing six data frames:
 \itemize{
  \item
-   byUIDspp: Data frame with data summarized by UID and TAXON
+   byUIDspp: Data frame with data summarized by sampID variables and TAXON
    at the species level and contains:
    \itemize{
-     \item UID: Unique sample identifier
+     \item sampID: A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
      \item STATE: State abbreviation of site location, necessary for merging
 with inNatCC
@@ -122,10 +125,11 @@ frames and contains, in addition, GENUS and FAMILY, but
 also contains (depending on the input taxa lists): CATEGORY,
 DURATION, GROWTH_HABIT, NWCA_CC, NWCA_NATSTAT, WIS.
 
-\item byPlotspp: Data frame with data summarized by UID, PLOT, and
+\item byPlotspp: Data frame with data summarized by sampID variables, PLOT, and
 TAXON at the species level. Each data frame contains:
    \itemize{
-     \item UID: Unique sample identifier
+     \item sampID A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
      \item PLOT: Plot number
 
@@ -140,45 +144,45 @@ TAXON at the species level. Each data frame contains:
      \item DISTINCT: Distinctness of taxon, value of 1 assigned to each row
 }
 
-\item byUIDgen: Data frame with data summarized by UID and TAXON
-at the genus level and contains UID, STATE, USAC_REGION,
+\item byUIDgen: Data frame with data summarized by sampID variables and TAXON
+at the genus level and contains \emph{sampID}, STATE, USAC_REGION,
 TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of
 plots in which taxon occurs, and XABCOV is the mean
 absolute COVER across plots. DISTINCT is the value 1
 assigned to each row.
 
-\item byPlotgen: Data frame with data summarized by UID, PLOT, and
-TAXON at the genus level. Each data frame contains UID,
-PLOT, STATE, USAC_REGION, TAXON, COVER, and DISTINCT.
+\item byPlotgen: Data frame with data summarized by sampID variables, 
+PLOT, and TAXON at the genus level. Each data frame contains 
+\emph{sampID}, PLOT, STATE, USAC_REGION, TAXON, COVER, and DISTINCT.
 DISTINCT assigns the value for each taxon as 1 if the
 taxon has COVER>0 or 0 if not. COVER is the sum of the
 COVER variable.
 
-\item byUIDfam: Data frame with data summarized by UID and TAXON
-at the family level and contains UID, STATE, USAC_REGION,
+\item byUIDfam: Data frame with data summarized by sampID variables and TAXON
+at the family level and contains \emph{sampID}, STATE, USAC_REGION,
 TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of plots
 in which taxon occurs, and XABCOV is the mean absolute COVER
 across plots. DISTINCT is the value 1 assigned to each row.
 
-\item byPlotfam: Data frame with data summarized by UID, PLOT, and
-TAXON at the family level. Each data frame contains UID,
-PLOT, STATE, USAC_REGION, TAXON, COVER, and DISTINCT.
-DISTINCT assigns the value for each taxon as 1 if the
-taxon has COVER>0 or 0 if not. COVER is the sum of the
-COVER variable.
+\item byPlotfam: Data frame with data summarized by \emph{sampID}
+, PLOT, and TAXON at the family level. Each data frame 
+contains \emph{sampID}, PLOT, STATE, USAC_REGION, TAXON, 
+COVER, and DISTINCT. DISTINCT assigns the value for each 
+taxon as 1 if the taxon has COVER>0 or 0 if not. COVER is the 
+sum of the COVER variable.
 }
 }
 \description{
 Assemble datasets from data frame containing
-vegetation cover by UID and PLOT, and taxa lists containing
+vegetation cover by sampID variables and PLOT, and taxa lists containing
 variables used in metric calculation. Species-, genus-, and
-family-level datasets are summarized by plot and UID. For the
-species-level output data summarized by UID, various traits
+family-level datasets are summarized by plot and sample. For the
+species-level output data summarized by sampID variables, various traits
 are added to the output data set.
 }
 \details{
 This function calls the createDFs() function, which
-sums cover by UID, PLOT, TAXON, with sums > 100 truncated to
+sums cover by sampID variables, PLOT, TAXON, with sums > 100 truncated to
 100 percent.
 }
 \examples{

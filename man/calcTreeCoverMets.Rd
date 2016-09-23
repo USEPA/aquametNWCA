@@ -4,12 +4,13 @@
 \alias{calcTreeCoverMets}
 \title{Calculate tree cover metrics}
 \usage{
-calcTreeCoverMets(dfIn)
+calcTreeCoverMets(dfIn, sampID = "UID")
 }
 \arguments{
 \item{dfIn}{A data frame containing the following variables:
 \itemize{
-\item UID: unique sample identifier
+\item sampID - A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item PAGE: Page from field form
 
@@ -29,7 +30,7 @@ or variables are ignored.}
 \value{
 Either a character string containing an error message when
 metric calculation is not successful, or a data frame. The data
-frame contains UID, PARAMETER, RESULT, where PARAMETER values
+frame contains the sampID variables, PARAMETER, RESULT, where PARAMETER values
 include: N_TREESPP, N_TALL_TREE, N_HMED_TREE, N_LMED_TREE,
 N_SMALL_TREE, N_VSMALL_TREE, N_VTALL_TREE, N_TREE_UPPER, N_TREE_MID,
 N_TREE_GROUND, PCTN_TREE_UPPER, PCTN_TREE_MID, PCTN_TREE_GROUND. A

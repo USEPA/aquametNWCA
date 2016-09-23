@@ -4,13 +4,14 @@
 \alias{calcNative}
 \title{Calculate metrics based only on native status}
 \usage{
-calcNative(indf)
+calcNative(indf, sampID = "UID")
 }
 \arguments{
 \item{indf}{Data frame containing cover data summarized by
 UID and TAXON, with the following fields:
 \itemize{
-    \item UID: Unique sample identifier
+    \item sampID: A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
     \item TAXON: Taxon name
 
@@ -30,7 +31,7 @@ UID and TAXON, with the following fields:
  }}
 }
 \value{
-Data frame containing UID, PARAMETER, RESULT,
+Data frame containing sampID variables, PARAMETER, RESULT,
 where values of PARAMETER consist of the metric name concatenated
 with trait value (represented as TRAITNM below):
 \itemize{

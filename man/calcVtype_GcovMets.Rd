@@ -5,12 +5,13 @@
 \title{Calculate NWCA 2011 vegetation types and ground surface
 attribute metrics based on data collected from field form V-3}
 \usage{
-calcVtype_GcovMets(indf)
+calcVtype_GcovMets(indf, sampID = "UID")
 }
 \arguments{
 \item{indf}{A data frame containing the following variables:
 \itemize{
-\item UID: unique sample identifier
+\item sampID - A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item PLOT: Sample plot from which data were collected
 
@@ -35,7 +36,7 @@ are ignored.}
 \value{
 Either a character string containing an error message when metric
 calculation is not successful, or a data frame. The first column of the
-data frame is the UID and subsequent columns are named for each metric and
+data frame is the sampID variables and subsequent columns are named for each metric and
 contain metric values. A list of metrics is provided in the document named
 "VegTypes_GrdCover_Metric_Descriptions.pdf" included in the help directory
 for the package.

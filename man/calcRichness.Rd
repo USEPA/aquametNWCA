@@ -4,13 +4,15 @@
 \alias{calcRichness}
 \title{Calculate richness metrics}
 \usage{
-calcRichness(byUIDspp, byPlotspp, byUIDgen, byPlotgen, byUIDfam, byPlotfam)
+calcRichness(byUIDspp, byPlotspp, byUIDgen, byPlotgen, byUIDfam, byPlotfam,
+  sampID = "UID")
 }
 \arguments{
 \item{byUIDspp}{Data frame containing species data summarized to the UID
 and TAXON level, with the following variables:
 \itemize{
-\item UID: Unique sample identifier
+ \item sampID: A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item STATE: State two-letter abbreviation for site
 
@@ -28,7 +30,8 @@ at a lower level are also included in sample.
 \item{byPlotspp}{Data frame containing species data summarized
 to the UID, PLOT, and TAXON level, with the following variables:
 \itemize{
-\item UID: Unique sample identifier
+ \item sampID: A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item PLOT: Plot from which data were collected
 
@@ -46,24 +49,24 @@ at a lower level are also included in sample.
 }}
 
 \item{byUIDgen}{Data frame containing genus-level data summarized
-to the UID and TAXON level and containing the same variables as
+to the sampID variables and TAXON level and containing the same variables as
 byUIDspp (described above).}
 
 \item{byPlotgen}{Data frame containing genus-level data
-summarized to the UID, PLOT, and TAXON level and containing the
+summarized to the sampID variables, PLOT, and TAXON level and containing the
 same variables as byPlotspp (described above).}
 
 \item{byUIDfam}{Data frame containing family-level data
-summarized to the UID and TAXON level and containing the same
+summarized to the sampID variables and TAXON level and containing the same
 variables as byUIDspp (described above).}
 
 \item{byPlotfam}{Data frame containing family-level data
-summarized to the UID, PLOT, and TAXON level and containing the
+summarized to the sampID variables, PLOT, and TAXON level and containing the
 same variables as byPlotspp (described above).}
 }
 \value{
-Data frame containing UID, PARAMETER, and RESULT, with one row of
-results per parameter and UID. The values for PARAMETER consist of the
+Data frame containing sampID variables, PARAMETER, and RESULT, with one row of
+results per parameter and sampID. The values for PARAMETER consist of the
 metric name concatenated with taxonomic level (represented as SPP, GEN,
 and FAM below):
 \itemize{
@@ -99,7 +102,7 @@ UID-based datasets at the species, genus, and family levels.
 The prepareData() function creates a list object with
 all of the necessary input data frames. For each taxonomic level,
 the function createDFs() creates a list with a data frame summarized
-by UID and one by UID and PLOT.
+by UID and one by sampID variables and PLOT.
 }
 \examples{
   head(VascPlantEx)

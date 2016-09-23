@@ -12,7 +12,7 @@
 
 <meta name="author" content="Karen Blocksom" />
 
-<meta name="date" content="2016-07-15" />
+<meta name="date" content="2016-09-23" />
 
 <title>Calculate VMMI</title>
 
@@ -52,7 +52,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 <h1 class="title toc-ignore">Calculate VMMI</h1>
 <h4 class="author"><em>Karen Blocksom</em></h4>
-<h4 class="date"><em>July 15, 2016</em></h4>
+<h4 class="date"><em>September 23, 2016</em></h4>
 
 
 
@@ -80,25 +80,25 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## 4   7    FL  CSTL_PLAIN    5 SAGITTARIA LANCIFOLIA    20
 ## 5   7    FL  CSTL_PLAIN    5       SPARTINA PATENS     0
 ## 6   7    FL  CSTL_PLAIN    1      PANICUM VIRGATUM     0</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">exPlant &lt;-<span class="st"> </span><span class="kw">prepareData</span>(VascPlantEx)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">exPlant &lt;-<span class="st"> </span><span class="kw">prepareData</span>(VascPlantEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
 <pre><code>## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with UID summing&quot;
+## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done preparing datasets&quot;</code></pre>
 <p>Now we can use the <code>byUIDspp</code> data frame from the output above to calculate the VMMI. Then we need to cast the data frame into wide format.</p>
-<pre class="sourceCode r"><code class="sourceCode r">mets &lt;-<span class="st"> </span><span class="kw">calcVMMImets</span>(exPlant$byUIDspp)
+<pre class="sourceCode r"><code class="sourceCode r">mets &lt;-<span class="st"> </span><span class="kw">calcVMMImets</span>(exPlant$byUIDspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
 
 <span class="kw">head</span>(mets)</code></pre>
-<pre><code>##   UID PARAMETER RESULT
-## 1   1  FQAI_ALL  20.27
-## 2   2  FQAI_ALL  31.43
-## 3   3  FQAI_ALL  21.39
-## 4   4  FQAI_ALL  30.41
-## 5   5  FQAI_ALL  16.33
-## 6   6  FQAI_ALL  40.23</code></pre>
+<pre><code>##   UID          PARAMETER RESULT
+## 1   1           FQAI_ALL  20.27
+## 2   1        RIMP_NATSPP 100.00
+## 3   1 XRCOV_MONOCOTS_NAT   0.60
+## 4   1              N_TOL   8.00
+## 5   2           FQAI_ALL  31.43
+## 6   2              N_TOL  16.00</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Now cast this data frame into wide format</span>
 <span class="kw">library</span>(reshape2)
 mets.wide &lt;-<span class="st"> </span><span class="kw">dcast</span>(mets,UID~PARAMETER,<span class="dt">value.var=</span><span class="st">'RESULT'</span>)
@@ -121,7 +121,7 @@ mets.wide &lt;-<span class="st"> </span><span class="kw">dcast</span>(mets,UID~P
 
 mets.wide<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">merge</span>(sites, mets.wide, <span class="dt">by=</span><span class="st">'UID'</span>)
 
-vmmi &lt;-<span class="st"> </span><span class="kw">calcVMMI_fromMets</span>(mets.wide<span class="fl">.1</span>)
+vmmi &lt;-<span class="st"> </span><span class="kw">calcVMMI_fromMets</span>(mets.wide<span class="fl">.1</span>, <span class="dt">sampID=</span><span class="st">'UID'</span>)
 <span class="kw">head</span>(vmmi)</code></pre>
 <pre><code>##   UID ECO_X_WETGRP FQAI_ALL_SC N_TOL_SC RIMP_NATSPP_SC VEGCOND VMMI
 ## 1   1     CPL-PRLW        4.21        8             10    FAIR 55.7
@@ -138,7 +138,7 @@ vmmi &lt;-<span class="st"> </span><span class="kw">calcVMMI_fromMets</span>(met
 ## 5                  9.84
 ## 6                  1.98</code></pre>
 <p>If we lack the ecoregion or wetland type information in the input data frame, the function still calculates the VMMI but generates a warning.</p>
-<pre class="sourceCode r"><code class="sourceCode r">vmmi.alt &lt;-<span class="st"> </span><span class="kw">calcVMMI_fromMets</span>(mets.wide)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">vmmi.alt &lt;-<span class="st"> </span><span class="kw">calcVMMI_fromMets</span>(mets.wide, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
 <pre><code>## [1] &quot;Warning: Must include variables NWCA_WET_GRP and NWCA_ECO4 OR ECO_X_WETGRP to determine condition class. This variable is missing, and condition class will not be assigned, but VMMI will be calculated.&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(vmmi.alt)</code></pre>
 <pre><code>##   UID FQAI_ALL_SC N_TOL_SC RIMP_NATSPP_SC VMMI XRCOV_MONOCOTS_NAT_SC

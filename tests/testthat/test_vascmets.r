@@ -6,7 +6,8 @@ context("Vascular plant metric functions")
 # Create an input dataset and an expected output dataset
 
 test_that("Data frames created with correct structure",
-         {testDFs <- createDFs('USDA_NAME',testVasc,taxaNWCA)
+         {
+          testDFs <- createDFs('USDA_NAME',testVasc,taxaNWCA,sampID='UID')
           expect_true(length(testDFs)==2)
           expect_true(class(testDFs)=='list')
           expect_equal(names(testDFs),c('byUID','byPlot'))
@@ -15,7 +16,7 @@ test_that("Data frames created with correct structure",
 })
 
 
-dfTest <- prepareData(testVasc)
+dfTest <- prepareData(testVasc,sampID='UID')
 
 test_that("Richness metric values are correct",
           {
@@ -114,10 +115,21 @@ test_that("Mean Bray-Curtis metric values correct",
 
 test_that("VMMI metric calculations",
           {
-          metOut <- calcVMMImets(testForCalc)
+           metOut <- calcVMMImets(testForCalc)
            compOut <- merge(testMets,metOut,by=c('UID','PARAMETER'))
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
            expect_true(nrow(metOut)==40)
            expect_true(nrow(compOut)==nrow(metOut))
            expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)
+          })
+
+test_that("All vascular plant metrics correct",
+          {
+            metOut <- calcVascPlantMets(testVasc,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID')
+            metOut.long <- melt(metOut,id.vars='UID',variable.name='PARAMETER',value.name='RESULT')
+            compOut <- merge(testMets,metOut.long,by=c('UID','PARAMETER'))
+            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
+            expect_true(nrow(metOut.long)==3480)
+            expect_true(nrow(metOut.long)==nrow(compOut))
+            expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)
           })

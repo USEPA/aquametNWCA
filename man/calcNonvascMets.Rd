@@ -4,13 +4,13 @@
 \alias{calcNonvascMets}
 \title{Calculate non-vascular metrics}
 \usage{
-calcNonvascMets(dataIn, nPlot)
+calcNonvascMets(dataIn, nPlot, sampID = "UID")
 }
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
 \itemize{
- \item UID (unique sample identifier), PLOT (Sample plot from which
- data were collected)
+ \item sampID - A character vector containing the name(s) of
+ variable(s) necessary to identify unique samples
 
  \item PARAMETER (specific measurement type)
 
@@ -20,13 +20,13 @@ calcNonvascMets(dataIn, nPlot)
  calculating tree metrics: 'PEAT_MOSS','BRYOPHYTES','LICHENS',
  'ARBOREAL','ALGAE','MACROALGAE'. Additional parameters or
  variables are ignored.
- @param nPlot Number of plots sampled associated with each UID
- with variables UID and NPLOTS.
+ @param nPlot Number of plots sampled associated with each sample
+ with sampID variables and NPLOTS.
  @details If any of the parameters are missing, they are assumed to
  be zeros (if numeric), and metric values associated with any metrics
  that cannot be calculated due to missing parameters are set to a
  standardized value.
- @return Data frame containing UID, PARAMETER, RESULT, where values of
+ @return Data frame containing sampID variables, PARAMETER, RESULT, where values of
  PARAMETER consist of the metric name concatenated with trait value,
  with valid values of: FREQ_ALGAE,  FREQ_ARBOREAL,
  FREQ_BRYOPHYTES, FREQ_LICHENS, FREQ_MACROALGAE, IMP_ALGAE,

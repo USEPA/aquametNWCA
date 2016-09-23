@@ -4,12 +4,13 @@
 \alias{calcVMMI_fromMets}
 \title{Calculate Vegetation MMI and assign condition class}
 \usage{
-calcVMMI_fromMets(indf)
+calcVMMI_fromMets(indf, sampID = "UID")
 }
 \arguments{
 \item{Data}{frame containing, at a minimum:
 \itemize{
-\item UID: Unique sample identifier
+\item sampID - A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 
 \item FQAI_ALL: Floristic Quality Assessment Index based on all species
 
@@ -41,7 +42,7 @@ data frame.}
 \value{
 Data frame containing:
 \itemize{
-\item UID: Unique sample identifier
+\item sampID variable(s) used to identify unique samples
 
 \item FQAI_ALL_SC: Scored FQAI_ALL, on 0-10 scale
 

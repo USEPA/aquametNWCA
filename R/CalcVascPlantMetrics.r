@@ -84,12 +84,12 @@
 #' str(exOut)
 #' head(exOut)
 calcVascPlantMets <- function(dfIn,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID'){
-  prepDat <- prepareData(dfIn,taxaIn,taxaCC,taxaWIS)
+  prepDat <- prepareData(dfIn,sampID,taxaIn,taxaCC,taxaWIS)
 
   print("Initial datasets prepared for metric calculation.")
 
   richMets <- calcRichness(prepDat$byUIDspp,prepDat$byPlotspp,prepDat$byUIDgen,prepDat$byPlotgen
-                           ,prepDat$byUIDfam,prepDat$byPlotfam)
+                           ,prepDat$byUIDfam,prepDat$byPlotfam,sampID='UID')
 
   print("Done calculating richness metrics.")
 

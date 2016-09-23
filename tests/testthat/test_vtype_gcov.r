@@ -6,7 +6,8 @@ context("Vegetation types and ground cover metric functions")
 nplots <- ddply(subset(testVCGC,PARAMETER!='SANDT_CLASS'),c('UID'),summarise,NPLOTS=length(unique(PLOT)))
 
 test_that("S & T metric values correct",
-{sandtOut <- calcSandTMets(testVCGC,nplots)
+{
+ sandtOut <- calcSandTMets(testVCGC,nplots)
  compOut <- merge(testMets,sandtOut,by=c('UID','PARAMETER'))
  expect_true(nrow(sandtOut)==50)
  expect_true(nrow(compOut)==nrow(sandtOut))
