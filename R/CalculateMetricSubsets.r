@@ -70,6 +70,12 @@ calcDuration <- function(indf,sampID='UID'){
                   c('ANNUAL, BIENNIAL, PERENNIAL','ANNUAL, PERENNIAL','PERENNIAL, ANNUAL', 'BIENNIAL, PERENNIAL')='ANN_PEREN'"))
 
   durOut <- .calcTraits_MultCat(indf.1,'DUR_ALT',sampID)
+  
+  empty_base <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
+  names(empty_base) <- c("N_ANN_BIEN","N_ANN_PEREN","N_ANNUAL","N_PERENNIAL", "PCTN_ANN_BIEN","PCTN_ANNUAL"
+                         ,"PCTN_ANN_PEREN","PCTN_PERENNIAL","XABCOV_ANN_BIEN","XABCOV_ANN_PEREN"
+                         ,"XABCOV_ANNUAL","XABCOV_PERENNIAL","XRCOV_ANN_BIEN","XRCOV_ANN_PEREN"
+                         ,"XRCOV_ANNUAL","XRCOV_PERENNIAL")
 
   if('NWCA_NATSTAT' %in% names(indf.1)){
     # Assign native status values to grouped categories
@@ -86,11 +92,24 @@ calcDuration <- function(indf,sampID='UID'){
                                  ,ANN_PEREN_AC=ifelse(DUR_ALT=='ANN_PEREN' & AC==1,1,0)
                                  ,PERENNIAL_NAT=ifelse(DUR_ALT=='PERENNIAL' & NATSTAT_ALT=='NAT',1,0)
                                  ,PERENNIAL_AC=ifelse(DUR_ALT=='PERENNIAL' & AC==1,1,0)
+                           
+    
       )
 
     multTraits <- .combTraits(indf.2,c('ANNUAL_NAT','ANNUAL_AC','ANN_BIEN_NAT','ANN_BIEN_AC','ANN_PEREN_NAT','ANN_PEREN_AC','PERENNIAL_NAT'
                                           ,'PERENNIAL_AC'),sampID)
     durOut <- rbind(durOut,multTraits)
+    empty_base.nat <- data.frame(t(rep(NA,32)),stringsAsFactors=F)
+    names(empty_base.nat) <- c("N_ANN_BIEN_AC","N_ANN_BIEN_NAT","N_ANN_PEREN_AC","N_ANN_PEREN_NAT"
+                               ,"N_ANNUAL_AC","N_ANNUAL_NAT","N_PERENNIAL_AC","N_PERENNIAL_NAT"
+                               ,"PCTN_ANN_BIEN_AC","PCTN_ANN_BIEN_NAT","PCTN_ANN_PEREN_AC"
+                               ,"PCTN_ANN_PEREN_NAT","PCTN_ANNUAL_AC","PCTN_ANNUAL_NAT"
+                               ,"PCTN_PERENNIAL_AC","PCTN_PERENNIAL_NAT","XABCOV_ANN_BIEN_AC"
+                               ,"XABCOV_ANN_BIEN_NAT","XABCOV_ANN_PEREN_AC","XABCOV_ANN_PEREN_NAT"
+                               ,"XABCOV_ANNUAL_AC","XABCOV_ANNUAL_NAT","XABCOV_PERENNIAL_AC"
+                               ,"XABCOV_PERENNIAL_NAT","XRCOV_ANN_BIEN_AC","XRCOV_ANN_BIEN_NAT"
+                               ,"XRCOV_ANN_PEREN_AC","XRCOV_ANN_PEREN_NAT","XRCOV_ANNUAL_AC"
+                               ,"XRCOV_ANNUAL_NAT","XRCOV_PERENNIAL_AC","XRCOV_PERENNIAL_NAT")
 
   }
 

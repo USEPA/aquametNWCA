@@ -1,7 +1,7 @@
-#' aquametNWCA2: A package to calculate metrics used in NWCA 2011
+#' aquametNWCA: A package to calculate metrics used in NWCA 2011
 #' 
 #' @docType package
-#' @name aquametNWCA2
+#' @name aquametNWCA
 #' 
 #' @importFrom Hmisc "%nin%"
 #' @importFrom gtools smartbind
