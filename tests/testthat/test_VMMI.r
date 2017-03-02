@@ -1,4 +1,4 @@
-library(aquametNWCA2)
+library(aquametNWCA)
 library(testthat)
 
 context("VMMI and condition values correct")

@@ -1,7 +1,7 @@
 ---
 title: "Calculate VMMI"
 author: "Karen Blocksom"
-date: "September 23, 2016"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Calculate VMMI}
@@ -26,7 +26,7 @@ If none of these variables is present in the input data frame, the VMMI will be 
 Using the vascular plant example dataset, `VascPlantEx` and the taxa lists included in the package, we first need to prepare the data for use in the `calcVMMImets()` function. 
 
 ```{r mets.1}
-library(aquametNWCA2)
+library(aquametNWCA)
 
 head(VascPlantEx)
 exPlant <- prepareData(VascPlantEx, sampID='UID')

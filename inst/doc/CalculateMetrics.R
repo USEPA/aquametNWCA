@@ -1,5 +1,5 @@
 ## ----allVasc.1-----------------------------------------------------------
-library(aquametNWCA2)
+library(aquametNWCA)
 
 head(VascPlantEx)
 

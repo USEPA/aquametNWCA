@@ -12,7 +12,7 @@
 
 <meta name="author" content="Karen Blocksom" />
 
-<meta name="date" content="2016-09-23" />
+<meta name="date" content="2017-03-02" />
 
 <title>Calculate Metrics</title>
 
@@ -52,7 +52,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 <h1 class="title toc-ignore">Calculate Metrics</h1>
 <h4 class="author"><em>Karen Blocksom</em></h4>
-<h4 class="date"><em>September 23, 2016</em></h4>
+<h4 class="date"><em>2017-03-02</em></h4>
 
 
 
@@ -68,7 +68,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="all-metrics-at-once" class="section level2">
 <h2>2.1 All metrics at once</h2>
 <p>Use the example plant data included in the package, <code>VascPlantEx</code>, along with the included taxalists for taxonomy and basic characteristics (<code>taxaNWCA</code>), Coefficient of Conservatism and native status values (<code>ccNatNWCA</code>), and Wetland Indicator Status values (<code>wisNWCA</code>).</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(aquametNWCA2)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(aquametNWCA)
 
 <span class="kw">head</span>(VascPlantEx)</code></pre>
 <pre><code>##   UID STATE USAC_REGION PLOT             USDA_NAME COVER
@@ -953,9 +953,8 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 <div id="subsets-of-metrics-2" class="section level2">
 <h2>4.2 Subsets of metrics</h2>
 <p>If we only want to calculate a subset of metrics, say S &amp; T metrics and vascular strata metrics, for example, we need to supply the number of plots sampled at each site along with the data from form V-4.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(plyr)</code></pre>
-<pre><code>## Warning: package 'plyr' was built under R version 3.2.5</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">nplots &lt;-<span class="st"> </span><span class="kw">ddply</span>(Vtype_GrCovEx,<span class="kw">c</span>(<span class="st">'UID'</span>),summarize,<span class="dt">NPLOTS=</span><span class="kw">length</span>(<span class="kw">unique</span>(PLOT)))
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(plyr)
+nplots &lt;-<span class="st"> </span><span class="kw">ddply</span>(Vtype_GrCovEx,<span class="kw">c</span>(<span class="st">'UID'</span>),summarize,<span class="dt">NPLOTS=</span><span class="kw">length</span>(<span class="kw">unique</span>(PLOT)))
 
 outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_GrCovEx, nplots, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
 <pre><code>## [1] &quot;Done with veg heterogeneity metrics&quot;</code></pre>

@@ -11,7 +11,7 @@ Imports:
     Hmisc,
     gtools,
     car
-Date: 2016-06-25
+Date: 2017-03-02
 Author: Karen Blocksom
 Maintainer: Karen Blocksom <blocksom.karen@epa.gov>
 Description: This package calculates metrics and

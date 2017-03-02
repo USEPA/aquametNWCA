@@ -1,4 +1,4 @@
-library(aquametNWCA2)
+library(aquametNWCA)
 library(testthat)
 
 context("Tree metric functions")

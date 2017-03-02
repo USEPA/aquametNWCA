@@ -1,4 +1,4 @@
 library(testthat)
-library(aquametNWCA2)
+library(aquametNWCA)
 
-test_check("aquametNWCA2")
+test_check("aquametNWCA")

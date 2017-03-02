@@ -1,5 +1,5 @@
 ## ----mets.1--------------------------------------------------------------
-library(aquametNWCA2)
+library(aquametNWCA)
 
 head(VascPlantEx)
 exPlant <- prepareData(VascPlantEx, sampID='UID')
