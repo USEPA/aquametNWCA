@@ -9,24 +9,25 @@ calcNonvascMets(dataIn, nPlot, sampID = "UID")
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
 \itemize{
- \item sampID - A character vector containing the name(s) of
- variable(s) necessary to identify unique samples
+ \item sampID - variable(s) identified in sampID argument
 
  \item PARAMETER (specific measurement type)
 
  \item RESULT (measured value)
-}
+ }
  The following parameters are used in
  calculating tree metrics: 'PEAT_MOSS','BRYOPHYTES','LICHENS',
  'ARBOREAL','ALGAE','MACROALGAE'. Additional parameters or
- variables are ignored.
- @param nPlot Number of plots sampled associated with each sample
- with sampID variables and NPLOTS.
- @details If any of the parameters are missing, they are assumed to
- be zeros (if numeric), and metric values associated with any metrics
- that cannot be calculated due to missing parameters are set to a
- standardized value.
- @return Data frame containing sampID variables, PARAMETER, RESULT, where values of
+ variables are ignored.}
+
+\item{nPlot}{Number of plots sampled associated with each sample
+with sampID variables and NPLOTS.}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
+}
+\value{
+Data frame containing sampID variables, PARAMETER, RESULT, where values of
  PARAMETER consist of the metric name concatenated with trait value,
  with valid values of: FREQ_ALGAE,  FREQ_ARBOREAL,
  FREQ_BRYOPHYTES, FREQ_LICHENS, FREQ_MACROALGAE, IMP_ALGAE,
@@ -36,8 +37,19 @@ calcNonvascMets(dataIn, nPlot, sampID = "UID")
  A list of metric descriptions is provided in the document
  named VegTypes_GrdCover_Metric_Descriptions.pdf included in the
  help directory for the package.
- @author Karen Blocksom \email{blocksom.karen@epa.gov}
- @examples
+}
+\description{
+This function calculates non-vascular plant
+metrics based on vegetative and ground cover data. This
+function is called by calcVtype_GcovMets().
+}
+\details{
+If any of the parameters are missing, they are assumed to
+ be zeros (if numeric), and metric values associated with any metrics
+ that cannot be calculated due to missing parameters are set to a
+ standardized value.
+}
+\examples{
  head(Vtype_GrCovEx)
  # Create data frame with number of plots sampled for each UID
  nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
@@ -48,11 +60,8 @@ calcNonvascMets(dataIn, nPlot, sampID = "UID")
  nvEx <- calcNonvascMets(Vtype_GrCovEx,nplots)
 
  head(nvEx)
- unique(nvEx$PARAMETER)}
+ unique(nvEx$PARAMETER)
 }
-\description{
-This function calculates non-vascular plant
-metrics based on vegetative and ground cover data. This
-function is called by calcVtype_GcovMets().
+\author{
+Karen Blocksom \email{blocksom.karen@epa.gov}
 }
-

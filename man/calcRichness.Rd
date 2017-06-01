@@ -11,8 +11,7 @@ calcRichness(byUIDspp, byPlotspp, byUIDgen, byPlotgen, byUIDfam, byPlotfam,
 \item{byUIDspp}{Data frame containing species data summarized to the UID
 and TAXON level, with the following variables:
 \itemize{
- \item sampID: A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+ \item sampID: Variables identified by sampID argument
 
 \item STATE: State two-letter abbreviation for site
 
@@ -30,8 +29,7 @@ at a lower level are also included in sample.
 \item{byPlotspp}{Data frame containing species data summarized
 to the UID, PLOT, and TAXON level, with the following variables:
 \itemize{
- \item sampID: A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+ \item sampID: Variables identified in sampID argument
 
 \item PLOT: Plot from which data were collected
 
@@ -63,6 +61,9 @@ variables as byUIDspp (described above).}
 \item{byPlotfam}{Data frame containing family-level data
 summarized to the sampID variables, PLOT, and TAXON level and containing the
 same variables as byPlotspp (described above).}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Data frame containing sampID variables, PARAMETER, and RESULT, with one row of
@@ -114,12 +115,11 @@ by UID and one by sampID variables and PLOT.
   head(richEx)
   unique(richEx$PARAMETER)
 }
-\author{
-Karen Blocksom \email{blocksom.karen@epa.gov}
-}
 \references{
 US Environmental Protection Agency. 2016. National
 Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006.
 US Environmental Protection Agency, Washington, DC.
 }
-
+\author{
+Karen Blocksom \email{blocksom.karen@epa.gov}
+}

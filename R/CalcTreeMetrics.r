@@ -7,8 +7,7 @@
 #' plot at a site.
 #' @param treeIn A data frame containing the following variables:
 #' \itemize{
-#'    \item sampID - A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'    \item sampID - Variable(s) found in the argument sampID
 #'
 #'    \item PAGE: Page number from field form
 #'
@@ -27,6 +26,8 @@
 #' 'XXTHICK_TREE','VSMALL_TREE','SMALL_TREE','LMED_TREE','HMED_TREE',
 #' 'TALL_TREE','VTALL_TREE'. Additional parameters or variables are
 #' ignored.
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @details If any of the parameters are missing, they are assumed to be
 #' zeros, and metric values associated with any metrics that cannot be
 #' calculated due to missing parameters are set to 0.

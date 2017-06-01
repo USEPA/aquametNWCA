@@ -8,8 +8,7 @@
 #' @param indf   Data frame containing cover data summarized by
 #' sampID variables and TAXON, with the following fields:
 #'  \itemize{
-#'     \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'     \item sampID: Variable(s) in the argument sampID
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -27,6 +26,8 @@
 #'     \item Optional: NWCA_NATSTAT: Native status variable with categories
 #'     of 'NAT','ADV','CRYP','INTR','UND'
 #'     }
+#' @param sampID  A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples   
 #' @return Data frame containing the sampID variables, PARAMETER, RESULT, where
 #' values of PARAMETER consist of the metric name concatenated
 #' with trait value (represented as TRAITNM below):
@@ -128,8 +129,7 @@ calcDuration <- function(indf,sampID='UID'){
 #' @param indf   Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'     \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'     \item sampID: Variable(s) identified in sampID argument
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -147,6 +147,8 @@ calcDuration <- function(indf,sampID='UID'){
 #'     \item Optional: NWCA_NATSTAT: Native status variable with categories
 #'     of 'NAT','ADV','CRYP','INTR','UND'
 #'    }
+#' @param sampID  A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @return Data frame containing sampID variables, PARAMETER, RESULT, where
 #' values of PARAMETER consist of the metric name concatenated
 #' with trait value (represented as TRAITNM below):
@@ -240,8 +242,7 @@ calcGrowthHabit <- function(indf,sampID='UID'){
 #' @param indf   Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'     \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'     \item sampID: Variable(s) identified in sampID argument
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -259,6 +260,8 @@ calcGrowthHabit <- function(indf,sampID='UID'){
 #'     \item Optional: NWCA_NATSTAT: Native status variable with categories
 #'     of 'NAT','ADV','CRYP','INTR','UND'
 #'    }
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @return Data frame containing sampID variables, PARAMETER, RESULT, where
 #' values of PARAMETER consist of the metric name concatenated
 #' with trait value (represented as TRAITNM below):
@@ -333,8 +336,7 @@ calcCategory <- function(indf,sampID='UID'){
 #' @param indf Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'     \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'     \item sampID: Variable(s) identified in sampID argument
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -356,6 +358,8 @@ calcCategory <- function(indf,sampID='UID'){
 #'       categories of 'NAT','ADV','CRYP','INTR','UND'.
 #'       UND taxa are ignored.
 #'    }
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 
 #' @return Data frame containing sampID variables, PARAMETER, RESULT, where
 #' values of PARAMETER consist of the metric name concatenated
@@ -473,8 +477,7 @@ calcWIS <- function(indf,sampID='UID'){
 #' @param indf Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'     \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'     \item sampID: Variable(s) identified in sampID argument
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -489,6 +492,8 @@ calcWIS <- function(indf,sampID='UID'){
 #'       categories of 'NAT','ADV','CRYP','INTR','UND'.
 #'       UND taxa are ignored.
 #'    }
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 
 #' @return   Data frame containing sampID variables, PARAMETER, RESULT, where
 #' values of PARAMETER are:
@@ -588,8 +593,7 @@ calcCC <- function(indf,sampID='UID'){
 #' @param indf Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'     \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'     \item sampID: Variable(s) identified in sampID argument
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -607,6 +611,8 @@ calcCC <- function(indf,sampID='UID'){
 #'     \item NWCA_NATSTAT: Native status variable with
 #'     categories of 'NAT','ADV','CRYP','INTR','UND'
 #'  }
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 
 #' @return     Data frame containing sampID variables, PARAMETER, RESULT,
 #' where values of PARAMETER consist of the metric name concatenated
@@ -664,8 +670,7 @@ calcNative <- function(indf,sampID='UID'){
 #' @param byUIDspp Data frame containing species data summarized to the UID
 #' and TAXON level, with the following variables:
 #' \itemize{
-#'  \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'  \item sampID: Variables identified by sampID argument
 #'
 #' \item STATE: State two-letter abbreviation for site
 #'
@@ -682,8 +687,7 @@ calcNative <- function(indf,sampID='UID'){
 #' @param byPlotspp Data frame containing species data summarized
 #' to the UID, PLOT, and TAXON level, with the following variables:
 #' \itemize{
-#'  \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'  \item sampID: Variables identified in sampID argument
 #'
 #' \item PLOT: Plot from which data were collected
 #'
@@ -711,6 +715,8 @@ calcNative <- function(indf,sampID='UID'){
 #' @param byPlotfam Data frame containing family-level data
 #' summarized to the sampID variables, PLOT, and TAXON level and containing the
 #' same variables as byPlotspp (described above).
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @details The prepareData() function creates a list object with
 #' all of the necessary input data frames. For each taxonomic level,
 #' the function createDFs() creates a list with a data frame summarized
@@ -796,8 +802,7 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
 #' @param indf Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'  \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'  \item sampID: Variable(s) identified in sampID argument
 #'
 #' \item TAXON: Taxon name
 #'
@@ -808,6 +813,8 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
 #' \item Optional: NWCA_NATSTAT: Native status variable with categories of
 #' 'NAT','ADV','CRYP','INTR','UND'
 #' }
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @return Data frame containing sampID variables, PARAMETER, RESULT, where
 #' values of PARAMETER are:
 #' \itemize{
@@ -892,7 +899,7 @@ calcDiversity <- function(indf,sampID='UID'){
 #' distances among plots for all species, and includes a version using only
 #' native species if the variable NWCA_NATSTAT is included in the input
 #' data frame. This variable is found in the ccNatNWCA dataset.
-#' @param Data frame containing cover data summarized by UID, PLOT, and
+#' @param indf Data frame containing cover data summarized by UID, PLOT, and
 #' DISTINCT at the species level. Must also contain at least one of the
 #' following: USDA_NAME (taxon name) or SPECIES_NAME_ID (numeric code
 #' for taxon). If NWCA_NATSTAT is included, a native species version is
@@ -956,8 +963,7 @@ calcBCmets <- function(indf,sampID='UID'){
 #' @param indf Data frame containing cover data summarized at the UID
 #' and TAXON level:
 #' \itemize{
-#'  \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#'  \item sampID: Variable(s) identified in sampID argument
 #'
 #' \item TAXON: Taxon name
 #'
@@ -977,6 +983,8 @@ calcBCmets <- function(indf,sampID='UID'){
 #' percentage of the total frequency of taxon occurrence across
 #' all taxa for a UID.
 #' }
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @details To calculate the VMMI as used in NWCA 2011, the default
 #' taxa lists must be used to create the input data frame.
 #' @return Data frame containing sampID variables, PARAMETER, RESULT, with the

@@ -9,8 +9,7 @@ calcTreeCntMets(dfIn, sampID = "UID")
 \arguments{
 \item{dfIn}{A data frame containing the following variables:
 \itemize{
-\item sampID - A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+\item sampID - Variable(s) identified in sampID argument
 
 \item PLOT: Sample plot from which data were collected
 
@@ -22,6 +21,9 @@ The following parameters are used in calculating tree metrics:
 'XXTHIN_TREE','XTHIN_TREE','THIN_TREE', 'JR_TREE','THICK_TREE',
 'XTHICK_TREE','XXTHICK_TREE'. Additional parameters or variables
 are ignored.}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Either a character string containing an error message when
@@ -54,4 +56,3 @@ unique(tcntEx$PARAMETER)
 \author{
 Karen Blocksom \email{blocksom.karen@epa.gov}
 }
-

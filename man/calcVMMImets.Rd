@@ -10,8 +10,7 @@ calcVMMImets(indf, sampID = "UID")
 \item{indf}{Data frame containing cover data summarized at the UID
 and TAXON level:
 \itemize{
- \item sampID: A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+ \item sampID: Variable(s) identified in sampID argument
 
 \item TAXON: Taxon name
 
@@ -31,6 +30,9 @@ with monocots indicated by 'MONOCOT'
 percentage of the total frequency of taxon occurrence across
 all taxa for a UID.
 }}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Data frame containing sampID variables, PARAMETER, RESULT, with the
@@ -65,13 +67,12 @@ vmmiEx <- calcVMMImets(exPlant$byUIDspp)
 head(vmmiEx)
 unique(vmmiEx$PARAMETER)
 }
-\author{
-Karen Blocksom \email{blocksom.karen@epa.gov}
-}
 \references{
 US Environmental Protection Agency. 2016.
 National Wetland Condition Assessment: 2011 Technical Report.
 EPA-843-R-15-006. US Environmental Protection Agency,
 Washington, DC.
 }
-
+\author{
+Karen Blocksom \email{blocksom.karen@epa.gov}
+}

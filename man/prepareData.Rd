@@ -24,6 +24,9 @@ supplemented with NWCA names, if not in USDA PLANTS
 for plots in which a taxon does not occur.
 }}
 
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
+
 \item{inTaxa}{Data frame with all taxa in indf, with variables:
 \itemize{
 \item USDA_NAME: Taxon name, based on USDA PLANTS names,
@@ -191,13 +194,12 @@ prepEx <- prepareData(VascPlantEx)
 
 str(prepEx)
 }
-\author{
-Karen Blocksom \email{blocksom.karen@epa.gov}
-}
 \references{
 US Environmental Protection Agency. 2016.
 National Wetland Condition Assessment: 2011 Technical Report.
 EPA-843-R-15-006. US Environmental Protection Agency,
 Washington, DC.
 }
-
+\author{
+Karen Blocksom \email{blocksom.karen@epa.gov}
+}

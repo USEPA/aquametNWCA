@@ -5,7 +5,7 @@
 #' variable(s) describing site ecoregion and wetland group type
 #' according to NWCA 2011 are included in the input data frame,
 #' condition class (Good/Fair/Poor) will also be assigned.
-#' @param Data frame containing, at a minimum:
+#' @param indf Data frame containing, at a minimum:
 #' \itemize{
 #' \item sampID - A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
@@ -36,9 +36,11 @@
 #' To assign condition class, either NWCA_ECO4 and NWCA_WET_GRP need to
 #' be included OR ECO_X_WETGRP needs to be included in the input
 #' data frame.
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @return  Data frame containing:
 #' \itemize{
-#' \item sampID variable(s) used to identify unique samples
+#' \item sampID Variable(s) found in the argument sampID
 #'
 #' \item FQAI_ALL_SC: Scored FQAI_ALL, on 0-10 scale
 #'

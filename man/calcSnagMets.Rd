@@ -9,15 +9,17 @@ calcSnagMets(dfIn, sampID = "UID")
 \arguments{
 \item{dfIn}{A data frame containing the following variables:
 \itemize{
-\item sampID - A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+\item sampID - Variable(s) identified in sampID argument
 
 \item PLOT: Sample plot from which data were collected
 
 \item PARAMETER: specific measurement type
 
 \item RESULT: measured value
-}
+}}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples
 The following parameters are used in
 calculating tree metrics: 'XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG',
 'JR_SNAG','THICK_SNAG','XTHICK_SNAG','XXTHICK_SNAG'.
@@ -55,4 +57,3 @@ unique(snagEx$PARAMETER)
 \author{
 Karen Blocksom \email{blocksom.karen@epa.gov}
 }
-

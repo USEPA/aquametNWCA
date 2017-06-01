@@ -10,8 +10,7 @@ calcTreeMets(treeIn, sampID = "UID")
 \arguments{
 \item{treeIn}{A data frame containing the following variables:
 \itemize{
-   \item sampID - A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+   \item sampID - Variable(s) found in the argument sampID
 
    \item PAGE: Page number from field form
 
@@ -30,6 +29,9 @@ calculating tree metrics: 'XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG',
 'XXTHICK_TREE','VSMALL_TREE','SMALL_TREE','LMED_TREE','HMED_TREE',
 'TALL_TREE','VTALL_TREE'. Additional parameters or variables are
 ignored.}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Either a character string containing an error message when 
@@ -58,12 +60,11 @@ exOut <- calcTreeMets(TreesEx)
 head(exOut)
 str(exOut)
 }
-\author{
-Karen Blocksom \email{blocksom.karen@epa.gov}
-}
 \references{
 US Environmental Protection Agency. 2016. National
 Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006.
 US Environmental Protection Agency, Washington, DC.
 }
-
+\author{
+Karen Blocksom \email{blocksom.karen@epa.gov}
+}

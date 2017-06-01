@@ -3,14 +3,15 @@
 #' @description This internal function merges the inputs of
 #' plant cover data and taxalist and summarizes by the taxonomic
 #' level specified. Not intended for use on its own.
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples 
 #' @param tvar String with the level of taxonomy
 #' ('USDA_NAME','GENUS','FAMILY')
 #' @param indf Data frame with vegetation cover data, having
 #' the following variables:
 #' \itemize{
 #'
-#' \item sampID - A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' \item sampID - Variable(s) found in the argument sampID
 #'
 #' \item PLOT - Plot number of data (1 to 5 possible)
 #'
@@ -95,6 +96,8 @@ createDFs <- function(sampID='UID',tvar,indf,taxa){
 #' \item COVER: Percent cover of taxon in plot, including zeros
 #' for plots in which a taxon does not occur.
 #' }
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @param inTaxa Data frame with all taxa in indf, with variables:
 #' \itemize{
 #' \item USDA_NAME: Taxon name, based on USDA PLANTS names,

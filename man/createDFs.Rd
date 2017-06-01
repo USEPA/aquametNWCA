@@ -7,6 +7,9 @@
 createDFs(sampID = "UID", tvar, indf, taxa)
 }
 \arguments{
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
+
 \item{tvar}{String with the level of taxonomy
 ('USDA_NAME','GENUS','FAMILY')}
 
@@ -14,8 +17,7 @@ createDFs(sampID = "UID", tvar, indf, taxa)
 the following variables:
 \itemize{
 
-\item sampID - A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+\item sampID - Variable(s) found in the argument sampID
 
 \item PLOT - Plot number of data (1 to 5 possible)
 
@@ -63,4 +65,3 @@ head(outEx$byPlot)
 \author{
 Karen Blocksom \email{blocksom.karen@epa.gov}
 }
-

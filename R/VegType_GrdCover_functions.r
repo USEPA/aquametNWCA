@@ -5,8 +5,7 @@
 #' calcVtype_GcovMets().
 #' @param dataIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' \item sampID - Variables identified in sampID argument
 #'
 #' \item PLOT (Sample plot from which data were collected)
 #'
@@ -19,6 +18,8 @@
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with
 #' each samples, with sampID variables and NPLOTS
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @details If any of the parameters are missing, they are assumed
 #' to be zeros (if numeric), and metric values associated with any
 #' metrics that cannot be calculated due to missing parameters are
@@ -103,8 +104,7 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
 #' @param dataIn A data frame containing the following
 #' variables:
 #' \itemize{
-#' \item sampID - A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' \item sampID - Variable(s) identified in the sampID argument
 #' 
 #' \item PLOT (Sample plot from which data were collected)
 #'
@@ -119,6 +119,8 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with each
 #' sample with sampID variables and NPLOTS
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @details If any of the parameters are missing, they are
 #' assumed to be zeros (if numeric), and metric values associated
 #' with any metrics that cannot be calculated due to missing
@@ -247,24 +249,25 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 #' function is called by calcVtype_GcovMets().
 #' @param dataIn A data frame containing the following variables:
 #' \itemize{
-#'  \item sampID - A character vector containing the name(s) of
-#'  variable(s) necessary to identify unique samples
+#'  \item sampID - variable(s) identified in sampID argument
 #'
 #'  \item PARAMETER (specific measurement type)
 #'
 #'  \item RESULT (measured value)
-#' }
+#'  }
 #'  The following parameters are used in
 #'  calculating tree metrics: 'PEAT_MOSS','BRYOPHYTES','LICHENS',
 #'  'ARBOREAL','ALGAE','MACROALGAE'. Additional parameters or
 #'  variables are ignored.
-#'  @param nPlot Number of plots sampled associated with each sample
+#' @param nPlot Number of plots sampled associated with each sample
 #'  with sampID variables and NPLOTS.
-#'  @details If any of the parameters are missing, they are assumed to
+#' @param sampID  A character vector containing the name(s) of
+#'  variable(s) necessary to identify unique samples
+#' @details If any of the parameters are missing, they are assumed to
 #'  be zeros (if numeric), and metric values associated with any metrics
 #'  that cannot be calculated due to missing parameters are set to a
 #'  standardized value.
-#'  @return Data frame containing sampID variables, PARAMETER, RESULT, where values of
+#' @return Data frame containing sampID variables, PARAMETER, RESULT, where values of
 #'  PARAMETER consist of the metric name concatenated with trait value,
 #'  with valid values of: FREQ_ALGAE,  FREQ_ARBOREAL,
 #'  FREQ_BRYOPHYTES, FREQ_LICHENS, FREQ_MACROALGAE, IMP_ALGAE,
@@ -274,8 +277,8 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 #'  A list of metric descriptions is provided in the document
 #'  named VegTypes_GrdCover_Metric_Descriptions.pdf included in the
 #'  help directory for the package.
-#'  @author Karen Blocksom \email{blocksom.karen@epa.gov}
-#'  @examples
+#' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' @examples
 #'  head(Vtype_GrCovEx)
 #'  # Create data frame with number of plots sampled for each UID
 #'  nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
@@ -357,8 +360,7 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
 #' called by calcVtype_GcovMets().
 #' @param dataIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' \item sampID - Variable(s) identified in sampID argument
 #' 
 #' \item PLOT (Sample plot from which data
 #' were collected)
@@ -374,6 +376,8 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with each
 #' sample with sampID variables and NPLOTS
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @details If any of the parameters are missing, they are assumed
 #' to be zeros (if numeric), and metric values associated with any
 #' metrics that cannot be calculated due to missing parameters are set
@@ -480,8 +484,7 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
 #' ground cover data. This function is called by calcVtype_GcovMets().
 #' @param dataIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' \item sampID - Variable(s) identified in sampID argument
 #' 
 #' \item PLOT (Sample plot from which data were collected)
 #'
@@ -496,6 +499,8 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
 #' 'WD_COARSE','EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK'.
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with each sample
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @details If any of the parameters are missing, they are assumed to be
 #' zeros (if numeric), and metric values associated with any metrics that
 #' cannot be calculated due to missing parameters are set to a

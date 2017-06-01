@@ -10,8 +10,7 @@ calcDuration(indf, sampID = "UID")
 \item{indf}{Data frame containing cover data summarized by
 sampID variables and TAXON, with the following fields:
  \itemize{
-    \item sampID: A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+    \item sampID: Variable(s) in the argument sampID
 
     \item TAXON: Taxon name
 
@@ -29,6 +28,9 @@ variable(s) necessary to identify unique samples
     \item Optional: NWCA_NATSTAT: Native status variable with categories
     of 'NAT','ADV','CRYP','INTR','UND'
     }}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Data frame containing the sampID variables, PARAMETER, RESULT, where
@@ -60,12 +62,11 @@ categories. Taxa with 'UND' as native status are excluded.
  head(durEx)
  unique(durEx$PARAMETER)
 }
-\author{
-Karen Blocksom \email{Blocksom.karen@epa.gov}
-}
 \references{
 US Environmental Protection Agency. 2016. National Wetland
 Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 Environmental Protection Agency, Washington, DC.
 }
-
+\author{
+Karen Blocksom \email{Blocksom.karen@epa.gov}
+}

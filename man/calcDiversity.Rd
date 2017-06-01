@@ -10,8 +10,7 @@ calcDiversity(indf, sampID = "UID")
 \item{indf}{Data frame containing cover data summarized by
 UID and TAXON, with the following fields:
 \itemize{
- \item sampID: A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+ \item sampID: Variable(s) identified in sampID argument
 
 \item TAXON: Taxon name
 
@@ -22,6 +21,9 @@ variable(s) necessary to identify unique samples
 \item Optional: NWCA_NATSTAT: Native status variable with categories of
 'NAT','ADV','CRYP','INTR','UND'
 }}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Data frame containing sampID variables, PARAMETER, RESULT, where
@@ -72,12 +74,11 @@ divEx <- calcDiversity(exPlant$byUIDspp)
 head(divEx)
 unique(divEx$PARAMETER)
 }
-\author{
-Karen Blocksom \email{blocksom.karen@epa.gov}
-}
 \references{
 US Environmental Protection Agency. 2016. National Wetland
 Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 Environmental Protection Agency, Washington, DC.
 }
-
+\author{
+Karen Blocksom \email{blocksom.karen@epa.gov}
+}

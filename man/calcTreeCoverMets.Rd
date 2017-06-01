@@ -9,8 +9,7 @@ calcTreeCoverMets(dfIn, sampID = "UID")
 \arguments{
 \item{dfIn}{A data frame containing the following variables:
 \itemize{
-\item sampID - A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+\item sampID - Variable(s) identified in sampID argument
 
 \item PAGE: Page from field form
 
@@ -26,6 +25,9 @@ The following parameters are used in
 calculating tree metrics: 'VSMALL_TREE','SMALL_TREE','LMED_TREE'
 ,'HMED_TREE','TALL_TREE','VTALL_TREE'.  Additional parameters
 or variables are ignored.}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Either a character string containing an error message when
@@ -58,4 +60,3 @@ unique(tcvrEx$PARAMETER)
 \author{
 Karen Blocksom \email{blocksom.karen@epa.gov}
 }
-

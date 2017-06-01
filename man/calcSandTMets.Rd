@@ -9,8 +9,7 @@ calcSandTMets(dataIn, nPlot, sampID = "UID")
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
 \itemize{
-\item sampID - A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+\item sampID - Variables identified in sampID argument
 
 \item PLOT (Sample plot from which data were collected)
 
@@ -24,6 +23,9 @@ Additional parameters or variables are ignored.}
 
 \item{nPlot}{Number of plots sampled associated with
 each samples, with sampID variables and NPLOTS}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Either a character string containing an error message
@@ -62,4 +64,3 @@ unique(sandtEx$PARAMETER)
 \author{
 Karen Blocksom \email{blocksom.karen@epa.gov}
 }
-

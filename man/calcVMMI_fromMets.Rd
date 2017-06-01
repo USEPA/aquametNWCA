@@ -7,7 +7,7 @@
 calcVMMI_fromMets(indf, sampID = "UID")
 }
 \arguments{
-\item{Data}{frame containing, at a minimum:
+\item{indf}{Data frame containing, at a minimum:
 \itemize{
 \item sampID - A character vector containing the name(s) of
 variable(s) necessary to identify unique samples
@@ -38,11 +38,14 @@ EMU-PRLW, IPL-PRLH, IPL-PRLW, W-PRLH, W-PRLW
 To assign condition class, either NWCA_ECO4 and NWCA_WET_GRP need to
 be included OR ECO_X_WETGRP needs to be included in the input
 data frame.}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Data frame containing:
 \itemize{
-\item sampID variable(s) used to identify unique samples
+\item sampID Variable(s) found in the argument sampID
 
 \item FQAI_ALL_SC: Scored FQAI_ALL, on 0-10 scale
 
@@ -82,12 +85,11 @@ check.2 <- calcVMMI_fromMets(subset(vmmiMetEx,select=-ECO_X_WETGRP))
 check.3 <- calcVMMI_fromMets(subset(vmmiMetEx,select=c('UID','FQAI_ALL'
                           ,'N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')))
 }
-\author{
-Karen Blocksom  \email{blocksom.karen@epa.gov}
-}
 \references{
 US Environmental Protection Agency. 2016. National
 Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006.
 US Environmental Protection Agency, Washington, DC.
 }
-
+\author{
+Karen Blocksom  \email{blocksom.karen@epa.gov}
+}

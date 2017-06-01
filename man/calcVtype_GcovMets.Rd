@@ -10,8 +10,7 @@ calcVtype_GcovMets(indf, sampID = "UID")
 \arguments{
 \item{indf}{A data frame containing the following variables:
 \itemize{
-\item sampID - A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+\item sampID - Variables identified in the sampID argument
 
 \item PLOT: Sample plot from which data were collected
 
@@ -32,6 +31,9 @@ calculating tree metrics: 'SANDT_CLASS','SUBMERGED_AQ',
 'EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK','WD_FINE',
 'WD_COARSE','TOTAL_LITTER'. Additional parameters or variables
 are ignored.}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Either a character string containing an error message when metric
@@ -62,12 +64,11 @@ exOut <- calcVtype_GcovMets(Vtype_GrCovEx)
 str(exOut)
 head(exOut)
 }
-\author{
-Karen Blocksom \email{blocksom.karen@epa.gov}
-}
 \references{
 US Environmental Protection Agency. 2016. National
 Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006.
 US Environmental Protection Agency, Washington, DC.
 }
-
+\author{
+Karen Blocksom \email{blocksom.karen@epa.gov}
+}

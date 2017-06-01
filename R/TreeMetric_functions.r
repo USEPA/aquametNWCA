@@ -5,8 +5,7 @@
 #' calcTreeMetrics().
 #' @param dfIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' \item sampID - Variable(s) identified in sampID argument
 #'
 #' \item PLOT: Sample plot from which data were collected
 #'
@@ -14,6 +13,8 @@
 #'
 #' \item RESULT: measured value
 #' }
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' The following parameters are used in
 #' calculating tree metrics: 'XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG',
 #' 'JR_SNAG','THICK_SNAG','XTHICK_SNAG','XXTHICK_SNAG'.
@@ -108,8 +109,7 @@ calcSnagMets <- function(dfIn,sampID='UID'){
 #' using tree data, and is called by function calcTreeMetrics()
 #' @param dfIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' \item sampID - Variable(s) identified in sampID argument
 #'
 #' \item PLOT: Sample plot from which data were collected
 #'
@@ -121,6 +121,8 @@ calcSnagMets <- function(dfIn,sampID='UID'){
 #' 'XXTHIN_TREE','XTHIN_TREE','THIN_TREE', 'JR_TREE','THICK_TREE',
 #' 'XTHICK_TREE','XXTHICK_TREE'. Additional parameters or variables
 #' are ignored.
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @details If any of the parameters are missing, they are assumed to be
 #' zeros, and metric values associated with any metrics that cannot be
 #' calculated due to missing parameters are set to 0.
@@ -206,8 +208,7 @@ calcTreeCntMets <- function(dfIn,sampID='UID'){
 #' using tree data, and is called by function calcTreeMetrics().
 #' @param dfIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' \item sampID - Variable(s) identified in sampID argument
 #'
 #' \item PAGE: Page from field form
 #'
@@ -223,6 +224,8 @@ calcTreeCntMets <- function(dfIn,sampID='UID'){
 #' calculating tree metrics: 'VSMALL_TREE','SMALL_TREE','LMED_TREE'
 #' ,'HMED_TREE','TALL_TREE','VTALL_TREE'.  Additional parameters
 #' or variables are ignored.
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @details If any of the parameters are missing, they are assumed
 #' to be zeros, and metric values associated with any metrics that
 #' cannot be calculated due to missing parameters are set to 0.

@@ -8,4 +8,3 @@
 \description{
 aquametNWCA: A package to calculate metrics used in NWCA 2011
 }
-

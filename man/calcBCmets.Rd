@@ -7,14 +7,14 @@
 calcBCmets(indf, sampID = "UID")
 }
 \arguments{
-\item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
-
-\item{Data}{frame containing cover data summarized by UID, PLOT, and
+\item{indf}{Data frame containing cover data summarized by UID, PLOT, and
 DISTINCT at the species level. Must also contain at least one of the
 following: USDA_NAME (taxon name) or SPECIES_NAME_ID (numeric code
 for taxon). If NWCA_NATSTAT is included, a native species version is
 also calculated.}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Data frame containing UID, PARAMETER, and RESULT, with one
@@ -39,4 +39,3 @@ This function calculates metrics based on all species, and on
 native species if the appropriate variable is included in the
 input data frame.
 }
-

@@ -9,8 +9,7 @@
 #' input data frame.
 #' @param indf A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' \item sampID - Variables identified in the sampID argument
 #'
 #' \item PLOT: Sample plot from which data were collected
 #'
@@ -31,6 +30,8 @@
 #' 'EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK','WD_FINE',
 #' 'WD_COARSE','TOTAL_LITTER'. Additional parameters or variables
 #' are ignored.
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples
 #' @details If any of the parameters are missing, they are assumed to be
 #' zeros (if numeric), and metric values associated with any metrics that
 #' cannot be calculated due to missing parameters are set to a standardized

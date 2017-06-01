@@ -94,12 +94,11 @@ exOut <- calcVascPlantMets(VascPlantEx,taxaNWCA,ccNatNWCA,wisNWCA)
 str(exOut)
 head(exOut)
 }
-\author{
-Karen Blocksom \email{blocksom.karen@epa.gov}
-}
 \references{
 US Environmental Protection Agency. 2016. National Wetland
 Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 Environmental Protection Agency, Washington, DC.
 }
-
+\author{
+Karen Blocksom \email{blocksom.karen@epa.gov}
+}
