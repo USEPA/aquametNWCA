@@ -7,7 +7,7 @@
 #' plot at a site. It also assumes a single column is used to identify
 #' each unique sample. Missing values and blanks should be removed from the
 #' input data frame.
-#' @param indf A data frame containing the following variables:
+#' @param dataIn A data frame containing the following variables:
 #' \itemize{
 #' \item sampID - Variables identified in the sampID argument
 #'
@@ -53,21 +53,21 @@
 #' str(exOut)
 #' head(exOut)
 
-calcVtype_GcovMets <- function(indf,sampID='UID'){
+calcVtype_GcovMets <- function(dataIn,sampID='UID'){
 
   datNames <- c('UID','PLOT','PARAMETER','RESULT')
-  if(any(datNames %nin% names(indf))){
+  if(any(datNames %nin% names(dataIn))){
     print(paste("Missing key variables! Should be ",paste(sampID,collapse=', '),"PLOT, PARAMETER, and RESULT.",sep=''))
     return(NULL)
   }
 
-  nplots <- ddply(subset(indf,PARAMETER!='SANDT_CLASS'),sampID,summarise,NPLOTS=length(unique(PLOT)))
+  nplots <- ddply(subset(dataIn,PARAMETER!='SANDT_CLASS'),sampID,summarise,NPLOTS=length(unique(PLOT)))
 
-  sandtOut <- calcSandTMets(indf,nplots,sampID)
-  vstratOut <- calcVascStratMets(indf,nplots,sampID)
-  nonvascOut <- calcNonvascMets(indf,nplots,sampID)
-  wcovOut <- calcWcovMets(indf,nplots,sampID)
-  bgLittOut <- calcBareGround_LitterMets(indf,nplots,sampID)
+  sandtOut <- calcSandTMets(dataIn,nplots,sampID)
+  vstratOut <- calcVascStratMets(dataIn,nplots,sampID)
+  nonvascOut <- calcNonvascMets(dataIn,nplots,sampID)
+  wcovOut <- calcWcovMets(dataIn,nplots,sampID)
+  bgLittOut <- calcBareGround_LitterMets(dataIn,nplots,sampID)
 
 
   vgOut <- rbind(sandtOut,vstratOut,nonvascOut,wcovOut,bgLittOut)

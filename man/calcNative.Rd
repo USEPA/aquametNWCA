@@ -4,10 +4,10 @@
 \alias{calcNative}
 \title{Calculate metrics based only on native status}
 \usage{
-calcNative(indf, sampID = "UID")
+calcNative(vascIn, sampID = "UID")
 }
 \arguments{
-\item{indf}{Data frame containing cover data summarized by
+\item{vascIn}{Data frame containing cover data summarized by
 UID and TAXON, with the following fields:
 \itemize{
     \item sampID: Variable(s) identified in sampID argument

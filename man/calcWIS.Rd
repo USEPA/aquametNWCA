@@ -4,10 +4,10 @@
 \alias{calcWIS}
 \title{Calculate Wetland Indicator Status metrics}
 \usage{
-calcWIS(indf, sampID = "UID")
+calcWIS(vascIn, sampID = "UID")
 }
 \arguments{
-\item{indf}{Data frame containing cover data summarized by
+\item{vascIn}{Data frame containing cover data summarized by
 UID and TAXON, with the following fields:
 \itemize{
     \item sampID: Variable(s) identified in sampID argument

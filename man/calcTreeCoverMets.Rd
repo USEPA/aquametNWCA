@@ -4,10 +4,10 @@
 \alias{calcTreeCoverMets}
 \title{Calculate tree cover metrics}
 \usage{
-calcTreeCoverMets(dfIn, sampID = "UID")
+calcTreeCoverMets(treeIn, sampID = "UID")
 }
 \arguments{
-\item{dfIn}{A data frame containing the following variables:
+\item{treeIn}{A data frame containing the following variables:
 \itemize{
 \item sampID - Variable(s) identified in sampID argument
 

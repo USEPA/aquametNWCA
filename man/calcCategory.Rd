@@ -4,10 +4,10 @@
 \alias{calcCategory}
 \title{Calculate plant category metrics}
 \usage{
-calcCategory(indf, sampID = "UID")
+calcCategory(vascIn, sampID = "UID")
 }
 \arguments{
-\item{indf}{Data frame containing cover data summarized by
+\item{vascIn}{Data frame containing cover data summarized by
 UID and TAXON, with the following fields:
 \itemize{
     \item sampID: Variable(s) identified in sampID argument

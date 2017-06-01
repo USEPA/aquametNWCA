@@ -4,7 +4,7 @@
 #' It assumes input data are organized so that each row represents the cover
 #' for a single taxon within a single plot at a site. It also assumes a single
 #' column is used to identify each unique sample.
-#' @param dfIn A data frame with the following variables (at a minimum):
+#' @param vascIn A data frame with the following variables (at a minimum):
 #' \itemize{
 #' \item sampID: Variable(s) identified in sampID argument, 'UID' by default
 #' 
@@ -20,7 +20,7 @@
 #' \item COVER: value from 0 to 100 indicating relative cover of taxon within plot).
 #' Data should already be summed by UID, PLOT, and USDA_NAME.
 #' }
-#' @param taxaIn A data frame containing taxonomy of all taxa found in dfIn,
+#' @param taxaIn A data frame containing taxonomy of all taxa found in vascIn,
 #' with the following variables at a minimum:
 #' \itemize{
 #' \item USDA_NAME: USDA accepted name of taxon in sample
@@ -38,7 +38,7 @@
 #' If this data frame is not supplied, the data set taxaNWCA included
 #' in the package is used.
 #' @param taxaCC A data frame containing Coefficient of Conservatism and native
-#' status as assigned for NWCA for all taxa in dfIn, with the following
+#' status as assigned for NWCA for all taxa in vascIn, with the following
 #' variables, at a minimum:
 #' \itemize{
 #' \item USDA_NAME: USDA accepted name
@@ -84,8 +84,8 @@
 #'
 #' str(exOut)
 #' head(exOut)
-calcVascPlantMets <- function(dfIn,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID'){
-  prepDat <- prepareData(dfIn,sampID,taxaIn,taxaCC,taxaWIS)
+calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID'){
+  prepDat <- prepareData(vascIn,sampID,taxaIn,taxaCC,taxaWIS)
 
   print("Initial datasets prepared for metric calculation.")
 

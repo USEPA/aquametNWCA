@@ -4,11 +4,11 @@
 \alias{prepareData}
 \title{Prepare data for calculating metrics}
 \usage{
-prepareData(indf, sampID = "UID", inTaxa = taxaNWCA, inNatCC = ccNatNWCA,
-  inWIS = wisNWCA)
+prepareData(vascIn, sampID = "UID", inTaxa = taxaNWCA,
+  inNatCC = ccNatNWCA, inWIS = wisNWCA)
 }
 \arguments{
-\item{indf}{Data frame containing cover data summarized at
+\item{vascIn}{Data frame containing cover data summarized at
 the sampID variables, PLOT, and taxon value, with the following variable
 names:
  \itemize{
@@ -27,7 +27,7 @@ for plots in which a taxon does not occur.
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples}
 
-\item{inTaxa}{Data frame with all taxa in indf, with variables:
+\item{inTaxa}{Data frame with all taxa in vascIn, with variables:
 \itemize{
 \item USDA_NAME: Taxon name, based on USDA PLANTS names,
 supplemented with NWCA names, if necessary.

@@ -4,10 +4,10 @@
 \alias{calcSnagMets}
 \title{Calculate snag metrics}
 \usage{
-calcSnagMets(dfIn, sampID = "UID")
+calcSnagMets(treeIn, sampID = "UID")
 }
 \arguments{
-\item{dfIn}{A data frame containing the following variables:
+\item{treeIn}{A data frame containing the following variables:
 \itemize{
 \item sampID - Variable(s) identified in sampID argument
 

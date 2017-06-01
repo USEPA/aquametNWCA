@@ -4,7 +4,7 @@
 \alias{createDFs}
 \title{Create data frames for function input}
 \usage{
-createDFs(sampID = "UID", tvar, indf, taxa)
+createDFs(sampID = "UID", tvar, vascIn, taxa)
 }
 \arguments{
 \item{sampID}{A character vector containing the name(s) of
@@ -13,7 +13,7 @@ variable(s) necessary to identify unique samples}
 \item{tvar}{String with the level of taxonomy
 ('USDA_NAME','GENUS','FAMILY')}
 
-\item{indf}{Data frame with vegetation cover data, having
+\item{vascIn}{Data frame with vegetation cover data, having
 the following variables:
 \itemize{
 

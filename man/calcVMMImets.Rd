@@ -4,10 +4,10 @@
 \alias{calcVMMImets}
 \title{Calculate only metrics used in NWCA 2011 VMMI}
 \usage{
-calcVMMImets(indf, sampID = "UID")
+calcVMMImets(vascIn, sampID = "UID")
 }
 \arguments{
-\item{indf}{Data frame containing cover data summarized at the UID
+\item{vascIn}{Data frame containing cover data summarized at the UID
 and TAXON level:
 \itemize{
  \item sampID: Variable(s) identified in sampID argument

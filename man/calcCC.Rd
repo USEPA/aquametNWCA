@@ -4,10 +4,10 @@
 \alias{calcCC}
 \title{Calculate Wetland Indicator Status metrics}
 \usage{
-calcCC(indf, sampID = "UID")
+calcCC(vascIn, sampID = "UID")
 }
 \arguments{
-\item{indf}{Data frame containing cover data summarized by
+\item{vascIn}{Data frame containing cover data summarized by
 UID and TAXON, with the following fields:
 \itemize{
     \item sampID: Variable(s) identified in sampID argument

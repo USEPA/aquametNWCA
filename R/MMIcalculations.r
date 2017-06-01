@@ -5,7 +5,7 @@
 #' variable(s) describing site ecoregion and wetland group type
 #' according to NWCA 2011 are included in the input data frame,
 #' condition class (Good/Fair/Poor) will also be assigned.
-#' @param indf Data frame containing, at a minimum:
+#' @param metsIn Data frame containing, at a minimum:
 #' \itemize{
 #' \item sampID - A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
@@ -77,27 +77,27 @@
 #'                           ,'N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')))
 
 
-calcVMMI_fromMets <- function(indf,sampID='UID'){
+calcVMMI_fromMets <- function(metsIn,sampID='UID'){
   # Look for UID, metrics in input data frame
   necVars <- c(sampID,'FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')
-  if(sum(necVars %in% names(indf))<5){
-    msgVars <- necVars[necVars %nin% names(indf)]
+  if(sum(necVars %in% names(metsIn))<5){
+    msgVars <- necVars[necVars %nin% names(metsIn)]
     print(paste(paste(msgVars,collapse=', '),"not found in input data frame. Cannot calculate VMMI without them.",sep=' '))
   }
 
   # Look for NWCA_WETGRP - cannot assign condition without it
-  if(any(c('NWCA_ECO4','NWCA_WET_GRP') %nin% names(indf)) & 'ECO_X_WETGRP' %nin% names(indf)){
+  if(any(c('NWCA_ECO4','NWCA_WET_GRP') %nin% names(metsIn)) & 'ECO_X_WETGRP' %nin% names(metsIn)){
     print("Warning: Must include variables NWCA_WET_GRP and NWCA_ECO4 OR ECO_X_WETGRP to determine condition class. This variable is missing, and condition class will not be assigned, but VMMI will be calculated.")
   }
 
   # Create ECO_X_WETGRP if not present but NWCA_ECO4 and NWCA_WETGRP are both provided
-  if('ECO_X_WETGRP' %nin% names(indf) & sum(c('NWCA_ECO4','NWCA_WET_GRP') %in% names(indf))==2){
-    indf <- plyr::mutate(indf,ECO_X_WETGRP=ifelse(NWCA_WET_GRP %in% c('EH','EW'),paste('ALL',NWCA_WET_GRP,sep='-')
+  if('ECO_X_WETGRP' %nin% names(metsIn) & sum(c('NWCA_ECO4','NWCA_WET_GRP') %in% names(metsIn))==2){
+    metsIn <- plyr::mutate(metsIn,ECO_X_WETGRP=ifelse(NWCA_WET_GRP %in% c('EH','EW'),paste('ALL',NWCA_WET_GRP,sep='-')
                                                     ,paste(NWCA_ECO4,NWCA_WET_GRP,sep='-')))
   }
 
   # Identify key variables in input dataset
-  if('ECO_X_WETGRP' %in% names(indf)){
+  if('ECO_X_WETGRP' %in% names(metsIn)){
     keyVars <- c(sampID,'ECO_X_WETGRP')
   }else{
     keyVars <- sampID
@@ -105,16 +105,16 @@ calcVMMI_fromMets <- function(indf,sampID='UID'){
 
   # Make sure all metrics are in numeric format for scoring
   necMets <- c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')
-  indf[,necMets] <- lapply(indf[,necMets],as.numeric)
+  metsIn[,necMets] <- lapply(metsIn[,necMets],as.numeric)
 
-  indf.long <- reshape2::melt(indf,id.vars=keyVars,variable.name='PARAMETER',value.name='RESULT'
+  metsIn.long <- reshape2::melt(metsIn,id.vars=keyVars,variable.name='PARAMETER',value.name='RESULT'
                               ,measure.vars=c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'))
 
   # Set metric scoring thresholds
   metTholds <- data.frame(PARAMETER=c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'),CEILING=c(38.59,40,100,100)
                           ,FLOOR=c(6.94,0,44.34,0.06),DIRECTION=c('POS','NEG','POS','POS'),stringsAsFactors=FALSE)
 
-  vMet <- merge(indf.long,metTholds,by='PARAMETER')
+  vMet <- merge(metsIn.long,metTholds,by='PARAMETER')
 
   ## Now apply the function that calculates metric scores by interpolating values
   scoreMet<-function(dir,x,floor,ceiling){

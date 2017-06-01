@@ -4,10 +4,10 @@
 \alias{calcBCmets}
 \title{Calculate Bray-Curtis metrics}
 \usage{
-calcBCmets(indf, sampID = "UID")
+calcBCmets(vascIn, sampID = "UID")
 }
 \arguments{
-\item{indf}{Data frame containing cover data summarized by UID, PLOT, and
+\item{vascIn}{Data frame containing cover data summarized by UID, PLOT, and
 DISTINCT at the species level. Must also contain at least one of the
 following: USDA_NAME (taxon name) or SPECIES_NAME_ID (numeric code
 for taxon). If NWCA_NATSTAT is included, a native species version is

@@ -4,57 +4,56 @@
 \alias{calcVascPlantMets}
 \title{Calculate NWCA 2011 vascular plant metrics based on form V-2}
 \usage{
-calcVascPlantMets(dfIn, taxaIn = taxaNWCA, taxaCC = ccNatNWCA,
+calcVascPlantMets(vascIn, taxaIn = taxaNWCA, taxaCC = ccNatNWCA,
   taxaWIS = wisNWCA, sampID = "UID")
 }
 \arguments{
-\item{dfIn}{A data frame with the following variables (at a minimum):
+\item{vascIn}{A data frame with the following variables (at a minimum):
 \itemize{
-\item sampID - A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+\item sampID: Variable(s) identified in sampID argument, 'UID' by default
 
-\item PLOT (numeric variable)
+\item PLOT: plot number
 
-\item STATE (state where sample collected)
+\item STATE: state where sample collected
 
-\item USAC_REGION (U.S. Army Corps of Engineers region of site where sample
-collected)
+\item USAC_REGION: U.S. Army Corps of Engineers region of site where sample
+collected
 
-\item USDA_NAME (USDA accepted name of taxon in sample)
+\item USDA_NAME: USDA accepted name of taxon in sample
 
-\item COVER (value from 0 to 100 indicating relative cover of taxon within plot).
+\item COVER: value from 0 to 100 indicating relative cover of taxon within plot).
 Data should already be summed by UID, PLOT, and USDA_NAME.
 }}
 
-\item{taxaIn}{A data frame containing taxonomy of all taxa found in dfIn,
+\item{taxaIn}{A data frame containing taxonomy of all taxa found in vascIn,
 with the following variables at a minimum:
 \itemize{
-\item USDA_NAME (USDA accepted name of taxon in sample)
+\item USDA_NAME: USDA accepted name of taxon in sample
 
-\item FAMILY (family name of taxon)
+\item FAMILY: family name of taxon
 
-\item GENUS (genus name of taxon)
+\item GENUS: genus name of taxon
 
-\item CATEGORY (USDA PLANTS category)
+\item CATEGORY: USDA PLANTS category
 
-\item GROWTH_HABIT (growth habit as designated in USDA PLANTS)
+\item GROWTH_HABIT: growth habit as designated in USDA PLANTS
 
-\item DURATION (duration as designated by USDA PLANTS).
+\item DURATION: duration as designated by USDA PLANTS
 }
 If this data frame is not supplied, the data set taxaNWCA included
 in the package is used.}
 
 \item{taxaCC}{A data frame containing Coefficient of Conservatism and native
-status as assigned for NWCA for all taxa in dfIn, with the following
+status as assigned for NWCA for all taxa in vascIn, with the following
 variables, at a minimum:
 \itemize{
-\item USDA_NAME (USDA accepted name)
+\item USDA_NAME: USDA accepted name
 
-\item GEOG_ID (state to which value applies)
+\item GEOG_ID: state to which value applies
 
-\item NWCA_CC (state- and taxon-specific Coefficient of Conservatism)
+\item NWCA_CC: state- and taxon-specific Coefficient of Conservatism
 
-\item NWCA_NATSTAT (state- and taxon-specific native status)
+\item NWCA_NATSTAT: state- and taxon-specific native status
 }
 If this data frame is not supplied, the data set ccNWCA included in
 the package is used.}
@@ -63,14 +62,17 @@ the package is used.}
 by USAC and reconciled by USDA PLANTS, with the following variables, at a
 minimum:
 \itemize{
-\item USDA_NAME (USDA accepted name)
+\item USDA_NAME: USDA accepted name
 
-\item GEOG_ID (USAC region to which value applies)
+\item GEOG_ID: USAC region to which value applies
 
-\item WIS (Wetland Indicator Status)
+\item WIS: Wetland Indicator Status
 }
 If this data frame is not supplied, the data set wisNWCA included in the
 package is used.}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples}
 }
 \value{
 Either a character string containing an error message when metric

@@ -3,7 +3,7 @@
 #' @description This function calculates all of the snag
 #' metrics from tree data, and is called by function
 #' calcTreeMetrics().
-#' @param dfIn A data frame containing the following variables:
+#' @param treeIn A data frame containing the following variables:
 #' \itemize{
 #' \item sampID - Variable(s) identified in sampID argument
 #'
@@ -39,19 +39,19 @@
 #'
 #' head(snagEx)
 #' unique(snagEx$PARAMETER)
-calcSnagMets <- function(dfIn,sampID='UID'){
+calcSnagMets <- function(treeIn,sampID='UID'){
   ### SNAG METRICS #########################################################################################
   # Create vector of all samples in dataset
   for(i in 1:length(sampID)){
-    if(i==1) dfIn$SAMPID <- dfIn[,sampID[i]]
-    else dfIn$SAMPID <- paste(dfIn$SAMPID,dfIn[,sampID[i]],sep='.')
+    if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
+    else treeIn$SAMPID <- paste(treeIn$SAMPID,treeIn[,sampID[i]],sep='.')
   }
-  samples <- unique(subset(dfIn,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(treeIn,select=c(sampID,'SAMPID')))
   
-  allUIDs <- data.frame(SAMPID=unique(dfIn$SAMPID),stringsAsFactors=F)
+  allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID),stringsAsFactors=F)
 
-  dfIn <- plyr::ddply(dfIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
-  snags <- subset(dfIn,PARAMETER %in% c('XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG','JR_SNAG','THICK_SNAG','XTHICK_SNAG','XXTHICK_SNAG'))
+  treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
+  snags <- subset(treeIn,PARAMETER %in% c('XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG','JR_SNAG','THICK_SNAG','XTHICK_SNAG','XXTHICK_SNAG'))
   if(nrow(snags)>0){
     snagsOut <- plyr::ddply(snags,c('SAMPID','PARAMETER'),summarise,TOTN=sum(as.numeric(RESULT)),XN=round(TOTN/unique(NPLOTS),2))
     snagsOut1 <- reshape2::melt(snagsOut,id.vars=c('SAMPID','PARAMETER'),variable.name='METRIC',value.name='RESULT')
@@ -81,7 +81,7 @@ calcSnagMets <- function(dfIn,sampID='UID'){
     names(empty_snags) <- c("TOTN_SNAGS","XN_SNAGS","TOTN_JR_SNAG","TOTN_THICK_SNAG","TOTN_THIN_SNAG","TOTN_XTHICK_SNAG","TOTN_XTHIN_SNAG"
                             ,"TOTN_XXTHIN_SNAG","XN_JR_SNAG","XN_THICK_SNAG","XN_THIN_SNAG","XN_XTHICK_SNAG","XN_XTHIN_SNAG","XN_XXTHIN_SNAG")
 
-    allSnagsOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(dfIn$SAMPID)),stringsAsFactors=F),empty_snags)
+    allSnagsOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_snags)
 
     allSnagsOut1 <- subset(allSnagOut,!is.na(SAMPID))
 
@@ -107,7 +107,7 @@ calcSnagMets <- function(dfIn,sampID='UID'){
 #' @title Calculate tree count metrics
 #' @description This function calculates tree count metrics
 #' using tree data, and is called by function calcTreeMetrics()
-#' @param dfIn A data frame containing the following variables:
+#' @param treeIn A data frame containing the following variables:
 #' \itemize{
 #' \item sampID - Variable(s) identified in sampID argument
 #'
@@ -143,18 +143,18 @@ calcSnagMets <- function(dfIn,sampID='UID'){
 #'
 #' head(tcntEx)
 #' unique(tcntEx$PARAMETER)
-calcTreeCntMets <- function(dfIn,sampID='UID'){
+calcTreeCntMets <- function(treeIn,sampID='UID'){
   for(i in 1:length(sampID)){
-    if(i==1) dfIn$SAMPID <- dfIn[,sampID[i]]
-    else dfIn$SAMPID <- paste(dfIn$SAMPID,dfIn[,sampID[i]],sep='.')
+    if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
+    else treeIn$SAMPID <- paste(treeIn$SAMPID,treeIn[,sampID[i]],sep='.')
   }
-  samples <- unique(subset(dfIn,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(treeIn,select=c(sampID,'SAMPID')))
   
-  allUIDs <- data.frame(SAMPID=unique(dfIn$SAMPID),stringsAsFactors=F)
+  allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID),stringsAsFactors=F)
   
-  dfIn <- plyr::ddply(dfIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
+  treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
   ### TREE METRICS #########################################################################################
-  tcnts <- subset(dfIn,PARAMETER %in% c('XXTHIN_TREE','XTHIN_TREE','THIN_TREE','JR_TREE','THICK_TREE','XTHICK_TREE','XXTHICK_TREE'))
+  tcnts <- subset(treeIn,PARAMETER %in% c('XXTHIN_TREE','XTHIN_TREE','THIN_TREE','JR_TREE','THICK_TREE','XTHICK_TREE','XXTHICK_TREE'))
   if(nrow(tcnts)>0){
     tcntsOut <- plyr::ddply(tcnts,c('SAMPID','PARAMETER'),summarise,TOTN=sum(as.numeric(RESULT)),XN=round(TOTN/unique(NPLOTS),2))
     tcntsOut1 <- reshape2::melt(tcntsOut,id.vars=c('SAMPID','PARAMETER'),variable.name='METRIC',value.name='RESULT')
@@ -182,7 +182,7 @@ calcTreeCntMets <- function(dfIn,sampID='UID'){
     names(empty_trees) <- c("TOTN_TREES","XN_TREES","TOTN_JR_TREE","TOTN_THICK_TREE","TOTN_THIN_TREE","TOTN_XTHICK_TREE","TOTN_XTHIN_TREE"
                             ,"TOTN_XXTHICK_TREE","TOTN_XXTHIN_TREE","XN_JR_TREE","XN_THICK_TREE","XN_THIN_TREE","XN_XTHICK_TREE","XN_XTHIN_TREE"
                             ,"XN_XXTHICK_TREE","XN_XXTHIN_TREE")
-    allTreesOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(dfIn$SAMPID)),stringsAsFactors=F),empty_trees)
+    allTreesOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_trees)
 
     allTreesOut1 <- subset(allTreesOut,!is.na(SAMPID))
 
@@ -206,7 +206,7 @@ calcTreeCntMets <- function(dfIn,sampID='UID'){
 #' @title Calculate tree cover metrics
 #' @description This function calculates tree cover metrics
 #' using tree data, and is called by function calcTreeMetrics().
-#' @param dfIn A data frame containing the following variables:
+#' @param treeIn A data frame containing the following variables:
 #' \itemize{
 #' \item sampID - Variable(s) identified in sampID argument
 #'
@@ -246,20 +246,20 @@ calcTreeCntMets <- function(dfIn,sampID='UID'){
 #'
 #' head(tcvrEx)
 #' unique(tcvrEx$PARAMETER)
-calcTreeCoverMets <- function(dfIn,sampID='UID'){
+calcTreeCoverMets <- function(treeIn,sampID='UID'){
   for(i in 1:length(sampID)){
-    if(i==1) dfIn$SAMPID <- dfIn[,sampID[i]]
-    else dfIn$SAMPID <- paste(dfIn$SAMPID,dfIn[,sampID[i]],sep='.')
+    if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
+    else treeIn$SAMPID <- paste(treeIn$SAMPID,treeIn[,sampID[i]],sep='.')
   }
-  samples <- unique(subset(dfIn,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(treeIn,select=c(sampID,'SAMPID')))
   
-  allUIDs <- data.frame(SAMPID=unique(dfIn$SAMPID),stringsAsFactors=F)
+  allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID),stringsAsFactors=F)
   
-  dfIn <- plyr::ddply(dfIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
+  treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
   ##### TREE SPECIES METRICS ####################################################################################
-  tcvr <- subset(dfIn,PARAMETER %in% c('VSMALL_TREE','SMALL_TREE','LMED_TREE','HMED_TREE','TALL_TREE','VTALL_TREE'))
+  tcvr <- subset(treeIn,PARAMETER %in% c('VSMALL_TREE','SMALL_TREE','LMED_TREE','HMED_TREE','TALL_TREE','VTALL_TREE'))
   if(nrow(tcvr)>0){
-    tspp <- reshape2::dcast(subset(dfIn,PARAMETER=='TREE_SPECIES'),SAMPID+PAGE+LINE+PLOT~PARAMETER,value.var='RESULT')
+    tspp <- reshape2::dcast(subset(treeIn,PARAMETER=='TREE_SPECIES'),SAMPID+PAGE+LINE+PLOT~PARAMETER,value.var='RESULT')
 
     tcvr1 <- merge(tspp,tcvr,by=c('SAMPID','PLOT','PAGE','LINE'),all=TRUE)
     tcvr1 <- plyr::mutate(tcvr1,PARAM_ALT=car::Recode(PARAMETER,"c('VSMALL_TREE','SMALL_TREE')='TREE_GROUND';c('LMED_TREE','HMED_TREE')='TREE_MID';
@@ -296,7 +296,7 @@ calcTreeCoverMets <- function(dfIn,sampID='UID'){
     empty_tspp <- data.frame(t(rep(NA,13)),stringsAsFactors=F)
     names(empty_tspp) <- c("N_TREESPP","N_TALL_TREE","N_HMED_TREE","N_LMED_TREE","N_SMALL_TREE","N_VSMALL_TREE","N_VTALL_TREE","N_TREE_UPPER"
                            ,"N_TREE_MID","N_TREE_GROUND","PCTN_TREE_UPPER","PCTN_TREE_MID","PCTN_TREE_GROUND")
-    tsppOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(dfIn$SAMPID)),stringsAsFactors=F),empty_tspp)
+    tsppOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_tspp)
     tsppOut1 <- subset(tsppOut,!is.na(SAMPID))
     tsppOut2 <- reshape2::melt(tsppOut1,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
     tsppOut3 <- plyr::mutate(tsppOut2,METRIC=as.character(METRIC),RESULT=0)
@@ -343,7 +343,7 @@ calcTreeCoverMets <- function(dfIn,sampID='UID'){
                            ,"XCOV_HMED_TREE","XCOV_LMED_TREE","XCOV_SMALL_TREE","XCOV_VSMALL_TREE","XCOV_VTALL_TREE","IMP_TALL_TREE","IMP_HMED_TREE"
                            ,"IMP_LMED_TREE","IMP_SMALL_TREE","IMP_VSMALL_TREE","IMP_VTALL_TREE","FREQ_TREE_UPPER","FREQ_TREE_MID","FREQ_TREE_GROUND"
                            ,"XCOV_TREE_UPPER","XCOV_TREE_MID","XCOV_TREE_GROUND","IMP_TREE_UPPER","IMP_TREE_MID","IMP_TREE_GROUND")
-    tcvrOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(dfIn$SAMPID)),stringsAsFactors=F),empty_tcvr)
+    tcvrOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_tcvr)
     tcvrOut1 <- subset(tcvrOut,!is.na(SAMPID))
     tcvrOut2 <- reshape2::melt(tcvrOut1,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
     tcvrOut3 <- plyr::mutate(tcvrOut2,METRIC=as.character(METRIC),RESULT=0)

@@ -4,10 +4,10 @@
 \alias{calcDuration}
 \title{Calculate vascular plant duration metrics}
 \usage{
-calcDuration(indf, sampID = "UID")
+calcDuration(vascIn, sampID = "UID")
 }
 \arguments{
-\item{indf}{Data frame containing cover data summarized by
+\item{vascIn}{Data frame containing cover data summarized by
 sampID variables and TAXON, with the following fields:
  \itemize{
     \item sampID: Variable(s) in the argument sampID

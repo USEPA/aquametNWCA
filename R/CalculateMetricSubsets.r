@@ -5,7 +5,7 @@
 #' @title Calculate vascular plant duration metrics
 #' @details Both DURATION and NWCA_NATSTAT variables are recoded to fewer
 #' categories. Taxa with 'UND' as native status are excluded.
-#' @param indf   Data frame containing cover data summarized by
+#' @param vascIn   Data frame containing cover data summarized by
 #' sampID variables and TAXON, with the following fields:
 #'  \itemize{
 #'     \item sampID: Variable(s) in the argument sampID
@@ -56,10 +56,10 @@
 #'  head(durEx)
 #'  unique(durEx$PARAMETER)
 
-calcDuration <- function(indf,sampID='UID'){
+calcDuration <- function(vascIn,sampID='UID'){
  # First check for necessary variables
   necNames <- c(sampID,'TAXON','DURATION','XABCOV','TOTN','sXRCOV')
-  msgNames <- necNames[necNames %nin% names(indf)]
+  msgNames <- necNames[necNames %nin% names(vascIn)]
   if(length(msgNames)>0){
     print(paste("Missing key variables for metric calculation: ",paste(msgNames,collapse=','),
                 ". Try prepareData() function to create necessary input variables.",sep=''))
@@ -67,10 +67,10 @@ calcDuration <- function(indf,sampID='UID'){
   }
 
   # From DURATION, create DUR_ALT variable
-  indf.1 <- plyr::mutate(indf,DUR_ALT=car::recode(DURATION,"c('ANNUAL, BIENNIAL','BIENNIAL')='ANN_BIEN';
+  vascIn.1 <- plyr::mutate(vascIn,DUR_ALT=car::recode(DURATION,"c('ANNUAL, BIENNIAL','BIENNIAL')='ANN_BIEN';
                   c('ANNUAL, BIENNIAL, PERENNIAL','ANNUAL, PERENNIAL','PERENNIAL, ANNUAL', 'BIENNIAL, PERENNIAL')='ANN_PEREN'"))
 
-  durOut <- .calcTraits_MultCat(indf.1,'DUR_ALT',sampID)
+  durOut <- .calcTraits_MultCat(vascIn.1,'DUR_ALT',sampID)
   
   empty_base <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
   names(empty_base) <- c("N_ANN_BIEN","N_ANN_PEREN","N_ANNUAL","N_PERENNIAL", "PCTN_ANN_BIEN","PCTN_ANNUAL"
@@ -78,14 +78,14 @@ calcDuration <- function(indf,sampID='UID'){
                          ,"XABCOV_ANNUAL","XABCOV_PERENNIAL","XRCOV_ANN_BIEN","XRCOV_ANN_PEREN"
                          ,"XRCOV_ANNUAL","XRCOV_PERENNIAL")
 
-  if('NWCA_NATSTAT' %in% names(indf.1)){
+  if('NWCA_NATSTAT' %in% names(vascIn.1)){
     # Assign native status values to grouped categories
-    indf.2 <- plyr::mutate(indf.1,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
+    vascIn.2 <- plyr::mutate(vascIn.1,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
                               ,NATSTAT_ALT=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT)
                               ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
 
 
-    indf.2 <- plyr::mutate(indf.2,ANNUAL_NAT=ifelse(DUR_ALT=='ANNUAL' & NATSTAT_ALT=='NAT',1,0)
+    vascIn.2 <- plyr::mutate(vascIn.2,ANNUAL_NAT=ifelse(DUR_ALT=='ANNUAL' & NATSTAT_ALT=='NAT',1,0)
                                  ,ANNUAL_AC=ifelse(DUR_ALT=='ANNUAL' & AC==1,1,0)
                                  ,ANN_BIEN_NAT=ifelse(DUR_ALT=='ANN_BIEN' & NATSTAT_ALT=='NAT',1,0)
                                  ,ANN_BIEN_AC=ifelse(DUR_ALT=='ANN_BIEN' & AC==1,1,0)
@@ -97,7 +97,7 @@ calcDuration <- function(indf,sampID='UID'){
     
       )
 
-    multTraits <- .combTraits(indf.2,c('ANNUAL_NAT','ANNUAL_AC','ANN_BIEN_NAT','ANN_BIEN_AC','ANN_PEREN_NAT','ANN_PEREN_AC','PERENNIAL_NAT'
+    multTraits <- .combTraits(vascIn.2,c('ANNUAL_NAT','ANNUAL_AC','ANN_BIEN_NAT','ANN_BIEN_AC','ANN_PEREN_NAT','ANN_PEREN_AC','PERENNIAL_NAT'
                                           ,'PERENNIAL_AC'),sampID)
     durOut <- rbind(durOut,multTraits)
     empty_base.nat <- data.frame(t(rep(NA,32)),stringsAsFactors=F)
@@ -126,7 +126,7 @@ calcDuration <- function(indf,sampID='UID'){
 #' in input data frame.
 #' @details Both GROWTH_HABIT and NWCA_NATSTAT variables are recoded to fewer
 #' categories. Taxa with 'UND' as native status are excluded.
-#' @param indf   Data frame containing cover data summarized by
+#' @param vascIn   Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
 #'     \item sampID: Variable(s) identified in sampID argument
@@ -178,17 +178,17 @@ calcDuration <- function(indf,sampID='UID'){
 #' head(ghEx)
 #' unique(ghEx$PARAMETER)
 
-calcGrowthHabit <- function(indf,sampID='UID'){
+calcGrowthHabit <- function(vascIn,sampID='UID'){
   # First check for necessary variables
   necNames <- c(sampID,'TAXON','GROWTH_HABIT','XABCOV','TOTN','sXRCOV')
-  msgNames <- necNames[necNames %nin% names(indf)]
+  msgNames <- necNames[necNames %nin% names(vascIn)]
   if(length(msgNames)>0){
     print(paste("Missing key variables for metric calculation: ",paste(msgNames,collapse=','),
                 ". Try prepareData() function to create necessary input variables.",sep=''))
     return(NULL)
   }
 
-  indf.1 <- plyr::mutate(indf,GRH_ALT=car::recode(GROWTH_HABIT,"c('FORB/HERB','FORB/HERB, SHRUB','FORB/HERB, SHRUB, SUBSHRUB'
+  vascIn.1 <- plyr::mutate(vascIn,GRH_ALT=car::recode(GROWTH_HABIT,"c('FORB/HERB','FORB/HERB, SHRUB','FORB/HERB, SHRUB, SUBSHRUB'
                           ,'FORB/HERB, SUBSHRUB')='FORB';c('SUBSHRUB, FORB/HERB','SUBSHRUB, SHRUB, FORB/HERB')='SSHRUB_FORB'
                           ;c('SUBSHRUB','SUBSHRUB, SHRUB','SHRUB, SUBSHRUB','SUBSHRUB, SHRUB, TREE')='SSHRUB_SHRUB'
                           ;c('SHRUB','SHRUB, TREE','TREE, SUBSHRUB, SHRUB','SHRUB, SUBSHRUB, TREE')='SHRUB'
@@ -201,16 +201,16 @@ calcGrowthHabit <- function(indf,sampID='UID'){
                            ,SHRUB_COMB=ifelse(GRH_ALT %in% c('SSHRUB_SHRUB','SSHURB_FORB','SHRUB'),1,0)
                            ,HERB=ifelse(GRH_ALT %in% c('GRAMINOID','FORB'),1,0))
 
-  sppGRH <- .calcTraits_MultCat(indf.1,'GRH_ALT',sampID)
-  sppGRH.1 <- .combTraits(indf.1,c('TREE_COMB','SHRUB_COMB','HERB'),sampID)
+  sppGRH <- .calcTraits_MultCat(vascIn.1,'GRH_ALT',sampID)
+  sppGRH.1 <- .combTraits(vascIn.1,c('TREE_COMB','SHRUB_COMB','HERB'),sampID)
   grhOut <- rbind(sppGRH,sppGRH.1)
 
-  if('NWCA_NATSTAT' %in% names(indf.1)){
-    indf.2 <- plyr::mutate(indf.1,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
+  if('NWCA_NATSTAT' %in% names(vascIn.1)){
+    vascIn.2 <- plyr::mutate(vascIn.1,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
                               ,NATSTAT_ALT=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT)
                               ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
 
-    indf.2 <- plyr::mutate(indf.2,GRAMINOID_AC=ifelse(GRH_ALT=='GRAMINOID' & AC==1,1,0)
+    vascIn.2 <- plyr::mutate(vascIn.2,GRAMINOID_AC=ifelse(GRH_ALT=='GRAMINOID' & AC==1,1,0)
                          ,GRAMINOID_NAT=ifelse(GRH_ALT=='GRAMINOID' & NATSTAT_ALT=='NAT',1,0)
                          ,FORB_AC=ifelse(GRH_ALT=='FORB' & AC==1,1,0),FORB_NAT=ifelse(GRH_ALT=='FORB' & NATSTAT_ALT=='NAT',1,0)
                          ,HERB_AC=ifelse(HERB==1 & AC==1,1,0),HERB_NAT=ifelse(HERB==1 & NATSTAT_ALT=='NAT',1,0)
@@ -221,7 +221,7 @@ calcGrowthHabit <- function(indf,sampID='UID'){
                          ,VINE_SHRUB_NAT=ifelse(GRH_ALT=='VINE_SHRUB' & NATSTAT_ALT=='NAT',1,0)
       )
 
-    multTraits <- .combTraits(indf.2,c('GRAMINOID_AC','GRAMINOID_NAT','FORB_AC','FORB_NAT','HERB_AC','HERB_NAT','SHRUB_COMB_AC','SHRUB_COMB_NAT'
+    multTraits <- .combTraits(vascIn.2,c('GRAMINOID_AC','GRAMINOID_NAT','FORB_AC','FORB_NAT','HERB_AC','HERB_NAT','SHRUB_COMB_AC','SHRUB_COMB_NAT'
                                         ,'TREE_COMB_AC','TREE_COMB_NAT','VINE_AC','VINE_NAT','VINE_SHRUB_AC','VINE_SHRUB_NAT')
                               ,sampID)
     grhOut <- rbind(grhOut,multTraits)
@@ -239,7 +239,7 @@ calcGrowthHabit <- function(indf,sampID='UID'){
 #' is included in the input data frame.
 #' @details Both CATEGORY and NWCA_NATSTAT variables are recoded to fewer
 #' categories. Taxa with 'UND' as native status are excluded.
-#' @param indf   Data frame containing cover data summarized by
+#' @param vascIn   Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
 #'     \item sampID: Variable(s) identified in sampID argument
@@ -289,24 +289,24 @@ calcGrowthHabit <- function(indf,sampID='UID'){
 #' head(catEx)
 #' unique(catEx$PARAMETER)
 
-calcCategory <- function(indf,sampID='UID'){
+calcCategory <- function(vascIn,sampID='UID'){
   # First check for necessary variables
   necNames <- c(sampID,'TAXON','CATEGORY','XABCOV','TOTN','sXRCOV')
-  msgNames <- necNames[necNames %nin% names(indf)]
+  msgNames <- necNames[necNames %nin% names(vascIn)]
   if(length(msgNames)>0){
     print(paste("Missing key variables for metric calculation: ",paste(msgNames,collapse=','),
                 ". Try prepareData() function to create necessary input variables.",sep=''))
     return(NULL)
   }
 
-  indf.1 <- subset(indf,!is.na(CATEGORY))
-  catOut <- .calcTraits_MultCat(indf.1,'CATEGORY',sampID)
+  vascIn.1 <- subset(vascIn,!is.na(CATEGORY))
+  catOut <- .calcTraits_MultCat(vascIn.1,'CATEGORY',sampID)
 
-  if('NWCA_NATSTAT' %in% names(indf)){
-    indf.2 <- plyr::mutate(indf.1,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
+  if('NWCA_NATSTAT' %in% names(vascIn)){
+    vascIn.2 <- plyr::mutate(vascIn.1,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
                            ,NATSTAT_ALT=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT)
                            ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
-    indf.2 <- plyr::mutate(indf.2,DICOTS_NAT=ifelse(CATEGORY=='DICOT' & NATSTAT_ALT=='NAT',1,0)
+    vascIn.2 <- plyr::mutate(vascIn.2,DICOTS_NAT=ifelse(CATEGORY=='DICOT' & NATSTAT_ALT=='NAT',1,0)
                                ,DICOTS_ALIEN=ifelse(CATEGORY=='DICOT' & NATSTAT_ALT=='ALIEN',1,0)
                                ,DICOTS_CRYP=ifelse(CATEGORY=='DICOT' & NATSTAT_ALT=='CRYP',1,0)
                                ,DICOTS_AC=ifelse(CATEGORY=='DICOT' & AC==1,1,0)
@@ -318,7 +318,7 @@ calcCategory <- function(indf,sampID='UID'){
                                ,MONOCOTS_AC=ifelse(CATEGORY=='MONOCOT' & AC==1,1,0))
 
 
-    multTraits <- .combTraits(indf.2,c('DICOTS_NAT','DICOTS_ALIEN','DICOTS_CRYP','DICOTS_AC','FERNS_NAT','FERNS_INTR','MONOCOTS_NAT','MONOCOTS_ALIEN'
+    multTraits <- .combTraits(vascIn.2,c('DICOTS_NAT','DICOTS_ALIEN','DICOTS_CRYP','DICOTS_AC','FERNS_NAT','FERNS_INTR','MONOCOTS_NAT','MONOCOTS_ALIEN'
                                     ,'MONOCOTS_CRYP','MONOCOTS_AC'),sampID)
     catOut <- rbind(catOut,multTraits)
 
@@ -333,7 +333,7 @@ calcCategory <- function(indf,sampID='UID'){
 #' @description This function calculates Wetland Indicator Status (WIS)
 #' metrics, including variations based on native status,
 #' if NWCA_NATSTAT is present in the input data frame.
-#' @param indf Data frame containing cover data summarized by
+#' @param vascIn Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
 #'     \item sampID: Variable(s) identified in sampID argument
@@ -408,44 +408,44 @@ calcCategory <- function(indf,sampID='UID'){
 #' head(wisEx)
 #' unique(wisEx$PARAMETER)
 
-calcWIS <- function(indf,sampID='UID'){
+calcWIS <- function(vascIn,sampID='UID'){
   # First check for necessary variables
   necNames <- c(sampID,'TAXON','WIS','FREQ','XABCOV','TOTN','sXRCOV')
-  msgNames <- necNames[necNames %nin% names(indf)]
+  msgNames <- necNames[necNames %nin% names(vascIn)]
   if(length(msgNames)>0){
     print(paste("Missing key variables for metric calculation: ",paste(msgNames,collapse=','),
                 ". Try prepareData() function to create necessary input variables.",sep=''))
     return(NULL)
   }
 
-  indf <- plyr::mutate(indf,ECOIND=car::recode(WIS,"c('FACU')=4;c('FAC')=3;c('FACW')=2;c('OBL')=1;
+  vascIn <- plyr::mutate(vascIn,ECOIND=car::recode(WIS,"c('FACU')=4;c('FAC')=3;c('FACW')=2;c('OBL')=1;
                                   c('UPL','NL')=5;c('TBD',NA)=NA")
                         ,WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD')=NA"))
 
   # Overall metric calculations
-  indf.1 <- subset(indf,!is.na(WIS))
-  sppWIS <- .calcTraits_MultCat(indf.1,'WIS',sampID)
+  vascIn.1 <- subset(vascIn,!is.na(WIS))
+  sppWIS <- .calcTraits_MultCat(vascIn.1,'WIS',sampID)
 
   ## Calculate Wetland indicator status metrics and melt into long format
-  indf.2 <- subset(indf.1,!is.na(ECOIND)) %>%
+  vascIn.2 <- subset(vascIn.1,!is.na(ECOIND)) %>%
     plyr::mutate(ECOIND=as.numeric(ECOIND)) %>%
     plyr::ddply(c(sampID),summarise
                         ,WETIND_COV_ALL=round(sum(XABCOV*ECOIND)/sum(XABCOV),2)
                         ,WETIND_FREQ_ALL=round(sum(FREQ*ECOIND)/sum(FREQ),2)) %>%
     reshape2::melt(id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT')
 
-  wisOut <- rbind(sppWIS,indf.2)
+  wisOut <- rbind(sppWIS,vascIn.2)
 
   # Metrics using only subsets of data based on NATSTAT_ALT
-  if('NWCA_NATSTAT' %in% names(indf)){
-    indf.nat <- plyr::mutate(indf,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
+  if('NWCA_NATSTAT' %in% names(vascIn)){
+    vascIn.nat <- plyr::mutate(vascIn,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
                            ,NATSTAT_ALT=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT)
                            ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
 
-    indf.nat.1 <- subset(indf.nat,NWCA_NATSTAT=='NAT')
+    vascIn.nat.1 <- subset(vascIn.nat,NWCA_NATSTAT=='NAT')
 
     ## Calculate Wetland indicator status metrics and melt into long format
-    wisOut.nat <- subset(indf.nat.1,!is.na(ECOIND)) %>%
+    wisOut.nat <- subset(vascIn.nat.1,!is.na(ECOIND)) %>%
       plyr::mutate(ECOIND=as.numeric(ECOIND)) %>%
       plyr::ddply(c(sampID),summarise,WETIND_COV_NAT=round(sum(XABCOV*ECOIND)/sum(XABCOV),2)
                           ,WETIND_FREQ_NAT=round(sum(FREQ*ECOIND)/sum(FREQ),2)) %>%
@@ -453,8 +453,8 @@ calcWIS <- function(indf,sampID='UID'){
               plyr::mutate(PARAMETER=as.character(PARAMETER))
 
     # Obligate and facultative wet alien and cryptogenic species
-    indf.obl <- plyr::mutate(indf.nat,OBLFACW_AC=ifelse(WIS %in% c('OBL','FACW') & NATSTAT_ALT %in% c('ALIEN','CRYP'),1,0))
-    ofOut <- .calcTraits_Indicator(indf.obl,'OBLFACW_AC',sampID) %>%
+    vascIn.obl <- plyr::mutate(vascIn.nat,OBLFACW_AC=ifelse(WIS %in% c('OBL','FACW') & NATSTAT_ALT %in% c('ALIEN','CRYP'),1,0))
+    ofOut <- .calcTraits_Indicator(vascIn.obl,'OBLFACW_AC',sampID) %>%
       plyr::mutate(PARAMETER=as.character(PARAMETER)) %>%
       subset(PARAMETER %nin% c('PCTN_OBLFACW_AC'))
 
@@ -474,7 +474,7 @@ calcWIS <- function(indf,sampID='UID'){
 #' @description This function calculates Wetland Indicator Status (WIS)
 #' metrics, including variations based on native status,
 #' if NWCA_NATSTAT is present in the input data frame.
-#' @param indf Data frame containing cover data summarized by
+#' @param vascIn Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
 #'     \item sampID: Variable(s) identified in sampID argument
@@ -529,16 +529,16 @@ calcWIS <- function(indf,sampID='UID'){
 #'
 #' head(ccEx)
 #' unique(ccEx$PARAMETER)
-calcCC <- function(indf,sampID='UID'){
-  if('NWCA_CC' %nin% names(indf)){
+calcCC <- function(vascIn,sampID='UID'){
+  if('NWCA_CC' %nin% names(vascIn)){
     print("Missing NWCA_CC from input data frame - cannot calculate metrics!")
     return(NULL)
   }
 
   ## Calculate mean CC and FQAI indices
-  totals <- plyr::ddply(indf,c(sampID),summarise,SUBTOTFREQ=sum(FREQ),SUBXTOTABCOV=sum(XABCOV))
-  indf.1 <- merge(subset(indf,select=names(indf) %nin% c('TOTFREQ','XTOTABCOV')),totals,by=sampID)
-  indf.2 <- plyr::ddply(subset(indf.1,NWCA_CC!='Und'),c(sampID),summarise,XC=round(sum(as.numeric(NWCA_CC))/length(unique(TAXON)),2)
+  totals <- plyr::ddply(vascIn,c(sampID),summarise,SUBTOTFREQ=sum(FREQ),SUBXTOTABCOV=sum(XABCOV))
+  vascIn.1 <- merge(subset(vascIn,select=names(vascIn) %nin% c('TOTFREQ','XTOTABCOV')),totals,by=sampID)
+  vascIn.2 <- plyr::ddply(subset(vascIn.1,NWCA_CC!='Und'),c(sampID),summarise,XC=round(sum(as.numeric(NWCA_CC))/length(unique(TAXON)),2)
                         ,FQAI=round(sum(as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
                         ,XC_FREQ=round(sum((FREQ/SUBTOTFREQ)*100*as.numeric(NWCA_CC))/length(unique(TAXON)),2)
                         ,FQAI_FREQ=round(sum((FREQ/SUBTOTFREQ)*100*as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
@@ -546,25 +546,25 @@ calcCC <- function(indf,sampID='UID'){
                         ,FQAI_COV=round(sum((XABCOV/SUBXTOTABCOV)*100*as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
   )
 
-  ccOut <- reshape2::melt(indf.2,id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT') %>%
+  ccOut <- reshape2::melt(vascIn.2,id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT') %>%
     plyr::mutate(PARAMETER=paste(as.character(PARAMETER),'ALL',sep='_'))
 
   # Now create recoded indicator variables based on NWCA_CC values
-  indf.alt <- plyr::mutate(indf,SEN=ifelse(NWCA_CC %in% c('7','8','9','10'),1,0),ISEN=ifelse(NWCA_CC %in% c('5','6'),1,0)
+  vascIn.alt <- plyr::mutate(vascIn,SEN=ifelse(NWCA_CC %in% c('7','8','9','10'),1,0),ISEN=ifelse(NWCA_CC %in% c('5','6'),1,0)
                           ,TOL=ifelse(NWCA_CC %in% c('4','3','2','1','0'),1,0),HTOL=ifelse(NWCA_CC %in% c('0','1','2'),1,0)
                           ,HSEN=ifelse(NWCA_CC %in% c('9','10'),1,0))
 
-  multTraits <- .combTraits(indf.alt,c('SEN','TOL','ISEN','HTOL','HSEN'),sampID)
+  multTraits <- .combTraits(vascIn.alt,c('SEN','TOL','ISEN','HTOL','HSEN'),sampID)
 
   ccOut <- rbind(ccOut,multTraits)
 
   # Now, if NATSTAT_ALT available, calculate additional metrics
-  if('NWCA_NATSTAT' %in% names(indf)){
-    indf.nat <- subset(indf,NWCA_NATSTAT=='NAT')
+  if('NWCA_NATSTAT' %in% names(vascIn)){
+    vascIn.nat <- subset(vascIn,NWCA_NATSTAT=='NAT')
 
-    totals.nat <- plyr::ddply(indf.nat,c(sampID),summarise,SUBTOTFREQ=sum(FREQ),SUBXTOTABCOV=sum(XABCOV))
-    indf1.nat <- merge(subset(indf.nat,select=names(indf.nat) %nin% c('TOTFREQ','XTOTABCOV')),totals.nat,by=sampID)
-    indf1a.nat <- plyr::ddply(subset(indf1.nat,NWCA_CC!='Und'),c(sampID),summarise
+    totals.nat <- plyr::ddply(vascIn.nat,c(sampID),summarise,SUBTOTFREQ=sum(FREQ),SUBXTOTABCOV=sum(XABCOV))
+    vascIn1.nat <- merge(subset(vascIn.nat,select=names(vascIn.nat) %nin% c('TOTFREQ','XTOTABCOV')),totals.nat,by=sampID)
+    vascIn1a.nat <- plyr::ddply(subset(vascIn1.nat,NWCA_CC!='Und'),c(sampID),summarise
                               ,XC=round(sum(as.numeric(NWCA_CC))/length(unique(TAXON)),2)
                           ,FQAI=round(sum(as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
                           ,XC_FREQ=round(sum((FREQ/SUBTOTFREQ)*100*as.numeric(NWCA_CC))/length(unique(TAXON)),2)
@@ -572,10 +572,10 @@ calcCC <- function(indf,sampID='UID'){
                           ,XC_COV=round(sum((XABCOV/SUBXTOTABCOV)*100*as.numeric(NWCA_CC))/length(unique(TAXON)),2)
                           ,FQAI_COV=round(sum((XABCOV/SUBXTOTABCOV)*100*as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2))
 
-    indf1b.nat <- reshape2::melt(indf1a.nat,id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT') %>%
+    vascIn1b.nat <- reshape2::melt(vascIn1a.nat,id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT') %>%
       plyr::mutate(PARAMETER=paste(as.character(PARAMETER),'NAT',sep='_'))
 
-    ccOut <- rbind(ccOut,indf1b.nat)
+    ccOut <- rbind(ccOut,vascIn1b.nat)
 
   }
 
@@ -590,7 +590,7 @@ calcCC <- function(indf,sampID='UID'){
 #' @title Calculate metrics based only on native status
 #' @description This function calculates all metrics based
 #' only on native status.
-#' @param indf Data frame containing cover data summarized by
+#' @param vascIn Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
 #'     \item sampID: Variable(s) identified in sampID argument
@@ -642,20 +642,20 @@ calcCC <- function(indf,sampID='UID'){
 #' head(natEx)
 #' unique(natEx$PARAMETER)
 
-calcNative <- function(indf,sampID='UID'){
-  if('NWCA_NATSTAT' %nin% names(indf)){
+calcNative <- function(vascIn,sampID='UID'){
+  if('NWCA_NATSTAT' %nin% names(vascIn)){
     print("Missing NWCA_NATSTAT from input data frame - cannot calculate metrics! If NWCA_NATSTAT exists,
           run prepareData() function to create input data frame.")
     return(NULL)
   }
 
-  indf <- plyr::mutate(indf,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
+  vascIn <- plyr::mutate(vascIn,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
                           ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
 
-  sppNATSTAT <- .calcTraits_MultCat.alt(indf,'NWCA_NATSTAT',sampID)
+  sppNATSTAT <- .calcTraits_MultCat.alt(vascIn,'NWCA_NATSTAT',sampID)
 
-  alienTrait <- .calcTraits_Indicator.alt(indf,'ALIEN',sampID) %>% plyr::mutate(PARAMETER=paste(PARAMETER,'SPP',sep=''))
-  acTrait <- .calcTraits_Indicator.alt(indf,'AC',sampID)
+  alienTrait <- .calcTraits_Indicator.alt(vascIn,'ALIEN',sampID) %>% plyr::mutate(PARAMETER=paste(PARAMETER,'SPP',sep=''))
+  acTrait <- .calcTraits_Indicator.alt(vascIn,'AC',sampID)
 
   natstatOut <- rbind(sppNATSTAT,alienTrait,acTrait)
 
@@ -799,7 +799,7 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
 #' @description Calculate Simpson Diversity, Shannon-Wiener
 #' Diversity, and Pielou's Evenness indices, with variations based on
 #' native status if NWCA_NATSTAT is included in the input data frame.
-#' @param indf Data frame containing cover data summarized by
+#' @param vascIn Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
 #'  \item sampID: Variable(s) identified in sampID argument
@@ -861,25 +861,25 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
 #' head(divEx)
 #' unique(divEx$PARAMETER)
 
-calcDiversity <- function(indf,sampID='UID'){
-  divOut <- .calcIndices(indf,'ALL',sampID)
+calcDiversity <- function(vascIn,sampID='UID'){
+  divOut <- .calcIndices(vascIn,'ALL',sampID)
 
- if('NWCA_NATSTAT' %in% names(indf)){
+ if('NWCA_NATSTAT' %in% names(vascIn)){
 
-   indf.1 <- plyr::mutate(indf,NATSTAT_ALT=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT)
+   vascIn.1 <- plyr::mutate(vascIn,NATSTAT_ALT=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT)
                           ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
 
    nsvalues <- c('NAT','ALIEN')
    for(i in 1:length(nsvalues)){
-     indf.2 <- subset(indf.1,NATSTAT_ALT==nsvalues[i])
+     vascIn.2 <- subset(vascIn.1,NATSTAT_ALT==nsvalues[i])
 
-     nsOut <- .calcIndices(indf.2,nsvalues[i],sampID)
+     nsOut <- .calcIndices(vascIn.2,nsvalues[i],sampID)
      divOut <- rbind(divOut,nsOut)
    }
 
    # AC metrics
-   indf.ac <- subset(indf.1,AC=='1')
-   acOut <- .calcIndices(indf.ac,'AC',sampID)
+   vascIn.ac <- subset(vascIn.1,AC=='1')
+   acOut <- .calcIndices(vascIn.ac,'AC',sampID)
 
    divOut <- rbind(divOut,acOut)
 
@@ -899,7 +899,7 @@ calcDiversity <- function(indf,sampID='UID'){
 #' distances among plots for all species, and includes a version using only
 #' native species if the variable NWCA_NATSTAT is included in the input
 #' data frame. This variable is found in the ccNatNWCA dataset.
-#' @param indf Data frame containing cover data summarized by UID, PLOT, and
+#' @param vascIn Data frame containing cover data summarized by UID, PLOT, and
 #' DISTINCT at the species level. Must also contain at least one of the
 #' following: USDA_NAME (taxon name) or SPECIES_NAME_ID (numeric code
 #' for taxon). If NWCA_NATSTAT is included, a native species version is
@@ -920,16 +920,16 @@ calcDiversity <- function(indf,sampID='UID'){
 #' based only on native species.
 #' }
 
-calcBCmets <- function(indf,sampID='UID'){
+calcBCmets <- function(vascIn,sampID='UID'){
   # Need to account for cases where there is no SPECIES_NAME_ID by creating one just for this
   # calculation
-  if('SPECIES_NAME_ID' %nin% names(indf)){
-    uniqNames <- unique(indf$USDA_NAME)
+  if('SPECIES_NAME_ID' %nin% names(vascIn)){
+    uniqNames <- unique(vascIn$USDA_NAME)
     uniqNames <- plyr::mutate(uniqNames,SPECIES_NAME_ID=seq(1,length(uniqNames)))
-    indf <- merge(indf,uniqNames,by='UsDA_NAME')
+    vascIn <- merge(vascIn,uniqNames,by='UsDA_NAME')
   }
 
-  forDist <- plyr::ddply(indf,c(sampID,'PLOT','SPECIES_NAME_ID')
+  forDist <- plyr::ddply(vascIn,c(sampID,'PLOT','SPECIES_NAME_ID')
                          ,summarise,COVER=sum(as.numeric(COVER)),.progress='tk')
   # This df needs to be in wide format
   forDist <- plyr::mutate(forDist,SPECIES=paste('s',SPECIES_NAME_ID,sep=''))
@@ -938,8 +938,8 @@ calcBCmets <- function(indf,sampID='UID'){
 
   xbcOut <- meanBC
 
-  if('NWCA_NATSTAT' %in% names(indf)){
-    forDist.nat <- plyr::ddply(indf,c(sampID,'PLOT','SPECIES_NAME_ID','NWCA_NATSTAT')
+  if('NWCA_NATSTAT' %in% names(vascIn)){
+    forDist.nat <- plyr::ddply(vascIn,c(sampID,'PLOT','SPECIES_NAME_ID','NWCA_NATSTAT')
                                ,summarise,COVER=sum(as.numeric(COVER)),.progress='tk') %>%
       plyr::mutate(SPECIES=paste('s',SPECIES_NAME_ID,sep='')) %>%
       dplyr::filter(NWCA_NATSTAT=='NAT')
@@ -960,7 +960,7 @@ calcBCmets <- function(indf,sampID='UID'){
 #' @description This function calculates FQAI_ALL, N_TOL, RIMP_NATSPP,
 #' and XRCOV_MONOCOTS_NAT metrics, which are used in the NWCA 2011
 #' Vegetation Multimetric Index (VMMI).
-#' @param indf Data frame containing cover data summarized at the UID
+#' @param vascIn Data frame containing cover data summarized at the UID
 #' and TAXON level:
 #' \itemize{
 #'  \item sampID: Variable(s) identified in sampID argument
@@ -1015,39 +1015,39 @@ calcBCmets <- function(indf,sampID='UID'){
 #' head(vmmiEx)
 #' unique(vmmiEx$PARAMETER)
 
-calcVMMImets <- function(indf,sampID='UID'){
+calcVMMImets <- function(vascIn,sampID='UID'){
   # Calculate only the 4 metrics used in the VMMI: FQAI_ALL,N_TOL,RIMP_NATSPP,XRCOV_MONOCOTS_NAT
   # First obtain all of the UIDs in input data frame
   for(i in 1:length(sampID)){
-    if(i==1) indf$SAMPID <- indf[,sampID[i]]
-    else indf$SAMPID <- paste(indf$SAMPID,indf[,sampID[i]],sep='.')
+    if(i==1) vascIn$SAMPID <- vascIn[,sampID[i]]
+    else vascIn$SAMPID <- paste(vascIn$SAMPID,vascIn[,sampID[i]],sep='.')
   }
-  samples <- unique(subset(indf,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(vascIn,select=c(sampID,'SAMPID')))
     
-  UIDs <- data.frame(SAMPID=unique(subset(indf,select='SAMPID')),stringsAsFactors=FALSE)
+  UIDs <- data.frame(SAMPID=unique(subset(vascIn,select='SAMPID')),stringsAsFactors=FALSE)
 
-  # Look at indf for necessary variables
-  if(sum(c('NWCA_CC','NWCA_NATSTAT','CATEGORY') %in% names(indf))<3){
+  # Look at vascIn for necessary variables
+  if(sum(c('NWCA_CC','NWCA_NATSTAT','CATEGORY') %in% names(vascIn))<3){
     print("Missing key variable(s) from input data frame! NWCA_CC, NWCA_NATSTAT, and CATEGORY
           required to calculate VMMI metrics")
     return(NULL)
   }
-  if(sum(c('sXRCOV','sRFREQ') %in% names(indf))<2){
+  if(sum(c('sXRCOV','sRFREQ') %in% names(vascIn))<2){
     print("Missing key sums in input data. Must provide sRFREQ and sXRCOV to calculate metrics!
           See help for more info.")
     return(NULL)
   }
 
   ## Calculate FQAI_ALL
-  fqaiOut <- plyr::ddply(subset(indf,NWCA_CC!='Und'),'SAMPID',summarise,PARAMETER='FQAI_ALL'
+  fqaiOut <- plyr::ddply(subset(vascIn,NWCA_CC!='Und'),'SAMPID',summarise,PARAMETER='FQAI_ALL'
                       ,RESULT=round(sum(as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2))
 
   # Calculate N_TOL
-  indf.alt <- plyr::mutate(indf,TOL=ifelse(NWCA_CC %in% c('4','3','2','1','0'),1,0)) %>%
+  vascIn.alt <- plyr::mutate(vascIn,TOL=ifelse(NWCA_CC %in% c('4','3','2','1','0'),1,0)) %>%
     subset(TOL==1)
 
-  if(nrow(indf.alt)>0){
-    ntol <- plyr::ddply(indf.alt,'SAMPID',summarise,N_TOL=length(TAXON))
+  if(nrow(vascIn.alt)>0){
+    ntol <- plyr::ddply(vascIn.alt,'SAMPID',summarise,N_TOL=length(TAXON))
     ntolOut <- merge(UIDs,ntol,by='SAMPID',all.x=T) %>%
       reshape2::melt(id.vars='SAMPID',variable.name='PARAMETER',value.name='RESULT') %>%
       plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT))
@@ -1057,13 +1057,13 @@ calcVMMImets <- function(indf,sampID='UID'){
   }
 
   # Calculate RIMP_NATSPP
-  indf.nat <- subset(indf,NWCA_NATSTAT=='NAT')
+  vascIn.nat <- subset(vascIn,NWCA_NATSTAT=='NAT')
 
-  if(nrow(indf.nat)>0){
-    indf.nat.1 <- plyr::ddply(indf.nat,'SAMPID',plyr::summarise,XRCOV=round(sum(sXRCOV),2)
+  if(nrow(vascIn.nat)>0){
+    vascIn.nat.1 <- plyr::ddply(vascIn.nat,'SAMPID',plyr::summarise,XRCOV=round(sum(sXRCOV),2)
                               ,RFREQ=round(sum(sRFREQ),2),RIMP_NATSPP=round((RFREQ+XRCOV)/2,2))
 
-    natOut <- merge(UIDs,indf.nat.1,by='SAMPID',all.x=T) %>%
+    natOut <- merge(UIDs,vascIn.nat.1,by='SAMPID',all.x=T) %>%
       reshape2::melt(id.vars='SAMPID',measure.vars='RIMP_NATSPP',variable.name='PARAMETER'
                      ,value.name='RESULT') %>%
       plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT))
@@ -1073,12 +1073,12 @@ calcVMMImets <- function(indf,sampID='UID'){
   }
 
   # Calculate XRCOV_MONOCOTS_NAT
-  indf.mono <- subset(indf,CATEGORY=='MONOCOT' & NWCA_NATSTAT=='NAT')
+  vascIn.mono <- subset(vascIn,CATEGORY=='MONOCOT' & NWCA_NATSTAT=='NAT')
 
-  if(nrow(indf.mono)>0){
-    indf.mono.1 <- plyr::ddply(indf.mono,c('SAMPID'),plyr::summarise,XRCOV_MONOCOTS_NAT=round(sum(sXRCOV),2))
+  if(nrow(vascIn.mono)>0){
+    vascIn.mono.1 <- plyr::ddply(vascIn.mono,c('SAMPID'),plyr::summarise,XRCOV_MONOCOTS_NAT=round(sum(sXRCOV),2))
 
-    monoOut <- merge(UIDs,indf.mono.1,by='SAMPID',all.x=T) %>%
+    monoOut <- merge(UIDs,vascIn.mono.1,by='SAMPID',all.x=T) %>%
       reshape2::melt(id.vars=c('SAMPID'),measure.vars='XRCOV_MONOCOTS_NAT',variable.name='PARAMETER'
                     ,value.name='RESULT') %>%
       plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT))

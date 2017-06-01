@@ -4,10 +4,10 @@
 \alias{calcVMMI_fromMets}
 \title{Calculate Vegetation MMI and assign condition class}
 \usage{
-calcVMMI_fromMets(indf, sampID = "UID")
+calcVMMI_fromMets(metsIn, sampID = "UID")
 }
 \arguments{
-\item{indf}{Data frame containing, at a minimum:
+\item{metsIn}{Data frame containing, at a minimum:
 \itemize{
 \item sampID - A character vector containing the name(s) of
 variable(s) necessary to identify unique samples

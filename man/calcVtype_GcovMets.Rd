@@ -5,10 +5,10 @@
 \title{Calculate NWCA 2011 vegetation types and ground surface
 attribute metrics based on data collected from field form V-3}
 \usage{
-calcVtype_GcovMets(indf, sampID = "UID")
+calcVtype_GcovMets(dataIn, sampID = "UID")
 }
 \arguments{
-\item{indf}{A data frame containing the following variables:
+\item{dataIn}{A data frame containing the following variables:
 \itemize{
 \item sampID - Variables identified in the sampID argument
 
