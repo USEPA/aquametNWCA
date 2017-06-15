@@ -10,7 +10,7 @@ calcWIS(vascIn, sampID = "UID")
 \item{vascIn}{Data frame containing cover data summarized by
 UID and TAXON, with the following fields:
 \itemize{
-    \item sampID: Variable(s) identified in sampID argument
+    \item sampID: Variable(s) identified in \emph{sampID} argument
 
     \item TAXON: Taxon name
 
@@ -28,48 +28,47 @@ UID and TAXON, with the following fields:
     \item sXRCOV: proportion of summed cover across all taxa
     (XTOTABCOV) represented by taxon in sample
 
-    \item Optional: NWCA_NATSTAT: Native status variable with
+    \item NWCA_NATSTAT (optional): Native status variable with
       categories of 'NAT','ADV','CRYP','INTR','UND'.
       UND taxa are ignored.
    }}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Data frame containing sampID variables, PARAMETER, RESULT, where
-values of PARAMETER consist of the metric name concatenated
-with trait value (represented as TRAITNM below):
+Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+  where values of PARAMETER consist of the metric name concatenated with
+  trait value (represented as TRAITNM below):
 \itemize{
 \item N_TRAITNM: Number of taxa with trait
 
-\item PCTN_TRAITNM: Number of taxa with trait as percentage of TOTN
+\item PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
 
-\item XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait
+\item XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
 
-\item XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
+\item XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 }
 In addition WIS indices based on all and native species only (if
 NWCA_NATSTAT is provided in the input data frame), with the
 suffixes ALL and NAT, respectively. WIS values recoded as numeric
 with OBL=1, FACW=2, FAC=3, FACU=4, UPL=5:
-\itemize{
-\item WETIND_COV_ALL, WETIND_COV_NAT: Wetland Index, weighted by taxon cover
+\itemize{ \item WETIND_COV_ALL, WETIND_COV_NAT: Wetland Index, weighted by
+taxon cover
 
-\item WETIND_FREQ_ALL, WETIND_FREQ_NAT: Wetland Index, weight by frequency
-}
-If NWCA_NATSTAT is provided in the input data frame, the following
-metrics are calculated based on Alien + Cryptogenic species:
-\itemize{
-\item N_OBLFACW_AC: Number of alien and cryptogenic taxa with WIS of either
-OBL or FACW.
+\item WETIND_FREQ_ALL, WETIND_FREQ_NAT: Wetland Index, weight by frequency } 
 
-\item XABCOV_OBLFACW_AC: Mean absolute cover of alien and cryptogenic taxa
+If NWCA_NATSTAT is provided in the input data frame, the following metrics
+are calculated based on Alien + Cryptogenic species: 
+\itemize{ \item
+N_OBLFACW_AC: Number of alien and cryptogenic taxa with WIS of either OBL or
+FACW.
+
+\item XABCOV_OBLFACW_AC: Mean absolute cover of alien and cryptogenic taxa 
 with WIS of either OBL or FACW.
 
-\item XRCOV_OBLFACW_AC: Mean relative cover of alien and cryptogenic taxa
-with WIS of either OBL or FACW.
-}
+\item XRCOV_OBLFACW_AC: Mean relative cover of alien and cryptogenic taxa 
+with WIS of either OBL or FACW. }
 }
 \description{
 This function calculates Wetland Indicator Status (WIS)

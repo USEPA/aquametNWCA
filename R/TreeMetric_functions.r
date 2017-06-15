@@ -1,11 +1,14 @@
 #' @export
+#' 
 #' @title Calculate snag metrics
+#' 
 #' @description This function calculates all of the snag
 #' metrics from tree data, and is called by function
 #' calcTreeMetrics().
+#' 
 #' @param treeIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - Variable(s) identified in sampID argument
+#' \item sampID: Variable(s) identified in \emph{sampID} argument
 #'
 #' \item PLOT: Sample plot from which data were collected
 #'
@@ -13,25 +16,31 @@
 #'
 #' \item RESULT: measured value
 #' }
-#' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
 #' The following parameters are used in
 #' calculating tree metrics: 'XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG',
 #' 'JR_SNAG','THICK_SNAG','XTHICK_SNAG','XXTHICK_SNAG'.
 #' Additional parameters or variables are ignored.
+#' 
+#' @param sampID A character vector containing the name(s) of
+#' variable(s) necessary to identify unique samples, 'UID' by default.
+#' 
+#' 
 #' @details If any of the parameters are missing, they are assumed
 #' to be zeros, and metric values associated with any metrics that
 #' cannot be calculated due to missing parameters are set to 0.
-#' @return Either a character string containing an error message when
-#' metric calculation is not successful, or a data frame. The data frame
-#' contains the sampID variables, PARAMETER, RESULT, where PARAMETER values include:
-#' TOTN_SNAGS, XN_SNAGS, TOTN_JR_SNAG, TOTN_THICK_SNAG,
-#' TOTN_THIN_SNAG, TOTN_XTHICK_SNAG, TOTN_XTHIN_SNAG, TOTN_XXTHIN_SNAG,
-#' XN_JR_SNAG, XN_THICK_SNAG, XN_THIN_SNAG, XN_XTHICK_SNAG, XN_XTHIN_SNAG,
-#' and XN_XXTHIN_SNAG. A list of metric descriptions is provided in the
-#' document named Tree_Metric_Descriptions.pdf included in the help
-#' directory for the package.
+#' 
+#' @return Either a character string containing an error message when metric
+#'   calculation is not successful, or a data frame. The data frame contains the
+#'   \emph{sampID} variables, PARAMETER, RESULT, where PARAMETER values include:
+#'   TOTN_SNAGS, XN_SNAGS, TOTN_JR_SNAG, TOTN_THICK_SNAG, TOTN_THIN_SNAG,
+#'   TOTN_XTHICK_SNAG, TOTN_XTHIN_SNAG, TOTN_XXTHIN_SNAG, XN_JR_SNAG,
+#'   XN_THICK_SNAG, XN_THIN_SNAG, XN_XTHICK_SNAG, XN_XTHIN_SNAG, and
+#'   XN_XXTHIN_SNAG. A list of metric descriptions is provided in the document
+#'   named Tree_Metric_Descriptions.pdf included in the help directory for the
+#'   package.
+#'   
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(TreesEx)
 #'
@@ -40,7 +49,6 @@
 #' head(snagEx)
 #' unique(snagEx$PARAMETER)
 calcSnagMets <- function(treeIn,sampID='UID'){
-  ### SNAG METRICS #########################################################################################
   # Create vector of all samples in dataset
   for(i in 1:length(sampID)){
     if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
@@ -104,12 +112,15 @@ calcSnagMets <- function(treeIn,sampID='UID'){
 
 # Tree count metrics function
 #' @export
+#' 
 #' @title Calculate tree count metrics
+#' 
 #' @description This function calculates tree count metrics
 #' using tree data, and is called by function calcTreeMetrics()
+#' 
 #' @param treeIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - Variable(s) identified in sampID argument
+#' \item sampID: Variable(s) identified in \emph{sampID} argument
 #'
 #' \item PLOT: Sample plot from which data were collected
 #'
@@ -122,20 +133,24 @@ calcSnagMets <- function(treeIn,sampID='UID'){
 #' 'XTHICK_TREE','XXTHICK_TREE'. Additional parameters or variables
 #' are ignored.
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples, 'UID' by default
+#' 
 #' @details If any of the parameters are missing, they are assumed to be
 #' zeros, and metric values associated with any metrics that cannot be
 #' calculated due to missing parameters are set to 0.
-#' @return Either a character string containing an error message when
-#' metric calculation is not successful, or a data frame. The data frame
-#' contains the sampID variables, PARAMETER, RESULT, where PARAMETER values include:
-#' TOTN_TREES, XN_TREES, TOTN_JR_TREE, TOTN_THICK_TREE, TOTN_THIN_TREE,
-#' TOTN_XTHICK_TREE, TOTN_XTHIN_TREE, TOTN_XXTHICK_TREE, TOTN_XXTHIN_TREE,
-#' XN_JR_TREE, XN_THICK_TREE, XN_THIN_TREE, XN_XTHICK_TREE, XN_XTHIN_TREE,
-#' XN_XXTHICK_TREE, XN_XXTHIN_TREE. A list of metric descriptions is
-#' provided in the document named Tree_Metric_Descriptions.pdf included
-#' in the help directory for the package.
+#' 
+#' @return Either a character string containing an error message when metric
+#'   calculation is not successful, or a data frame. The data frame contains the
+#'   \emph{sampID} variables, PARAMETER, RESULT, where PARAMETER values include:
+#'   TOTN_TREES, XN_TREES, TOTN_JR_TREE, TOTN_THICK_TREE, TOTN_THIN_TREE, 
+#'   TOTN_XTHICK_TREE, TOTN_XTHIN_TREE, TOTN_XXTHICK_TREE, TOTN_XXTHIN_TREE, 
+#'   XN_JR_TREE, XN_THICK_TREE, XN_THIN_TREE, XN_XTHICK_TREE, XN_XTHIN_TREE, 
+#'   XN_XXTHICK_TREE, XN_XXTHIN_TREE. A list of metric descriptions is provided
+#'   in the document named Tree_Metric_Descriptions.pdf included in the help
+#'   directory for the package.
+#'   
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(TreesEx)
 #'
@@ -153,7 +168,7 @@ calcTreeCntMets <- function(treeIn,sampID='UID'){
   allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID),stringsAsFactors=F)
   
   treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
-  ### TREE METRICS #########################################################################################
+ 
   tcnts <- subset(treeIn,PARAMETER %in% c('XXTHIN_TREE','XTHIN_TREE','THIN_TREE','JR_TREE','THICK_TREE','XTHICK_TREE','XXTHICK_TREE'))
   if(nrow(tcnts)>0){
     tcntsOut <- plyr::ddply(tcnts,c('SAMPID','PARAMETER'),summarise,TOTN=sum(as.numeric(RESULT)),XN=round(TOTN/unique(NPLOTS),2))
@@ -203,12 +218,15 @@ calcTreeCntMets <- function(treeIn,sampID='UID'){
 
 ## Tree species and cover metric function
 #' @export
+#' 
 #' @title Calculate tree cover metrics
+#' 
 #' @description This function calculates tree cover metrics
 #' using tree data, and is called by function calcTreeMetrics().
+#' 
 #' @param treeIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - Variable(s) identified in sampID argument
+#' \item sampID: Variable(s) identified in \emph{sampID} argument
 #'
 #' \item PAGE: Page from field form
 #'
@@ -225,20 +243,23 @@ calcTreeCntMets <- function(treeIn,sampID='UID'){
 #' ,'HMED_TREE','TALL_TREE','VTALL_TREE'.  Additional parameters
 #' or variables are ignored.
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples, 'UID' by default
+#' 
 #' @details If any of the parameters are missing, they are assumed
 #' to be zeros, and metric values associated with any metrics that
 #' cannot be calculated due to missing parameters are set to 0.
-#' @return Either a character string containing an error message when
-#' metric calculation is not successful, or a data frame. The data
-#' frame contains the sampID variables, PARAMETER, RESULT, where PARAMETER values
-#' include: N_TREESPP, N_TALL_TREE, N_HMED_TREE, N_LMED_TREE,
-#' N_SMALL_TREE, N_VSMALL_TREE, N_VTALL_TREE, N_TREE_UPPER, N_TREE_MID,
-#' N_TREE_GROUND, PCTN_TREE_UPPER, PCTN_TREE_MID, PCTN_TREE_GROUND. A
-#' list of metric descriptions is provided in the document named
-#' Tree_Metric_Descriptions.pdf included in the help directory for the
-#' package.
+#' 
+#' @return Either a character string containing an error message when metric
+#'   calculation is not successful, or a data frame. The data frame contains the
+#'   \emph{sampID} variables, PARAMETER, RESULT, where PARAMETER values include:
+#'   N_TREESPP, N_TALL_TREE, N_HMED_TREE, N_LMED_TREE, N_SMALL_TREE,
+#'   N_VSMALL_TREE, N_VTALL_TREE, N_TREE_UPPER, N_TREE_MID, N_TREE_GROUND,
+#'   PCTN_TREE_UPPER, PCTN_TREE_MID, PCTN_TREE_GROUND. A list of metric
+#'   descriptions is provided in the document named Tree_Metric_Descriptions.pdf
+#'   included in the help directory for the package.
+#' 
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(TreesEx)
 #'

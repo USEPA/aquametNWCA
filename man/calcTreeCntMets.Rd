@@ -9,7 +9,7 @@ calcTreeCntMets(treeIn, sampID = "UID")
 \arguments{
 \item{treeIn}{A data frame containing the following variables:
 \itemize{
-\item sampID - Variable(s) identified in sampID argument
+\item sampID: Variable(s) identified in \emph{sampID} argument
 
 \item PLOT: Sample plot from which data were collected
 
@@ -23,18 +23,18 @@ The following parameters are used in calculating tree metrics:
 are ignored.}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Either a character string containing an error message when
-metric calculation is not successful, or a data frame. The data frame
-contains the sampID variables, PARAMETER, RESULT, where PARAMETER values include:
-TOTN_TREES, XN_TREES, TOTN_JR_TREE, TOTN_THICK_TREE, TOTN_THIN_TREE,
-TOTN_XTHICK_TREE, TOTN_XTHIN_TREE, TOTN_XXTHICK_TREE, TOTN_XXTHIN_TREE,
-XN_JR_TREE, XN_THICK_TREE, XN_THIN_TREE, XN_XTHICK_TREE, XN_XTHIN_TREE,
-XN_XXTHICK_TREE, XN_XXTHIN_TREE. A list of metric descriptions is
-provided in the document named Tree_Metric_Descriptions.pdf included
-in the help directory for the package.
+Either a character string containing an error message when metric
+  calculation is not successful, or a data frame. The data frame contains the
+  \emph{sampID} variables, PARAMETER, RESULT, where PARAMETER values include:
+  TOTN_TREES, XN_TREES, TOTN_JR_TREE, TOTN_THICK_TREE, TOTN_THIN_TREE, 
+  TOTN_XTHICK_TREE, TOTN_XTHIN_TREE, TOTN_XXTHICK_TREE, TOTN_XXTHIN_TREE, 
+  XN_JR_TREE, XN_THICK_TREE, XN_THIN_TREE, XN_XTHICK_TREE, XN_XTHIN_TREE, 
+  XN_XXTHICK_TREE, XN_XXTHIN_TREE. A list of metric descriptions is provided
+  in the document named Tree_Metric_Descriptions.pdf included in the help
+  directory for the package.
 }
 \description{
 This function calculates tree count metrics

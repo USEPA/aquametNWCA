@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -12,7 +12,7 @@
 
 <meta name="author" content="Karen Blocksom" />
 
-<meta name="date" content="2017-03-02" />
+<meta name="date" content="2017-06-15" />
 
 <title>Calculate Metrics</title>
 
@@ -20,28 +20,46 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
+div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
 table.sourceCode { width: 100%; line-height: 100%; }
 td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
 td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; }
-code > span.dt { color: #902000; }
-code > span.dv { color: #40a070; }
-code > span.bn { color: #40a070; }
-code > span.fl { color: #40a070; }
-code > span.ch { color: #4070a0; }
-code > span.st { color: #4070a0; }
-code > span.co { color: #60a0b0; font-style: italic; }
-code > span.ot { color: #007020; }
-code > span.al { color: #ff0000; font-weight: bold; }
-code > span.fu { color: #06287e; }
-code > span.er { color: #ff0000; font-weight: bold; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 
 
 
-<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%7D%0Apre%20%7B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -52,7 +70,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 
 <h1 class="title toc-ignore">Calculate Metrics</h1>
 <h4 class="author"><em>Karen Blocksom</em></h4>
-<h4 class="date"><em>2017-03-02</em></h4>
+<h4 class="date"><em>2017-06-15</em></h4>
 
 
 
@@ -68,9 +86,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="all-metrics-at-once" class="section level2">
 <h2>2.1 All metrics at once</h2>
 <p>Use the example plant data included in the package, <code>VascPlantEx</code>, along with the included taxalists for taxonomy and basic characteristics (<code>taxaNWCA</code>), Coefficient of Conservatism and native status values (<code>ccNatNWCA</code>), and Wetland Indicator Status values (<code>wisNWCA</code>).</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(aquametNWCA)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(aquametNWCA)
 
-<span class="kw">head</span>(VascPlantEx)</code></pre>
+<span class="kw">head</span>(VascPlantEx)</code></pre></div>
 <pre><code>##   UID STATE USAC_REGION PLOT             USDA_NAME COVER
 ## 1   7    FL  CSTL_PLAIN    2 SAGITTARIA LANCIFOLIA    28
 ## 2   7    FL  CSTL_PLAIN    3 SAGITTARIA LANCIFOLIA     6
@@ -79,7 +97,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## 5   7    FL  CSTL_PLAIN    5       SPARTINA PATENS     0
 ## 6   7    FL  CSTL_PLAIN    1      PANICUM VIRGATUM     0</code></pre>
 <p>This is the expected input format for vegetation data from form V-2. To run <code>calcVascPlantMets</code>, the taxalists <code>taxaNWCA</code>, <code>ccNatNWCA</code>, and <code>wisNWCA</code> will be called by default by the function if not specified. In this example, we explicitly include the arguments that specify these taxalists in the function call. However, the user may either leave them blank or call their own versions of these taxalists, so long as the field names are as expected.</p>
-<pre class="sourceCode r"><code class="sourceCode r">outdf &lt;-<span class="st"> </span><span class="kw">calcVascPlantMets</span>(<span class="dt">dfIn=</span>VascPlantEx,<span class="dt">taxaIn=</span>taxaNWCA,<span class="dt">taxaCC=</span>ccNatNWCA,<span class="dt">taxaWIS=</span>wisNWCA,<span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outdf &lt;-<span class="st"> </span><span class="kw">calcVascPlantMets</span>(<span class="dt">vascIn=</span>VascPlantEx,<span class="dt">taxaIn=</span>taxaNWCA,<span class="dt">taxaCC=</span>ccNatNWCA,<span class="dt">taxaWIS=</span>wisNWCA,<span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
 <pre><code>## [1] &quot;Done with plot summing&quot;
 ## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
@@ -98,7 +116,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## [1] &quot;Done with CC metrics.&quot;
 ## [1] &quot;Done with native status metrics.&quot;
 ## [1] &quot;Done with Bray-Curtis distance.&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(outdf)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(outdf)</code></pre></div>
 <pre><code>##   [1] &quot;UID&quot;                   &quot;XTOTABCOV&quot;            
 ##   [3] &quot;MEDN_AC&quot;               &quot;MEDN_ADVSPP&quot;          
 ##   [5] &quot;MEDN_ALIENSPP&quot;         &quot;MEDN_CRYPSPP&quot;         
@@ -286,7 +304,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h3>2.2.1 Data preparation</h3>
 <p>Data are expected to be in a specific format with specific summary variables, and it is possible to create input datasets outside of R, but the easiest approach is to use <code>prepareData()</code> to create input datasets for these functions. The <code>calcRichness()</code> function expects datasets summarized by both UID and by UID and PLOT at the species, genus, and family levels. The <code>prepareData()</code> function performs all necessary summarization and creates a single list object containing 6 data frames that reflect all of these summarizations of data.</p>
 <p>First, run <code>prepareData()</code> to create a list containing 6 data frames that can be used in all other functions:</p>
-<pre class="sourceCode r"><code class="sourceCode r">sumdf &lt;-<span class="st"> </span><span class="kw">prepareData</span>(<span class="dt">indf=</span>VascPlantEx, <span class="dt">sampID=</span><span class="st">'UID'</span>, <span class="dt">inTaxa=</span>taxaNWCA, <span class="dt">inNatCC=</span>ccNatNWCA, <span class="dt">inWIS=</span>wisNWCA)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sumdf &lt;-<span class="st"> </span><span class="kw">prepareData</span>(<span class="dt">vascIn=</span>VascPlantEx, <span class="dt">sampID=</span><span class="st">'UID'</span>, <span class="dt">inTaxa=</span>taxaNWCA, <span class="dt">inNatCC=</span>ccNatNWCA, <span class="dt">inWIS=</span>wisNWCA)</code></pre></div>
 <pre><code>## [1] &quot;Done with plot summing&quot;
 ## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
@@ -294,7 +312,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## [1] &quot;Done with plot summing&quot;
 ## [1] &quot;Done with sAMPID summing&quot;
 ## [1] &quot;Done preparing datasets&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(sumdf)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(sumdf)</code></pre></div>
 <pre><code>## List of 6
 ##  $ byUIDspp :'data.frame':   238 obs. of  30 variables:
 ##   ..$ TAXON            : chr [1:238] &quot;ACER RUBRUM&quot; &quot;APIOS AMERICANA&quot; &quot;CAREX&quot; &quot;CEPHALANTHUS OCCIDENTALIS&quot; ...
@@ -376,9 +394,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="metric-subset-functions" class="section level3">
 <h3>2.2.2 Metric Subset Functions</h3>
 <p>Now we can run functions for subsets, starting with <code>calcRichness()</code>:</p>
-<pre class="sourceCode r"><code class="sourceCode r">outRich &lt;-<span class="st"> </span><span class="kw">calcRichness</span>(sumdf$byUIDspp,sumdf$byPlotspp,sumdf$byUIDgen,sumdf$byPlotgen,sumdf$byUIDfam,sumdf$byPlotfam
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outRich &lt;-<span class="st"> </span><span class="kw">calcRichness</span>(sumdf$byUIDspp,sumdf$byPlotspp,sumdf$byUIDgen,sumdf$byPlotgen,sumdf$byUIDfam,sumdf$byPlotfam
                         ,<span class="dt">sampID=</span><span class="st">'UID'</span>)
-<span class="kw">head</span>(outRich)</code></pre>
+<span class="kw">head</span>(outRich)</code></pre></div>
 <pre><code>##   UID PARAMETER RESULT
 ## 1   1   MEDN_AC      0
 ## 2   2   MEDN_AC      1
@@ -386,7 +404,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## 4   4   MEDN_AC      0
 ## 5   5   MEDN_AC      0
 ## 6   6   MEDN_AC      2</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outRich$PARAMETER)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outRich$PARAMETER)</code></pre></div>
 <pre><code>##  [1] &quot;MEDN_AC&quot;       &quot;MEDN_ADVSPP&quot;   &quot;MEDN_ALIENSPP&quot; &quot;MEDN_CRYPSPP&quot; 
 ##  [5] &quot;MEDN_FAM&quot;      &quot;MEDN_GEN&quot;      &quot;MEDN_INTRSPP&quot;  &quot;MEDN_NATSPP&quot;  
 ##  [9] &quot;MEDN_SPP&quot;      &quot;SDN_AC&quot;        &quot;SDN_ADVSPP&quot;    &quot;SDN_ALIENSPP&quot; 
@@ -397,8 +415,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## [29] &quot;XN_ADVSPP&quot;     &quot;XN_ALIENSPP&quot;   &quot;XN_CRYPSPP&quot;    &quot;XN_FAM&quot;       
 ## [33] &quot;XN_GEN&quot;        &quot;XN_INTRSPP&quot;    &quot;XN_NATSPP&quot;     &quot;XN_SPP&quot;</code></pre>
 <p>Now category metrics, which are called very similarly to all remaining metrics except Bray-Curtis:</p>
-<pre class="sourceCode r"><code class="sourceCode r">outCat &lt;-<span class="st"> </span><span class="kw">calcCategory</span>(sumdf$byUIDspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
-<span class="kw">head</span>(outCat)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outCat &lt;-<span class="st"> </span><span class="kw">calcCategory</span>(sumdf$byUIDspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
+<span class="kw">head</span>(outCat)</code></pre></div>
 <pre><code>##   UID PARAMETER RESULT
 ## 1   1   N_DICOT     15
 ## 2   2   N_DICOT     29
@@ -406,7 +424,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## 4   4   N_DICOT     26
 ## 5   5   N_DICOT      2
 ## 6   6   N_DICOT     44</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outCat$PARAMETER) </code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outCat$PARAMETER) </code></pre></div>
 <pre><code>##  [1] &quot;N_DICOT&quot;               &quot;N_FERN&quot;               
 ##  [3] &quot;N_GYMNOSPERM&quot;          &quot;N_HORSETAIL&quot;          
 ##  [5] &quot;N_MONOCOT&quot;             &quot;PCTN_DICOT&quot;           
@@ -438,8 +456,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## [57] &quot;N_MONOCOTS_AC&quot;         &quot;PCTN_MONOCOTS_AC&quot;     
 ## [59] &quot;XABCOV_MONOCOTS_AC&quot;    &quot;XRCOV_MONOCOTS_AC&quot;</code></pre>
 <p>Finally, calculate Bray-Curtis metrics using species-level plot data:</p>
-<pre class="sourceCode r"><code class="sourceCode r">outBC &lt;-<span class="st"> </span><span class="kw">calcBCmets</span>(sumdf$byPlotspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
-<span class="kw">head</span>(outBC)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outBC &lt;-<span class="st"> </span><span class="kw">calcBCmets</span>(sumdf$byPlotspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
+<span class="kw">head</span>(outBC)</code></pre></div>
 <pre><code>##   UID   PARAMETER RESULT
 ## 1   1 XBCDIST_SPP 0.5080
 ## 2   2 XBCDIST_SPP 0.3721
@@ -447,14 +465,14 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## 4   4 XBCDIST_SPP 0.7047
 ## 5   5 XBCDIST_SPP 0.4075
 ## 6   6 XBCDIST_SPP 0.6477</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outBC$PARAMETER)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outBC$PARAMETER)</code></pre></div>
 <pre><code>## [1] &quot;XBCDIST_SPP&quot;    &quot;XBCDIST_NATSPP&quot;</code></pre>
 <p>To see all of these combined and in wide format:</p>
-<pre class="sourceCode r"><code class="sourceCode r">allVasc &lt;-<span class="st"> </span><span class="kw">rbind</span>(outRich, outCat, outBC)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">allVasc &lt;-<span class="st"> </span><span class="kw">rbind</span>(outRich, outCat, outBC)
 
 <span class="kw">library</span>(reshape2)
 outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~PARAMETER,<span class="dt">value.var=</span><span class="st">'RESULT'</span>)
-<span class="kw">head</span>(outVasc)</code></pre>
+<span class="kw">head</span>(outVasc)</code></pre></div>
 <pre><code>##   UID MEDN_AC MEDN_ADVSPP MEDN_ALIENSPP MEDN_CRYPSPP MEDN_FAM MEDN_GEN
 ## 1   1       0           0             0            0        8        9
 ## 2   2       1           0             1            0       17       18
@@ -611,7 +629,7 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 <p>As with the vascular plant metrics, there is a wrapper function that calculates all tree metrics at once (<code>calcTreeMets()</code>). There are also functions that calculate subsets of metrics (<code>calcSnagMets()</code>, <code>calcTreeCntMets()</code>, <code>calcTreeCoverMets()</code>), which require no additional processing steps but do provide output data in long format as with vascular plant metric subset functions.</p>
 <div id="all-metrics-at-once-1" class="section level2">
 <h2>3.1 All metrics at once</h2>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(TreesEx)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(TreesEx)</code></pre></div>
 <pre><code>##   UID PLOT PAGE LINE       PARAMETER RESULT
 ## 1   7    1    1    2 SPECIES_NAME_ID  36494
 ## 2   7    1    1    2       LMED_TREE      5
@@ -619,12 +637,12 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 4   7    5    1    3      SMALL_TREE      1
 ## 5   7    1    1    2       TALL_TREE      0
 ## 6   7    1    1    2         JR_TREE      0</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">outTree &lt;-<span class="st"> </span><span class="kw">calcTreeMets</span>(TreesEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outTree &lt;-<span class="st"> </span><span class="kw">calcTreeMets</span>(TreesEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
 <pre><code>## [1] &quot;Done with snag metrics&quot;
 ## [1] &quot;Done with tree count metrics&quot;
 ## [1] &quot;Done with tree species metrics&quot;
 ## [1] &quot;Done with tree cover metrics&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outTree)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outTree)</code></pre></div>
 <pre><code>##   UID FREQ_HMED_TREE FREQ_LMED_TREE FREQ_SMALL_TREE FREQ_TALL_TREE
 ## 1   1             40              0              40             80
 ## 2   2             80              0               0            100
@@ -741,9 +759,9 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 <div id="subsets-of-metrics-1" class="section level2">
 <h2>3.2 Subsets of metrics</h2>
 <p>To calculate only snag metrics, the same dataset can be used directly with the subset functions. In this example, we only want to calculate snag metrics.</p>
-<pre class="sourceCode r"><code class="sourceCode r">outSnag &lt;-<span class="st"> </span><span class="kw">calcSnagMets</span>(TreesEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outSnag &lt;-<span class="st"> </span><span class="kw">calcSnagMets</span>(TreesEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
 <pre><code>## [1] &quot;Done with snag metrics&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outSnag)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outSnag)</code></pre></div>
 <pre><code>##   UID        PARAMETER RESULT
 ## 1   1       TOTN_SNAGS      0
 ## 2   1   TOTN_THIN_SNAG      0
@@ -751,7 +769,7 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 4   1  TOTN_THICK_SNAG      0
 ## 5   1 TOTN_XXTHIN_SNAG      0
 ## 6   1       XN_JR_SNAG      0</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outSnag$PARAMETER)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outSnag$PARAMETER)</code></pre></div>
 <pre><code>##  [1] &quot;TOTN_SNAGS&quot;       &quot;TOTN_THIN_SNAG&quot;   &quot;XN_XTHIN_SNAG&quot;   
 ##  [4] &quot;TOTN_THICK_SNAG&quot;  &quot;TOTN_XXTHIN_SNAG&quot; &quot;XN_JR_SNAG&quot;      
 ##  [7] &quot;TOTN_JR_SNAG&quot;     &quot;TOTN_XTHIN_SNAG&quot;  &quot;XN_THIN_SNAG&quot;    
@@ -765,7 +783,7 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 <p>Both vegetation type and ground cover data are collected on the same form (V-4) in NWCA, so these metrics are processed together. There is again a wrapper function (<code>calcVtype_GcovMets()</code>) that calculates several subsets of metrics and combines them into a single output data frame. The functions that calculate subsets of these metrics are <code>calcBareGround_LitterMets()</code>, <code>calcNonvascMets()</code>, <code>calcSandTMets()</code>, <code>calcVascStratMets()</code>, <code>calcWcovMets()</code>. These subset functions require one additional step to run, described below.</p>
 <div id="all-metrics-at-once-2" class="section level2">
 <h2>4.1 All metrics at once</h2>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(Vtype_GrCovEx)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(Vtype_GrCovEx)</code></pre></div>
 <pre><code>##   UID PLOT       PARAMETER RESULT
 ## 1   7    4   MINIMUM_DEPTH      8
 ## 2   7    3 LITTER_DEPTH_NE      0
@@ -773,14 +791,14 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 4   7    4     WATER_AQVEG      0
 ## 5   7    5   MINIMUM_DEPTH      8
 ## 6   7    5     WATER_NOVEG      0</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">outVG &lt;-<span class="st"> </span><span class="kw">calcVtype_GcovMets</span>(Vtype_GrCovEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outVG &lt;-<span class="st"> </span><span class="kw">calcVtype_GcovMets</span>(Vtype_GrCovEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
 <pre><code>## [1] &quot;Done with veg heterogeneity metrics&quot;
 ## [1] &quot;Done with vascular strata metrics&quot;
 ## [1] &quot;Done with non-vascular strata metrics&quot;
 ## [1] &quot;Done with water depth metrics&quot;
 ## [1] &quot;Done with litter metrics&quot;
 ## [1] &quot;Done with bare ground metrics&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outVG)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outVG)</code></pre></div>
 <pre><code>##   UID D_SANDT D_VASC_STRATA DOM_SANDT FREQ_ALGAE FREQ_ARBOREAL FREQ_BAREGD
 ## 1   1       0        0.6617       PFO          0            20           0
 ## 2   2       0        0.5684       PFO          0           100         100
@@ -953,12 +971,12 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 <div id="subsets-of-metrics-2" class="section level2">
 <h2>4.2 Subsets of metrics</h2>
 <p>If we only want to calculate a subset of metrics, say S &amp; T metrics and vascular strata metrics, for example, we need to supply the number of plots sampled at each site along with the data from form V-4.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(plyr)
-nplots &lt;-<span class="st"> </span><span class="kw">ddply</span>(Vtype_GrCovEx,<span class="kw">c</span>(<span class="st">'UID'</span>),summarize,<span class="dt">NPLOTS=</span><span class="kw">length</span>(<span class="kw">unique</span>(PLOT)))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(plyr)
+nplots &lt;-<span class="st"> </span><span class="kw">ddply</span>(Vtype_GrCovEx,<span class="kw">c</span>(<span class="st">'UID'</span>),summarise,<span class="dt">NPLOTS=</span><span class="kw">length</span>(<span class="kw">unique</span>(PLOT)))
 
-outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_GrCovEx, nplots, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
+outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_GrCovEx, nplots, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
 <pre><code>## [1] &quot;Done with veg heterogeneity metrics&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outST)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outST)</code></pre></div>
 <pre><code>##   UID PARAMETER RESULT
 ## 1   1   D_SANDT      0
 ## 2   1   N_SANDT      1
@@ -966,11 +984,11 @@ outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_
 ## 4   1   J_SANDT      0
 ## 5   1 DOM_SANDT    PFO
 ## 6   2 DOM_SANDT    PFO</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outST$PARAMETER)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outST$PARAMETER)</code></pre></div>
 <pre><code>## [1] &quot;D_SANDT&quot;   &quot;N_SANDT&quot;   &quot;H_SANDT&quot;   &quot;J_SANDT&quot;   &quot;DOM_SANDT&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">outVstrat &lt;-<span class="st"> </span><span class="kw">calcVascStratMets</span>(Vtype_GrCovEx, nplots, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outVstrat &lt;-<span class="st"> </span><span class="kw">calcVascStratMets</span>(Vtype_GrCovEx, nplots, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
 <pre><code>## [1] &quot;Done with vascular strata metrics&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outVstrat)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outVstrat)</code></pre></div>
 <pre><code>##   UID        PARAMETER RESULT
 ## 1   1 FREQ_FLOATING_AQ   0.00
 ## 2   1    N_VASC_STRATA   6.00
@@ -978,7 +996,7 @@ outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_
 ## 4   1   IMP_VSMALL_VEG  42.11
 ## 5   1  XRCOV_VTALL_VEG   0.00
 ## 6   1     XRCOV_LIANAS   0.57</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outVstrat$PARAMETER)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outVstrat$PARAMETER)</code></pre></div>
 <pre><code>##  [1] &quot;FREQ_FLOATING_AQ&quot;    &quot;N_VASC_STRATA&quot;       &quot;XRCOV_MED_VEG&quot;      
 ##  [4] &quot;IMP_VSMALL_VEG&quot;      &quot;XRCOV_VTALL_VEG&quot;     &quot;XRCOV_LIANAS&quot;       
 ##  [7] &quot;IMP_TALL_VEG&quot;        &quot;XCOV_VTALL_VEG&quot;      &quot;XRCOV_HMED_VEG&quot;     
@@ -994,10 +1012,10 @@ outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_
 ## [37] &quot;J_VASC_STRATA&quot;       &quot;XCOV_SUBMERGED_AQ&quot;   &quot;D_VASC_STRATA&quot;      
 ## [40] &quot;FREQ_VTALL_VEG&quot;      &quot;IMP_VTALL_VEG&quot;       &quot;XCOV_TALL_VEG&quot;      
 ## [43] &quot;XCOV_VSMALL_VEG&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Now we can combine these two outputs and cast them into wide format</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Now we can combine these two outputs and cast them into wide format</span>
 outAllVG &lt;-<span class="st"> </span><span class="kw">rbind</span>(outST,outVstrat)
 outAllVG.wide &lt;-<span class="st"> </span><span class="kw">dcast</span>(outAllVG,UID~PARAMETER,<span class="dt">value.var=</span><span class="st">'RESULT'</span>)
-<span class="kw">head</span>(outAllVG.wide)</code></pre>
+<span class="kw">head</span>(outAllVG.wide)</code></pre></div>
 <pre><code>##   UID D_SANDT D_VASC_STRATA DOM_SANDT FREQ_FLOATING_AQ FREQ_HMED_VEG
 ## 1   1       0        0.6617       PFO                0            80
 ## 2   2       0        0.5684       PFO                0           100
@@ -1090,7 +1108,7 @@ outAllVG.wide &lt;-<span class="st"> </span><span class="kw">dcast</span>(outAll
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

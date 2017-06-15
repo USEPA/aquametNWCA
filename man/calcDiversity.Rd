@@ -10,7 +10,7 @@ calcDiversity(vascIn, sampID = "UID")
 \item{vascIn}{Data frame containing cover data summarized by
 UID and TAXON, with the following fields:
 \itemize{
- \item sampID: Variable(s) identified in sampID argument
+ \item sampID: Variable(s) identified in \emph{sampID} argument
 
 \item TAXON: Taxon name
 
@@ -23,11 +23,11 @@ UID and TAXON, with the following fields:
 }}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Data frame containing sampID variables, PARAMETER, RESULT, where
-values of PARAMETER are:
+Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+  where values of PARAMETER are:
 \itemize{
 \item D_ALL: Simpson diversity index based on all taxa
 

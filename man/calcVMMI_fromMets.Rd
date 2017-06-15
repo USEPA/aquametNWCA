@@ -7,10 +7,8 @@
 calcVMMI_fromMets(metsIn, sampID = "UID")
 }
 \arguments{
-\item{metsIn}{Data frame containing, at a minimum:
-\itemize{
-\item sampID - A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+\item{metsIn}{Data frame containing, at a minimum: \itemize{ \item sampID:
+Variables identified in \emph{sampID} argument
 
 \item FQAI_ALL: Floristic Quality Assessment Index based on all species
 
@@ -18,52 +16,43 @@ variable(s) necessary to identify unique samples
 
 \item RIMP_NATSPP: Relative importance of native species
 
-\item XRCOV_MONOCOTS_NAT: Mean relative cover of native monocots
-}
-Optional:
-\itemize{
-\item NWCA_ECO4: Aggregated ecoregion abbreviations as used in NWCA
-2011. Valid values include: CPL (Coastal Plains), EMU (Eastern
+\item XRCOV_MONOCOTS_NAT: Mean relative cover of native monocots } 
+Optional: \itemize{ \item NWCA_ECO4: Aggregated ecoregion abbreviations as
+used in NWCA 2011. Valid values include: CPL (Coastal Plains), EMU (Eastern
 Mountains and Uplands), IPL (Interior Plains), and W (West).
 
-\item NWCA_WET_GRP: Wetland type groups as used in NWCA 2011. Valid
-values include: EH (Estuarine Herbaceous), EW (Estuarine Woody),
-PRLH (Palustrine, Riverine, and Lacustrine Herbaceous),
-PRLW (Palustrine, Riverine, and Lacustrine Woody).
+\item NWCA_WET_GRP: Wetland type groups as used in NWCA 2011. Valid values
+include: EH (Estuarine Herbaceous), EW (Estuarine Woody), PRLH (Palustrine,
+Riverine, and Lacustrine Herbaceous), PRLW (Palustrine, Riverine, and
+Lacustrine Woody).
 
-\item ECO_X_WETGRP: Combinations of NWCA_ECO4 and NWCA_WET_GRP. Valid
-values include ALL-EH, ALL-EW, CPL-PRLH, CPL-PRLW, EMU-PRLH,
-EMU-PRLW, IPL-PRLH, IPL-PRLW, W-PRLH, W-PRLW
-}
-To assign condition class, either NWCA_ECO4 and NWCA_WET_GRP need to
-be included OR ECO_X_WETGRP needs to be included in the input
-data frame.}
+\item ECO_X_WETGRP: Combinations of NWCA_ECO4 and NWCA_WET_GRP. Valid 
+values include ALL-EH, ALL-EW, CPL-PRLH, CPL-PRLW, EMU-PRLH, EMU-PRLW,
+IPL-PRLH, IPL-PRLW, W-PRLH, W-PRLW } To assign condition class, either
+NWCA_ECO4 and NWCA_WET_GRP need to be included OR ECO_X_WETGRP needs to be
+included in the input data frame.}
 
-\item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+\item{sampID}{A character vector containing the name(s) of variable(s)
+necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Data frame containing:
-\itemize{
-\item sampID Variable(s) found in the argument sampID
-
-\item FQAI_ALL_SC: Scored FQAI_ALL, on 0-10 scale
-
-\item N_TOL_SC: Scored N_TOL, on 0-10 scale
-
-\item RIMP_NATSPP_SC: Scored RIMP_NATSPP, on 0-10 scale
-
-\item XRCOV_MONOCOTS_NAT_SC: Scored XRCOV_MONOCOTS_NAT, on 0-10 scale
-
-\item VMMI: NWCA 2011 Vegetation Multimetric Index on 100-point scale
-}
-If ECO_X_WETGRP is provided or can be determined from NWCA_ECO4 and
-NWCA_WET_GRP, ECO_X_WETGRP and the following is also provided as output:
-\itemize{
-\item VEGCOND: Vegetation condition class, based on VMMI score and
-site location, as assigned for NWCA 2011. Valid values are
-Good, Fair, and Poor.
-}
+Data frame containing: \itemize{ \item \emph{sampID} Variable(s)
+  found in the argument sampID
+  
+  \item FQAI_ALL_SC: Scored FQAI_ALL, on 0-10 scale
+  
+  \item N_TOL_SC: Scored N_TOL, on 0-10 scale
+  
+  \item RIMP_NATSPP_SC: Scored RIMP_NATSPP, on 0-10 scale
+  
+  \item XRCOV_MONOCOTS_NAT_SC: Scored XRCOV_MONOCOTS_NAT, on 0-10 scale
+  
+  \item VMMI: NWCA 2011 Vegetation Multimetric Index on 100-point scale } If
+  ECO_X_WETGRP is provided or can be determined from NWCA_ECO4 and 
+  NWCA_WET_GRP, ECO_X_WETGRP and the following is also provided as output: 
+  \itemize{ \item VEGCOND: Vegetation condition class, based on VMMI score
+  and site location, as assigned for NWCA 2011. Valid values are Good, Fair,
+  and Poor. }
 }
 \description{
 This function calculates the NWCA 2011 Vegetation
@@ -86,9 +75,9 @@ check.3 <- calcVMMI_fromMets(subset(vmmiMetEx,select=c('UID','FQAI_ALL'
                           ,'N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')))
 }
 \references{
-US Environmental Protection Agency. 2016. National
-Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006.
-US Environmental Protection Agency, Washington, DC.
+US Environmental Protection Agency. 2016. National Wetland
+  Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
+  Environmental Protection Agency, Washington, DC.
 }
 \author{
 Karen Blocksom  \email{blocksom.karen@epa.gov}

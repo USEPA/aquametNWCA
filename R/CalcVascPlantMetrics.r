@@ -1,34 +1,36 @@
 #' @export
-#' @title Calculate NWCA 2011 vascular plant metrics based on form V-2
-#' @description This function calculates the NWCA 2011 vascular plant metrics.
-#' It assumes input data are organized so that each row represents the cover
-#' for a single taxon within a single plot at a site. It also assumes a single
-#' column is used to identify each unique sample.
-#' @param vascIn A data frame with the following variables (at a minimum):
-#' \itemize{
-#' \item sampID: Variable(s) identified in sampID argument, 'UID' by default
 #' 
-#' \item PLOT: plot number
-#'
-#' \item STATE: state where sample collected
-#'
-#' \item USAC_REGION: U.S. Army Corps of Engineers region of site where sample
-#' collected
-#'
-#' \item USDA_NAME: USDA accepted name of taxon in sample
-#'
-#' \item COVER: value from 0 to 100 indicating relative cover of taxon within plot).
-#' Data should already be summed by UID, PLOT, and USDA_NAME.
-#' }
-#' @param taxaIn A data frame containing taxonomy of all taxa found in vascIn,
-#' with the following variables at a minimum:
-#' \itemize{
-#' \item USDA_NAME: USDA accepted name of taxon in sample
-#'
-#' \item FAMILY: family name of taxon
-#'
-#' \item GENUS: genus name of taxon
-#'
+#' @title Calculate NWCA 2011 vascular plant metrics based on form V-2
+#' 
+#' @description This function calculates the NWCA 2011 vascular plant metrics. 
+#'   It assumes input data are organized so that each row represents the cover 
+#'   for a single taxon within a single plot at a site. It also assumes a single
+#'   column is used to identify each unique sample.
+#'   
+#' @param vascIn A data frame with the following variables (at a minimum): 
+#'   \itemize{ \item sampID: Variable(s) identified in \emph{sampID} argument,
+#'   'UID' by default
+#'   
+#'   \item PLOT: plot number
+#'   
+#'   \item STATE: state where sample collected
+#'   
+#'   \item USAC_REGION: U.S. Army Corps of Engineers region of site where sample
+#'   collected
+#'   
+#'   \item USDA_NAME: USDA accepted name of taxon in sample
+#'   
+#'   \item COVER: value from 0 to 100 indicating relative cover of taxon within
+#'   plot). Data should already be summed by UID, PLOT, and USDA_NAME. }
+#' @param taxaIn A data frame containing taxonomy of all taxa found in vascIn, 
+#'   with the following variables at a minimum: 
+#'   \itemize{ \item USDA_NAME: USDA
+#'   accepted name of taxon in sample
+#'   
+#'   \item FAMILY: family name of taxon
+#'   
+#'   \item GENUS: genus name of taxon
+#'   
 #' \item CATEGORY: USDA PLANTS category
 #'
 #' \item GROWTH_HABIT: growth habit as designated in USDA PLANTS
@@ -65,18 +67,22 @@
 #' If this data frame is not supplied, the data set wisNWCA included in the
 #' package is used.
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples, 'UID' by default
+#' 
 #' @return Either a character string containing an error message when metric
-#' calculation is not successful, or a data frame. The first column of the
-#' data frame is the UID and subsequent columns are named for each metric and
+#' calculation is not successful, or a data frame. The first column(s) of the
+#' data frame contain the \emph{sampID} variables, and subsequent columns are 
+#' named for each metric and
 #' contain metric values. A list of metrics is provided in the document named
 #' "Vascular_Plant_Metric_Descriptions.pdf" included in the help directory for
 #' the package.
+#' 
 #' @references US Environmental Protection Agency. 2016. National Wetland
 #' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 #' Environmental Protection Agency, Washington, DC.
 #'
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(VascPlantEx)
 #'

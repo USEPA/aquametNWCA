@@ -1,45 +1,51 @@
 #' @export
+#' 
 #' @title Create data frames for function input
+#' 
 #' @description This internal function merges the inputs of
 #' plant cover data and taxalist and summarizes by the taxonomic
 #' level specified. Not intended for use on its own.
+#' 
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples 
+#' variable(s) necessary to identify unique samples, 'UID' by default
 #' @param tvar String with the level of taxonomy
 #' ('USDA_NAME','GENUS','FAMILY')
 #' @param vascIn Data frame with vegetation cover data, having
 #' the following variables:
 #' \itemize{
 #'
-#' \item sampID - Variable(s) found in the argument sampID
+#' \item sampID: Variable(s) found in the argument \emph{sampID}
 #'
-#' \item PLOT - Plot number of data (1 to 5 possible)
+#' \item PLOT:  Plot number of data (1 to 5 possible)
 #'
-#' \item STATE - State postal code of site
+#' \item STATE: State postal code of site
 #'
-#' \item USAC_REGION - U.S. Army Corps of Engineers Region Name
+#' \item USAC_REGION: U.S. Army Corps of Engineers Region Name
 #'
-#' \item USDA_NAME - Taxon name, must match with taxa data frame
+#' \item USDA_NAME: Taxon name, must match with taxa data frame
 #'
-#' \item COVER - Percentage estimated vegetation cover by TAXON in PLOT
+#' \item COVER: Percentage estimated vegetation cover by TAXON in PLOT
 #' }
 #' @param taxa Data frame containing USDA_NAME, GENUS, CATEGORY,
 #' GROWTH_HABIT, and DURATION variables. Dataset taxaNWCA is the
 #' default if not specified. These variables are assumed to be
 #' populated with abbreviations as found in UsDA PLANTS database.
-#' @return A list containing two data frames. The first data frame
-#' summarizes data by sampID variables and TAXON and contains 
-#' sampID variables, STATE, USAC_REGION, TAXON, NUM, XABCOV, DISTINCT, 
-#' and NPLOTS. NUM is the number of plots in which taxon occurs, and 
-#' XABCOV is the mean absolute COVER across plots. DISTINCT is the value 
-#' 1 assigned to each row. NPLOTS is the number of plots sampled.
-#'
-#' The second summarizes by sampID variables, PLOT, and TAXON. Each data frame
-#' contains sampID variables, PLOT, STATE, USAC_REGION, TAXON, COVER, and
-#' DISTINCT. DISTINCT assigns the value for each taxon as 1 if the
-#' taxon has COVER>0 or 0 if not. COVER is the sum of the COVER
-#' variable by sampID variables, PLOT, and TAXON.
+#' 
+#' @return A list containing two data frames. The first data frame summarizes
+#'   data by \emph{sampID} variables and TAXON and contains sampID variables,
+#'   STATE, USAC_REGION, TAXON, NUM, XABCOV, DISTINCT, and NPLOTS. NUM is the
+#'   number of plots in which taxon occurs, and XABCOV is the mean absolute
+#'   COVER across plots. DISTINCT is the value 1 assigned to each row. NPLOTS is
+#'   the number of plots sampled.
+#'   
+#'   The second summarizes by \emph{sampID} variables, PLOT, and TAXON. Each
+#'   data frame contains sampID variables, PLOT, STATE, USAC_REGION, TAXON,
+#'   COVER, and DISTINCT. DISTINCT assigns the value for each taxon as 1 if the 
+#'   taxon has COVER>0 or 0 if not. COVER is the sum of the COVER variable by
+#'   sampID variables, PLOT, and TAXON.
+#'   
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(VascPlantEx)
 #' data(taxaNWCA)
@@ -74,185 +80,164 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa){
 }
 
 #' @export
-#' @title Prepare data for calculating metrics
-#' @description Assemble datasets from data frame containing
-#' vegetation cover by sampID variables and PLOT, and taxa lists containing
-#' variables used in metric calculation. Species-, genus-, and
-#' family-level datasets are summarized by plot and sample. For the
-#' species-level output data summarized by sampID variables, various traits
-#' are added to the output data set.
-#' @param vascIn Data frame containing cover data summarized at
-#' the sampID variables, PLOT, and taxon value, with the following variable
-#' names:
-#'  \itemize{
-#' \item sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#'
-#' \item PLOT: Plot number of data
-#'
-#' \item USDA_NAME: Taxon name, based on USDA PLANTS names,
-#' supplemented with NWCA names, if not in USDA PLANTS
-#'
-#' \item COVER: Percent cover of taxon in plot, including zeros
-#' for plots in which a taxon does not occur.
-#' }
-#' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @param inTaxa Data frame with all taxa in vascIn, with variables:
-#' \itemize{
-#' \item USDA_NAME: Taxon name, based on USDA PLANTS names,
-#' supplemented with NWCA names, if necessary.
-#'
-#' \item FAMILY: Family name of taxon
-#'
-#' \item GENUS: Genus name of taxon
-#'
-#' \item CATEGORY (optional): USDA PLANTS category variable,
-#' necessary to calculate category metrics.
-#'
-#' \item DURATION (optional): USDA PLANTS duration variable,
-#' necessary to calculate duration metrics.
-#'
-#' \item GROWTH_HABIT (optional): USDA PLANTS growth habit
-#' variable,necessary to calculate growth habit metrics
-#'
-#' \item SPECIES_NAME_ID (optional): Taxonomic ID number,
-#' which will be used in Bray-Curtis distance metrics
-#' if available.
-#'
-#' \item STATE: Postal abbreviation for state of sample
-#'
-#' \item USAC_REGION: U.S. Army Corps of Engineers region
-#' abbreviation for sample, to correspond to those
-#' in inWIS data frame.
-#' }
-#' @param inNatCC Data frame with C-values and native status:
-#'
-#' \itemize{
-#' \item USDA_NAME: Taxon name
-#'
-#' \item GEOG_ID: Postal abbreviation for STATE of taxon
-#'
-#' \item NWCA_CC (optional): Coefficient of conservatism,
-#' as used in NWCA, necessary to calculate CC metrics
-#'
-#' \item NWCA_NATSTAT (optional): Native status variable,
-#' as used in NWCA, necessary to calculate native status metrics.
-#' }
-#' @param inWIS Data frame with Wetland Indicator Status, from
-#' U.S. Army Corps of Engineers (USAC):
-#' \itemize{
-#' \item USDA_NAME: Taxon name
-#'
-#' \item GEOG_ID: USAC region, abbreviated to match those used in input
-#' data frame
-#'
-#' \item WIS: Wetland Indicator Status as provided by USAC
-#' or added for NWCA
-#' }
-#' @details This function calls the createDFs() function, which
-#' sums cover by sampID variables, PLOT, TAXON, with sums > 100 truncated to
-#' 100 percent.
-#' @return A list containing six data frames:
-#' \itemize{
-#'  \item
-#'    byUIDspp: Data frame with data summarized by sampID variables and TAXON
-#'    at the species level and contains:
-#'    \itemize{
-#'      \item sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#'
-#'      \item STATE: State abbreviation of site location, necessary for merging
-#' with inNatCC
-#'
-#'      \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation
-#' necessary for merging with inWIS.
-#'
-#'      \item TAXON: Taxon name
-#'
-#'      \item NUM: Number of occurrences of taxon across plots
-#'
-#'      \item XABCOV: Mean percent absolute cover of taxon across plots
-#'
-#'      \item DISTINCT: Distinctness value for each taxon, 1 if
-#' the taxon has COVER>0 and 0 if not.
-#'
-#'      \item NPLOTS: Number of plots in sample (1-5)
-#'
-#'      \item TOTN: Total number of taxa in sample
-#'
-#'      \item XTOTABCOV: Sum of XABCOV across all taxa in sample
-#'
-#'      \item sXRCOV: taxon mean relative cover (XABCOV/XTOTABCOV)*100
-#'
-#'      \item FREQ: Relative number of plots in which taxon occurs
-#' (NUM/NPLOTS)*100
-#'
-#'      \item TOTFREQ: Sum of FREQ across all taxa in sample
-#'
-#'      \item SRFREQ: Relative frequency of taxon relative to total
-#' frequency (FREQ/TOTFREQ)*100
-#'    }
-#' This data frame is also merged with the input taxa data
-#' frames and contains, in addition, GENUS and FAMILY, but
-#' also contains (depending on the input taxa lists): CATEGORY,
-#' DURATION, GROWTH_HABIT, NWCA_CC, NWCA_NATSTAT, WIS.
-#'
-#' \item byPlotspp: Data frame with data summarized by sampID variables, PLOT, and
-#' TAXON at the species level. Each data frame contains:
-#'    \itemize{
-#'      \item sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#'
-#'      \item PLOT: Plot number
-#'
-#'      \item STATE: State of sample location
-#'
-#'      \item USAC_REGION: USAC region code
-#'
-#'      \item TAXON: Taxon name
-#'
-#'      \item COVER: Sum of cover by TAXON within plot
-#'
-#'      \item DISTINCT: Distinctness of taxon, value of 1 assigned to each row
-#' }
 #' 
-#' \item byUIDgen: Data frame with data summarized by sampID variables and TAXON
-#' at the genus level and contains \emph{sampID}, STATE, USAC_REGION,
-#' TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of
-#' plots in which taxon occurs, and XABCOV is the mean
-#' absolute COVER across plots. DISTINCT is the value 1
-#' assigned to each row.
-#'
-#' \item byPlotgen: Data frame with data summarized by sampID variables, 
-#' PLOT, and TAXON at the genus level. Each data frame contains 
-#' \emph{sampID}, PLOT, STATE, USAC_REGION, TAXON, COVER, and DISTINCT.
-#' DISTINCT assigns the value for each taxon as 1 if the
-#' taxon has COVER>0 or 0 if not. COVER is the sum of the
-#' COVER variable.
-#'
-#' \item byUIDfam: Data frame with data summarized by sampID variables and TAXON
-#' at the family level and contains \emph{sampID}, STATE, USAC_REGION,
-#' TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of plots
-#' in which taxon occurs, and XABCOV is the mean absolute COVER
-#' across plots. DISTINCT is the value 1 assigned to each row.
-#'
-#' \item byPlotfam: Data frame with data summarized by \emph{sampID}
-#' , PLOT, and TAXON at the family level. Each data frame 
-#' contains \emph{sampID}, PLOT, STATE, USAC_REGION, TAXON, 
-#' COVER, and DISTINCT. DISTINCT assigns the value for each 
-#' taxon as 1 if the taxon has COVER>0 or 0 if not. COVER is the 
-#' sum of the COVER variable.
-#' }
-#' @references US Environmental Protection Agency. 2016.
-#' National Wetland Condition Assessment: 2011 Technical Report.
-#' EPA-843-R-15-006. US Environmental Protection Agency,
-#' Washington, DC.
+#' @title Prepare data for calculating metrics
+#'   
+#' @description Assemble datasets from data frame containing vegetation cover by
+#'   sampID variables and PLOT, and taxa lists containing variables used in
+#'   metric calculation. Species-, genus-, and family-level datasets are
+#'   summarized by plot and sample. For the species-level output data summarized
+#'   by sampID variables, various traits are added to the output data set.
+#'   
+#' @param vascIn Data frame containing cover data summarized at the
+#'   \emph{sampID} variables, PLOT, and taxon value, with the following variable
+#'   names: \itemize{ \item sampID A character vector containing the name(s) of 
+#'   variable(s) necessary to identify unique samples, 'UID' by default
+#'   
+#'   \item PLOT: Plot number of data
+#'   
+#'   \item USDA_NAME: Taxon name, based on USDA PLANTS names, supplemented with
+#'   NWCA names, if not in USDA PLANTS
+#'   
+#'   \item COVER: Percent cover of taxon in plot, including zeros for plots in
+#'   which a taxon does not occur. }
+#' @param sampID A character vector containing the name(s) of variable(s)
+#'   necessary to identify unique samples, 'UID' by default
+#' @param inTaxa Data frame with all taxa in vascIn, with variables: \itemize{ 
+#'   \item USDA_NAME: Taxon name, based on USDA PLANTS names, supplemented with
+#'   NWCA names, if necessary.
+#'   
+#'   \item FAMILY: Family name of taxon
+#'   
+#'   \item GENUS: Genus name of taxon
+#'   
+#'   \item CATEGORY (optional): USDA PLANTS category variable, necessary to
+#'   calculate category metrics.
+#'   
+#'   \item DURATION (optional): USDA PLANTS duration variable, necessary to
+#'   calculate duration metrics.
+#'   
+#'   \item GROWTH_HABIT (optional): USDA PLANTS growth habit variable,necessary
+#'   to calculate growth habit metrics
+#'   
+#'   \item SPECIES_NAME_ID (optional): Taxonomic ID number, which will be used
+#'   in Bray-Curtis distance metrics if available.
+#'   
+#'   \item STATE: Postal abbreviation for state of sample
+#'   
+#'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation for
+#'   sample, to correspond to those in inWIS data frame. }
+#' @param inNatCC Data frame with C-values and native status:
+#'   
+#'   \itemize{ \item USDA_NAME: Taxon name
+#'   
+#'   \item GEOG_ID: Postal abbreviation for STATE of taxon
+#'   
+#'   \item NWCA_CC (optional): Coefficient of conservatism, as used in NWCA,
+#'   necessary to calculate CC metrics
+#'   
+#'   \item NWCA_NATSTAT (optional): Native status variable, as used in NWCA,
+#'   necessary to calculate native status metrics. }
+#' @param inWIS Data frame with Wetland Indicator Status, from U.S. Army Corps
+#'   of Engineers (USAC): \itemize{ \item USDA_NAME: Taxon name
+#'   
+#'   \item GEOG_ID: USAC region, abbreviated to match those used in input data
+#'   frame
+#'   
+#'   \item WIS: Wetland Indicator Status as provided by USAC or added for NWCA }
+#'   
+#' @details This function calls the createDFs() function, which sums cover by
+#'   \emph{sampID} variables, PLOT, TAXON, with sums > 100 truncated to 100
+#'   percent.
+#'   
+#' @return A list containing six data frames: \itemize{ \item byUIDspp: Data
+#'   frame with data summarized by \emph{sampID} variables and TAXON at the
+#'   species level and contains: \itemize{ \item sampID: Variable(s) identified
+#'   in \emph{sampID} argument
+#'   
+#'   \item STATE: State abbreviation of site location, necessary for merging 
+#'   with inNatCC
+#'   
+#'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation 
+#'   necessary for merging with inWIS.
+#'   
+#'   \item TAXON: Taxon name
+#'   
+#'   \item NUM: Number of occurrences of taxon across plots
+#'   
+#'   \item XABCOV: Mean percent absolute cover of taxon across plots
+#'   
+#'   \item DISTINCT: Distinctness value for each taxon, 1 if the taxon has
+#'   COVER>0 and 0 if not.
+#'   
+#'   \item NPLOTS: Number of plots in sample (1-5)
+#'   
+#'   \item TOTN: Total number of taxa in sample
+#'   
+#'   \item XTOTABCOV: Sum of \emph{XABCOV} across all taxa in sample
+#'   
+#'   \item sXRCOV: taxon mean relative cover (XABCOV/XTOTABCOV)*100
+#'   
+#'   \item FREQ: Relative number of plots in which taxon occurs (NUM/NPLOTS)*100
+#'   
+#'   \item TOTFREQ: Sum of \emph{FREQ} across all taxa in sample
+#'   
+#'   \item SRFREQ: Relative frequency of taxon relative to total frequency
+#'   (FREQ/TOTFREQ)*100 } This data frame is also merged with the input taxa
+#'   data frames and contains, in addition, GENUS and FAMILY, but also contains
+#'   (depending on the input taxa lists): CATEGORY, DURATION, GROWTH_HABIT,
+#'   NWCA_CC, NWCA_NATSTAT, WIS.
+#'   
+#'   \item byPlotspp: Data frame with data summarized by \emph{sampID}
+#'   variables, PLOT, and TAXON at the species level. Each data frame contains: 
+#'   \itemize{ \item sampID Variables identified in \emph{sampID} argument
+#'   
+#'   \item PLOT: Plot number
+#'   
+#'   \item STATE: State of sample location
+#'   
+#'   \item USAC_REGION: USAC region code
+#'   
+#'   \item TAXON: Taxon name
+#'   
+#'   \item COVER: Sum of cover by TAXON within plot
+#'   
+#'   \item DISTINCT: Distinctness of taxon, value of 1 assigned to each row }
+#'   
+#'   \item byUIDgen: Data frame with data summarized by sampID variables and
+#'   TAXON at the genus level and contains \emph{sampID}, STATE, USAC_REGION, 
+#'   TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of plots in which taxon
+#'   occurs, and XABCOV is the mean absolute COVER across plots. DISTINCT is the
+#'   value 1 assigned to each row.
+#'   
+#'   \item byPlotgen: Data frame with data summarized by sampID variables, PLOT,
+#'   and TAXON at the genus level. Each data frame contains \emph{sampID}, PLOT,
+#'   STATE, USAC_REGION, TAXON, COVER, and DISTINCT. DISTINCT assigns the value
+#'   for each taxon as 1 if the taxon has COVER>0 or 0 if not. COVER is the sum
+#'   of the COVER variable.
+#'   
+#'   \item byUIDfam: Data frame with data summarized by sampID variables and
+#'   TAXON at the family level and contains \emph{sampID}, STATE, USAC_REGION, 
+#'   TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of plots in which taxon
+#'   occurs, and XABCOV is the mean absolute COVER across plots. DISTINCT is the
+#'   value 1 assigned to each row.
+#'   
+#'   \item byPlotfam: Data frame with data summarized by \emph{sampID} , PLOT,
+#'   and TAXON at the family level. Each data frame contains \emph{sampID},
+#'   PLOT, STATE, USAC_REGION, TAXON, COVER, and DISTINCT. DISTINCT assigns the
+#'   value for each taxon as 1 if the taxon has COVER>0 or 0 if not. COVER is
+#'   the sum of the COVER variable. }
+#'   
+#' @references US Environmental Protection Agency. 2016. National Wetland
+#'   Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
+#'   Environmental Protection Agency, Washington, DC.
+#'   
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#'   
 #' @examples
 #' head(VascPlantEx)
 #' prepEx <- prepareData(VascPlantEx)
-#'
+#' 
 #' str(prepEx)
 prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWIS=wisNWCA){
   # Read in various input datasets, and create output dataset based on available
@@ -356,35 +341,43 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
 }
 
 #' @export
+#' 
 #' @title Calculate vascular plant richness metrics
-#' @description This internal function calculates taxa richness
-#' of sample at a specified level of taxonomy, based on output
-#' from CreateDFs(). Not intended for use on its own.
-#' @param x Data frame containing cover data summarized by sampID,
-#' TAXON, DISTINCT at the specified taxonomic level (tlevel)
-#' @param y Data frame containing cover data summarized by sampID,
-#' PLOT, TAXON, and DISTINCT at the specified taxonomic level.
-#' @param tlevel Taxonomic level of input dataset, abbreviated
-#' to serve as suffix to metric names ('SPP','GEN','FAM')
-#' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, and RESULT,
-#' with one row of results per parameter and sample. The values for
-#' PARAMETER consist of the metric name concatenated with taxonomic
-#' level (represented as TAXLEVEL below):
-#'
-#' TOTN_TAXLEVEL: Number of unique taxa in sample 
-#'
-#' XN_TAXLEVEL: Mean number of taxa per plot
-#'
-#' MEDN_TAXLEVEL: Median number of taxa per plot
-#'
-#' SDN_TAXLEVEL: Standard deviation of number of taxa per plot
-#'
-#' N_PLOTS: Number of plots sampled for sampID
-#'
+#'   
+#' @description This internal function calculates taxa richness of sample at a
+#'   specified level of taxonomy, based on output from CreateDFs(). This 
+#'   function used in \code{calcRichness()} function.
+#'   
+#' @section Warning: This function not intended for use on its own
+#'   
+#' @param x Data frame containing cover data summarized by \emph{sampID} 
+#'   variables, TAXON, DISTINCT at the specified taxonomic level (tlevel)
+#' @param y Data frame containing cover data summarized by \emph{sampID} 
+#'   variables, PLOT, TAXON, and DISTINCT at the specified taxonomic level.
+#' @param tlevel Taxonomic level of input dataset, abbreviated to serve as
+#'   suffix to metric names ('SPP','GEN','FAM')
+#' @param sampID A character vector containing the name(s) of variable(s)
+#'   necessary to identify unique samples
+#'   
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, and RESULT,
+#'   with one row of results per parameter and sample. The values for PARAMETER 
+#'   consist of the metric name concatenated with taxonomic level (represented 
+#'   as TAXLEVEL below):
+#'   
+#'   TOTN_TAXLEVEL: Number of unique taxa in sample
+#'   
+#'   XN_TAXLEVEL: Mean number of taxa per plot
+#'   
+#'   MEDN_TAXLEVEL: Median number of taxa per plot
+#'   
+#'   SDN_TAXLEVEL: Standard deviation of number of taxa per plot
+#'   
+#'   N_PLOTS: Number of plots sampled for sampID
+#'   
 #' @author Karen Blocksom
-.calcRich <- function(x,y,tlevel,sampID) {
+#'   
+#'   
+int.calcRich <- function(x,y,tlevel,sampID) {
   xx1 <- plyr::ddply(x,sampID,summarise,TOTN_TAXA=sum(DISTINCT))
   ## Now calculate richness by plot to obtain average richness per plot
   yy1 <- merge(subset(y,select=c(sampID,'PLOT','DISTINCT')),xx1,by=sampID)
@@ -400,33 +393,38 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
   return(outdf)
 }
 
-#' @export 
+#' @export
 #' @title Calculate metrics for traits with >2 categories
-#' @description This internal function calculates metrics using
-#' traits with more than two categories as values. Used in
-#' calculating metrics for growth habit and duration.
-#' @param vascIn Input data frame with sampID variables, TAXON, TOTN, XABCOV,
-#' sXRCOV, and variable with name in argument trait. TOTN is the
-#' total number of taxa at the lowest level for a sampID variables. XABCOV is
-#' the mean absolute cover of taxon. sXRCOV is the percentage of
-#' the total sum of absolute cover across all taxa for a sampID variables.
-#' @param trait Character string with name of variable containing
-#' traits of interest
-#' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, where values
-#' of PARAMETER consist of the metric name concatenated with each
-#' value of the trait (represented as TRAITVAL below):
-#'
-#' N_TRAITVAL: Number of taxa with trait value
-#'
-#' PCTN_TRAITVAL: Number of taxa with trait value as percentage of TOTN
-#'
-#' XABCOV_TRAITVAL: Sum of XABCOV values across taxa with trait value
-#'
-#' XRCOV_TRAITVAL: Sum of sXRCOV values across taxa with trait value
+#' 
+#' @description This internal function calculates metrics using traits with more
+#'   than two categories as values. Used in calculating metrics for growth habit
+#'   and duration. Used in \code{calcDuration()}, \code{calcGrowthHabit()}, 
+#'   \code{calcCategory()}, \code{calcWIS()} functions.
+#'   
+#' @section Warning: This function not intended for use on its own
+#'   
+#' @param vascIn Input data frame with \emph{sampID} variables, TAXON, TOTN, 
+#'   XABCOV, sXRCOV, and variable with name in \emph{trait} argument. TOTN is 
+#'   the total number of taxa at the lowest level for a \emph{sampID} variables.
+#'   XABCOV is the mean absolute cover of taxon. sXRCOV is the percentage of the
+#'   total sum of absolute cover across all taxa for \emph{sampID} variables.
+#' @param trait Character string with name of variable containing traits of 
+#'   interest
+#' @param sampID A character vector containing the name(s) of variable(s) 
+#'   necessary to identify unique samples
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT, 
+#'   where values of PARAMETER consist of the metric name concatenated with each
+#'   value of the trait (represented as TRAITVAL below):
+#'   
+#'   N_TRAITVAL: Number of taxa with trait value
+#'   
+#'   PCTN_TRAITVAL: Number of taxa with trait value as percentage of TOTN
+#'   
+#'   XABCOV_TRAITVAL: Sum of XABCOV values across taxa with trait value
+#'   
+#'   XRCOV_TRAITVAL: Sum of sXRCOV values across taxa with trait value
 #' @author Karen Blocksom
-.calcTraits_MultCat <- function(vascIn,trait,sampID){
+int.calcTraits_MultCat <- function(vascIn,trait,sampID){
   vascIn1 <- subset(vascIn,!is.na(eval(as.name(trait))) & eval(as.name(trait))!='')
 
   vascIn2 <- plyr::ddply(vascIn1,c(sampID,trait),summarise,N=length(TAXON),PCTN=round(N/unique(TOTN)*100,2)
@@ -441,39 +439,48 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
 }
 
 #' @export 
+#' 
 #' @title Alternate metric calculations for traits with >2 categories
-#' @description This internal function calculates metrics using traits
-#' having >2 categories as values. Used for native status variables.
-#' @param vascIn Input data frame with sampID variables, TAXON, TOTN, XABCOV, sXRCOV,
-#' sRFREQ, and variable with name in argument trait. TOTN is the total
-#' number of taxa at the lowest level for a sampID variables. XABCOV is the mean
-#' absolute cover of taxon. sXRCOV is the percentage of the total
-#' sum of absolute cover across all taxa for a sample. sRFREQ is the relative
-#' frequency of a taxon, calculated as the percentage of the total frequency
-#' of taxon occurrence across all taxa for a sample.
-#' @param trait Character string with name of variable containing
-#' traits of interest
-#' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, where values
-#' of PARAMETER consist of the metric name concatenated with each
-#' value of the trait (represented as TRAITVAL below):
-#'
-#' N_TRAITVAL: Number of taxa with trait value
-#'
-#' PCTN_TRAITVAL: Number of taxa with trait value as percentage of TOTN
-#'
-#' XABCOV_TRAITVAL: Sum of XABCOV values across taxa with trait value
-#'
-#' XRCOV_TRAITVAL: Sum of sXRCOV values across taxa with trait value
-#'
-#' RFREQ_TRAITVAL: Sum of sRFREQ values across taxa with trait value
-#'
-#' RIMP_TRAITVAL: Relative importance ((RFREQ_TRAITVAL + XRCOV_TRAITVAL)/2)
+#' 
+#' @description This internal function calculates metrics using traits having >2
+#'   categories as values. Used for native status variables. Used in 
+#'   \code{calcNative()} function.
+#'   
+#' @section Warning: This function not intended for use on its own
+#'   
+#' @param vascIn Input data frame with \emph{sampID} variables, TAXON, TOTN, 
+#'   XABCOV, sXRCOV, sRFREQ, and variable with name in argument trait. 
+#'   \emph{TOTN} is the total number of taxa at the lowest level for 
+#'   \emph{sampID} variables. \emph{XABCOV} is the mean absolute cover of taxon.
+#'   \emph{sXRCOV} is the percentage of the total sum of absolute cover across 
+#'   all taxa for a sample. \emph{sRFREQ} is the relative frequency of a taxon, 
+#'   calculated as the percentage of the total frequency of taxon occurrence 
+#'   across all taxa for a sample.
+#' @param trait Character string with name of variable containing traits of 
+#'   interest
+#' @param sampID A character vector containing the name(s) of variable(s) 
+#'   necessary to identify unique samples
+#'   
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT, 
+#'   where values of PARAMETER consist of the metric name concatenated with each
+#'   value of the trait (represented as TRAITVAL below):
+#'   
+#'   N_TRAITVAL: Number of taxa with trait value
+#'   
+#'   PCTN_TRAITVAL: Number of taxa with trait value as percentage of TOTN
+#'   
+#'   XABCOV_TRAITVAL: Sum of XABCOV values across taxa with trait value
+#'   
+#'   XRCOV_TRAITVAL: Sum of sXRCOV values across taxa with trait value
+#'   
+#'   RFREQ_TRAITVAL: Sum of sRFREQ values across taxa with trait value
+#'   
+#'   RIMP_TRAITVAL: Relative importance ((RFREQ_TRAITVAL + XRCOV_TRAITVAL)/2)
 #' of taxa with trait value
+#' 
 #' @author Karen Blocksom
 
-.calcTraits_MultCat.alt <- function(vascIn,trait,sampID){
+int.calcTraits_MultCat.alt <- function(vascIn,trait,sampID){
   vascIn1 <- subset(vascIn,!is.na(eval(as.name(trait))) & eval(as.name(trait))!='')
 
   vascIn2 <- plyr::ddply(vascIn1,c(sampID,trait),summarise,PCTN=round(length(TAXON)/unique(TOTN)*100,2)
@@ -493,31 +500,37 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
 }
 
 #' @export 
+#' 
 #' @title Calculate metrics using traits with only two values (0/1)
+#' 
 #' @description This internal function calculates metrics for traits
 #' that are indicator values (0 or 1). Not intended to be used on its
-#' own. Output feeds into combTraits function.
-#' @param vascIn Input data frame with variables sampID variables, TAXON, TOTN, XABCOV,
-#' sXRCOV, and a binary variable with name in trait argument
-#' and possible values of 0 and 1, with 1 indicating trait
-#' present for taxon.
-#' @param trait Character string with name of variable containing
-#' traits of interest
-#' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, where values
-#' of PARAMETER consist of the metric name concatenated with trait name
-#' (represented as TRAITNM below):
+#' own. Output feeds into \code{int.combTraits()} function. Used in 
+#' \code{calcWIS()} function.
+#' 
+#' @section Warning: This function not intended for use on its own
+#' 
+#' @param vascIn Input data frame with \emph{sampID} variables, TAXON, TOTN,
+#'   XABCOV, sXRCOV, and a binary variable with name in \emph{trait} argument 
+#'   and possible values of 0 and 1, with 1 indicating trait present for taxon.
+#' @param trait Character string with name of variable containing traits of
+#'   interest
+#' @param sampID A character vector containing the name(s) of variable(s)
+#'   necessary to identify unique samples
+#'   
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+#'   where values of PARAMETER consist of the metric name concatenated with
+#'   trait name (represented as TRAITNM below):
 #'
 #' N_TRAITNM: Number of taxa with trait
 #'
-#' PCTN_TRAITNM: Number of taxa with trait as percentage of TOTN
+#' PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
 #'
-#' XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait
+#' XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
 #'
-#' XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
+#' XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 #' @author Karen Blocksom
-.calcTraits_Indicator <- function(vascIn,trait,sampID){
+int.calcTraits_Indicator <- function(vascIn,trait,sampID){
   
   for(i in 1:length(sampID)){
     if(i==1) vascIn$SAMPID <- vascIn[,sampID[i]]
@@ -549,31 +562,40 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
 }
 
 #' @export 
+#' 
 #' @title Combine trait metric calculations
+#' 
 #' @description This internal function calls calcTraits_Indicator()
 #' repeatedly a set of traits provided in a character vector. Not
-#' intended for use on its own.
-#' @param vascIn Input data frame containing sampID variables, TAXON, TOTN, XABCOV,
-#' sXRCOV, and variables with all names matching those in traits argument.
-#' @param traits Character vector containing one or more traits variable
-#' names.
-#' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, where values of
-#' PARAMETER consist of the metric name concatenated with each trait name
-#' (represented as TRAITNM below):
-#'
-#' N_TRAITNM: Number of taxa with trait
-#'
-#' PCTN_TRAITNM: Number of taxa with trait as percentage of TOTN
-#'
-#' XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait
-#'
-#' XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
+#' intended for use on its own. Used in \code{calcDuration()}, 
+#' \code{calcGrowthHabit()}, \code{calcCategory()},
+#' \code{calcCC()} functions.
+#' 
+#' @section Warning: This function not intended for use on its own
+#' 
+#' @param vascIn Input data frame containing \emph{sampID} variables, TAXON, 
+#'   TOTN, XABCOV, sXRCOV, and variables with all names matching those in traits
+#'   argument.
+#' @param traits Character vector containing one or more traits variable names.
+#' @param sampID A character vector containing the name(s) of variable(s) 
+#'   necessary to identify unique samples
+#'   
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT, 
+#'   where values of PARAMETER consist of the metric name concatenated with each
+#'   trait name (represented as TRAITNM below):
+#'   
+#'   N_TRAITNM: Number of taxa with trait
+#'   
+#'   PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
+#'   
+#'   XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
+#'   
+#'   XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
+#'   
 #' @author Karen Blocksom
-.combTraits <- function(vascIn,traits,sampID){
+int.combTraits <- function(vascIn,traits,sampID){
   for(i in 1:length(traits)){
-    tmpOut <- .calcTraits_Indicator(vascIn,traits[i],sampID)
+    tmpOut <- int.calcTraits_Indicator(vascIn,traits[i],sampID)
     if(i==1){
       outdf <- tmpOut
     }else{
@@ -584,39 +606,46 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
 }
 
 #' @export 
+#' 
 #' @title Calculate metrics using traits with only two values (0/1)
-#' @description This internal function calculates metrics for traits
-#' that are indicator values (0 or 1), specifically for alien and
-#' cryptogenic species groups. Not intended to be used on its own.
-#' @param vascIn Input data frame with sampID variables, TAXON, TOTN, XABCOV, sXRCOV,
-#' sRFREQ, and variable with name in argument trait. TOTN is the total
-#' number of taxa at the lowest level for each sample (combination of 
-#' sampID variables). XABCOV is the mean
-#' absolute cover of taxon. sXRCOV is the percentage of the total
-#' sum of absolute cover across all taxa for a sample. sRFREQ is the relative
-#' frequency of a taxon, calculated as the percentage of the total
-#' frequency of taxon occurrence across all taxa for a sample.
+#' 
+#' @description This internal function calculates metrics for traits that are 
+#'   indicator values (0 or 1), specifically for alien and cryptogenic species 
+#'   groups. Used by \code{calcNative()} function.
+#'   
+#' @section Warning: This function not intended for use on its own
+#'   
+#' @param vascIn Input data frame with \emph{sampID} variables, TAXON, TOTN, 
+#'   XABCOV, sXRCOV, sRFREQ, and variable with name in argument trait. 
+#'   \emph{TOTN} is the total number of taxa at the lowest level for each sample
+#'   (combination of sampID variables). \emph{XABCOV} is the mean absolute cover
+#'   of taxon. sXRCOV is the percentage of the total sum of absolute cover 
+#'   across all taxa for a sample. sRFREQ is the relative frequency of a taxon, 
+#'   calculated as the percentage of the total frequency of taxon occurrence 
+#'   across all taxa for a sample.
 #' @param trait Character string containing name of binary trait variable.
-#' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, 
-#' where values of PARAMETER consist of the metric name concatenated 
-#' with trait name (represented as TRAITNM below):
+#' @param sampID A character vector containing the name(s) of variable(s) 
+#'   necessary to identify unique samples
+#'   
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT, 
+#'   where values of PARAMETER consist of the metric name concatenated with 
+#'   trait name (represented as TRAITNM below):
+#'   
+#'   N_TRAITNM: Number of taxa with trait value
 #'
-#' N_TRAITNM: Number of taxa with trait value
+#' PCTN_TRAITNM: Number of taxa with trait value as percentage of \emph{TOTN}
 #'
-#' PCTN_TRAITNM: Number of taxa with trait value as percentage of TOTN
+#' XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait value
 #'
-#' XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait value
+#' XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait value
 #'
-#' XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait value
-#'
-#' RFREQ_TRAITNM: Sum of sRFREQ values across taxa with trait value
+#' RFREQ_TRAITNM: Sum of \emph{sRFREQ} values across taxa with trait value
 #'
 #' RIMP_TRAITNM: Relative importance ((RFREQ_TRAITVAL + XRCOV_TRAITVAL)/2)
 #' of taxa with trait value
+#' 
 #' @author Karen Blocksom
-.calcTraits_Indicator.alt <- function(vascIn,trait,sampID){
+int.calcTraits_Indicator.alt <- function(vascIn,trait,sampID){
   
   for(i in 1:length(sampID)){
     if(i==1) vascIn$SAMPID <- vascIn[,sampID[i]]
@@ -641,37 +670,44 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
 }
 
 #' @export 
+#' 
 #' @title Calculate Mean C and FQAI indices
-#' @description This internal function calculates several variations of
-#' Mean C and FQAI, based on cover, frequency, and number of taxa. Also
-#' calculated are Not intended for use on its own.
+#' 
+#' @description This internal function calculates several variations of Mean C 
+#'   and FQAI, based on cover, frequency, and number of taxa. Also calculated 
+#'   are Not intended for use on its own. Used in \code{calcDiversity()} 
+#'   function.
+#'   
+#' @section Warning: This function not intended for use on its own
+#'   
 #' @param vascIn Input data frame containing:
-#'
-#' sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#'
-#' TAXON: Taxon name
-#'
-#' XABCOV: Mean absolute cover of taxon
-#' @param subgrp  Character string of subgroup abbreviation to add
-#' as suffix to metric name. Default value is NULL.
-#' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, and RESULT, where values
-#' for PARAMETER consist of name below concatenated with subgrp value as
-#' suffix (represented as SUBGRP below):
-#'
-#' H_SUBGRP: Shannon-Wiener Diversity Index H' = -1*sum(pi*ln(pi)), where pi
-#' is proportion of species i
-#'
-#' J_SUBGRP: Eveness (Pielou). J = H'/ln(S), where S is number of species
-#' observed
-#'
+#'   
+#'   sampID: Variables identified in \emph{sampID} argument
+#'   
+#'   TAXON: Taxon name
+#'   
+#'   XABCOV: Mean absolute cover of taxon
+#' @param subgrp  Character string of subgroup abbreviation to add as suffix to 
+#'   metric name. Default value is NULL.
+#' @param sampID A character vector containing the name(s) of variable(s) 
+#'   necessary to identify unique samples
+#'   
+#' @return Data frame containing sampID variables, PARAMETER, and RESULT, where 
+#'   values for PARAMETER consist of name below concatenated with subgrp value 
+#'   as suffix (represented as SUBGRP below):
+#'   
+#'   H_SUBGRP: Shannon-Wiener Diversity Index H' = -1*sum(pi*ln(pi)), where pi 
+#'   is proportion of species i
+#'   
+#'   J_SUBGRP: Eveness (Pielou). J = H'/ln(S), where S is number of species 
+#'   observed
+#'   
 #' D_SUBGRP: Simpson Diversity Index. D = 1 - sum(pi^2), where pi is
 #' proportion of species i
+#' 
 #' @author Karen Blocksom
 
-.calcIndices <- function(vascIn,subgrp=NULL,sampID){
+int.calcIndices <- function(vascIn,subgrp=NULL,sampID){
   
   ## Calculate mean CC and FQAI indices
   vascIn.1 <- plyr::ddply(vascIn,sampID,mutate,SUBXTOTABCOV=sum(XABCOV))
@@ -688,10 +724,15 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
 }
 
 #' @export 
+#' 
 #' @title Calculate richness metrics for native status subsets
+#' 
 #' @description This internal function calculates species richness
-#' of sample for subset based on native status values specified.
-#' Not intended for use on its own.
+#' of sample for subset based on native status values specified. 
+#' Used by \code{calcRichness()}
+#' 
+#' @section Warning: This function not intended for use on its own
+#' 
 #' @param x Data frame containing cover data summarized by sampID 
 #' variables, TAXON, NWCA_NATSTAT, and DISTINCT
 #' @param y Data frame containing cover data summarized by sampID 
@@ -702,11 +743,12 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
 #' represent this group
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, and RESULT, with one
-#' row of results per parameter and sample. The values for PARAMETER
-#' consist of the metric name concatenated with grpname value
-#' (represented as GRP below):
-#'
+#' 
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, and RESULT,
+#'   with one row of results per parameter and sample. The values for PARAMETER 
+#'   consist of the metric name concatenated with grpname value (represented as 
+#'   GRP below):
+#'   
 #' TOTN_GRP: Number of unique taxa in sample 
 #'
 #' XN_GRP: Mean number of taxa per plot
@@ -714,8 +756,9 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
 #' MEDN_GRP: Median number of taxa per plot
 #'
 #' SDN_GRP: Standard deviation of number of taxa per plot
+#' 
 #' @author Karen Blocksom
-.calcRichNS <- function(x,y,natstat,grpname,sampID) {
+int.calcRichNS <- function(x,y,natstat,grpname,sampID) {
   xx1 <- plyr::ddply(subset(x,NWCA_NATSTAT %in% natstat),sampID,summarise,TOTN_TAXA=sum(DISTINCT))
   ## Now calculate richness by plot to obtain average richness per plot
   yy1 <- merge(subset(y,NWCA_NATSTAT %in% natstat,select=c(sampID,'PLOT','DISTINCT')),xx1,by=sampID)
@@ -728,29 +771,36 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
   return(outdf)
 }
 
-#' @export 
+#' @export
+#' 
 #' @title Calculate mean Bray-Curtis distance among plots
-#' @description This internal function calculates the mean Bray-Curtis
-#' distance among   plots based on species composition.
+#' 
+#' @description This internal function calculates the mean Bray-Curtis distance 
+#'   among plots based on species composition. Used in \code{calcBCmets()} 
+#'   function.
+#'   
+#' @section Warning: This function not intended for use on its own
+#'   
 #' @param x Data frame containing:
-#'
-#' sampID: A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#'
-#' PLOT: Plot number of sample
-#'
-#' SPECIES: Character code for taxon with no spaces
-#'
-#' COVER: Percentage vegetative cover for a given taxon
-#' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame consisting of sampID variables and XCDIST_SPP, 
-#' defined as:
-#'
-#' Within AA dissimilarity based on species composition = Mean of
-#' between plot Bray-Curtis Distance (Dissimilarity)
+#'   
+#'   sampID: A character vector containing the name(s) of variable(s) necessary 
+#'   to identify unique samples
+#'   
+#'   PLOT: Plot number of sample
+#'   
+#'   SPECIES: Character code for taxon with no spaces
+#'   
+#'   COVER: Percentage vegetative cover for a given taxon
+#' @param sampID A character vector containing the name(s) of variable(s) 
+#'   necessary to identify unique samples
+#'   
+#' @return Data frame consisting of \emph{sampID} variables and XCDIST_SPP, 
+#'   defined as:
+#'   
+#'   Within AA dissimilarity based on species composition = Mean of between plot
+#'   Bray-Curtis Distance (Dissimilarity)
 #' @author Karen Blocksom
-.calcXBC <- function(x,sampID){
+int.calcXBC <- function(x,sampID){
   for(i in 1:length(sampID)){
     if(i==1) x$SAMPID <- x[,sampID[i]]
     else x$SAMPID <- paste(x$SAMPID,x[,sampID[i]],sep='.')

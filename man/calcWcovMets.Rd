@@ -9,14 +9,14 @@ calcWcovMets(dataIn, nPlot, sampID = "UID")
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
 \itemize{
-\item sampID - Variable(s) identified in sampID argument
+\item sampID: Variable(s) identified in \emph{sampID} argument
 
-\item PLOT (Sample plot from which data
-were collected)
+\item PLOT: Sample plot from which data
+were collected
 
-\item PARAMETER (specific measurement type)
+\item PARAMETER: specific measurement type
 
-\item RESULT (measured value)
+\item RESULT: measured value
 }
 The following parameters are used in
 calculating tree metrics: 'TIME','MINIMUM_DEPTH',
@@ -25,27 +25,26 @@ calculating tree metrics: 'TIME','MINIMUM_DEPTH',
 Additional parameters or variables are ignored.}
 
 \item{nPlot}{Number of plots sampled associated with each
-sample with sampID variables and NPLOTS}
+sample with \emph{sampID} variables and NPLOTS}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples,
+'UID' by default.}
 }
 \value{
-Either a character string containing an error message
-when metric calculation is not successful, or a data frame. Data
-frame contains sampID variables, PARAMETER, RESULT, where values of PARAMETER
-consist of the metric name concatenated with trait value, with
-valid values of: MIN_H2O_DEPTH, MAX_H2O_DEPTH,
-XH2O_DEPTH_AA, MIN_COV_H2O, MAX_COV_H2O, FREQ_H2O,
-FREQ_H2O_AQVEG, FREQ_H2O_EMERGVEG, FREQ_H2O_NOVEG, XCOV_H2O,
-XCOV_H2O_AQVEG, XCOV_H2O_EMERGVEG, XCOV_H2O_NOVEG, IMP_H2O,
-IMP_H2O_AQVEG, IMP_H2O_EMERGVEG, IMP_H2O_NOVEG, XH2O_DEPTH.
-A list of metric descriptions is provided in the document
-named VegTypes_GrdCover_Metric_Descriptions.pdf
-included in the help directory for the package.
+Either a character string containing an error message when metric
+  calculation is not successful, or a data frame. Data frame contains
+  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+  consist of the metric name concatenated with trait value, with valid values
+  of: MIN_H2O_DEPTH, MAX_H2O_DEPTH, XH2O_DEPTH_AA, MIN_COV_H2O, MAX_COV_H2O,
+  FREQ_H2O, FREQ_H2O_AQVEG, FREQ_H2O_EMERGVEG, FREQ_H2O_NOVEG, XCOV_H2O, 
+  XCOV_H2O_AQVEG, XCOV_H2O_EMERGVEG, XCOV_H2O_NOVEG, IMP_H2O, IMP_H2O_AQVEG,
+  IMP_H2O_EMERGVEG, IMP_H2O_NOVEG, XH2O_DEPTH. A list of metric descriptions
+  is provided in the document named VegTypes_GrdCover_Metric_Descriptions.pdf
+  included in the help directory for the package.
 }
 \description{
-This internal function calculates metrics water
+This function calculates metrics water
 cover and depth based on ground cover data. This function is
 called by calcVtype_GcovMets().
 }
@@ -57,7 +56,7 @@ to a standardized value.
 }
 \examples{
 head(Vtype_GrCovEx)
-# Create data frame with number of plots sampled for each UID
+# Create data frame with number of plots sampled for each sampID
 nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
 # alternative approach to creating this data frame
 nplots <- plyr::ddply(Vtype_GrCovEx,c('UID'),dplyr::summarise,

@@ -9,11 +9,11 @@ calcNonvascMets(dataIn, nPlot, sampID = "UID")
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
 \itemize{
- \item sampID - variable(s) identified in sampID argument
+ \item sampID: variable(s) identified in \emph{sampID} argument
 
- \item PARAMETER (specific measurement type)
+ \item PARAMETER: specific measurement type
 
- \item RESULT (measured value)
+ \item RESULT: measured value
  }
  The following parameters are used in
  calculating tree metrics: 'PEAT_MOSS','BRYOPHYTES','LICHENS',
@@ -24,19 +24,19 @@ calcNonvascMets(dataIn, nPlot, sampID = "UID")
 with sampID variables and NPLOTS.}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID'
+by default.}
 }
 \value{
-Data frame containing sampID variables, PARAMETER, RESULT, where values of
- PARAMETER consist of the metric name concatenated with trait value,
- with valid values of: FREQ_ALGAE,  FREQ_ARBOREAL,
- FREQ_BRYOPHYTES, FREQ_LICHENS, FREQ_MACROALGAE, IMP_ALGAE,
- IMP_ARBOREAL, IMP_BRYOPHYTES, IMP_LICHENS, IMP_MACROALGAE,
- XCOV_ALGAE, XCOV_ARBOREAL, XCOV_BRYOPHYTES, XCOV_LICHENS,
- XCOV_MACROALGAE, N_PEAT_MOSS_DOM, FREQ_PEAT_MOSS_DOM.
- A list of metric descriptions is provided in the document
- named VegTypes_GrdCover_Metric_Descriptions.pdf included in the
- help directory for the package.
+Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+  where values of PARAMETER consist of the metric name concatenated with
+  trait value, with valid values of: FREQ_ALGAE,  FREQ_ARBOREAL, 
+  FREQ_BRYOPHYTES, FREQ_LICHENS, FREQ_MACROALGAE, IMP_ALGAE, IMP_ARBOREAL,
+  IMP_BRYOPHYTES, IMP_LICHENS, IMP_MACROALGAE, XCOV_ALGAE, XCOV_ARBOREAL,
+  XCOV_BRYOPHYTES, XCOV_LICHENS, XCOV_MACROALGAE, N_PEAT_MOSS_DOM,
+  FREQ_PEAT_MOSS_DOM. A list of metric descriptions is provided in the
+  document named VegTypes_GrdCover_Metric_Descriptions.pdf included in the 
+  help directory for the package.
 }
 \description{
 This function calculates non-vascular plant
@@ -51,7 +51,7 @@ If any of the parameters are missing, they are assumed to
 }
 \examples{
  head(Vtype_GrCovEx)
- # Create data frame with number of plots sampled for each UID
+ # Create data frame with number of plots sampled for each sampID
  nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
  # alternative approach to creating this data frame
  nplots <- plyr::ddply(Vtype_GrCovEx,c('UID'),dplyr::summarise,

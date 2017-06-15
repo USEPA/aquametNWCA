@@ -9,7 +9,7 @@ calcTreeCoverMets(treeIn, sampID = "UID")
 \arguments{
 \item{treeIn}{A data frame containing the following variables:
 \itemize{
-\item sampID - Variable(s) identified in sampID argument
+\item sampID: Variable(s) identified in \emph{sampID} argument
 
 \item PAGE: Page from field form
 
@@ -27,18 +27,17 @@ calculating tree metrics: 'VSMALL_TREE','SMALL_TREE','LMED_TREE'
 or variables are ignored.}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Either a character string containing an error message when
-metric calculation is not successful, or a data frame. The data
-frame contains the sampID variables, PARAMETER, RESULT, where PARAMETER values
-include: N_TREESPP, N_TALL_TREE, N_HMED_TREE, N_LMED_TREE,
-N_SMALL_TREE, N_VSMALL_TREE, N_VTALL_TREE, N_TREE_UPPER, N_TREE_MID,
-N_TREE_GROUND, PCTN_TREE_UPPER, PCTN_TREE_MID, PCTN_TREE_GROUND. A
-list of metric descriptions is provided in the document named
-Tree_Metric_Descriptions.pdf included in the help directory for the
-package.
+Either a character string containing an error message when metric
+  calculation is not successful, or a data frame. The data frame contains the
+  \emph{sampID} variables, PARAMETER, RESULT, where PARAMETER values include:
+  N_TREESPP, N_TALL_TREE, N_HMED_TREE, N_LMED_TREE, N_SMALL_TREE,
+  N_VSMALL_TREE, N_VTALL_TREE, N_TREE_UPPER, N_TREE_MID, N_TREE_GROUND,
+  PCTN_TREE_UPPER, PCTN_TREE_MID, PCTN_TREE_GROUND. A list of metric
+  descriptions is provided in the document named Tree_Metric_Descriptions.pdf
+  included in the help directory for the package.
 }
 \description{
 This function calculates tree cover metrics

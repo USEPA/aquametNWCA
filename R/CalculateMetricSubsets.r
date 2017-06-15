@@ -2,13 +2,16 @@
 
 # Calculate only duration metrics (both with and without native status, if available)
 #' @export
+#' 
 #' @title Calculate vascular plant duration metrics
+#' 
 #' @details Both DURATION and NWCA_NATSTAT variables are recoded to fewer
 #' categories. Taxa with 'UND' as native status are excluded.
+#' 
 #' @param vascIn   Data frame containing cover data summarized by
 #' sampID variables and TAXON, with the following fields:
 #'  \itemize{
-#'     \item sampID: Variable(s) in the argument sampID
+#'     \item sampID: Variable(s) in the argument \emph{sampID}
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -23,31 +26,35 @@
 #'     \item sXRCOV: proportion of summed cover across all taxa
 #'     (XTOTABCOV) represented by taxon in sample
 #'
-#'     \item Optional: NWCA_NATSTAT: Native status variable with categories
+#'     \item NWCA_NATSTAT (Optional): Native status variable with categories
 #'     of 'NAT','ADV','CRYP','INTR','UND'
 #'     }
-#' @param sampID  A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples   
-#' @return Data frame containing the sampID variables, PARAMETER, RESULT, where
-#' values of PARAMETER consist of the metric name concatenated
-#' with trait value (represented as TRAITNM below):
-#' \itemize{
-#'    \item N_TRAITNM: Number of taxa with trait
-#'
-#'    \item PCTN_TRAITNM: Number of taxa with trait as percentage of TOTN
-#'
-#'    \item XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait
-#'
-#'    \item XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
+#' @param sampID  A character vector containing the name(s) of variable(s)
+#'   necessary to identify unique samples, 'UID' by default
+#' 
+#' @return Data frame containing the \emph{sampID} variables, PARAMETER, RESULT,
+#'   where values of PARAMETER consist of the metric name concatenated with
+#'   trait value (represented as TRAITNM below): 
+#'  \itemize{ \item N_TRAITNM:
+#'   Number of taxa with trait
+#'   
+#'   \item PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
+#'   
+#'   \item XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
+#'   
+#'   \item XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 #' }
 #' If NWCA_NATSTAT is in the input data frame, the same set except
 #' 'N_' metrics is calculated for native species and
 #' alien + cryptogenic species, with metric names suffixes of
 #' _NAT and _AC, respectively.
+#' 
 #' @author Karen Blocksom \email{Blocksom.karen@epa.gov}
+#' 
 #' @references US Environmental Protection Agency. 2016. National Wetland
 #' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 #' Environmental Protection Agency, Washington, DC.
+#' 
 #' @examples
 #'  head(VascPlantEx)
 #'  exPlant <- prepareData(VascPlantEx)
@@ -70,7 +77,7 @@ calcDuration <- function(vascIn,sampID='UID'){
   vascIn.1 <- plyr::mutate(vascIn,DUR_ALT=car::recode(DURATION,"c('ANNUAL, BIENNIAL','BIENNIAL')='ANN_BIEN';
                   c('ANNUAL, BIENNIAL, PERENNIAL','ANNUAL, PERENNIAL','PERENNIAL, ANNUAL', 'BIENNIAL, PERENNIAL')='ANN_PEREN'"))
 
-  durOut <- .calcTraits_MultCat(vascIn.1,'DUR_ALT',sampID)
+  durOut <- int.calcTraits_MultCat(vascIn.1,'DUR_ALT',sampID)
   
   empty_base <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
   names(empty_base) <- c("N_ANN_BIEN","N_ANN_PEREN","N_ANNUAL","N_PERENNIAL", "PCTN_ANN_BIEN","PCTN_ANNUAL"
@@ -97,9 +104,11 @@ calcDuration <- function(vascIn,sampID='UID'){
     
       )
 
-    multTraits <- .combTraits(vascIn.2,c('ANNUAL_NAT','ANNUAL_AC','ANN_BIEN_NAT','ANN_BIEN_AC','ANN_PEREN_NAT','ANN_PEREN_AC','PERENNIAL_NAT'
-                                          ,'PERENNIAL_AC'),sampID)
+    multTraits <- int.combTraits(vascIn.2,c('ANNUAL_NAT','ANNUAL_AC','ANN_BIEN_NAT','ANN_BIEN_AC','ANN_PEREN_NAT'
+                                            ,'ANN_PEREN_AC','PERENNIAL_NAT','PERENNIAL_AC'),sampID)
+    
     durOut <- rbind(durOut,multTraits)
+    
     empty_base.nat <- data.frame(t(rep(NA,32)),stringsAsFactors=F)
     names(empty_base.nat) <- c("N_ANN_BIEN_AC","N_ANN_BIEN_NAT","N_ANN_PEREN_AC","N_ANN_PEREN_NAT"
                                ,"N_ANNUAL_AC","N_ANNUAL_NAT","N_PERENNIAL_AC","N_PERENNIAL_NAT"
@@ -129,7 +138,7 @@ calcDuration <- function(vascIn,sampID='UID'){
 #' @param vascIn   Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'     \item sampID: Variable(s) identified in sampID argument
+#'     \item sampID: Variable(s) identified in \emph{sampID} argument
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -144,22 +153,22 @@ calcDuration <- function(vascIn,sampID='UID'){
 #'     \item sXRCOV: proportion of summed cover across all taxa
 #'     (XTOTABCOV) represented by taxon in sample
 #'
-#'     \item Optional: NWCA_NATSTAT: Native status variable with categories
+#'     \item NWCA_NATSTAT (optional): Native status variable with categories
 #'     of 'NAT','ADV','CRYP','INTR','UND'
 #'    }
-#' @param sampID  A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, where
-#' values of PARAMETER consist of the metric name concatenated
-#' with trait value (represented as TRAITNM below):
-#' \itemize{
+#' @param sampID  A character vector containing the name(s) of variable(s)
+#'   necessary to identify unique samples, 'UID' by default
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+#'   where values of PARAMETER consist of the metric name concatenated with
+#'   trait value (represented as TRAITNM below): 
+#'\itemize{
 #' \item N_TRAITNM: Number of taxa with trait
 #'
-#' \item PCTN_TRAITNM: Number of taxa with trait as percentage of TOTN
+#' \item PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
 #'
-#' \item XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait
+#' \item XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
 #'
-#' \item XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
+#' \item XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 #' }
 #' If NWCA_NATSTAT is in the input data frame, the same set except
 #' 'N_' metrics is calculated for native species and
@@ -201,8 +210,8 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
                            ,SHRUB_COMB=ifelse(GRH_ALT %in% c('SSHRUB_SHRUB','SSHURB_FORB','SHRUB'),1,0)
                            ,HERB=ifelse(GRH_ALT %in% c('GRAMINOID','FORB'),1,0))
 
-  sppGRH <- .calcTraits_MultCat(vascIn.1,'GRH_ALT',sampID)
-  sppGRH.1 <- .combTraits(vascIn.1,c('TREE_COMB','SHRUB_COMB','HERB'),sampID)
+  sppGRH <- int.calcTraits_MultCat(vascIn.1,'GRH_ALT',sampID)
+  sppGRH.1 <- int.combTraits(vascIn.1,c('TREE_COMB','SHRUB_COMB','HERB'),sampID)
   grhOut <- rbind(sppGRH,sppGRH.1)
 
   if('NWCA_NATSTAT' %in% names(vascIn.1)){
@@ -221,7 +230,7 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
                          ,VINE_SHRUB_NAT=ifelse(GRH_ALT=='VINE_SHRUB' & NATSTAT_ALT=='NAT',1,0)
       )
 
-    multTraits <- .combTraits(vascIn.2,c('GRAMINOID_AC','GRAMINOID_NAT','FORB_AC','FORB_NAT','HERB_AC','HERB_NAT','SHRUB_COMB_AC','SHRUB_COMB_NAT'
+    multTraits <- int.combTraits(vascIn.2,c('GRAMINOID_AC','GRAMINOID_NAT','FORB_AC','FORB_NAT','HERB_AC','HERB_NAT','SHRUB_COMB_AC','SHRUB_COMB_NAT'
                                         ,'TREE_COMB_AC','TREE_COMB_NAT','VINE_AC','VINE_NAT','VINE_SHRUB_AC','VINE_SHRUB_NAT')
                               ,sampID)
     grhOut <- rbind(grhOut,multTraits)
@@ -233,16 +242,20 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
 
 # Category metrics (with and without native status, if available)
 #' @export
+#' 
 #' @title Calculate plant category metrics
+#' 
 #' @description This function calculates all category-based metrics, including
 #' versions with only native species if the variable NWCA_NATSTAT
 #' is included in the input data frame.
+#' 
 #' @details Both CATEGORY and NWCA_NATSTAT variables are recoded to fewer
 #' categories. Taxa with 'UND' as native status are excluded.
+#' 
 #' @param vascIn   Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'     \item sampID: Variable(s) identified in sampID argument
+#'     \item sampID: Variable(s) identified in \emph{sampID} argument
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -257,29 +270,33 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
 #'     \item sXRCOV: proportion of summed cover across all taxa
 #'     (XTOTABCOV) represented by taxon in sample
 #'
-#'     \item Optional: NWCA_NATSTAT: Native status variable with categories
+#'     \item NWCA_NATSTAT (optional): Native status variable with categories
 #'     of 'NAT','ADV','CRYP','INTR','UND'
 #'    }
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, where
-#' values of PARAMETER consist of the metric name concatenated
-#' with trait value (represented as TRAITNM below):
+#' variable(s) necessary to identify unique samples, 'UID' by default
+#' 
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+#'   where values of PARAMETER consist of the metric name concatenated with
+#'   trait value (represented as TRAITNM below):
 #' \itemize{
 #' \item N_TRAITNM: Number of taxa with trait
 #'
-#' \item PCTN_TRAITNM: Number of taxa with trait as percentage of TOTN
+#' \item PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
 #'
-#' \item XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait
+#' \item XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
 #'
-#' \item XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
+#' \item XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 #' }
 #' For metrics using native status, the metric name has a suffix
 #' of NAT, ALIEN, AC, INTR, or CRYP.
+#' 
 #' @author Karen Blocksom \email{Blocksom.karen@epa.gov}
+#' 
 #' @references US Environmental Protection Agency. 2016. National Wetland
 #' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 #' Environmental Protection Agency, Washington, DC.
+#' 
 #' @examples
 #' head(VascPlantEx)
 #' exPlant <- prepareData(VascPlantEx)
@@ -300,7 +317,7 @@ calcCategory <- function(vascIn,sampID='UID'){
   }
 
   vascIn.1 <- subset(vascIn,!is.na(CATEGORY))
-  catOut <- .calcTraits_MultCat(vascIn.1,'CATEGORY',sampID)
+  catOut <- int.calcTraits_MultCat(vascIn.1,'CATEGORY',sampID)
 
   if('NWCA_NATSTAT' %in% names(vascIn)){
     vascIn.2 <- plyr::mutate(vascIn.1,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
@@ -318,7 +335,7 @@ calcCategory <- function(vascIn,sampID='UID'){
                                ,MONOCOTS_AC=ifelse(CATEGORY=='MONOCOT' & AC==1,1,0))
 
 
-    multTraits <- .combTraits(vascIn.2,c('DICOTS_NAT','DICOTS_ALIEN','DICOTS_CRYP','DICOTS_AC','FERNS_NAT','FERNS_INTR','MONOCOTS_NAT','MONOCOTS_ALIEN'
+    multTraits <- int.combTraits(vascIn.2,c('DICOTS_NAT','DICOTS_ALIEN','DICOTS_CRYP','DICOTS_AC','FERNS_NAT','FERNS_INTR','MONOCOTS_NAT','MONOCOTS_ALIEN'
                                     ,'MONOCOTS_CRYP','MONOCOTS_AC'),sampID)
     catOut <- rbind(catOut,multTraits)
 
@@ -329,14 +346,17 @@ calcCategory <- function(vascIn,sampID='UID'){
 
 # Wetland indicator status metrics (with and without native status, if available)
 #' @export
+#' 
 #' @title Calculate Wetland Indicator Status metrics
+#' 
 #' @description This function calculates Wetland Indicator Status (WIS)
 #' metrics, including variations based on native status,
 #' if NWCA_NATSTAT is present in the input data frame.
+#' 
 #' @param vascIn Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'     \item sampID: Variable(s) identified in sampID argument
+#'     \item sampID: Variable(s) identified in \emph{sampID} argument
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -354,51 +374,52 @@ calcCategory <- function(vascIn,sampID='UID'){
 #'     \item sXRCOV: proportion of summed cover across all taxa
 #'     (XTOTABCOV) represented by taxon in sample
 #'
-#'     \item Optional: NWCA_NATSTAT: Native status variable with
+#'     \item NWCA_NATSTAT (optional): Native status variable with
 #'       categories of 'NAT','ADV','CRYP','INTR','UND'.
 #'       UND taxa are ignored.
 #'    }
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples, 'UID' by default
 
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, where
-#' values of PARAMETER consist of the metric name concatenated
-#' with trait value (represented as TRAITNM below):
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+#'   where values of PARAMETER consist of the metric name concatenated with
+#'   trait value (represented as TRAITNM below):
 #' \itemize{
 #' \item N_TRAITNM: Number of taxa with trait
 #'
-#' \item PCTN_TRAITNM: Number of taxa with trait as percentage of TOTN
+#' \item PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
 #'
-#' \item XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait
+#' \item XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
 #'
-#' \item XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
+#' \item XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 #' }
 #' In addition WIS indices based on all and native species only (if
 #' NWCA_NATSTAT is provided in the input data frame), with the
 #' suffixes ALL and NAT, respectively. WIS values recoded as numeric
 #' with OBL=1, FACW=2, FAC=3, FACU=4, UPL=5:
-#' \itemize{
-#' \item WETIND_COV_ALL, WETIND_COV_NAT: Wetland Index, weighted by taxon cover
-#'
-#' \item WETIND_FREQ_ALL, WETIND_FREQ_NAT: Wetland Index, weight by frequency
-#' }
-#' If NWCA_NATSTAT is provided in the input data frame, the following
-#' metrics are calculated based on Alien + Cryptogenic species:
-#' \itemize{
-#' \item N_OBLFACW_AC: Number of alien and cryptogenic taxa with WIS of either
-#' OBL or FACW.
-#'
-#' \item XABCOV_OBLFACW_AC: Mean absolute cover of alien and cryptogenic taxa
+#' \itemize{ \item WETIND_COV_ALL, WETIND_COV_NAT: Wetland Index, weighted by
+#' taxon cover
+#' 
+#' \item WETIND_FREQ_ALL, WETIND_FREQ_NAT: Wetland Index, weight by frequency } 
+#' 
+#' If NWCA_NATSTAT is provided in the input data frame, the following metrics
+#' are calculated based on Alien + Cryptogenic species: 
+#'\itemize{ \item
+#' N_OBLFACW_AC: Number of alien and cryptogenic taxa with WIS of either OBL or
+#' FACW.
+#' 
+#' \item XABCOV_OBLFACW_AC: Mean absolute cover of alien and cryptogenic taxa 
 #' with WIS of either OBL or FACW.
-#'
-#' \item XRCOV_OBLFACW_AC: Mean relative cover of alien and cryptogenic taxa
-#' with WIS of either OBL or FACW.
-#' }
+#' 
+#' \item XRCOV_OBLFACW_AC: Mean relative cover of alien and cryptogenic taxa 
+#' with WIS of either OBL or FACW. }
 
 #' @author Karen Blocksom \email{Blocksom.karen@epa.gov}
+#' 
 #' @references US Environmental Protection Agency. 2016. National Wetland
 #' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 #' Environmental Protection Agency, Washington, DC.
+#' 
 #' @examples
 #' head(VascPlantEx)
 #' exPlant <- prepareData(VascPlantEx)
@@ -424,7 +445,7 @@ calcWIS <- function(vascIn,sampID='UID'){
 
   # Overall metric calculations
   vascIn.1 <- subset(vascIn,!is.na(WIS))
-  sppWIS <- .calcTraits_MultCat(vascIn.1,'WIS',sampID)
+  sppWIS <- int.calcTraits_MultCat(vascIn.1,'WIS',sampID)
 
   ## Calculate Wetland indicator status metrics and melt into long format
   vascIn.2 <- subset(vascIn.1,!is.na(ECOIND)) %>%
@@ -454,7 +475,7 @@ calcWIS <- function(vascIn,sampID='UID'){
 
     # Obligate and facultative wet alien and cryptogenic species
     vascIn.obl <- plyr::mutate(vascIn.nat,OBLFACW_AC=ifelse(WIS %in% c('OBL','FACW') & NATSTAT_ALT %in% c('ALIEN','CRYP'),1,0))
-    ofOut <- .calcTraits_Indicator(vascIn.obl,'OBLFACW_AC',sampID) %>%
+    ofOut <- int.calcTraits_Indicator(vascIn.obl,'OBLFACW_AC',sampID) %>%
       plyr::mutate(PARAMETER=as.character(PARAMETER)) %>%
       subset(PARAMETER %nin% c('PCTN_OBLFACW_AC'))
 
@@ -470,14 +491,17 @@ calcWIS <- function(vascIn,sampID='UID'){
 
 # Metrics using CC values
 #' @export
+#' 
 #' @title Calculate Wetland Indicator Status metrics
+#' 
 #' @description This function calculates Wetland Indicator Status (WIS)
 #' metrics, including variations based on native status,
 #' if NWCA_NATSTAT is present in the input data frame.
+#' 
 #' @param vascIn Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'     \item sampID: Variable(s) identified in sampID argument
+#'     \item sampID: Variable(s) identified in \emph{sampID} argument
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -488,15 +512,15 @@ calcWIS <- function(vascIn,sampID='UID'){
 #'     \item NWCA_CC: Coefficient of conservatism values by taxon
 #'     from NWCA
 #'
-#'     \item Optional: NWCA_NATSTAT: Native status variable with
+#'     \item NWCA_NATSTAT (optional): Native status variable with
 #'       categories of 'NAT','ADV','CRYP','INTR','UND'.
 #'       UND taxa are ignored.
 #'    }
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples, 'UID' by default
 
-#' @return   Data frame containing sampID variables, PARAMETER, RESULT, where
-#' values of PARAMETER are:
+#' @return   Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+#'   where values of PARAMETER are:
 #' \itemize{
 #'     \item XC: Mean coefficient of conservatism (unweighted)
 #'
@@ -517,10 +541,13 @@ calcWIS <- function(vascIn,sampID='UID'){
 #'     \item For metrics based native species, the metric name has a
 #'     suffix of NAT.
 #'    }
+#' 
 #' @author Karen Blocksom \email{Blocksom.karen@epa.gov}
-#' @references US Environmental Protection Agency. 2016. National Wetland
-#' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
-#' Environmental Protection Agency, Washington, DC.
+#' 
+#' @references US Environmental Protection Agency. 2016. National Wetland 
+#'   Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US 
+#'   Environmental Protection Agency, Washington, DC.
+#'   
 #' @examples
 #' head(VascPlantEx)
 #' exPlant <- prepareData(VascPlantEx)
@@ -554,7 +581,7 @@ calcCC <- function(vascIn,sampID='UID'){
                           ,TOL=ifelse(NWCA_CC %in% c('4','3','2','1','0'),1,0),HTOL=ifelse(NWCA_CC %in% c('0','1','2'),1,0)
                           ,HSEN=ifelse(NWCA_CC %in% c('9','10'),1,0))
 
-  multTraits <- .combTraits(vascIn.alt,c('SEN','TOL','ISEN','HTOL','HSEN'),sampID)
+  multTraits <- int.combTraits(vascIn.alt,c('SEN','TOL','ISEN','HTOL','HSEN'),sampID)
 
   ccOut <- rbind(ccOut,multTraits)
 
@@ -587,13 +614,16 @@ calcCC <- function(vascIn,sampID='UID'){
 
 # Metrics using only native status
 #' @export
+#' 
 #' @title Calculate metrics based only on native status
+#' 
 #' @description This function calculates all metrics based
 #' only on native status.
+#' 
 #' @param vascIn Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'     \item sampID: Variable(s) identified in sampID argument
+#'     \item sampID: Variable(s) identified in \emph{sampID} argument
 #'
 #'     \item TAXON: Taxon name
 #'
@@ -612,27 +642,30 @@ calcCC <- function(vascIn,sampID='UID'){
 #'     categories of 'NAT','ADV','CRYP','INTR','UND'
 #'  }
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples, 'UID' by default
 
-#' @return     Data frame containing sampID variables, PARAMETER, RESULT,
-#' where values of PARAMETER consist of the metric name concatenated
-#' with trait value (represented as TRAITNM below):
+#' @return     Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+#'   where values of PARAMETER consist of the metric name concatenated with
+#'   trait value (represented as TRAITNM below):
 #' \itemize{
-#'   \item PCTN_TRAITNM: Number of taxa with trait as percentage of TOTN
+#'   \item PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
 #'
-#'   \item XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait
+#'   \item XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
 #'
-#'   \item XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
+#'   \item XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 #'
-#'   \item RFREQ_TRAITNM: Sum of sRFREQ values across taxa with trait value
+#'   \item RFREQ_TRAITNM: Sum of \emph{sRFREQ} values across taxa with trait value
 #'
 #'   \item RIMP_TRAITNM: Relative importance ((RFREQ_TRAITVAL + XRCOV_TRAITVAL)/2)
 #'   of taxa with trait value
 #'   }
+#' 
 #' @author Karen Blocksom \email{Blocksom.karen@epa.gov}
+#' 
 #' @references US Environmental Protection Agency. 2016. National Wetland
 #' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 #' Environmental Protection Agency, Washington, DC.
+#' 
 #' @examples
 #' head(VascPlantEx)
 #' exPlant <- prepareData(VascPlantEx)
@@ -652,10 +685,10 @@ calcNative <- function(vascIn,sampID='UID'){
   vascIn <- plyr::mutate(vascIn,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
                           ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
 
-  sppNATSTAT <- .calcTraits_MultCat.alt(vascIn,'NWCA_NATSTAT',sampID)
+  sppNATSTAT <- int.calcTraits_MultCat.alt(vascIn,'NWCA_NATSTAT',sampID)
 
-  alienTrait <- .calcTraits_Indicator.alt(vascIn,'ALIEN',sampID) %>% plyr::mutate(PARAMETER=paste(PARAMETER,'SPP',sep=''))
-  acTrait <- .calcTraits_Indicator.alt(vascIn,'AC',sampID)
+  alienTrait <- int.calcTraits_Indicator.alt(vascIn,'ALIEN',sampID) %>% plyr::mutate(PARAMETER=paste(PARAMETER,'SPP',sep=''))
+  acTrait <- int.calcTraits_Indicator.alt(vascIn,'AC',sampID)
 
   natstatOut <- rbind(sppNATSTAT,alienTrait,acTrait)
 
@@ -664,13 +697,16 @@ calcNative <- function(vascIn,sampID='UID'){
 
 
 #' @export
+#' 
 #' @title Calculate richness metrics
+#' 
 #' @description This function calculates richness metrics using plot- and
 #' UID-based datasets at the species, genus, and family levels.
+#' 
 #' @param byUIDspp Data frame containing species data summarized to the UID
 #' and TAXON level, with the following variables:
 #' \itemize{
-#'  \item sampID: Variables identified by sampID argument
+#'  \item sampID: Variables identified by \emph{sampID} argument
 #'
 #' \item STATE: State two-letter abbreviation for site
 #'
@@ -703,28 +739,30 @@ calcNative <- function(vascIn,sampID='UID'){
 #' taxa above species level are not distinct (0) if taxa
 #' at a lower level are also included in sample.
 #' }
-#' @param byUIDgen Data frame containing genus-level data summarized
-#' to the sampID variables and TAXON level and containing the same variables as
-#' byUIDspp (described above).
-#' @param byPlotgen Data frame containing genus-level data
-#' summarized to the sampID variables, PLOT, and TAXON level and containing the
-#' same variables as byPlotspp (described above).
-#' @param byUIDfam  Data frame containing family-level data
-#' summarized to the sampID variables and TAXON level and containing the same
-#' variables as byUIDspp (described above).
-#' @param byPlotfam Data frame containing family-level data
-#' summarized to the sampID variables, PLOT, and TAXON level and containing the
-#' same variables as byPlotspp (described above).
+#' @param byUIDgen Data frame containing genus-level data summarized to the
+#'   sampID variables and TAXON level and containing the same variables as 
+#'   byUIDspp (described above).
+#' @param byPlotgen Data frame containing genus-level data summarized to the
+#'   sampID variables, PLOT, and TAXON level and containing the same variables
+#'   as byPlotspp (described above).
+#' @param byUIDfam  Data frame containing family-level data summarized to the
+#'   sampID variables and TAXON level and containing the same variables as
+#'   byUIDspp (described above).
+#' @param byPlotfam Data frame containing family-level data summarized to the
+#'   sampID variables, PLOT, and TAXON level and containing the same variables
+#'   as byPlotspp (described above).
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples, 'UID' by default
+#' 
 #' @details The prepareData() function creates a list object with
 #' all of the necessary input data frames. For each taxonomic level,
 #' the function createDFs() creates a list with a data frame summarized
 #' by UID and one by sampID variables and PLOT.
-#' @return   Data frame containing sampID variables, PARAMETER, and RESULT, with one row of
-#' results per parameter and sampID. The values for PARAMETER consist of the
-#' metric name concatenated with taxonomic level (represented as SPP, GEN,
-#' and FAM below):
+#' 
+#' @return   Data frame containing \emph{sampID} variables, PARAMETER, and
+#'   RESULT, with one row of results per parameter and \emph{sampID}. The values
+#'   for PARAMETER consist of the metric name concatenated with taxonomic level
+#'   (represented as SPP, GEN, and FAM below):
 #' \itemize{
 #' \item TOTN_SPP, TOTN_GEN, TOTN_FAM: Number of unique taxa in sample (UID)
 #'
@@ -736,6 +774,7 @@ calcNative <- function(vascIn,sampID='UID'){
 #'
 #' \item N_PLOTS: Number of plots sampled for UID
 #' }
+#' 
 #' If NWCA_NATSTAT is present in the input data frame, the following
 #' metrics are calculated. GRP in the metric names below represents
 #' native status values of NAT, ADV, CRYP, INTR, and subsets ALIEN
@@ -752,7 +791,9 @@ calcNative <- function(vascIn,sampID='UID'){
 #' @references US Environmental Protection Agency. 2016. National
 #' Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006.
 #' US Environmental Protection Agency, Washington, DC.
+#' 
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #'   head(VascPlantEx)
 #'   exPlant <- prepareData(VascPlantEx)
@@ -765,19 +806,19 @@ calcNative <- function(vascIn,sampID='UID'){
 
 calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfam,sampID='UID'){
 
-  sppRich <- .calcRich(byUIDspp,byPlotspp,'SPP',sampID)
-  genRich <- .calcRich(byUIDgen,byPlotgen,'GEN',sampID)
-  famRich <- .calcRich(byUIDfam,byPlotfam,'FAM',sampID)
+  sppRich <- int.calcRich(byUIDspp,byPlotspp,'SPP',sampID)
+  genRich <- int.calcRich(byUIDgen,byPlotgen,'GEN',sampID)
+  famRich <- int.calcRich(byUIDfam,byPlotfam,'FAM',sampID)
 
   richOut <- rbind(sppRich,genRich,famRich)
 
   if('NWCA_NATSTAT' %in% names(byUIDspp)){
-    natRich <- .calcRichNS(byUIDspp,byPlotspp,c('NAT'),'NATSPP',sampID)
-    advRich <- .calcRichNS(byUIDspp,byPlotspp,c('ADV'),'ADVSPP',sampID)
-    crypRich <- .calcRichNS(byUIDspp,byPlotspp,c('CRYP'),'CRYPSPP',sampID)
-    intrRich <- .calcRichNS(byUIDspp,byPlotspp,c('INTR'),'INTRSPP',sampID)
-    alienRich <- .calcRichNS(byUIDspp,byPlotspp,c('ADV','INTR'),'ALIENSPP',sampID)
-    acRich <- .calcRichNS(byUIDspp,byPlotspp,c('INTR','ADV','CRYP'),'AC',sampID)
+    natRich <- int.calcRichNS(byUIDspp,byPlotspp,c('NAT'),'NATSPP',sampID)
+    advRich <- int.calcRichNS(byUIDspp,byPlotspp,c('ADV'),'ADVSPP',sampID)
+    crypRich <- int.calcRichNS(byUIDspp,byPlotspp,c('CRYP'),'CRYPSPP',sampID)
+    intrRich <- int.calcRichNS(byUIDspp,byPlotspp,c('INTR'),'INTRSPP',sampID)
+    alienRich <- int.calcRichNS(byUIDspp,byPlotspp,c('ADV','INTR'),'ALIENSPP',sampID)
+    acRich <- int.calcRichNS(byUIDspp,byPlotspp,c('INTR','ADV','CRYP'),'AC',sampID)
 
     # Combine all into a single df
     allNSrich <- rbind(natRich,advRich,crypRich,intrRich,alienRich,acRich)
@@ -788,21 +829,24 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
   formula <- paste(paste(sampID,collapse='+'),'~PARAMETER',sep='')
   allRichOut <- reshape2::dcast(richOut,eval(formula),value.var='RESULT') %>%
     reshape2::melt(id.vars=sampID,variable.name='PARAMETER',value.name='RESULT') %>%
-    mutate(RESULT=ifelse(is.na(RESULT),0,RESULT),PARAMETER=as.character(PARAMETER))
+    plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT),PARAMETER=as.character(PARAMETER))
 
   return(allRichOut)
 }
 
 
 #' @export
+#' 
 #' @title Calculate diversity indices
+#' 
 #' @description Calculate Simpson Diversity, Shannon-Wiener
 #' Diversity, and Pielou's Evenness indices, with variations based on
 #' native status if NWCA_NATSTAT is included in the input data frame.
+#' 
 #' @param vascIn Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
-#'  \item sampID: Variable(s) identified in sampID argument
+#'  \item sampID: Variable(s) identified in \emph{sampID} argument
 #'
 #' \item TAXON: Taxon name
 #'
@@ -814,9 +858,10 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
 #' 'NAT','ADV','CRYP','INTR','UND'
 #' }
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, where
-#' values of PARAMETER are:
+#' variable(s) necessary to identify unique samples, 'UID' by default
+#' 
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+#'   where values of PARAMETER are:
 #' \itemize{
 #' \item D_ALL: Simpson diversity index based on all taxa
 #'
@@ -848,10 +893,13 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
 #'
 #' \item J_AC: Pielou's evenness index based on alien and cryptogenic taxa
 #' }
+#' 
 #' @references US Environmental Protection Agency. 2016. National Wetland
 #' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 #' Environmental Protection Agency, Washington, DC.
+#' 
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(VascPlantEx)
 #' exPlant <- prepareData(VascPlantEx)
@@ -862,7 +910,7 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
 #' unique(divEx$PARAMETER)
 
 calcDiversity <- function(vascIn,sampID='UID'){
-  divOut <- .calcIndices(vascIn,'ALL',sampID)
+  divOut <- int.calcIndices(vascIn,'ALL',sampID)
 
  if('NWCA_NATSTAT' %in% names(vascIn)){
 
@@ -873,13 +921,13 @@ calcDiversity <- function(vascIn,sampID='UID'){
    for(i in 1:length(nsvalues)){
      vascIn.2 <- subset(vascIn.1,NATSTAT_ALT==nsvalues[i])
 
-     nsOut <- .calcIndices(vascIn.2,nsvalues[i],sampID)
+     nsOut <- int.calcIndices(vascIn.2,nsvalues[i],sampID)
      divOut <- rbind(divOut,nsOut)
    }
 
    # AC metrics
    vascIn.ac <- subset(vascIn.1,AC=='1')
-   acOut <- .calcIndices(vascIn.ac,'AC',sampID)
+   acOut <- int.calcIndices(vascIn.ac,'AC',sampID)
 
    divOut <- rbind(divOut,acOut)
 
@@ -894,25 +942,31 @@ calcDiversity <- function(vascIn,sampID='UID'){
 
 
 #' @export
+#' 
 #' @title Calculate Bray-Curtis metrics
+#' 
 #' @description This function calculates the mean Bray-Curtis
 #' distances among plots for all species, and includes a version using only
 #' native species if the variable NWCA_NATSTAT is included in the input
 #' data frame. This variable is found in the ccNatNWCA dataset.
-#' @param vascIn Data frame containing cover data summarized by UID, PLOT, and
+#' 
+#' @param vascIn Data frame containing cover data summarized by 
+#' \emph{sampID} variables, PLOT, and
 #' DISTINCT at the species level. Must also contain at least one of the
 #' following: USDA_NAME (taxon name) or SPECIES_NAME_ID (numeric code
 #' for taxon). If NWCA_NATSTAT is included, a native species version is
 #' also calculated.
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples, 'UID' by default
+#' 
 #' @details This function calculates metrics based on all species, and on
 #' native species if the appropriate variable is included in the
 #' input data frame.
-#' @return Data frame containing UID, PARAMETER, and RESULT, with one
-#' row of results per parameter and UID. The values for PARAMETER consist
-#' of the metric name concatenated with taxonomic level (represented as
-#' TAXLEVEL below):
+#' 
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, and RESULT,
+#'   with one row of results per parameter and UID. The values for PARAMETER
+#'   consist of the metric name concatenated with taxonomic level (represented
+#'   as TAXLEVEL below):
 #' \itemize{
 #' \item XBCDIST_SPP: Mean Bray-Curtis distance among plots in sample
 #'
@@ -934,7 +988,7 @@ calcBCmets <- function(vascIn,sampID='UID'){
   # This df needs to be in wide format
   forDist <- plyr::mutate(forDist,SPECIES=paste('s',SPECIES_NAME_ID,sep=''))
 
-  meanBC <- .calcXBC(forDist,sampID)
+  meanBC <- int.calcXBC(forDist,sampID)
 
   xbcOut <- meanBC
 
@@ -944,7 +998,7 @@ calcBCmets <- function(vascIn,sampID='UID'){
       plyr::mutate(SPECIES=paste('s',SPECIES_NAME_ID,sep='')) %>%
       dplyr::filter(NWCA_NATSTAT=='NAT')
 
-    meanBC_nat <- .calcXBC(forDist.nat,sampID) %>% plyr::rename(c('XBCDIST_SPP'='XBCDIST_NATSPP'))
+    meanBC_nat <- int.calcXBC(forDist.nat,sampID) %>% plyr::rename(c('XBCDIST_SPP'='XBCDIST_NATSPP'))
 
     xbcOut <- merge(xbcOut,meanBC_nat,by='UID',all.x=T)
   }
@@ -956,14 +1010,17 @@ calcBCmets <- function(vascIn,sampID='UID'){
 }
 
 #' @export
+#' 
 #' @title Calculate only metrics used in NWCA 2011 VMMI
+#' 
 #' @description This function calculates FQAI_ALL, N_TOL, RIMP_NATSPP,
 #' and XRCOV_MONOCOTS_NAT metrics, which are used in the NWCA 2011
 #' Vegetation Multimetric Index (VMMI).
+#' 
 #' @param vascIn Data frame containing cover data summarized at the UID
 #' and TAXON level:
 #' \itemize{
-#'  \item sampID: Variable(s) identified in sampID argument
+#'  \item sampID: Variable(s) identified in \emph{sampID} argument
 #'
 #' \item TAXON: Taxon name
 #'
@@ -984,11 +1041,13 @@ calcBCmets <- function(vascIn,sampID='UID'){
 #' all taxa for a UID.
 #' }
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples, 'UID' by default
+#' 
 #' @details To calculate the VMMI as used in NWCA 2011, the default
 #' taxa lists must be used to create the input data frame.
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, with the
-#' following PARAMETER values:
+#' 
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+#'   with the following PARAMETER values:
 #' \itemize{
 #' \item FQAI_ALL: Floristic Quality Assessment Index, based on all
 #' species
@@ -1005,7 +1064,9 @@ calcBCmets <- function(vascIn,sampID='UID'){
 #' National Wetland Condition Assessment: 2011 Technical Report.
 #' EPA-843-R-15-006. US Environmental Protection Agency,
 #' Washington, DC.
+#' 
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(VascPlantEx)
 #' exPlant <- prepareData(VascPlantEx)

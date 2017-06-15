@@ -10,7 +10,7 @@ calcCC(vascIn, sampID = "UID")
 \item{vascIn}{Data frame containing cover data summarized by
 UID and TAXON, with the following fields:
 \itemize{
-    \item sampID: Variable(s) identified in sampID argument
+    \item sampID: Variable(s) identified in \emph{sampID} argument
 
     \item TAXON: Taxon name
 
@@ -21,17 +21,17 @@ UID and TAXON, with the following fields:
     \item NWCA_CC: Coefficient of conservatism values by taxon
     from NWCA
 
-    \item Optional: NWCA_NATSTAT: Native status variable with
+    \item NWCA_NATSTAT (optional): Native status variable with
       categories of 'NAT','ADV','CRYP','INTR','UND'.
       UND taxa are ignored.
    }}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Data frame containing sampID variables, PARAMETER, RESULT, where
-values of PARAMETER are:
+Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+  where values of PARAMETER are:
 \itemize{
     \item XC: Mean coefficient of conservatism (unweighted)
 
@@ -68,9 +68,9 @@ head(ccEx)
 unique(ccEx$PARAMETER)
 }
 \references{
-US Environmental Protection Agency. 2016. National Wetland
-Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
-Environmental Protection Agency, Washington, DC.
+US Environmental Protection Agency. 2016. National Wetland 
+  Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US 
+  Environmental Protection Agency, Washington, DC.
 }
 \author{
 Karen Blocksom \email{Blocksom.karen@epa.gov}

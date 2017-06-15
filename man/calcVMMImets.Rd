@@ -10,7 +10,7 @@ calcVMMImets(vascIn, sampID = "UID")
 \item{vascIn}{Data frame containing cover data summarized at the UID
 and TAXON level:
 \itemize{
- \item sampID: Variable(s) identified in sampID argument
+ \item sampID: Variable(s) identified in \emph{sampID} argument
 
 \item TAXON: Taxon name
 
@@ -32,11 +32,11 @@ all taxa for a UID.
 }}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Data frame containing sampID variables, PARAMETER, RESULT, with the
-following PARAMETER values:
+Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+  with the following PARAMETER values:
 \itemize{
 \item FQAI_ALL: Floristic Quality Assessment Index, based on all
 species

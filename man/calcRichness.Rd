@@ -11,7 +11,7 @@ calcRichness(byUIDspp, byPlotspp, byUIDgen, byPlotgen, byUIDfam, byPlotfam,
 \item{byUIDspp}{Data frame containing species data summarized to the UID
 and TAXON level, with the following variables:
 \itemize{
- \item sampID: Variables identified by sampID argument
+ \item sampID: Variables identified by \emph{sampID} argument
 
 \item STATE: State two-letter abbreviation for site
 
@@ -46,30 +46,30 @@ taxa above species level are not distinct (0) if taxa
 at a lower level are also included in sample.
 }}
 
-\item{byUIDgen}{Data frame containing genus-level data summarized
-to the sampID variables and TAXON level and containing the same variables as
+\item{byUIDgen}{Data frame containing genus-level data summarized to the
+sampID variables and TAXON level and containing the same variables as 
 byUIDspp (described above).}
 
-\item{byPlotgen}{Data frame containing genus-level data
-summarized to the sampID variables, PLOT, and TAXON level and containing the
-same variables as byPlotspp (described above).}
+\item{byPlotgen}{Data frame containing genus-level data summarized to the
+sampID variables, PLOT, and TAXON level and containing the same variables
+as byPlotspp (described above).}
 
-\item{byUIDfam}{Data frame containing family-level data
-summarized to the sampID variables and TAXON level and containing the same
-variables as byUIDspp (described above).}
+\item{byUIDfam}{Data frame containing family-level data summarized to the
+sampID variables and TAXON level and containing the same variables as
+byUIDspp (described above).}
 
-\item{byPlotfam}{Data frame containing family-level data
-summarized to the sampID variables, PLOT, and TAXON level and containing the
-same variables as byPlotspp (described above).}
+\item{byPlotfam}{Data frame containing family-level data summarized to the
+sampID variables, PLOT, and TAXON level and containing the same variables
+as byPlotspp (described above).}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Data frame containing sampID variables, PARAMETER, and RESULT, with one row of
-results per parameter and sampID. The values for PARAMETER consist of the
-metric name concatenated with taxonomic level (represented as SPP, GEN,
-and FAM below):
+Data frame containing \emph{sampID} variables, PARAMETER, and
+  RESULT, with one row of results per parameter and \emph{sampID}. The values
+  for PARAMETER consist of the metric name concatenated with taxonomic level
+  (represented as SPP, GEN, and FAM below):
 \itemize{
 \item TOTN_SPP, TOTN_GEN, TOTN_FAM: Number of unique taxa in sample (UID)
 
@@ -81,6 +81,7 @@ and FAM below):
 
 \item N_PLOTS: Number of plots sampled for UID
 }
+
 If NWCA_NATSTAT is present in the input data frame, the following
 metrics are calculated. GRP in the metric names below represents
 native status values of NAT, ADV, CRYP, INTR, and subsets ALIEN

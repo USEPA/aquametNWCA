@@ -1,41 +1,49 @@
 #' @export
+#' 
 #' @title Calculate metrics based on S&T (Status and Trends) categories
+#' 
 #' @description This function calculations metrics based on the
 #' number of S&T classes found across plots. This function is called by
 #' calcVtype_GcovMets().
+#' 
 #' @param dataIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - Variables identified in sampID argument
+#' \item sampID: Variables identified in \emph{sampID} argument
 #'
-#' \item PLOT (Sample plot from which data were collected)
+#' \item PLOT: Sample plot from which data were collected
 #'
-#' \item PARAMETER (specific measurement type)
+#' \item PARAMETER: specific measurement type
 #'
-#' \item RESULT (measured value)
+#' \item RESULT: measured value
 #' }
 #' The following parameters are used in calculating
 #' vegetation type metrics: 'SANDT_CLASS','PAL_FARMED'.
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with
-#' each samples, with sampID variables and NPLOTS
+#' each samples, with \emph{sampID} variables and NPLOTS
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples, 'UID'
+#' by default.
+#' 
 #' @details If any of the parameters are missing, they are assumed
 #' to be zeros (if numeric), and metric values associated with any
 #' metrics that cannot be calculated due to missing parameters are
 #' set to a standardized value.
-#' @return Either a character string containing an error message
-#' when metric calculation is not successful, or a data frame.
-#' Data frame contains sampID variables, PARAMETER, RESULT, where values of PARAMETER
-#' consist of the metric name concatenated with trait value, with
-#' valid values of: N_SANDT, DOM_SANDT, D_SANDT, H_SANDT, J_SANDT. A list
-#' of metric descriptions is provided in the document named
-#' VegTypes_GrdCover_Metric_Descriptions.pdf included in the help
-#' directory for the package.
+#' 
+#' @return Either a character string containing an error message when metric
+#'   calculation is not successful, or a data frame. Data frame contains
+#'   \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+#'   consist of the metric name concatenated with trait value, with valid values
+#'   of: N_SANDT, DOM_SANDT, D_SANDT, H_SANDT, J_SANDT. A list of metric
+#'   descriptions is provided in the document named 
+#'   VegTypes_GrdCover_Metric_Descriptions.pdf included in the help directory
+#'   for the package.
+#'   
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(Vtype_GrCovEx)
-#' # Create data frame with number of plots sampled for each UID
+#' # Create data frame with number of plots sampled for each sampID
 #' nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
 #' # alternative approach to creating this data frame
 #' nplots <- plyr::ddply(Vtype_GrCovEx,c('UID'),dplyr::summarise
@@ -97,20 +105,23 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
 
 #### VASCULAR STRATA
 #' @export
+#' 
 #' @title Calculate vascular strata metrics
+#' 
 #' @description Calculate vascular strata metrics using
 #' vegetation type data. This function is called by
 #' calcVtype_GcovMets().
+#' 
 #' @param dataIn A data frame containing the following
 #' variables:
 #' \itemize{
-#' \item sampID - Variable(s) identified in the sampID argument
+#' \item sampID: Variable(s) identified in the \emph{sampID} argument
 #' 
-#' \item PLOT (Sample plot from which data were collected)
+#' \item PLOT: Sample plot from which data were collected
 #'
-#' \item PARAMETER (specific measurement type)
+#' \item PARAMETER: specific measurement type
 #'
-#' \item RESULT (measured value)
+#' \item RESULT: measured value
 #' }
 #' The following parameters are used in
 #' calculating tree metrics: 'SUBMERGED_AQ','FLOATING_AQ',
@@ -118,31 +129,35 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
 #' 'SMALL_VEG','VSMALL_VEG'.
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with each
-#' sample with sampID variables and NPLOTS
+#' sample with \emph{sampID} variables and NPLOTS
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples,
+#' 'UID' by default.
+#' 
 #' @details If any of the parameters are missing, they are
 #' assumed to be zeros (if numeric), and metric values associated
 #' with any metrics that cannot be calculated due to missing
 #' parameters are set to a standardized value.
-#' @return Either a character string containing an error message
-#' when metric calculation is not successful, or a data frame. Data
-#' frame contains sampID variables, PARAMETER, RESULT, where values of PARAMETER
-#' consist of the metric name concatenated with trait value, with
-#' valid values of: FREQ_FLOATING_AQ, FREQ_HMED_VEG,
-#' FREQ_LIANAS, FREQ_MED_VEG, FREQ_SMALL_VEG, FREQ_SUBMERGED_AQ,
-#' FREQ_TALL_VEG, FREQ_VSMALL_VEG, FREQ_VTALL_VEG, IMP_FLOATING_AQ,
-#' IMP_HMED_VEG, IMP_LIANAS, IMP_MED_VEG, IMP_SMALL_VEG,
-#' IMP_SUBMERGED_AQ, IMP_TALL_VEG, IMP_VSMALL_VEG, IMP_VTALL_VEG,
-#' XCOV_FLOATING_AQ, XCOV_HMED_VEG, XCOV_LIANAS, XCOV_MED_VEG,
-#' XCOV_SMALL_VEG, XCOV_SUBMERGED_AQ, XCOV_TALL_VEG,
-#' XCOV_VSMALL_VEG, XCOV_VTALL_VEG, XRCOV_FLOATING_AQ, XRCOV_HMED_VEG,
-#' XRCOV_LIANAS, XRCOV_MED_VEG, XRCOV_SMALL_VEG, XRCOV_SUBMERGED_AQ,
-#' XRCOV_TALL_VEG, XRCOV_VSMALL_VEG, XRCOV_VTALL_VEG, H_VASC_STRATA,
-#' J_VASC_STRATA, D_VASC_STRATA. A list of metric descriptions is
-#' provided in the document VegTypes_GrdCover_Metric_Descriptions.pdf
-#' included in the help directory for the package.
+#' 
+#' @return Either a character string containing an error message when metric
+#'   calculation is not successful, or a data frame. Data frame contains
+#'   \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+#'   consist of the metric name concatenated with trait value, with valid values
+#'   of: FREQ_FLOATING_AQ, FREQ_HMED_VEG, FREQ_LIANAS, FREQ_MED_VEG,
+#'   FREQ_SMALL_VEG, FREQ_SUBMERGED_AQ, FREQ_TALL_VEG, FREQ_VSMALL_VEG,
+#'   FREQ_VTALL_VEG, IMP_FLOATING_AQ, IMP_HMED_VEG, IMP_LIANAS, IMP_MED_VEG,
+#'   IMP_SMALL_VEG, IMP_SUBMERGED_AQ, IMP_TALL_VEG, IMP_VSMALL_VEG,
+#'   IMP_VTALL_VEG, XCOV_FLOATING_AQ, XCOV_HMED_VEG, XCOV_LIANAS, XCOV_MED_VEG, 
+#'   XCOV_SMALL_VEG, XCOV_SUBMERGED_AQ, XCOV_TALL_VEG, XCOV_VSMALL_VEG,
+#'   XCOV_VTALL_VEG, XRCOV_FLOATING_AQ, XRCOV_HMED_VEG, XRCOV_LIANAS,
+#'   XRCOV_MED_VEG, XRCOV_SMALL_VEG, XRCOV_SUBMERGED_AQ, XRCOV_TALL_VEG,
+#'   XRCOV_VSMALL_VEG, XRCOV_VTALL_VEG, H_VASC_STRATA, J_VASC_STRATA,
+#'   D_VASC_STRATA. A list of metric descriptions is provided in the document
+#'   VegTypes_GrdCover_Metric_Descriptions.pdf included in the help directory
+#'   for the package.
+#'   
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(Vtype_GrCovEx)
 #' # Create data frame with number of plots sampled for each UID
@@ -243,17 +258,20 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 
 #### NON-VASCULAR STRATA
 #' @export
+#' 
 #' @title Calculate non-vascular metrics
+#' 
 #' @description This function calculates non-vascular plant
 #' metrics based on vegetative and ground cover data. This
 #' function is called by calcVtype_GcovMets().
+#' 
 #' @param dataIn A data frame containing the following variables:
 #' \itemize{
-#'  \item sampID - variable(s) identified in sampID argument
+#'  \item sampID: variable(s) identified in \emph{sampID} argument
 #'
-#'  \item PARAMETER (specific measurement type)
+#'  \item PARAMETER: specific measurement type
 #'
-#'  \item RESULT (measured value)
+#'  \item RESULT: measured value
 #'  }
 #'  The following parameters are used in
 #'  calculating tree metrics: 'PEAT_MOSS','BRYOPHYTES','LICHENS',
@@ -262,25 +280,29 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 #' @param nPlot Number of plots sampled associated with each sample
 #'  with sampID variables and NPLOTS.
 #' @param sampID  A character vector containing the name(s) of
-#'  variable(s) necessary to identify unique samples
+#'  variable(s) necessary to identify unique samples, 'UID'
+#'  by default.
+#' 
 #' @details If any of the parameters are missing, they are assumed to
 #'  be zeros (if numeric), and metric values associated with any metrics
 #'  that cannot be calculated due to missing parameters are set to a
 #'  standardized value.
-#' @return Data frame containing sampID variables, PARAMETER, RESULT, where values of
-#'  PARAMETER consist of the metric name concatenated with trait value,
-#'  with valid values of: FREQ_ALGAE,  FREQ_ARBOREAL,
-#'  FREQ_BRYOPHYTES, FREQ_LICHENS, FREQ_MACROALGAE, IMP_ALGAE,
-#'  IMP_ARBOREAL, IMP_BRYOPHYTES, IMP_LICHENS, IMP_MACROALGAE,
-#'  XCOV_ALGAE, XCOV_ARBOREAL, XCOV_BRYOPHYTES, XCOV_LICHENS,
-#'  XCOV_MACROALGAE, N_PEAT_MOSS_DOM, FREQ_PEAT_MOSS_DOM.
-#'  A list of metric descriptions is provided in the document
-#'  named VegTypes_GrdCover_Metric_Descriptions.pdf included in the
-#'  help directory for the package.
+#' 
+#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+#'   where values of PARAMETER consist of the metric name concatenated with
+#'   trait value, with valid values of: FREQ_ALGAE,  FREQ_ARBOREAL, 
+#'   FREQ_BRYOPHYTES, FREQ_LICHENS, FREQ_MACROALGAE, IMP_ALGAE, IMP_ARBOREAL,
+#'   IMP_BRYOPHYTES, IMP_LICHENS, IMP_MACROALGAE, XCOV_ALGAE, XCOV_ARBOREAL,
+#'   XCOV_BRYOPHYTES, XCOV_LICHENS, XCOV_MACROALGAE, N_PEAT_MOSS_DOM,
+#'   FREQ_PEAT_MOSS_DOM. A list of metric descriptions is provided in the
+#'   document named VegTypes_GrdCover_Metric_Descriptions.pdf included in the 
+#'   help directory for the package.
+#' 
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #'  head(Vtype_GrCovEx)
-#'  # Create data frame with number of plots sampled for each UID
+#'  # Create data frame with number of plots sampled for each sampID
 #'  nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
 #'  # alternative approach to creating this data frame
 #'  nplots <- plyr::ddply(Vtype_GrCovEx,c('UID'),dplyr::summarise,
@@ -354,20 +376,23 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
 
 
 #' @export
+#' 
 #' @title Calculate water cover metrics
-#' @description This internal function calculates metrics water
+#' 
+#' @description This function calculates metrics water
 #' cover and depth based on ground cover data. This function is
 #' called by calcVtype_GcovMets().
+#' 
 #' @param dataIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - Variable(s) identified in sampID argument
+#' \item sampID: Variable(s) identified in \emph{sampID} argument
 #' 
-#' \item PLOT (Sample plot from which data
-#' were collected)
+#' \item PLOT: Sample plot from which data
+#' were collected
 #'
-#' \item PARAMETER (specific measurement type)
+#' \item PARAMETER: specific measurement type
 #'
-#' \item RESULT (measured value)
+#' \item RESULT: measured value
 #' }
 #' The following parameters are used in
 #' calculating tree metrics: 'TIME','MINIMUM_DEPTH',
@@ -375,29 +400,32 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
 #' 'WATER_NOVEG','WATER_AQVEG','WATER_EMERGVEG'.
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with each
-#' sample with sampID variables and NPLOTS
+#' sample with \emph{sampID} variables and NPLOTS
 #' @param sampID A character vector containing the name(s) of
-#' variable(s) necessary to identify unique samples
+#' variable(s) necessary to identify unique samples,
+#' 'UID' by default.
+#' 
 #' @details If any of the parameters are missing, they are assumed
 #' to be zeros (if numeric), and metric values associated with any
 #' metrics that cannot be calculated due to missing parameters are set
 #' to a standardized value.
-#' @return Either a character string containing an error message
-#' when metric calculation is not successful, or a data frame. Data
-#' frame contains sampID variables, PARAMETER, RESULT, where values of PARAMETER
-#' consist of the metric name concatenated with trait value, with
-#' valid values of: MIN_H2O_DEPTH, MAX_H2O_DEPTH,
-#' XH2O_DEPTH_AA, MIN_COV_H2O, MAX_COV_H2O, FREQ_H2O,
-#' FREQ_H2O_AQVEG, FREQ_H2O_EMERGVEG, FREQ_H2O_NOVEG, XCOV_H2O,
-#' XCOV_H2O_AQVEG, XCOV_H2O_EMERGVEG, XCOV_H2O_NOVEG, IMP_H2O,
-#' IMP_H2O_AQVEG, IMP_H2O_EMERGVEG, IMP_H2O_NOVEG, XH2O_DEPTH.
-#' A list of metric descriptions is provided in the document
-#' named VegTypes_GrdCover_Metric_Descriptions.pdf
-#' included in the help directory for the package.
+#' 
+#' @return Either a character string containing an error message when metric
+#'   calculation is not successful, or a data frame. Data frame contains
+#'   \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+#'   consist of the metric name concatenated with trait value, with valid values
+#'   of: MIN_H2O_DEPTH, MAX_H2O_DEPTH, XH2O_DEPTH_AA, MIN_COV_H2O, MAX_COV_H2O,
+#'   FREQ_H2O, FREQ_H2O_AQVEG, FREQ_H2O_EMERGVEG, FREQ_H2O_NOVEG, XCOV_H2O, 
+#'   XCOV_H2O_AQVEG, XCOV_H2O_EMERGVEG, XCOV_H2O_NOVEG, IMP_H2O, IMP_H2O_AQVEG,
+#'   IMP_H2O_EMERGVEG, IMP_H2O_NOVEG, XH2O_DEPTH. A list of metric descriptions
+#'   is provided in the document named VegTypes_GrdCover_Metric_Descriptions.pdf
+#'   included in the help directory for the package.
+#' 
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(Vtype_GrCovEx)
-#' # Create data frame with number of plots sampled for each UID
+#' # Create data frame with number of plots sampled for each sampID
 #' nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
 #' # alternative approach to creating this data frame
 #' nplots <- plyr::ddply(Vtype_GrCovEx,c('UID'),dplyr::summarise,
@@ -479,12 +507,15 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
 
 
 #' @export
+#' 
 #' @title Calculate bare ground and litter metrics
+#' 
 #' @description Calculate bare ground and litter metrics based on
 #' ground cover data. This function is called by calcVtype_GcovMets().
+#' 
 #' @param dataIn A data frame containing the following variables:
 #' \itemize{
-#' \item sampID - Variable(s) identified in sampID argument
+#' \item sampID: Variable(s) identified in \emph{sampID} argument
 #' 
 #' \item PLOT (Sample plot from which data were collected)
 #'
@@ -498,27 +529,30 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
 #' 'LITTER_DEPTH_SW','LITTER_DEPTH_NE','TOTAL_LITTER','WD_FINE',
 #' 'WD_COARSE','EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK'.
 #' Additional parameters or variables are ignored.
-#' @param nPlot Number of plots sampled associated with each sample
+#' @param nPlot Number of plots sampled associated with each sample,
+#' including \emph{sampID} variables and NPLOTS.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
+#' 
 #' @details If any of the parameters are missing, they are assumed to be
 #' zeros (if numeric), and metric values associated with any metrics that
 #' cannot be calculated due to missing parameters are set to a
 #' standardized value.
-#' @return Either a character string containing an error message
-#' when metric calculation is not successful, or a data frame.
-#' Data frame contains sampID variables, PARAMETER, RESULT, where values of PARAMETER
-#' consist of the metric name concatenated with trait value, with
-#' valid values of: FREQ_BAREGD, FREQ_EXPOSED_GRAVEL,
-#' FREQ_EXPOSED_ROCK, FREQ_EXPOSED_SOIL, FREQ_LITTER, FREQ_WD_COARSE,
-#' FREQ_WD_FINE, IMP_BAREGD, IMP_EXPOSED_GRAVEL, IMP_EXPOSED_ROCK,
-#' IMP_EXPOSED_SOIL, IMP_LITTER, IMP_WD_COARSE, IMP_WD_FINE,
-#' XCOV_BAREGD, XCOV_EXPOSED_GRAVEL, XCOV_EXPOSED_ROCK,
-#' XCOV_EXPOSED_SOIL, XCOV_LITTER, XCOV_WD_COARSE, XCOV_WD_FINE.
-#' A list of metric descriptions is provided in the document
-#' named VegTypes_GrdCover_Metric_Descriptions.pdf
-#' included in the help directory for the package.
+#' 
+#' @return Either a character string containing an error message when metric
+#'   calculation is not successful, or a data frame. Data frame contains
+#'   \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+#'   consist of the metric name concatenated with trait value, with valid values
+#'   of: FREQ_BAREGD, FREQ_EXPOSED_GRAVEL, FREQ_EXPOSED_ROCK, FREQ_EXPOSED_SOIL,
+#'   FREQ_LITTER, FREQ_WD_COARSE, FREQ_WD_FINE, IMP_BAREGD, IMP_EXPOSED_GRAVEL,
+#'   IMP_EXPOSED_ROCK, IMP_EXPOSED_SOIL, IMP_LITTER, IMP_WD_COARSE, IMP_WD_FINE,
+#'   XCOV_BAREGD, XCOV_EXPOSED_GRAVEL, XCOV_EXPOSED_ROCK, XCOV_EXPOSED_SOIL,
+#'   XCOV_LITTER, XCOV_WD_COARSE, XCOV_WD_FINE. A list of metric descriptions is
+#'   provided in the document named VegTypes_GrdCover_Metric_Descriptions.pdf 
+#'   included in the help directory for the package.
+#'   
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
+#' 
 #' @examples
 #' head(Vtype_GrCovEx)
 #' # Create data frame with number of plots sampled for each UID

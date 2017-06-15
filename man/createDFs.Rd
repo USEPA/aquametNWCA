@@ -8,7 +8,7 @@ createDFs(sampID = "UID", tvar, vascIn, taxa)
 }
 \arguments{
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 
 \item{tvar}{String with the level of taxonomy
 ('USDA_NAME','GENUS','FAMILY')}
@@ -17,17 +17,17 @@ variable(s) necessary to identify unique samples}
 the following variables:
 \itemize{
 
-\item sampID - Variable(s) found in the argument sampID
+\item sampID: Variable(s) found in the argument \emph{sampID}
 
-\item PLOT - Plot number of data (1 to 5 possible)
+\item PLOT:  Plot number of data (1 to 5 possible)
 
-\item STATE - State postal code of site
+\item STATE: State postal code of site
 
-\item USAC_REGION - U.S. Army Corps of Engineers Region Name
+\item USAC_REGION: U.S. Army Corps of Engineers Region Name
 
-\item USDA_NAME - Taxon name, must match with taxa data frame
+\item USDA_NAME: Taxon name, must match with taxa data frame
 
-\item COVER - Percentage estimated vegetation cover by TAXON in PLOT
+\item COVER: Percentage estimated vegetation cover by TAXON in PLOT
 }}
 
 \item{taxa}{Data frame containing USDA_NAME, GENUS, CATEGORY,
@@ -36,18 +36,18 @@ default if not specified. These variables are assumed to be
 populated with abbreviations as found in UsDA PLANTS database.}
 }
 \value{
-A list containing two data frames. The first data frame
-summarizes data by sampID variables and TAXON and contains 
-sampID variables, STATE, USAC_REGION, TAXON, NUM, XABCOV, DISTINCT, 
-and NPLOTS. NUM is the number of plots in which taxon occurs, and 
-XABCOV is the mean absolute COVER across plots. DISTINCT is the value 
-1 assigned to each row. NPLOTS is the number of plots sampled.
-
-The second summarizes by sampID variables, PLOT, and TAXON. Each data frame
-contains sampID variables, PLOT, STATE, USAC_REGION, TAXON, COVER, and
-DISTINCT. DISTINCT assigns the value for each taxon as 1 if the
-taxon has COVER>0 or 0 if not. COVER is the sum of the COVER
-variable by sampID variables, PLOT, and TAXON.
+A list containing two data frames. The first data frame summarizes
+  data by \emph{sampID} variables and TAXON and contains sampID variables,
+  STATE, USAC_REGION, TAXON, NUM, XABCOV, DISTINCT, and NPLOTS. NUM is the
+  number of plots in which taxon occurs, and XABCOV is the mean absolute
+  COVER across plots. DISTINCT is the value 1 assigned to each row. NPLOTS is
+  the number of plots sampled.
+  
+  The second summarizes by \emph{sampID} variables, PLOT, and TAXON. Each
+  data frame contains sampID variables, PLOT, STATE, USAC_REGION, TAXON,
+  COVER, and DISTINCT. DISTINCT assigns the value for each taxon as 1 if the 
+  taxon has COVER>0 or 0 if not. COVER is the sum of the COVER variable by
+  sampID variables, PLOT, and TAXON.
 }
 \description{
 This internal function merges the inputs of

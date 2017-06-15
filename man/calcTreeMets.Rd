@@ -10,7 +10,7 @@ calcTreeMets(treeIn, sampID = "UID")
 \arguments{
 \item{treeIn}{A data frame containing the following variables:
 \itemize{
-   \item sampID - Variable(s) found in the argument sampID
+   \item sampID: Variable(s) found in the argument \emph{sampID}
 
    \item PAGE: Page number from field form
 
@@ -31,15 +31,15 @@ calculating tree metrics: 'XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG',
 ignored.}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Either a character string containing an error message when 
-metric calculation is not successful, or a data frame. The first columns 
-of the data frame are the sampID variables and subsequent columns are 
-named for each metric and contain metric values. A list of metrics
-is provided in the document named "Tree_Metric_Descriptions.pdf" included 
-in the help directory for the package.
+Either a character string containing an error message when metric
+  calculation is not successful, or a data frame. The first columns of the
+  data frame are the sampID variables and subsequent columns are named for
+  each metric and contain metric values. A list of metrics is provided in the
+  document named "Tree_Metric_Descriptions.pdf" included in the help
+  directory for the package.
 }
 \description{
 This function calculates the NWCA 2011 tree metrics.

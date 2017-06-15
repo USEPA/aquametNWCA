@@ -9,32 +9,32 @@ calcSnagMets(treeIn, sampID = "UID")
 \arguments{
 \item{treeIn}{A data frame containing the following variables:
 \itemize{
-\item sampID - Variable(s) identified in sampID argument
+\item sampID: Variable(s) identified in \emph{sampID} argument
 
 \item PLOT: Sample plot from which data were collected
 
 \item PARAMETER: specific measurement type
 
 \item RESULT: measured value
-}}
-
-\item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples
+}
 The following parameters are used in
 calculating tree metrics: 'XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG',
 'JR_SNAG','THICK_SNAG','XTHICK_SNAG','XXTHICK_SNAG'.
 Additional parameters or variables are ignored.}
+
+\item{sampID}{A character vector containing the name(s) of
+variable(s) necessary to identify unique samples, 'UID' by default.}
 }
 \value{
-Either a character string containing an error message when
-metric calculation is not successful, or a data frame. The data frame
-contains the sampID variables, PARAMETER, RESULT, where PARAMETER values include:
-TOTN_SNAGS, XN_SNAGS, TOTN_JR_SNAG, TOTN_THICK_SNAG,
-TOTN_THIN_SNAG, TOTN_XTHICK_SNAG, TOTN_XTHIN_SNAG, TOTN_XXTHIN_SNAG,
-XN_JR_SNAG, XN_THICK_SNAG, XN_THIN_SNAG, XN_XTHICK_SNAG, XN_XTHIN_SNAG,
-and XN_XXTHIN_SNAG. A list of metric descriptions is provided in the
-document named Tree_Metric_Descriptions.pdf included in the help
-directory for the package.
+Either a character string containing an error message when metric
+  calculation is not successful, or a data frame. The data frame contains the
+  \emph{sampID} variables, PARAMETER, RESULT, where PARAMETER values include:
+  TOTN_SNAGS, XN_SNAGS, TOTN_JR_SNAG, TOTN_THICK_SNAG, TOTN_THIN_SNAG,
+  TOTN_XTHICK_SNAG, TOTN_XTHIN_SNAG, TOTN_XXTHIN_SNAG, XN_JR_SNAG,
+  XN_THICK_SNAG, XN_THIN_SNAG, XN_XTHICK_SNAG, XN_XTHIN_SNAG, and
+  XN_XXTHIN_SNAG. A list of metric descriptions is provided in the document
+  named Tree_Metric_Descriptions.pdf included in the help directory for the
+  package.
 }
 \description{
 This function calculates all of the snag

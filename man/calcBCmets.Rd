@@ -7,20 +7,21 @@
 calcBCmets(vascIn, sampID = "UID")
 }
 \arguments{
-\item{vascIn}{Data frame containing cover data summarized by UID, PLOT, and
+\item{vascIn}{Data frame containing cover data summarized by 
+\emph{sampID} variables, PLOT, and
 DISTINCT at the species level. Must also contain at least one of the
 following: USDA_NAME (taxon name) or SPECIES_NAME_ID (numeric code
 for taxon). If NWCA_NATSTAT is included, a native species version is
 also calculated.}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Data frame containing UID, PARAMETER, and RESULT, with one
-row of results per parameter and UID. The values for PARAMETER consist
-of the metric name concatenated with taxonomic level (represented as
-TAXLEVEL below):
+Data frame containing \emph{sampID} variables, PARAMETER, and RESULT,
+  with one row of results per parameter and UID. The values for PARAMETER
+  consist of the metric name concatenated with taxonomic level (represented
+  as TAXLEVEL below):
 \itemize{
 \item XBCDIST_SPP: Mean Bray-Curtis distance among plots in sample
 

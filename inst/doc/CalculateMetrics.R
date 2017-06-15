@@ -4,12 +4,12 @@ library(aquametNWCA)
 head(VascPlantEx)
 
 ## ----allVasc.2-----------------------------------------------------------
-outdf <- calcVascPlantMets(dfIn=VascPlantEx,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID')
+outdf <- calcVascPlantMets(vascIn=VascPlantEx,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID')
 
 names(outdf)
 
 ## ----subVasc.1-----------------------------------------------------------
-sumdf <- prepareData(indf=VascPlantEx, sampID='UID', inTaxa=taxaNWCA, inNatCC=ccNatNWCA, inWIS=wisNWCA)
+sumdf <- prepareData(vascIn=VascPlantEx, sampID='UID', inTaxa=taxaNWCA, inNatCC=ccNatNWCA, inWIS=wisNWCA)
 str(sumdf)
 
 ## ----subVasc.2-----------------------------------------------------------
@@ -55,7 +55,7 @@ head(outVG)
 
 ## ----subVG---------------------------------------------------------------
 library(plyr)
-nplots <- ddply(Vtype_GrCovEx,c('UID'),summarize,NPLOTS=length(unique(PLOT)))
+nplots <- ddply(Vtype_GrCovEx,c('UID'),summarise,NPLOTS=length(unique(PLOT)))
 
 outST <- calcSandTMets(Vtype_GrCovEx, nplots, sampID='UID')
 head(outST)

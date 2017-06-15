@@ -10,7 +10,7 @@ calcNative(vascIn, sampID = "UID")
 \item{vascIn}{Data frame containing cover data summarized by
 UID and TAXON, with the following fields:
 \itemize{
-    \item sampID: Variable(s) identified in sampID argument
+    \item sampID: Variable(s) identified in \emph{sampID} argument
 
     \item TAXON: Taxon name
 
@@ -30,20 +30,20 @@ UID and TAXON, with the following fields:
  }}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Data frame containing sampID variables, PARAMETER, RESULT,
-where values of PARAMETER consist of the metric name concatenated
-with trait value (represented as TRAITNM below):
+Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+  where values of PARAMETER consist of the metric name concatenated with
+  trait value (represented as TRAITNM below):
 \itemize{
-  \item PCTN_TRAITNM: Number of taxa with trait as percentage of TOTN
+  \item PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
 
-  \item XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait
+  \item XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
 
-  \item XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
+  \item XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 
-  \item RFREQ_TRAITNM: Sum of sRFREQ values across taxa with trait value
+  \item RFREQ_TRAITNM: Sum of \emph{sRFREQ} values across taxa with trait value
 
   \item RIMP_TRAITNM: Relative importance ((RFREQ_TRAITVAL + XRCOV_TRAITVAL)/2)
   of taxa with trait value

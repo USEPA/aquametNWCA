@@ -10,7 +10,7 @@ calcDuration(vascIn, sampID = "UID")
 \item{vascIn}{Data frame containing cover data summarized by
 sampID variables and TAXON, with the following fields:
  \itemize{
-    \item sampID: Variable(s) in the argument sampID
+    \item sampID: Variable(s) in the argument \emph{sampID}
 
     \item TAXON: Taxon name
 
@@ -25,25 +25,25 @@ sampID variables and TAXON, with the following fields:
     \item sXRCOV: proportion of summed cover across all taxa
     (XTOTABCOV) represented by taxon in sample
 
-    \item Optional: NWCA_NATSTAT: Native status variable with categories
+    \item NWCA_NATSTAT (Optional): Native status variable with categories
     of 'NAT','ADV','CRYP','INTR','UND'
     }}
 
-\item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+\item{sampID}{A character vector containing the name(s) of variable(s)
+necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Data frame containing the sampID variables, PARAMETER, RESULT, where
-values of PARAMETER consist of the metric name concatenated
-with trait value (represented as TRAITNM below):
-\itemize{
-   \item N_TRAITNM: Number of taxa with trait
-
-   \item PCTN_TRAITNM: Number of taxa with trait as percentage of TOTN
-
-   \item XABCOV_TRAITNM: Sum of XABCOV values across taxa with trait
-
-   \item XRCOV_TRAITNM: Sum of sXRCOV values across taxa with trait
+Data frame containing the \emph{sampID} variables, PARAMETER, RESULT,
+  where values of PARAMETER consist of the metric name concatenated with
+  trait value (represented as TRAITNM below): 
+ \itemize{ \item N_TRAITNM:
+  Number of taxa with trait
+  
+  \item PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
+  
+  \item XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
+  
+  \item XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 }
 If NWCA_NATSTAT is in the input data frame, the same set except
 'N_' metrics is calculated for native species and

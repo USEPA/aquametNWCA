@@ -10,13 +10,13 @@ calcVascStratMets(dataIn, nPlot, sampID = "UID")
 \item{dataIn}{A data frame containing the following
 variables:
 \itemize{
-\item sampID - Variable(s) identified in the sampID argument
+\item sampID: Variable(s) identified in the \emph{sampID} argument
 
-\item PLOT (Sample plot from which data were collected)
+\item PLOT: Sample plot from which data were collected
 
-\item PARAMETER (specific measurement type)
+\item PARAMETER: specific measurement type
 
-\item RESULT (measured value)
+\item RESULT: measured value
 }
 The following parameters are used in
 calculating tree metrics: 'SUBMERGED_AQ','FLOATING_AQ',
@@ -25,29 +25,29 @@ calculating tree metrics: 'SUBMERGED_AQ','FLOATING_AQ',
 Additional parameters or variables are ignored.}
 
 \item{nPlot}{Number of plots sampled associated with each
-sample with sampID variables and NPLOTS}
+sample with \emph{sampID} variables and NPLOTS}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples,
+'UID' by default.}
 }
 \value{
-Either a character string containing an error message
-when metric calculation is not successful, or a data frame. Data
-frame contains sampID variables, PARAMETER, RESULT, where values of PARAMETER
-consist of the metric name concatenated with trait value, with
-valid values of: FREQ_FLOATING_AQ, FREQ_HMED_VEG,
-FREQ_LIANAS, FREQ_MED_VEG, FREQ_SMALL_VEG, FREQ_SUBMERGED_AQ,
-FREQ_TALL_VEG, FREQ_VSMALL_VEG, FREQ_VTALL_VEG, IMP_FLOATING_AQ,
-IMP_HMED_VEG, IMP_LIANAS, IMP_MED_VEG, IMP_SMALL_VEG,
-IMP_SUBMERGED_AQ, IMP_TALL_VEG, IMP_VSMALL_VEG, IMP_VTALL_VEG,
-XCOV_FLOATING_AQ, XCOV_HMED_VEG, XCOV_LIANAS, XCOV_MED_VEG,
-XCOV_SMALL_VEG, XCOV_SUBMERGED_AQ, XCOV_TALL_VEG,
-XCOV_VSMALL_VEG, XCOV_VTALL_VEG, XRCOV_FLOATING_AQ, XRCOV_HMED_VEG,
-XRCOV_LIANAS, XRCOV_MED_VEG, XRCOV_SMALL_VEG, XRCOV_SUBMERGED_AQ,
-XRCOV_TALL_VEG, XRCOV_VSMALL_VEG, XRCOV_VTALL_VEG, H_VASC_STRATA,
-J_VASC_STRATA, D_VASC_STRATA. A list of metric descriptions is
-provided in the document VegTypes_GrdCover_Metric_Descriptions.pdf
-included in the help directory for the package.
+Either a character string containing an error message when metric
+  calculation is not successful, or a data frame. Data frame contains
+  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+  consist of the metric name concatenated with trait value, with valid values
+  of: FREQ_FLOATING_AQ, FREQ_HMED_VEG, FREQ_LIANAS, FREQ_MED_VEG,
+  FREQ_SMALL_VEG, FREQ_SUBMERGED_AQ, FREQ_TALL_VEG, FREQ_VSMALL_VEG,
+  FREQ_VTALL_VEG, IMP_FLOATING_AQ, IMP_HMED_VEG, IMP_LIANAS, IMP_MED_VEG,
+  IMP_SMALL_VEG, IMP_SUBMERGED_AQ, IMP_TALL_VEG, IMP_VSMALL_VEG,
+  IMP_VTALL_VEG, XCOV_FLOATING_AQ, XCOV_HMED_VEG, XCOV_LIANAS, XCOV_MED_VEG, 
+  XCOV_SMALL_VEG, XCOV_SUBMERGED_AQ, XCOV_TALL_VEG, XCOV_VSMALL_VEG,
+  XCOV_VTALL_VEG, XRCOV_FLOATING_AQ, XRCOV_HMED_VEG, XRCOV_LIANAS,
+  XRCOV_MED_VEG, XRCOV_SMALL_VEG, XRCOV_SUBMERGED_AQ, XRCOV_TALL_VEG,
+  XRCOV_VSMALL_VEG, XRCOV_VTALL_VEG, H_VASC_STRATA, J_VASC_STRATA,
+  D_VASC_STRATA. A list of metric descriptions is provided in the document
+  VegTypes_GrdCover_Metric_Descriptions.pdf included in the help directory
+  for the package.
 }
 \description{
 Calculate vascular strata metrics using

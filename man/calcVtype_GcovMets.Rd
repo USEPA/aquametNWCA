@@ -10,7 +10,7 @@ calcVtype_GcovMets(dataIn, sampID = "UID")
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
 \itemize{
-\item sampID - Variables identified in the sampID argument
+\item sampID: Variables identified in the \emph{sampID} argument
 
 \item PLOT: Sample plot from which data were collected
 
@@ -33,15 +33,15 @@ calculating tree metrics: 'SANDT_CLASS','SUBMERGED_AQ',
 are ignored.}
 
 \item{sampID}{A character vector containing the name(s) of
-variable(s) necessary to identify unique samples}
+variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Either a character string containing an error message when metric
-calculation is not successful, or a data frame. The first column of the
-data frame is the sampID variables and subsequent columns are named for each metric and
-contain metric values. A list of metrics is provided in the document named
-"VegTypes_GrdCover_Metric_Descriptions.pdf" included in the help directory
-for the package.
+Either a character string containing an error message when metric 
+  calculation is not successful, or a data frame. The first column of the 
+  data frame is the \emph{sampID} variables and subsequent columns are named
+  for each metric and contain metric values. A list of metrics is provided in
+  the document named "VegTypes_GrdCover_Metric_Descriptions.pdf" included in
+  the help directory for the package.
 }
 \description{
 This function calculates the NWCA 2011 vegetation types and
@@ -65,9 +65,9 @@ str(exOut)
 head(exOut)
 }
 \references{
-US Environmental Protection Agency. 2016. National
-Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006.
-US Environmental Protection Agency, Washington, DC.
+US Environmental Protection Agency. 2016. National Wetland
+  Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
+  Environmental Protection Agency, Washington, DC.
 }
 \author{
 Karen Blocksom \email{blocksom.karen@epa.gov}

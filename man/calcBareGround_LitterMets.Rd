@@ -9,7 +9,7 @@ calcBareGround_LitterMets(dataIn, nPlot, sampID = "UID")
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
 \itemize{
-\item sampID - Variable(s) identified in sampID argument
+\item sampID: Variable(s) identified in \emph{sampID} argument
 
 \item PLOT (Sample plot from which data were collected)
 
@@ -24,25 +24,24 @@ calculating tree metrics: 'LITTER_THATCH','LITTER_FORB',
 'WD_COARSE','EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK'.
 Additional parameters or variables are ignored.}
 
-\item{nPlot}{Number of plots sampled associated with each sample}
+\item{nPlot}{Number of plots sampled associated with each sample,
+including \emph{sampID} variables and NPLOTS.}
 
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples}
 }
 \value{
-Either a character string containing an error message
-when metric calculation is not successful, or a data frame.
-Data frame contains sampID variables, PARAMETER, RESULT, where values of PARAMETER
-consist of the metric name concatenated with trait value, with
-valid values of: FREQ_BAREGD, FREQ_EXPOSED_GRAVEL,
-FREQ_EXPOSED_ROCK, FREQ_EXPOSED_SOIL, FREQ_LITTER, FREQ_WD_COARSE,
-FREQ_WD_FINE, IMP_BAREGD, IMP_EXPOSED_GRAVEL, IMP_EXPOSED_ROCK,
-IMP_EXPOSED_SOIL, IMP_LITTER, IMP_WD_COARSE, IMP_WD_FINE,
-XCOV_BAREGD, XCOV_EXPOSED_GRAVEL, XCOV_EXPOSED_ROCK,
-XCOV_EXPOSED_SOIL, XCOV_LITTER, XCOV_WD_COARSE, XCOV_WD_FINE.
-A list of metric descriptions is provided in the document
-named VegTypes_GrdCover_Metric_Descriptions.pdf
-included in the help directory for the package.
+Either a character string containing an error message when metric
+  calculation is not successful, or a data frame. Data frame contains
+  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+  consist of the metric name concatenated with trait value, with valid values
+  of: FREQ_BAREGD, FREQ_EXPOSED_GRAVEL, FREQ_EXPOSED_ROCK, FREQ_EXPOSED_SOIL,
+  FREQ_LITTER, FREQ_WD_COARSE, FREQ_WD_FINE, IMP_BAREGD, IMP_EXPOSED_GRAVEL,
+  IMP_EXPOSED_ROCK, IMP_EXPOSED_SOIL, IMP_LITTER, IMP_WD_COARSE, IMP_WD_FINE,
+  XCOV_BAREGD, XCOV_EXPOSED_GRAVEL, XCOV_EXPOSED_ROCK, XCOV_EXPOSED_SOIL,
+  XCOV_LITTER, XCOV_WD_COARSE, XCOV_WD_FINE. A list of metric descriptions is
+  provided in the document named VegTypes_GrdCover_Metric_Descriptions.pdf 
+  included in the help directory for the package.
 }
 \description{
 Calculate bare ground and litter metrics based on
