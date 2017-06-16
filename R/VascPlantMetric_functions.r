@@ -50,7 +50,7 @@
 #' head(VascPlantEx)
 #' data(taxaNWCA)
 #'
-#' outEx <- createDFs('GENUS',VascPlantEx,taxaNWCA)
+#' outEx <- createDFs(sampID='UID','GENUS',VascPlantEx,taxaNWCA)
 #' head(outEx$byUID)
 #' head(outEx$byPlot)
 createDFs <- function(sampID='UID',tvar,vascIn,taxa){

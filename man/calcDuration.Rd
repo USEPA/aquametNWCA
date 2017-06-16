@@ -50,6 +50,11 @@ If NWCA_NATSTAT is in the input data frame, the same set except
 alien + cryptogenic species, with metric names suffixes of
 _NAT and _AC, respectively.
 }
+\description{
+This function calculates all duration metrics, with
+additional metrics if NWCA_NATSTAT variable is included
+in input data frame.
+}
 \details{
 Both DURATION and NWCA_NATSTAT variables are recoded to fewer
 categories. Taxa with 'UND' as native status are excluded.

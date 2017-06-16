@@ -58,7 +58,7 @@ level specified. Not intended for use on its own.
 head(VascPlantEx)
 data(taxaNWCA)
 
-outEx <- createDFs('GENUS',VascPlantEx,taxaNWCA)
+outEx <- createDFs(sampID='UID','GENUS',VascPlantEx,taxaNWCA)
 head(outEx$byUID)
 head(outEx$byPlot)
 }

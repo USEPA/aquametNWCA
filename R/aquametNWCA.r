@@ -11,6 +11,7 @@
 #' @importFrom reshape2 dcast melt
 #' @importFrom car recode Recode
 #' @importFrom ecodist distance
+#' @importFrom stats approx median sd
 #' 
 #' @keywords package
 #' @title aquametNWCA

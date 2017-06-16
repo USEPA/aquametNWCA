@@ -5,6 +5,10 @@
 #' 
 #' @title Calculate vascular plant duration metrics
 #' 
+#' @description This function calculates all duration metrics, with
+#' additional metrics if NWCA_NATSTAT variable is included
+#' in input data frame.
+#' 
 #' @details Both DURATION and NWCA_NATSTAT variables are recoded to fewer
 #' categories. Taxa with 'UND' as native status are excluded.
 #' 
