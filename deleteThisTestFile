@@ -1,0 +1,11 @@
+total 33
+-rwxrwxr-x+ 1 cseelige Domain Users  320 Sep  6 15:02 aquametNWCA2.v2.Rproj*
+drwxrwxr-x+ 1 cseelige Domain Users    0 Sep  6 15:02 data/
+-rw-rwxr--+ 1 cseelige Domain Users    0 Sep  6 15:02 deleteThisTestFile*
+-rwxrwxr-x+ 1 cseelige Domain Users  847 Sep  6 15:02 DESCRIPTION*
+drwxrwxr-x+ 1 cseelige Domain Users    0 Sep  6 15:02 inst/
+drwxrwxr-x+ 1 cseelige Domain Users    0 Sep  6 15:02 man/
+-rwxrwxr-x+ 1 cseelige Domain Users 1233 Sep  6 15:02 NAMESPACE*
+drwxrwxr-x+ 1 cseelige Domain Users    0 Sep  6 15:02 R/
+drwxrwxr-x+ 1 cseelige Domain Users    0 Sep  6 15:02 tests/
+drwxrwxr-x+ 1 cseelige Domain Users    0 Sep  6 15:02 vignettes/
