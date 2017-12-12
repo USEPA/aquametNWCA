@@ -73,7 +73,7 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa){
                         ,NPLOTS=length(unique(PLOT)))
   byUID2 <- plyr::mutate(byUID1,DISTINCT=1)
 
-  print("Done with sAMPID summing")
+  print("Done with sampID summing")
 
   byDF <- list(byUID=byUID2,byPlot=byPlot1)
   return(byDF)
@@ -89,9 +89,10 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa){
 #'   summarized by plot and sample. For the species-level output data summarized
 #'   by sampID variables, various traits are added to the output data set.
 #'   
-#' @param vascIn Data frame containing cover data summarized at the
+#' @param vascIn Data frame containing cover data summarized by
 #'   \emph{sampID} variables, PLOT, and taxon value, with the following variable
-#'   names: \itemize{ \item sampID A character vector containing the name(s) of 
+#'   names: \itemize{ 
+#'   \item sampID A character vector containing the name(s) of 
 #'   variable(s) necessary to identify unique samples, 'UID' by default
 #'   
 #'   \item PLOT: Plot number of data
@@ -100,7 +101,12 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa){
 #'   NWCA names, if not in USDA PLANTS
 #'   
 #'   \item COVER: Percent cover of taxon in plot, including zeros for plots in
-#'   which a taxon does not occur. }
+#'   which a taxon does not occur. 
+#'   
+#'   \item STATE: Postal abbreviation for state of sample
+#'   
+#'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation for
+#'   sample, to correspond to those in inWIS data frame.}
 #' @param sampID A character vector containing the name(s) of variable(s)
 #'   necessary to identify unique samples, 'UID' by default
 #' @param inTaxa Data frame with all taxa in vascIn, with variables: \itemize{ 
@@ -121,12 +127,7 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa){
 #'   to calculate growth habit metrics
 #'   
 #'   \item SPECIES_NAME_ID (optional): Taxonomic ID number, which will be used
-#'   in Bray-Curtis distance metrics if available.
-#'   
-#'   \item STATE: Postal abbreviation for state of sample
-#'   
-#'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation for
-#'   sample, to correspond to those in inWIS data frame. }
+#'   in Bray-Curtis distance metrics if available. }
 #' @param inNatCC Data frame with C-values and native status:
 #'   
 #'   \itemize{ \item USDA_NAME: Taxon name
@@ -245,7 +246,7 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
   # If
   datNames <- c(sampID,'PLOT','USDA_NAME','COVER','STATE','USAC_REGION')
   if(any(datNames %nin% names(vascIn))){
-    print(paste("Missing key variables! Should be ",sampID," PLOT, USDA_NAME, and COVER.",sep=''))
+    print(paste("Missing key variables! Should be ",sampID," PLOT, USDA_NAME, COVER, STATE, and USAC_REGION.",sep=''))
     return(NULL)
   }
   # Input taxa list with taxonomy and life history traits

@@ -8,9 +8,10 @@ prepareData(vascIn, sampID = "UID", inTaxa = taxaNWCA,
   inNatCC = ccNatNWCA, inWIS = wisNWCA)
 }
 \arguments{
-\item{vascIn}{Data frame containing cover data summarized at the
+\item{vascIn}{Data frame containing cover data summarized by
 \emph{sampID} variables, PLOT, and taxon value, with the following variable
-names: \itemize{ \item sampID A character vector containing the name(s) of 
+names: \itemize{ 
+\item sampID A character vector containing the name(s) of 
 variable(s) necessary to identify unique samples, 'UID' by default
 
 \item PLOT: Plot number of data
@@ -19,7 +20,12 @@ variable(s) necessary to identify unique samples, 'UID' by default
 NWCA names, if not in USDA PLANTS
 
 \item COVER: Percent cover of taxon in plot, including zeros for plots in
-which a taxon does not occur. }}
+which a taxon does not occur. 
+
+\item STATE: Postal abbreviation for state of sample
+
+\item USAC_REGION: U.S. Army Corps of Engineers region abbreviation for
+sample, to correspond to those in inWIS data frame.}}
 
 \item{sampID}{A character vector containing the name(s) of variable(s)
 necessary to identify unique samples, 'UID' by default}
@@ -42,12 +48,7 @@ calculate duration metrics.
 to calculate growth habit metrics
 
 \item SPECIES_NAME_ID (optional): Taxonomic ID number, which will be used
-in Bray-Curtis distance metrics if available.
-
-\item STATE: Postal abbreviation for state of sample
-
-\item USAC_REGION: U.S. Army Corps of Engineers region abbreviation for
-sample, to correspond to those in inWIS data frame. }}
+in Bray-Curtis distance metrics if available. }}
 
 \item{inNatCC}{Data frame with C-values and native status:
 
