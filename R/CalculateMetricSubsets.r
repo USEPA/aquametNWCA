@@ -1050,8 +1050,8 @@ calcBCmets <- function(vascIn,sampID='UID'){
 #' @details To calculate the VMMI as used in NWCA 2011, the default
 #' taxa lists must be used to create the input data frame.
 #' 
-#' @return Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
-#'   with the following PARAMETER values:
+#' @return Data frame containing \emph{sampID} variables, FQAI_ALL, N_TOL,
+#'   RIMP_NATSPP, and XRCOV_MONOCOTS_NAT, with the following definitions:
 #' \itemize{
 #' \item FQAI_ALL: Floristic Quality Assessment Index, based on all
 #' species
@@ -1062,7 +1062,6 @@ calcBCmets <- function(vascIn,sampID='UID'){
 #'
 #' \item XRCOV_MONOCOTS_NAT: Mean relative cover of native monocots
 #' }
-#' RESULT contains the metric value for each parameter.
 #' 
 #' @references US Environmental Protection Agency. 2016.
 #' National Wetland Condition Assessment: 2011 Technical Report.
@@ -1154,8 +1153,11 @@ calcVMMImets <- function(vascIn,sampID='UID'){
 
  # Now combine into one data frame
  allOut <- rbind(fqaiOut,natOut,monoOut,ntolOut)
- allOut.1 <- merge(samples,allOut,by='SAMPID') %>% 
+ allOut.1 <- reshape2::dcast(allOut,SAMPID~PARAMETER,value.var='RESULT') %>%
+   merge(samples,by='SAMPID') %>% 
    dplyr::select(-SAMPID)
+ 
+ allOut.1 <- allOut.1[,c(sampID,'FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')]
 
  return(allOut.1)
 

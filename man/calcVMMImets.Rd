@@ -35,8 +35,8 @@ all taxa for a UID.
 variable(s) necessary to identify unique samples, 'UID' by default}
 }
 \value{
-Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
-  with the following PARAMETER values:
+Data frame containing \emph{sampID} variables, FQAI_ALL, N_TOL,
+  RIMP_NATSPP, and XRCOV_MONOCOTS_NAT, with the following definitions:
 \itemize{
 \item FQAI_ALL: Floristic Quality Assessment Index, based on all
 species
@@ -47,7 +47,6 @@ species
 
 \item XRCOV_MONOCOTS_NAT: Mean relative cover of native monocots
 }
-RESULT contains the metric value for each parameter.
 }
 \description{
 This function calculates FQAI_ALL, N_TOL, RIMP_NATSPP,

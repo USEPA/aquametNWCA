@@ -138,7 +138,7 @@ calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,taxaWIS=wi
   allOut <- rbind(xtotabcov,richMets,divMets,durMets,grhMets,catMets,wisMets,ccMets,natMets,xbcMets)
 
   formula <- paste(paste(sampID,collapse='+'),'~PARAMETER',sep='')
-  finOut <- dcast(allOut,eval(formula),value.var='RESULT')
+  finOut <- reshape2::dcast(allOut,eval(formula),value.var='RESULT')
   return(finOut)
 }
 

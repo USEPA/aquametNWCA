@@ -116,10 +116,11 @@ test_that("Mean Bray-Curtis metric values correct",
 test_that("VMMI metric calculations",
           {
            metOut <- calcVMMImets(testForCalc)
-           compOut <- merge(testMets,metOut,by=c('UID','PARAMETER'))
+           metOut.long <- melt(metOut,id.vars='UID',variable.name='PARAMETER',value.name='RESULT')
+           compOut <- merge(testMets,metOut.long,by=c('UID','PARAMETER'))
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
-           expect_true(nrow(metOut)==40)
-           expect_true(nrow(compOut)==nrow(metOut))
+           expect_true(nrow(metOut.long)==40)
+           expect_true(nrow(compOut)==nrow(metOut.long))
            expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)
           })
 
