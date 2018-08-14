@@ -125,6 +125,7 @@ calcDuration <- function(vascIn,sampID='UID'){
                                ,"XRCOV_ANN_PEREN_AC","XRCOV_ANN_PEREN_NAT","XRCOV_ANNUAL_AC"
                                ,"XRCOV_ANNUAL_NAT","XRCOV_PERENNIAL_AC","XRCOV_PERENNIAL_NAT")
 
+
   }
 
   return(durOut)

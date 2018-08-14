@@ -24,7 +24,7 @@ test_that("Vascular stratum metric values correct",
  expect_true(nrow(vstratOut)==430)
  expect_true(nrow(compOut)==nrow(vstratOut))
  compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
- expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)            
+ expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)            
 })
 
 test_that("Non-vascular metric values correct",
@@ -33,7 +33,7 @@ test_that("Non-vascular metric values correct",
  expect_true(nrow(nvascOut)==170)
  expect_true(nrow(compOut)==nrow(nvascOut))
  compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
- expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)            
+ expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)            
 })
 
 test_that("Water cover metric values correct",
@@ -42,7 +42,7 @@ test_that("Water cover metric values correct",
  expect_true(nrow(wcovOut)==180)
  expect_true(nrow(compOut)==nrow(wcovOut))
  compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x),RESULT.y=as.numeric(RESULT.y))
- expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)  
+ expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)  
 })
 
 test_that("Bare ground and litter metric values correct",
@@ -54,5 +54,5 @@ test_that("Bare ground and litter metric values correct",
  expect_equal(compOut.char$RESULT.x,compOut.char$RESULT.y)
  compOut.num <- subset(compOut,PARAMETER!='LITTER_TYPE')
  compOut.num <- dplyr::mutate(compOut.num,RESULT.x=as.numeric(RESULT.x),RESULT.y=as.numeric(RESULT.y))
- expect_equal(compOut.num$RESULT.x,compOut.num$RESULT.y,tolerance=0.001)            
+ expect_equal(as.numeric(compOut.num$RESULT.x),as.numeric(compOut.num$RESULT.y),tolerance=0.001)            
 })

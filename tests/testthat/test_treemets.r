@@ -10,7 +10,7 @@ test_that("Snag metric values correct",
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
            expect_true(nrow(snagOut)==140)
            expect_true(nrow(compOut)==nrow(snagOut))
-           expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)            
+           expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)            
           })
 
 test_that("Tree count metric values correct",
@@ -19,7 +19,7 @@ test_that("Tree count metric values correct",
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
            expect_true(nrow(tcntOut)==160)
            expect_true(nrow(compOut)==nrow(tcntOut))
-           expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)                      
+           expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)                      
           })
 
 test_that("Tree cover metric values correct",
@@ -28,7 +28,7 @@ test_that("Tree cover metric values correct",
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
            expect_true(nrow(tcvrOut)==400)
            expect_true(nrow(compOut)==nrow(tcvrOut))
-           expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)            
+           expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)            
            
           })
 
@@ -40,6 +40,6 @@ test_that("All tree metric values correct",
             compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
             expect_true(nrow(treeOut.long)==700)
             expect_true(nrow(compOut)==nrow(treeOut.long))
-            expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)                      
+            expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)                      
             
           })

@@ -9,7 +9,7 @@ outdf <- calcVascPlantMets(vascIn=VascPlantEx,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,t
 names(outdf)
 
 ## ----subVasc.1-----------------------------------------------------------
-sumdf <- prepareData(vascIn=VascPlantEx, sampID='UID', inTaxa=taxaNWCA, inNatCC=ccNatNWCA, inWIS=wisNWCA)
+sumdf <- nwcaVegData(vascIn=VascPlantEx, sampID='UID', inTaxa=taxaNWCA, inNatCC=ccNatNWCA, inWIS=wisNWCA, cValReg='STATE')
 str(sumdf)
 
 ## ----subVasc.2-----------------------------------------------------------

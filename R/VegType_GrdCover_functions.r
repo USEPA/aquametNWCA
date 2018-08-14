@@ -82,7 +82,7 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
                  ,J_SANDT=round(ifelse(H_SANDT!=0 & unique(N_SANDT)!=1,H_SANDT/log(unique(N_SANDT)),0),4))
 
   vhet6 <- merge(vhet4a,vhet5,by='SAMPID')
-  ## create an empty data frame with all of the metric names as variables to ensure all are included in output
+  # create an empty data frame with all of the metric names as variables to ensure all are included in output
   empty_vhet <- data.frame(t(rep(NA,5)),stringsAsFactors=FALSE)
   names(empty_vhet) <- c('N_SANDT','DOM_SANDT','D_SANDT','H_SANDT','J_SANDT')
 

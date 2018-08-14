@@ -50,7 +50,7 @@ Data are expected to be in a specific format with specific summary variables, an
 
 First, run `prepareData()` to create a list containing 6 data frames that can be used in all other functions:
 ```{r subVasc.1}
-sumdf <- prepareData(vascIn=VascPlantEx, sampID='UID', inTaxa=taxaNWCA, inNatCC=ccNatNWCA, inWIS=wisNWCA)
+sumdf <- nwcaVegData(vascIn=VascPlantEx, sampID='UID', inTaxa=taxaNWCA, inNatCC=ccNatNWCA, inWIS=wisNWCA, cValReg='STATE')
 str(sumdf)
 ```
 

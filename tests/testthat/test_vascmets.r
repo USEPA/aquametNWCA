@@ -7,7 +7,7 @@ context("Vascular plant metric functions")
 
 test_that("Data frames created with correct structure",
          {
-          testDFs <- createDFs('USDA_NAME',testVasc,taxaNWCA,sampID='UID')
+          testDFs <- nwcaVegInput(sampID='UID',tvar='USDA_NAME',testVasc,taxaNWCA,cValReg='STATE')
           expect_true(length(testDFs)==2)
           expect_true(class(testDFs)=='list')
           expect_equal(names(testDFs),c('byUID','byPlot'))

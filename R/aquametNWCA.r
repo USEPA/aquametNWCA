@@ -70,6 +70,10 @@
 #' \itemize{
 #' \item createDFs()
 #' \item prepareData()
+#' \item nwcaVegData() (alternative to prepareData() that allows
+#' use of a C-value region other than 'STATE')
+#' \item nwcaVegInput() (alternative to createDFs() that allows
+#' use of a C-value region other than 'STATE')
 #' }
 #' 
 #' @section Included datasets used in examples:

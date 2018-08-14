@@ -12,7 +12,7 @@
 
 <meta name="author" content="Karen Blocksom" />
 
-<meta name="date" content="2017-06-15" />
+<meta name="date" content="2018-08-14" />
 
 <title>Calculate Metrics</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Calculate Metrics</h1>
 <h4 class="author"><em>Karen Blocksom</em></h4>
-<h4 class="date"><em>2017-06-15</em></h4>
+<h4 class="date"><em>2018-08-14</em></h4>
 
 
 
@@ -99,11 +99,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>This is the expected input format for vegetation data from form V-2. To run <code>calcVascPlantMets</code>, the taxalists <code>taxaNWCA</code>, <code>ccNatNWCA</code>, and <code>wisNWCA</code> will be called by default by the function if not specified. In this example, we explicitly include the arguments that specify these taxalists in the function call. However, the user may either leave them blank or call their own versions of these taxalists, so long as the field names are as expected.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outdf &lt;-<span class="st"> </span><span class="kw">calcVascPlantMets</span>(<span class="dt">vascIn=</span>VascPlantEx,<span class="dt">taxaIn=</span>taxaNWCA,<span class="dt">taxaCC=</span>ccNatNWCA,<span class="dt">taxaWIS=</span>wisNWCA,<span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
 <pre><code>## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with sAMPID summing&quot;
+## [1] &quot;Done with sampID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with sAMPID summing&quot;
+## [1] &quot;Done with sampID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with sAMPID summing&quot;
+## [1] &quot;Done with sampID summing&quot;
 ## [1] &quot;Done preparing datasets&quot;
 ## [1] &quot;Initial datasets prepared for metric calculation.&quot;
 ## [1] &quot;Done calculating richness metrics.&quot;
@@ -304,13 +304,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3>2.2.1 Data preparation</h3>
 <p>Data are expected to be in a specific format with specific summary variables, and it is possible to create input datasets outside of R, but the easiest approach is to use <code>prepareData()</code> to create input datasets for these functions. The <code>calcRichness()</code> function expects datasets summarized by both UID and by UID and PLOT at the species, genus, and family levels. The <code>prepareData()</code> function performs all necessary summarization and creates a single list object containing 6 data frames that reflect all of these summarizations of data.</p>
 <p>First, run <code>prepareData()</code> to create a list containing 6 data frames that can be used in all other functions:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sumdf &lt;-<span class="st"> </span><span class="kw">prepareData</span>(<span class="dt">vascIn=</span>VascPlantEx, <span class="dt">sampID=</span><span class="st">'UID'</span>, <span class="dt">inTaxa=</span>taxaNWCA, <span class="dt">inNatCC=</span>ccNatNWCA, <span class="dt">inWIS=</span>wisNWCA)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sumdf &lt;-<span class="st"> </span><span class="kw">nwcaVegData</span>(<span class="dt">vascIn=</span>VascPlantEx, <span class="dt">sampID=</span><span class="st">'UID'</span>, <span class="dt">inTaxa=</span>taxaNWCA, <span class="dt">inNatCC=</span>ccNatNWCA, <span class="dt">inWIS=</span>wisNWCA, <span class="dt">cValReg=</span><span class="st">'STATE'</span>)</code></pre></div>
 <pre><code>## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with sAMPID summing&quot;
+## [1] &quot;Done with sampID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with sAMPID summing&quot;
+## [1] &quot;Done with sampID summing&quot;
 ## [1] &quot;Done with plot summing&quot;
-## [1] &quot;Done with sAMPID summing&quot;
+## [1] &quot;Done with sampID summing&quot;
 ## [1] &quot;Done preparing datasets&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(sumdf)</code></pre></div>
 <pre><code>## List of 6
@@ -394,7 +394,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="metric-subset-functions" class="section level3">
 <h3>2.2.2 Metric Subset Functions</h3>
 <p>Now we can run functions for subsets, starting with <code>calcRichness()</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outRich &lt;-<span class="st"> </span><span class="kw">calcRichness</span>(sumdf$byUIDspp,sumdf$byPlotspp,sumdf$byUIDgen,sumdf$byPlotgen,sumdf$byUIDfam,sumdf$byPlotfam
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outRich &lt;-<span class="st"> </span><span class="kw">calcRichness</span>(sumdf<span class="op">$</span>byUIDspp,sumdf<span class="op">$</span>byPlotspp,sumdf<span class="op">$</span>byUIDgen,sumdf<span class="op">$</span>byPlotgen,sumdf<span class="op">$</span>byUIDfam,sumdf<span class="op">$</span>byPlotfam
                         ,<span class="dt">sampID=</span><span class="st">'UID'</span>)
 <span class="kw">head</span>(outRich)</code></pre></div>
 <pre><code>##   UID PARAMETER RESULT
@@ -404,7 +404,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 4   4   MEDN_AC      0
 ## 5   5   MEDN_AC      0
 ## 6   6   MEDN_AC      2</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outRich$PARAMETER)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outRich<span class="op">$</span>PARAMETER)</code></pre></div>
 <pre><code>##  [1] &quot;MEDN_AC&quot;       &quot;MEDN_ADVSPP&quot;   &quot;MEDN_ALIENSPP&quot; &quot;MEDN_CRYPSPP&quot; 
 ##  [5] &quot;MEDN_FAM&quot;      &quot;MEDN_GEN&quot;      &quot;MEDN_INTRSPP&quot;  &quot;MEDN_NATSPP&quot;  
 ##  [9] &quot;MEDN_SPP&quot;      &quot;SDN_AC&quot;        &quot;SDN_ADVSPP&quot;    &quot;SDN_ALIENSPP&quot; 
@@ -415,7 +415,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [29] &quot;XN_ADVSPP&quot;     &quot;XN_ALIENSPP&quot;   &quot;XN_CRYPSPP&quot;    &quot;XN_FAM&quot;       
 ## [33] &quot;XN_GEN&quot;        &quot;XN_INTRSPP&quot;    &quot;XN_NATSPP&quot;     &quot;XN_SPP&quot;</code></pre>
 <p>Now category metrics, which are called very similarly to all remaining metrics except Bray-Curtis:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outCat &lt;-<span class="st"> </span><span class="kw">calcCategory</span>(sumdf$byUIDspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outCat &lt;-<span class="st"> </span><span class="kw">calcCategory</span>(sumdf<span class="op">$</span>byUIDspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
 <span class="kw">head</span>(outCat)</code></pre></div>
 <pre><code>##   UID PARAMETER RESULT
 ## 1   1   N_DICOT     15
@@ -424,7 +424,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 4   4   N_DICOT     26
 ## 5   5   N_DICOT      2
 ## 6   6   N_DICOT     44</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outCat$PARAMETER) </code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outCat<span class="op">$</span>PARAMETER) </code></pre></div>
 <pre><code>##  [1] &quot;N_DICOT&quot;               &quot;N_FERN&quot;               
 ##  [3] &quot;N_GYMNOSPERM&quot;          &quot;N_HORSETAIL&quot;          
 ##  [5] &quot;N_MONOCOT&quot;             &quot;PCTN_DICOT&quot;           
@@ -456,7 +456,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [57] &quot;N_MONOCOTS_AC&quot;         &quot;PCTN_MONOCOTS_AC&quot;     
 ## [59] &quot;XABCOV_MONOCOTS_AC&quot;    &quot;XRCOV_MONOCOTS_AC&quot;</code></pre>
 <p>Finally, calculate Bray-Curtis metrics using species-level plot data:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outBC &lt;-<span class="st"> </span><span class="kw">calcBCmets</span>(sumdf$byPlotspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outBC &lt;-<span class="st"> </span><span class="kw">calcBCmets</span>(sumdf<span class="op">$</span>byPlotspp, <span class="dt">sampID=</span><span class="st">'UID'</span>)
 <span class="kw">head</span>(outBC)</code></pre></div>
 <pre><code>##   UID   PARAMETER RESULT
 ## 1   1 XBCDIST_SPP 0.5080
@@ -465,13 +465,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 4   4 XBCDIST_SPP 0.7047
 ## 5   5 XBCDIST_SPP 0.4075
 ## 6   6 XBCDIST_SPP 0.6477</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outBC$PARAMETER)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outBC<span class="op">$</span>PARAMETER)</code></pre></div>
 <pre><code>## [1] &quot;XBCDIST_SPP&quot;    &quot;XBCDIST_NATSPP&quot;</code></pre>
 <p>To see all of these combined and in wide format:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">allVasc &lt;-<span class="st"> </span><span class="kw">rbind</span>(outRich, outCat, outBC)
 
 <span class="kw">library</span>(reshape2)
-outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~PARAMETER,<span class="dt">value.var=</span><span class="st">'RESULT'</span>)
+outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID<span class="op">~</span>PARAMETER,<span class="dt">value.var=</span><span class="st">'RESULT'</span>)
 <span class="kw">head</span>(outVasc)</code></pre></div>
 <pre><code>##   UID MEDN_AC MEDN_ADVSPP MEDN_ALIENSPP MEDN_CRYPSPP MEDN_FAM MEDN_GEN
 ## 1   1       0           0             0            0        8        9
@@ -638,10 +638,142 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 5   7    1    1    2       TALL_TREE      0
 ## 6   7    1    1    2         JR_TREE      0</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outTree &lt;-<span class="st"> </span><span class="kw">calcTreeMets</span>(TreesEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
-<pre><code>## [1] &quot;Done with snag metrics&quot;
-## [1] &quot;Done with tree count metrics&quot;
-## [1] &quot;Done with tree species metrics&quot;
-## [1] &quot;Done with tree cover metrics&quot;</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_SNAGS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_SNAGS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_JR_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_THICK_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_THIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_XTHICK_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_XTHIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_XXTHIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_JR_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_THICK_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_THIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_XTHICK_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_XTHIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_XXTHIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## [1] &quot;Done with snag metrics&quot;</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'TOTN_TREES'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'XN_TREES'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'TOTN_JR_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'TOTN_THICK_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'TOTN_THIN_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'TOTN_XTHICK_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'TOTN_XTHIN_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'TOTN_XXTHICK_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'TOTN_XXTHIN_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'XN_JR_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'XN_THICK_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'XN_THIN_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'XN_XTHICK_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'XN_XTHIN_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'XN_XXTHICK_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allTreesOut1, empty_trees): Column class
+## mismatch for 'XN_XXTHIN_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## [1] &quot;Done with tree count metrics&quot;</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'N_TREESPP'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'N_TALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'N_HMED_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'N_LMED_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'N_SMALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'N_VSMALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'N_TREE_UPPER'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'N_TREE_MID'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'N_TREE_GROUND'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'PCTN_TREE_UPPER'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'PCTN_TREE_MID'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tsppOut1, empty_tspp): Column class mismatch
+## for 'PCTN_TREE_GROUND'. Converting column to class 'character'.</code></pre>
+<pre><code>## [1] &quot;Done with tree species metrics&quot;</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'FREQ_TALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'FREQ_HMED_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'FREQ_LMED_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'FREQ_SMALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'FREQ_VSMALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'XCOV_TALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'XCOV_HMED_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'XCOV_LMED_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'XCOV_SMALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'XCOV_VSMALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'IMP_TALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'IMP_HMED_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'IMP_LMED_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'IMP_SMALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'IMP_VSMALL_TREE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'FREQ_TREE_UPPER'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'FREQ_TREE_MID'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'FREQ_TREE_GROUND'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'XCOV_TREE_UPPER'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'XCOV_TREE_MID'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'XCOV_TREE_GROUND'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'IMP_TREE_UPPER'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'IMP_TREE_MID'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(tcvrOut1, empty_tcvr): Column class mismatch
+## for 'IMP_TREE_GROUND'. Converting column to class 'character'.</code></pre>
+<pre><code>## [1] &quot;Done with tree cover metrics&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outTree)</code></pre></div>
 <pre><code>##   UID FREQ_HMED_TREE FREQ_LMED_TREE FREQ_SMALL_TREE FREQ_TALL_TREE
 ## 1   1             40              0              40             80
@@ -658,19 +790,19 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 5                0             0               0                0
 ## 6                0           100              80                0
 ##   FREQ_VTALL_TREE IMP_HMED_TREE IMP_LMED_TREE IMP_SMALL_TREE IMP_TALL_TREE
-## 1               0          23.0           0.0           20.7          92.0
-## 2               0          41.6           0.0            0.0          64.4
-## 3               0           0.0           0.0            0.0           0.0
+## 1               0            23             0           20.7            92
+## 2               0          41.6             0              0          64.4
+## 3               0             0             0              0             0
 ## 4               0          63.5          58.7           51.5          56.9
-## 5               0           0.0           0.0            0.0           0.0
-## 6               0          59.4          11.0            0.0          48.0
+## 5               0             0             0              0             0
+## 6               0          59.4            11              0            48
 ##   IMP_TREE_GROUND IMP_TREE_MID IMP_TREE_UPPER IMP_VSMALL_TREE
-## 1            20.7         23.0           92.0             0.0
-## 2             0.0         41.6           64.4             0.0
-## 3             0.0          0.0            0.0             0.0
+## 1            20.7           23             92               0
+## 2               0         41.6           64.4               0
+## 3               0            0              0               0
 ## 4            56.6         72.2           56.9            35.1
-## 5             0.0          0.0            0.0             0.0
-## 6             0.0         60.4           48.0             0.0
+## 5               0            0              0               0
+## 6               0         60.4             48               0
 ##   IMP_VTALL_TREE N_HMED_TREE N_LMED_TREE N_SMALL_TREE N_TALL_TREE
 ## 1              0           3           0            2           3
 ## 2              0           3           0            0           3
@@ -687,11 +819,11 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 6             0          4            1         4             0
 ##   N_VTALL_TREE PCTN_TREE_GROUND PCTN_TREE_MID PCTN_TREE_UPPER TOTN_JR_SNAG
 ## 1            0            66.67           100             100            0
-## 2            0             0.00            60              60            0
-## 3            0             0.00             0               0            0
+## 2            0                0            60              60            0
+## 3            0                0             0               0            0
 ## 4            0            58.33            75              50            0
-## 5            0             0.00             0               0            0
-## 6            0             0.00           100              25            0
+## 5            0                0             0               0            0
+## 6            0                0           100              25            0
 ##   TOTN_JR_TREE TOTN_SNAGS TOTN_THICK_SNAG TOTN_THICK_TREE TOTN_THIN_SNAG
 ## 1            3          0               0               0              0
 ## 2            6          2               0               0              1
@@ -714,52 +846,80 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 5               0               0                 0                0
 ## 6               1              16                 0                0
 ##   TOTN_XXTHIN_TREE XCOV_HMED_TREE XCOV_LMED_TREE XCOV_SMALL_TREE
-## 1                2            6.0            0.0             1.4
-## 2                1            3.2            0.0             0.0
-## 3                0            0.0            0.0             0.0
-## 4               44           27.0           17.4             3.0
-## 5                0            0.0            0.0             0.0
-## 6               24           18.8            2.0             0.0
+## 1                2              6              0             1.4
+## 2                1            3.2              0               0
+## 3                0              0              0               0
+## 4               44             27           17.4               3
+## 5                0              0              0               0
+## 6               24           18.8              2               0
 ##   XCOV_TALL_TREE XCOV_TREE_GROUND XCOV_TREE_MID XCOV_TREE_UPPER
-## 1          104.0              1.4           6.0           104.0
-## 2           28.8              0.0           3.2            28.8
-## 3            0.0              0.0           0.0             0.0
+## 1            104              1.4             6             104
+## 2           28.8                0           3.2            28.8
+## 3              0                0             0               0
 ## 4           33.8             13.2          44.4            33.8
-## 5            0.0              0.0           0.0             0.0
-## 6           16.0              0.0          20.8            16.0
+## 5              0                0             0               0
+## 6             16                0          20.8              16
 ##   XCOV_VSMALL_TREE XCOV_VTALL_TREE XN_JR_SNAG XN_JR_TREE XN_SNAGS
-## 1              0.0               0          0        0.6      0.0
-## 2              0.0               0          0        1.2      0.4
-## 3              0.0               0          0        0.0      0.0
-## 4             10.2               0          0        2.2      0.0
-## 5              0.0               0          0        0.0      0.0
-## 6              0.0               0          0        0.0      0.4
+## 1                0               0          0        0.6        0
+## 2                0               0          0        1.2      0.4
+## 3                0               0          0          0        0
+## 4             10.2               0          0        2.2        0
+## 5                0               0          0          0        0
+## 6                0               0          0          0      0.4
 ##   XN_THICK_SNAG XN_THICK_TREE XN_THIN_SNAG XN_THIN_TREE XN_TREES
-## 1             0           0.0          0.0          1.2      4.8
-## 2             0           0.0          0.2          1.8      5.6
-## 3             0           0.0          0.0          0.0      0.0
-## 4             0           0.2          0.0          1.2     15.8
-## 5             0           0.0          0.0          0.0      0.0
-## 6             0           0.0          0.2          1.0      9.0
+## 1             0             0            0          1.2      4.8
+## 2             0             0          0.2          1.8      5.6
+## 3             0             0            0            0        0
+## 4             0           0.2            0          1.2     15.8
+## 5             0             0            0            0        0
+## 6             0             0          0.2            1        9
 ##   XN_XTHICK_SNAG XN_XTHICK_TREE XN_XTHIN_SNAG XN_XTHIN_TREE
-## 1              0              0           0.0           2.6
+## 1              0              0             0           2.6
 ## 2              0              0           0.2           2.4
-## 3              0              0           0.0           0.0
-## 4              0              0           0.0           3.4
-## 5              0              0           0.0           0.0
+## 3              0              0             0             0
+## 4              0              0             0           3.4
+## 5              0              0             0             0
 ## 6              0              0           0.2           3.2
 ##   XN_XXTHICK_TREE XN_XXTHIN_SNAG XN_XXTHIN_TREE
 ## 1               0              0            0.4
 ## 2               0              0            0.2
-## 3               0              0            0.0
+## 3               0              0              0
 ## 4               0              0            8.8
-## 5               0              0            0.0
+## 5               0              0              0
 ## 6               0              0            4.8</code></pre>
 </div>
 <div id="subsets-of-metrics-1" class="section level2">
 <h2>3.2 Subsets of metrics</h2>
 <p>To calculate only snag metrics, the same dataset can be used directly with the subset functions. In this example, we only want to calculate snag metrics.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outSnag &lt;-<span class="st"> </span><span class="kw">calcSnagMets</span>(TreesEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_SNAGS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_SNAGS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_JR_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_THICK_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_THIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_XTHICK_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_XTHIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'TOTN_XXTHIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_JR_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_THICK_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_THIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_XTHICK_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_XTHIN_SNAG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(allSnagsOut1, empty_snags): Column class
+## mismatch for 'XN_XXTHIN_SNAG'. Converting column to class 'character'.</code></pre>
 <pre><code>## [1] &quot;Done with snag metrics&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outSnag)</code></pre></div>
 <pre><code>##   UID        PARAMETER RESULT
@@ -769,7 +929,7 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 4   1  TOTN_THICK_SNAG      0
 ## 5   1 TOTN_XXTHIN_SNAG      0
 ## 6   1       XN_JR_SNAG      0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outSnag$PARAMETER)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outSnag<span class="op">$</span>PARAMETER)</code></pre></div>
 <pre><code>##  [1] &quot;TOTN_SNAGS&quot;       &quot;TOTN_THIN_SNAG&quot;   &quot;XN_XTHIN_SNAG&quot;   
 ##  [4] &quot;TOTN_THICK_SNAG&quot;  &quot;TOTN_XXTHIN_SNAG&quot; &quot;XN_JR_SNAG&quot;      
 ##  [7] &quot;TOTN_JR_SNAG&quot;     &quot;TOTN_XTHIN_SNAG&quot;  &quot;XN_THIN_SNAG&quot;    
@@ -792,12 +952,208 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 ## 5   7    5   MINIMUM_DEPTH      8
 ## 6   7    5     WATER_NOVEG      0</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outVG &lt;-<span class="st"> </span><span class="kw">calcVtype_GcovMets</span>(Vtype_GrCovEx, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
-<pre><code>## [1] &quot;Done with veg heterogeneity metrics&quot;
-## [1] &quot;Done with vascular strata metrics&quot;
-## [1] &quot;Done with non-vascular strata metrics&quot;
-## [1] &quot;Done with water depth metrics&quot;
-## [1] &quot;Done with litter metrics&quot;
-## [1] &quot;Done with bare ground metrics&quot;</code></pre>
+<pre><code>## Warning in gtools::smartbind(vhet6, empty_vhet): Column class mismatch for
+## 'N_SANDT'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vhet6, empty_vhet): Column class mismatch for
+## 'DOM_SANDT'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vhet6, empty_vhet): Column class mismatch for
+## 'D_SANDT'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vhet6, empty_vhet): Column class mismatch for
+## 'H_SANDT'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vhet6, empty_vhet): Column class mismatch for
+## 'J_SANDT'. Converting column to class 'character'.</code></pre>
+<pre><code>## [1] &quot;Done with veg heterogeneity metrics&quot;</code></pre>
+<pre><code>## Warning in gtools::smartbind(vstrat1, empty_vstrat): Column class mismatch
+## for 'N_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vstrat1, empty_vstrat): Column class mismatch
+## for 'XTOTCOV_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vstrat1, empty_vstrat): Column class mismatch
+## for 'XN_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vstrat1, empty_vstrat): Column class mismatch
+## for 'RG_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_FLOATING_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_HMED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_LIANAS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_MED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_SMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_SUBMERGED_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_TALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_VSMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_FLOATING_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_HMED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_LIANAS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_MED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_SMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_SUBMERGED_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_TALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_VSMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_FLOATING_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_HMED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_LIANAS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_MED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_SMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_SUBMERGED_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_TALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_VSMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_FLOATING_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_HMED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_LIANAS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_MED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_SMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_SUBMERGED_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_TALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_VSMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'H_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'J_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'D_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## [1] &quot;Done with vascular strata metrics&quot;</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'FREQ_ALGAE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'FREQ_ARBOREAL'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'FREQ_BRYOPHYTES'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'FREQ_LICHENS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'IMP_ALGAE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'IMP_ARBOREAL'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'IMP_BRYOPHYTES'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'IMP_LICHENS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'XCOV_ALGAE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'XCOV_ARBOREAL'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'XCOV_BRYOPHYTES'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'XCOV_LICHENS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'N_PEAT_MOSS_DOM'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf4, empty_nv): Column class mismatch for
+## 'FREQ_PEAT_MOSS_DOM'. Converting column to class 'character'.</code></pre>
+<pre><code>## [1] &quot;Done with non-vascular strata metrics&quot;</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'MIN_H2O_DEPTH'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'MAX_H2O_DEPTH'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'XH2O_DEPTH_AA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'MIN_COV_H2O'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'MAX_COV_H2O'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'FREQ_H2O'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'FREQ_H2O_AQVEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'FREQ_H2O_EMERGVEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'FREQ_H2O_NOVEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'XCOV_H2O'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'XCOV_H2O_AQVEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'XCOV_H2O_EMERGVEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'XCOV_H2O_NOVEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'IMP_H2O'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'IMP_H2O_AQVEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'IMP_H2O_EMERGVEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'IMP_H2O_NOVEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(watMet1, empty_wat): Column class mismatch for
+## 'XH2O_DEPTH'. Converting column to class 'character'.</code></pre>
+<pre><code>## [1] &quot;Done with water depth metrics&quot;</code></pre>
+<pre><code>## Warning in gtools::smartbind(loutdf1, empty_lit): Column class mismatch for
+## 'N_LITTER_TYPE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(loutdf1, empty_lit): Column class mismatch for
+## 'LITTER_TYPE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(loutdf1, empty_lit): Column class mismatch for
+## 'XDEPTH_LITTER'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(loutdf1, empty_lit): Column class mismatch for
+## 'MEDDEPTH_LITTER'. Converting column to class 'character'.</code></pre>
+<pre><code>## [1] &quot;Done with litter metrics&quot;</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'FREQ_BAREGD'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'FREQ_EXPOSED_GRAVEL'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'FREQ_EXPOSED_SOIL'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'FREQ_LITTER'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'FREQ_WD_COARSE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'FREQ_WD_FINE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'IMP_BAREGD'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'IMP_EXPOSED_GRAVEL'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'IMP_EXPOSED_SOIL'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'IMP_LITTER'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'IMP_WD_COARSE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'IMP_WD_FINE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'XCOV_BAREGD'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'XCOV_EXPOSED_GRAVEL'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'XCOV_EXPOSED_SOIL'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'XCOV_LITTER'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'XCOV_WD_COARSE'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(bgoutdf2, empty_bg): Column class mismatch for
+## 'XCOV_WD_FINE'. Converting column to class 'character'.</code></pre>
+<pre><code>## [1] &quot;Done with bare ground metrics&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outVG)</code></pre></div>
 <pre><code>##   UID D_SANDT D_VASC_STRATA DOM_SANDT FREQ_ALGAE FREQ_ARBOREAL FREQ_BAREGD
 ## 1   1       0        0.6617       PFO          0            20           0
@@ -975,6 +1331,16 @@ outVasc &lt;-<span class="st"> </span><span class="kw">dcast</span>(allVasc,UID~
 nplots &lt;-<span class="st"> </span><span class="kw">ddply</span>(Vtype_GrCovEx,<span class="kw">c</span>(<span class="st">'UID'</span>),summarise,<span class="dt">NPLOTS=</span><span class="kw">length</span>(<span class="kw">unique</span>(PLOT)))
 
 outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_GrCovEx, nplots, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
+<pre><code>## Warning in gtools::smartbind(vhet6, empty_vhet): Column class mismatch for
+## 'N_SANDT'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vhet6, empty_vhet): Column class mismatch for
+## 'DOM_SANDT'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vhet6, empty_vhet): Column class mismatch for
+## 'D_SANDT'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vhet6, empty_vhet): Column class mismatch for
+## 'H_SANDT'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vhet6, empty_vhet): Column class mismatch for
+## 'J_SANDT'. Converting column to class 'character'.</code></pre>
 <pre><code>## [1] &quot;Done with veg heterogeneity metrics&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outST)</code></pre></div>
 <pre><code>##   UID PARAMETER RESULT
@@ -984,19 +1350,97 @@ outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_
 ## 4   1   J_SANDT      0
 ## 5   1 DOM_SANDT    PFO
 ## 6   2 DOM_SANDT    PFO</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outST$PARAMETER)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outST<span class="op">$</span>PARAMETER)</code></pre></div>
 <pre><code>## [1] &quot;D_SANDT&quot;   &quot;N_SANDT&quot;   &quot;H_SANDT&quot;   &quot;J_SANDT&quot;   &quot;DOM_SANDT&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">outVstrat &lt;-<span class="st"> </span><span class="kw">calcVascStratMets</span>(Vtype_GrCovEx, nplots, <span class="dt">sampID=</span><span class="st">'UID'</span>)</code></pre></div>
+<pre><code>## Warning in gtools::smartbind(vstrat1, empty_vstrat): Column class mismatch
+## for 'N_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vstrat1, empty_vstrat): Column class mismatch
+## for 'XTOTCOV_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vstrat1, empty_vstrat): Column class mismatch
+## for 'XN_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(vstrat1, empty_vstrat): Column class mismatch
+## for 'RG_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_FLOATING_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_HMED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_LIANAS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_MED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_SMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_SUBMERGED_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_TALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'FREQ_VSMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_FLOATING_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_HMED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_LIANAS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_MED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_SMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_SUBMERGED_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_TALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'IMP_VSMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_FLOATING_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_HMED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_LIANAS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_MED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_SMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_SUBMERGED_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_TALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XCOV_VSMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_FLOATING_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_HMED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_LIANAS'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_MED_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_SMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_SUBMERGED_AQ'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_TALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'XRCOV_VSMALL_VEG'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'H_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'J_VASC_STRATA'. Converting column to class 'character'.</code></pre>
+<pre><code>## Warning in gtools::smartbind(outdf3, empty_vtype): Column class mismatch
+## for 'D_VASC_STRATA'. Converting column to class 'character'.</code></pre>
 <pre><code>## [1] &quot;Done with vascular strata metrics&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(outVstrat)</code></pre></div>
 <pre><code>##   UID        PARAMETER RESULT
-## 1   1 FREQ_FLOATING_AQ   0.00
-## 2   1    N_VASC_STRATA   6.00
+## 1   1 FREQ_FLOATING_AQ      0
+## 2   1    N_VASC_STRATA      6
 ## 3   1    XRCOV_MED_VEG  14.19
 ## 4   1   IMP_VSMALL_VEG  42.11
-## 5   1  XRCOV_VTALL_VEG   0.00
+## 5   1  XRCOV_VTALL_VEG      0
 ## 6   1     XRCOV_LIANAS   0.57</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outVstrat$PARAMETER)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(outVstrat<span class="op">$</span>PARAMETER)</code></pre></div>
 <pre><code>##  [1] &quot;FREQ_FLOATING_AQ&quot;    &quot;N_VASC_STRATA&quot;       &quot;XRCOV_MED_VEG&quot;      
 ##  [4] &quot;IMP_VSMALL_VEG&quot;      &quot;XRCOV_VTALL_VEG&quot;     &quot;XRCOV_LIANAS&quot;       
 ##  [7] &quot;IMP_TALL_VEG&quot;        &quot;XCOV_VTALL_VEG&quot;      &quot;XRCOV_HMED_VEG&quot;     
@@ -1014,7 +1458,7 @@ outST &lt;-<span class="st"> </span><span class="kw">calcSandTMets</span>(Vtype_
 ## [43] &quot;XCOV_VSMALL_VEG&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Now we can combine these two outputs and cast them into wide format</span>
 outAllVG &lt;-<span class="st"> </span><span class="kw">rbind</span>(outST,outVstrat)
-outAllVG.wide &lt;-<span class="st"> </span><span class="kw">dcast</span>(outAllVG,UID~PARAMETER,<span class="dt">value.var=</span><span class="st">'RESULT'</span>)
+outAllVG.wide &lt;-<span class="st"> </span><span class="kw">dcast</span>(outAllVG,UID<span class="op">~</span>PARAMETER,<span class="dt">value.var=</span><span class="st">'RESULT'</span>)
 <span class="kw">head</span>(outAllVG.wide)</code></pre></div>
 <pre><code>##   UID D_SANDT D_VASC_STRATA DOM_SANDT FREQ_FLOATING_AQ FREQ_HMED_VEG
 ## 1   1       0        0.6617       PFO                0            80

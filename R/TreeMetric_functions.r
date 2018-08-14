@@ -197,6 +197,7 @@ calcTreeCntMets <- function(treeIn,sampID='UID'){
     names(empty_trees) <- c("TOTN_TREES","XN_TREES","TOTN_JR_TREE","TOTN_THICK_TREE","TOTN_THIN_TREE","TOTN_XTHICK_TREE","TOTN_XTHIN_TREE"
                             ,"TOTN_XXTHICK_TREE","TOTN_XXTHIN_TREE","XN_JR_TREE","XN_THICK_TREE","XN_THIN_TREE","XN_XTHICK_TREE","XN_XTHIN_TREE"
                             ,"XN_XXTHICK_TREE","XN_XXTHIN_TREE")
+
     allTreesOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_trees)
 
     allTreesOut1 <- subset(allTreesOut,!is.na(SAMPID))
@@ -317,6 +318,7 @@ calcTreeCoverMets <- function(treeIn,sampID='UID'){
     empty_tspp <- data.frame(t(rep(NA,13)),stringsAsFactors=F)
     names(empty_tspp) <- c("N_TREESPP","N_TALL_TREE","N_HMED_TREE","N_LMED_TREE","N_SMALL_TREE","N_VSMALL_TREE","N_VTALL_TREE","N_TREE_UPPER"
                            ,"N_TREE_MID","N_TREE_GROUND","PCTN_TREE_UPPER","PCTN_TREE_MID","PCTN_TREE_GROUND")
+
     tsppOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_tspp)
     tsppOut1 <- subset(tsppOut,!is.na(SAMPID))
     tsppOut2 <- reshape2::melt(tsppOut1,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
@@ -358,12 +360,14 @@ calcTreeCoverMets <- function(treeIn,sampID='UID'){
 
     tcvrOut4 <- reshape2::melt(tcvrOut3,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
     tcvrOut4 <- plyr::mutate( tcvrOut4,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),0,RESULT))
+    
   }else{
     empty_tcvr <- data.frame(t(rep(NA,27)),stringsAsFactors=F)
     names(empty_tcvr) <- c("FREQ_TALL_TREE","FREQ_HMED_TREE","FREQ_LMED_TREE","FREQ_SMALL_TREE","FREQ_VSMALL_TREE","FREQ_VTALL_TREE","XCOV_TALL_TREE"
                            ,"XCOV_HMED_TREE","XCOV_LMED_TREE","XCOV_SMALL_TREE","XCOV_VSMALL_TREE","XCOV_VTALL_TREE","IMP_TALL_TREE","IMP_HMED_TREE"
                            ,"IMP_LMED_TREE","IMP_SMALL_TREE","IMP_VSMALL_TREE","IMP_VTALL_TREE","FREQ_TREE_UPPER","FREQ_TREE_MID","FREQ_TREE_GROUND"
                            ,"XCOV_TREE_UPPER","XCOV_TREE_MID","XCOV_TREE_GROUND","IMP_TREE_UPPER","IMP_TREE_MID","IMP_TREE_GROUND")
+
     tcvrOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_tcvr)
     tcvrOut1 <- subset(tcvrOut,!is.na(SAMPID))
     tcvrOut2 <- reshape2::melt(tcvrOut1,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
