@@ -12,6 +12,7 @@
 #' @importFrom car recode Recode
 #' @importFrom ecodist distance
 #' @importFrom stats approx median sd
+#' @importFrom rlang .data
 #' 
 #' @keywords package
 #' @title aquametNWCA
@@ -97,5 +98,22 @@
 #' the VMMI 
 #' }
 #' 
-NULL
-## NULL
+if(getRversion() >= "3.0") utils::globalVariables(c('COVER'
+ ,'SPECIES_NAME_ID','NWCA_NATSTAT','PARAMETER','RESULT'
+ ,'AC','CATEGORY','COV','DISTINCT','DURATION','DUR_ALT'
+ ,'ECOIND','FREQ','FREQ_H2O','FREQ_LITTER','GRH_ALT'
+ ,'GROWTH_HABIT','H','HERB','H_SANDT','H_VASC_STRATA'
+ ,'J_VASC_STRATA','LITTER_TYPE','MAXF','MAXIMUM_DEPTH'
+ ,'MAXN','METRIC','MINIMUM_DEPTH','N','NATSTAT_ALT','NPLOTS'
+ ,'NQUADS','NSAMP','NUM','NWCA_CC','NWCA_ECO4'
+ ,'NWCA_WET_GRP','N_PEAT_MOSS_DOM','N_SANDT','N_TAXA'
+ ,'N_TREESPP','N_VSTRATA','PAL_FARMED','PARAM_ALT','PLOT'
+ ,'PLOTSAMP','PREDOMINANT_DEPTH','RFREQ','SAMPID'
+ ,'SANDT_CLASS','SHRUB_COMB','SUBTOTFREQ','SUBXTOTABCOV'
+ ,'TAXON','TOL','TOTAL_WATER','TOTFREQ','TOTN','TREE_COMB'
+ ,'TREE_SPECIES','USDA_NAME','WIS','XABCOV','XCOV','XCOV_H2O'
+ ,'XCOV_LITTER','XDEPTH_LITTER','XN','XRCOV','XTOTABCOV'
+ ,'XTOTCOV_VASC_STRATA','allSnagOut','allSnagOut1','allSnagOut2'
+ ,'ccNatNWCA','p05','p25','sRFREQ','sXRCOV','taxaNWCA'
+ ,'tobj','value','variable','wisNWCA'))
+ 

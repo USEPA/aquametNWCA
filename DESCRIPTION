@@ -10,7 +10,8 @@ Imports:
     ecodist,
     Hmisc,
     gtools,
-    car
+    car,
+    rlang
 Date: 2017-06-07
 Author: Karen Blocksom
 Maintainer: Karen Blocksom <blocksom.karen@epa.gov>
