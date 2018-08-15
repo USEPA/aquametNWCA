@@ -70,6 +70,9 @@ of Engineers (USAC): \itemize{ \item USDA_NAME: Taxon name
 frame
 
 \item WIS: Wetland Indicator Status as provided by USAC or added for NWCA }}
+
+\item{cValReg}{String containing the name of the Coefficient of 
+Conservatism region in \emph{vascIn}, with default value of 'STATE'}
 }
 \value{
 A list containing six data frames: \itemize{ \item byUIDspp: Data

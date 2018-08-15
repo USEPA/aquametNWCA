@@ -72,6 +72,10 @@ listed above, in the expected formats, from raw data:
 \itemize{
 \item createDFs()
 \item prepareData()
+\item nwcaVegData() (alternative to prepareData() that allows
+use of a C-value region other than 'STATE')
+\item nwcaVegInput() (alternative to createDFs() that allows
+use of a C-value region other than 'STATE')
 }
 }
 

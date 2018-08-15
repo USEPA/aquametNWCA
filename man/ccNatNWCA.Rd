@@ -29,7 +29,7 @@ status values used in NWCA 2011.
 }
 \examples{
 head(ccNatNWCA)
-str(ccNatNWCCA)
+str(ccNatNWCA)
 
 }
 \keyword{datasets}

@@ -67,6 +67,9 @@
 #'   
 #'   \item WIS: Wetland Indicator Status as provided by USAC or added for NWCA }
 #'   
+#' @param cValReg String containing the name of the Coefficient of 
+#' Conservatism region in \emph{vascIn}, with default value of 'STATE'
+#'   
 #' @details This function calls the createDFs() function, which sums cover by
 #'   \emph{sampID} variables, PLOT, TAXON, with sums > 100 truncated to 100
 #'   percent.

@@ -21,7 +21,7 @@
 #' @keywords datasets
 #' @examples 
 #' head(ccNatNWCA)
-#' str(ccNatNWCCA)
+#' str(ccNatNWCA)
 #' 
 "ccNatNWCA"
 
