@@ -14,7 +14,7 @@ test_that("S & T metric values correct",
  compOut.char <- subset(compOut,PARAMETER=='DOM_SANDT')
  expect_equal(compOut.char$RESULT.x,compOut.char$RESULT.y)
  compOut.num <- subset(compOut,PARAMETER!='DOM_SANDT')
- compOut.num <- dplyr::mutate(compOut.num,RESULT.x=as.numeric(RESULT.x),RESULT.y=as.numeric(RESULT.y))
+ compOut.num <- dplyr::mutate(compOut.num,RESULT.x=RESULT.x,RESULT.y=RESULT.y)
  expect_equal(compOut.num$RESULT.x,compOut.num$RESULT.y,tolerance=0.001)            
 })
 
@@ -23,7 +23,7 @@ test_that("Vascular stratum metric values correct",
  compOut <- merge(testMets,vstratOut,by=c('UID','PARAMETER'))
  expect_true(nrow(vstratOut)==430)
  expect_true(nrow(compOut)==nrow(vstratOut))
- compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
+ compOut <- dplyr::mutate(compOut,RESULT.x=RESULT.x)
  expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)            
 })
 

@@ -86,7 +86,7 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
   empty_vhet <- data.frame(t(rep(NA,5)),stringsAsFactors=FALSE)
   names(empty_vhet) <- c('N_SANDT','DOM_SANDT','D_SANDT','H_SANDT','J_SANDT')
 
-  vhet7 <- subset(gtools::smartbind(vhet6,empty_vhet),!is.na(SAMPID))
+  vhet7 <- subset(merge(vhet6, empty_vhet, all=TRUE),!is.na(SAMPID))
 
   vhet8 <- merge(allUIDs,vhet7,by='SAMPID',all.x=T)
 
@@ -200,7 +200,7 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
   empty_vstrat <- data.frame(t(rep(NA,4)),stringsAsFactors=FALSE)
   names(empty_vstrat) <- c('N_VASC_STRATA','XTOTCOV_VASC_STRATA','XN_VASC_STRATA','RG_VASC_STRATA')
 
-  vstrat2 <- subset(gtools::smartbind(vstrat1,empty_vstrat),!is.na(SAMPID))
+  vstrat2 <- subset(merge(vstrat1, empty_vstrat, all=TRUE),!is.na(SAMPID))
 
   vstrat3 <- merge(allUIDs,vstrat2,by='SAMPID',all.x=T)
 
@@ -237,7 +237,7 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 
   outdf3 <- reshape2::dcast(outdf2,SAMPID~METRIC,value.var='RESULT')
 
-  outdf4 <- subset(gtools::smartbind(outdf3,empty_vtype),!is.na(SAMPID))
+  outdf4 <- subset(merge(outdf3, empty_vtype, all=TRUE),!is.na(SAMPID))
 
   outdf5 <- merge(allUIDs,outdf4,by='SAMPID',all.x=T)
 
@@ -360,7 +360,7 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
                        ,"IMP_ARBOREAL","IMP_BRYOPHYTES","IMP_LICHENS","IMP_MACROALGAE","XCOV_ALGAE","XCOV_ARBOREAL","XCOV_BRYOPHYTES"
                        ,"XCOV_LICHENS","XCOV_MACROALGAE","N_PEAT_MOSS_DOM","FREQ_PEAT_MOSS_DOM")
 
-  outdf5 <- subset(gtools::smartbind(outdf4,empty_nv),!is.na(SAMPID))
+  outdf5 <- subset(merge(outdf4, empty_nv, all=TRUE),!is.na(SAMPID))
 
   outdf6 <- merge(allUIDs,outdf5,by='SAMPID',all.x=T)
 
@@ -489,7 +489,7 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
                         ,"FREQ_H2O_AQVEG","FREQ_H2O_EMERGVEG","FREQ_H2O_NOVEG","XCOV_H2O","XCOV_H2O_AQVEG","XCOV_H2O_EMERGVEG"
                         ,"XCOV_H2O_NOVEG","IMP_H2O","IMP_H2O_AQVEG","IMP_H2O_EMERGVEG","IMP_H2O_NOVEG","XH2O_DEPTH")
 
-  watMet2 <- subset(gtools::smartbind(watMet1,empty_wat),!is.na(SAMPID))
+  watMet2 <- subset(merge(watMet1, empty_wat, all=TRUE),!is.na(SAMPID))
 
   watMet3 <- merge(allUIDs,watMet2,by='SAMPID',all.x=T)
 
@@ -616,7 +616,7 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID'){
   empty_lit <- data.frame(t(rep(NA,4)),stringsAsFactors=FALSE)
   names(empty_lit) <- c('N_LITTER_TYPE','LITTER_TYPE','XDEPTH_LITTER','MEDDEPTH_LITTER')
 
-  loutdf2 <- subset(gtools::smartbind(loutdf1,empty_lit),!is.na(SAMPID))
+  loutdf2 <- subset(merge(loutdf1, empty_lit, all=TRUE),!is.na(SAMPID))
 
   loutdf3 <- merge(allUIDs,loutdf2,by='SAMPID',all.x=T)
 
@@ -657,7 +657,7 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID'){
                        ,"IMP_WD_COARSE","IMP_WD_FINE","XCOV_BAREGD","XCOV_EXPOSED_GRAVEL","XCOV_EXPOSED_ROCK","XCOV_EXPOSED_SOIL"
                        ,"XCOV_LITTER","XCOV_WD_COARSE","XCOV_WD_FINE")
 
-  bgoutdf3 <- subset(gtools::smartbind(bgoutdf2,empty_bg),!is.na(SAMPID))
+  bgoutdf3 <- subset(merge(bgoutdf2, empty_bg, all=TRUE),!is.na(SAMPID))
 
   bgoutdf4 <- merge(allUIDs,bgoutdf3,by='SAMPID',all.x=T)
 
