@@ -29,7 +29,7 @@ UID and TAXON, with the following fields:
     (XTOTABCOV) represented by taxon in sample
 
     \item NWCA_NATSTAT (optional): Native status variable with
-      categories of 'NAT','ADV','CRYP','INTR','UND'.
+      categories of 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'.
       UND taxa are ignored.
    }}
 

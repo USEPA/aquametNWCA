@@ -17,7 +17,7 @@
 #' \item RESULT: measured value
 #' }
 #' The following parameters are used in calculating
-#' vegetation type metrics: 'SANDT_CLASS','PAL_FARMED'.
+#' vegetation type metrics: 'SANDT_CLASS', 'PAL_FARMED'.
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with
 #' each samples, with \emph{sampID} variables and NPLOTS
@@ -124,9 +124,9 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
 #' \item RESULT: measured value
 #' }
 #' The following parameters are used in
-#' calculating tree metrics: 'SUBMERGED_AQ','FLOATING_AQ',
-#' 'LIANAS','VTALL_VEG','TALL_VEG','HMED_VEG','MED_VEG',
-#' 'SMALL_VEG','VSMALL_VEG'.
+#' calculating tree metrics: 'SUBMERGED_AQ', 'FLOATING_AQ', 
+#' 'LIANAS', 'VTALL_VEG', 'TALL_VEG', 'HMED_VEG', 'MED_VEG', 
+#' 'SMALL_VEG', 'VSMALL_VEG'.
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with each
 #' sample with \emph{sampID} variables and NPLOTS
@@ -274,8 +274,8 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 #'  \item RESULT: measured value
 #'  }
 #'  The following parameters are used in
-#'  calculating tree metrics: 'PEAT_MOSS','BRYOPHYTES','LICHENS',
-#'  'ARBOREAL','ALGAE','MACROALGAE'. Additional parameters or
+#'  calculating tree metrics: 'PEAT_MOSS', 'BRYOPHYTES', 'LICHENS', 
+#'  'ARBOREAL', 'ALGAE', 'MACROALGAE'. Additional parameters or
 #'  variables are ignored.
 #' @param nPlot Number of plots sampled associated with each sample
 #'  with sampID variables and NPLOTS.
@@ -395,9 +395,9 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
 #' \item RESULT: measured value
 #' }
 #' The following parameters are used in
-#' calculating tree metrics: 'TIME','MINIMUM_DEPTH',
-#' 'MAXIMUM_DEPTH','PREDOMINANT_DEPTH','TOTAL_WATER',
-#' 'WATER_NOVEG','WATER_AQVEG','WATER_EMERGVEG'.
+#' calculating tree metrics: 'TIME', 'MINIMUM_DEPTH', 
+#' 'MAXIMUM_DEPTH', 'PREDOMINANT_DEPTH', 'TOTAL_WATER', 
+#' 'WATER_NOVEG', 'WATER_AQVEG', 'WATER_EMERGVEG'.
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with each
 #' sample with \emph{sampID} variables and NPLOTS
@@ -524,10 +524,10 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
 #' \item RESULT (measured value)
 #' }
 #' The following parameters are used in
-#' calculating tree metrics: 'LITTER_THATCH','LITTER_FORB',
-#' 'LITTER_CONIFER','LITTER_DECID','LITTER_BROADLEAF',
-#' 'LITTER_DEPTH_SW','LITTER_DEPTH_NE','TOTAL_LITTER','WD_FINE',
-#' 'WD_COARSE','EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK'.
+#' calculating tree metrics: 'LITTER_THATCH', 'LITTER_FORB', 
+#' 'LITTER_CONIFER', 'LITTER_DECID', 'LITTER_BROADLEAF', 
+#' 'LITTER_DEPTH_SW', 'LITTER_DEPTH_NE', 'TOTAL_LITTER', 'WD_FINE', 
+#' 'WD_COARSE', 'EXPOSED_SOIL', 'EXPOSED_GRAVEL', 'EXPOSED_ROCK'.
 #' Additional parameters or variables are ignored.
 #' @param nPlot Number of plots sampled associated with each sample,
 #' including \emph{sampID} variables and NPLOTS.

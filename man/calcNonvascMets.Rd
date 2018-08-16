@@ -16,8 +16,8 @@ calcNonvascMets(dataIn, nPlot, sampID = "UID")
  \item RESULT: measured value
  }
  The following parameters are used in
- calculating tree metrics: 'PEAT_MOSS','BRYOPHYTES','LICHENS',
- 'ARBOREAL','ALGAE','MACROALGAE'. Additional parameters or
+ calculating tree metrics: 'PEAT_MOSS', 'BRYOPHYTES', 'LICHENS', 
+ 'ARBOREAL', 'ALGAE', 'MACROALGAE'. Additional parameters or
  variables are ignored.}
 
 \item{nPlot}{Number of plots sampled associated with each sample

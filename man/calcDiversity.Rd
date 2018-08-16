@@ -19,7 +19,7 @@ UID and TAXON, with the following fields:
 \item XABCOV: Mean percent cover of taxon across plots
 
 \item Optional: NWCA_NATSTAT: Native status variable with categories of
-'NAT','ADV','CRYP','INTR','UND'
+'NAT', 'ADV', 'CRYP', 'INTR', 'UND'
 }}
 
 \item{sampID}{A character vector containing the name(s) of

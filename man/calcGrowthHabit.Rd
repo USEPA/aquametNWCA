@@ -26,7 +26,7 @@ UID and TAXON, with the following fields:
     (XTOTABCOV) represented by taxon in sample
 
     \item NWCA_NATSTAT (optional): Native status variable with categories
-    of 'NAT','ADV','CRYP','INTR','UND'
+    of 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'
    }}
 
 \item{sampID}{A character vector containing the name(s) of variable(s)

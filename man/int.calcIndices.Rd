@@ -37,9 +37,8 @@ proportion of species i
 }
 \description{
 This internal function calculates several variations of Mean C 
-  and FQAI, based on cover, frequency, and number of taxa. Also calculated 
-  are Not intended for use on its own. Used in \code{calcDiversity()} 
-  function.
+  and FQAI, based on cover, frequency, and number of taxa. Used in 
+  \code{calcDiversity()} function.
 }
 \section{Warning}{
  This function not intended for use on its own

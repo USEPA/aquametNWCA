@@ -19,9 +19,9 @@ variables:
 \item RESULT: measured value
 }
 The following parameters are used in
-calculating tree metrics: 'SUBMERGED_AQ','FLOATING_AQ',
-'LIANAS','VTALL_VEG','TALL_VEG','HMED_VEG','MED_VEG',
-'SMALL_VEG','VSMALL_VEG'.
+calculating tree metrics: 'SUBMERGED_AQ', 'FLOATING_AQ', 
+'LIANAS', 'VTALL_VEG', 'TALL_VEG', 'HMED_VEG', 'MED_VEG', 
+'SMALL_VEG', 'VSMALL_VEG'.
 Additional parameters or variables are ignored.}
 
 \item{nPlot}{Number of plots sampled associated with each

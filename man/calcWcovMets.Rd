@@ -19,9 +19,9 @@ were collected
 \item RESULT: measured value
 }
 The following parameters are used in
-calculating tree metrics: 'TIME','MINIMUM_DEPTH',
-'MAXIMUM_DEPTH','PREDOMINANT_DEPTH','TOTAL_WATER',
-'WATER_NOVEG','WATER_AQVEG','WATER_EMERGVEG'.
+calculating tree metrics: 'TIME', 'MINIMUM_DEPTH', 
+'MAXIMUM_DEPTH', 'PREDOMINANT_DEPTH', 'TOTAL_WATER', 
+'WATER_NOVEG', 'WATER_AQVEG', 'WATER_EMERGVEG'.
 Additional parameters or variables are ignored.}
 
 \item{nPlot}{Number of plots sampled associated with each

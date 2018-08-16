@@ -26,7 +26,7 @@ UID and TAXON, with the following fields:
     occurrence across all taxa for a UID
 
     \item NWCA_NATSTAT: Native status variable with
-    categories of 'NAT','ADV','CRYP','INTR','UND'
+    categories of 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'
  }}
 
 \item{sampID}{A character vector containing the name(s) of

@@ -34,8 +34,7 @@ Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
 }
 \description{
 This internal function calculates metrics using traits with more
-  than two categories as values. Used in calculating metrics for growth habit
-  and duration. Used in \code{calcDuration()}, \code{calcGrowthHabit()}, 
+  than two categories as values. Used in \code{calcDuration()}, \code{calcGrowthHabit()}, 
   \code{calcCategory()}, \code{calcWIS()} functions.
 }
 \section{Warning}{

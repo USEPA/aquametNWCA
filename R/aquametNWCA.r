@@ -113,7 +113,7 @@ if(getRversion() >= "3.0") utils::globalVariables(c('COVER'
  ,'TAXON','TOL','TOTAL_WATER','TOTFREQ','TOTN','TREE_COMB'
  ,'TREE_SPECIES','USDA_NAME','WIS','XABCOV','XCOV','XCOV_H2O'
  ,'XCOV_LITTER','XDEPTH_LITTER','XN','XRCOV','XTOTABCOV'
- ,'XTOTCOV_VASC_STRATA','allSnagOut','allSnagOut1','allSnagOut2'
+ ,'XTOTCOV_VASC_STRATA'
  ,'ccNatNWCA','p05','p25','sRFREQ','sXRCOV','taxaNWCA'
  ,'tobj','value','variable','wisNWCA'))
  

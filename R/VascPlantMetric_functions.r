@@ -398,8 +398,7 @@ int.calcRich <- function(x,y,tlevel,sampID) {
 #' @title Calculate metrics for traits with >2 categories
 #' 
 #' @description This internal function calculates metrics using traits with more
-#'   than two categories as values. Used in calculating metrics for growth habit
-#'   and duration. Used in \code{calcDuration()}, \code{calcGrowthHabit()}, 
+#'   than two categories as values. Used in \code{calcDuration()}, \code{calcGrowthHabit()}, 
 #'   \code{calcCategory()}, \code{calcWIS()} functions.
 #'   
 #' @section Warning: This function not intended for use on its own
@@ -505,8 +504,8 @@ int.calcTraits_MultCat.alt <- function(vascIn,trait,sampID){
 #' @title Calculate metrics using traits with only two values (0/1)
 #' 
 #' @description This internal function calculates metrics for traits
-#' that are indicator values (0 or 1). Not intended to be used on its
-#' own. Output feeds into \code{int.combTraits()} function. Used in 
+#' that are indicator values (0 or 1). Output feeds into 
+#' \code{int.combTraits()} function. Used in 
 #' \code{calcWIS()} function.
 #' 
 #' @section Warning: This function not intended for use on its own
@@ -567,9 +566,8 @@ int.calcTraits_Indicator <- function(vascIn,trait,sampID){
 #' @title Combine trait metric calculations
 #' 
 #' @description This internal function calls calcTraits_Indicator()
-#' repeatedly a set of traits provided in a character vector. Not
-#' intended for use on its own. Used in \code{calcDuration()}, 
-#' \code{calcGrowthHabit()}, \code{calcCategory()},
+#' repeatedly a set of traits provided in a character vector. Used in 
+#' \code{calcDuration()}, \code{calcGrowthHabit()}, \code{calcCategory()},
 #' \code{calcCC()} functions.
 #' 
 #' @section Warning: This function not intended for use on its own
@@ -675,9 +673,8 @@ int.calcTraits_Indicator.alt <- function(vascIn,trait,sampID){
 #' @title Calculate Mean C and FQAI indices
 #' 
 #' @description This internal function calculates several variations of Mean C 
-#'   and FQAI, based on cover, frequency, and number of taxa. Also calculated 
-#'   are Not intended for use on its own. Used in \code{calcDiversity()} 
-#'   function.
+#'   and FQAI, based on cover, frequency, and number of taxa. Used in 
+#'   \code{calcDiversity()} function.
 #'   
 #' @section Warning: This function not intended for use on its own
 #'   

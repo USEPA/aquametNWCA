@@ -18,8 +18,8 @@ calcSnagMets(treeIn, sampID = "UID")
 \item RESULT: measured value
 }
 The following parameters are used in
-calculating tree metrics: 'XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG',
-'JR_SNAG','THICK_SNAG','XTHICK_SNAG','XXTHICK_SNAG'.
+calculating tree metrics: 'XXTHIN_SNAG', 'XTHIN_SNAG', 'THIN_SNAG', 
+'JR_SNAG', 'THICK_SNAG', 'XTHICK_SNAG', 'XXTHICK_SNAG'.
 Additional parameters or variables are ignored.}
 
 \item{sampID}{A character vector containing the name(s) of

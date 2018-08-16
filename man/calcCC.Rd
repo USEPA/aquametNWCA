@@ -22,7 +22,7 @@ UID and TAXON, with the following fields:
     from NWCA
 
     \item NWCA_NATSTAT (optional): Native status variable with
-      categories of 'NAT','ADV','CRYP','INTR','UND'.
+      categories of 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'.
       UND taxa are ignored.
    }}
 

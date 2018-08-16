@@ -18,10 +18,10 @@ calcBareGround_LitterMets(dataIn, nPlot, sampID = "UID")
 \item RESULT (measured value)
 }
 The following parameters are used in
-calculating tree metrics: 'LITTER_THATCH','LITTER_FORB',
-'LITTER_CONIFER','LITTER_DECID','LITTER_BROADLEAF',
-'LITTER_DEPTH_SW','LITTER_DEPTH_NE','TOTAL_LITTER','WD_FINE',
-'WD_COARSE','EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK'.
+calculating tree metrics: 'LITTER_THATCH', 'LITTER_FORB', 
+'LITTER_CONIFER', 'LITTER_DECID', 'LITTER_BROADLEAF', 
+'LITTER_DEPTH_SW', 'LITTER_DEPTH_NE', 'TOTAL_LITTER', 'WD_FINE', 
+'WD_COARSE', 'EXPOSED_SOIL', 'EXPOSED_GRAVEL', 'EXPOSED_ROCK'.
 Additional parameters or variables are ignored.}
 
 \item{nPlot}{Number of plots sampled associated with each sample,

@@ -31,9 +31,8 @@ Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
 }
 \description{
 This internal function calls calcTraits_Indicator()
-repeatedly a set of traits provided in a character vector. Not
-intended for use on its own. Used in \code{calcDuration()}, 
-\code{calcGrowthHabit()}, \code{calcCategory()},
+repeatedly a set of traits provided in a character vector. Used in 
+\code{calcDuration()}, \code{calcGrowthHabit()}, \code{calcCategory()},
 \code{calcCC()} functions.
 }
 \section{Warning}{

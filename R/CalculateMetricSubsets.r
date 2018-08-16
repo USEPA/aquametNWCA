@@ -31,7 +31,7 @@
 #'     (XTOTABCOV) represented by taxon in sample
 #'
 #'     \item NWCA_NATSTAT (Optional): Native status variable with categories
-#'     of 'NAT','ADV','CRYP','INTR','UND'
+#'     of 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'
 #'     }
 #' @param sampID  A character vector containing the name(s) of variable(s)
 #'   necessary to identify unique samples, 'UID' by default
@@ -159,7 +159,7 @@ calcDuration <- function(vascIn,sampID='UID'){
 #'     (XTOTABCOV) represented by taxon in sample
 #'
 #'     \item NWCA_NATSTAT (optional): Native status variable with categories
-#'     of 'NAT','ADV','CRYP','INTR','UND'
+#'     of 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'
 #'    }
 #' @param sampID  A character vector containing the name(s) of variable(s)
 #'   necessary to identify unique samples, 'UID' by default
@@ -276,7 +276,7 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
 #'     (XTOTABCOV) represented by taxon in sample
 #'
 #'     \item NWCA_NATSTAT (optional): Native status variable with categories
-#'     of 'NAT','ADV','CRYP','INTR','UND'
+#'     of 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'
 #'    }
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
@@ -380,7 +380,7 @@ calcCategory <- function(vascIn,sampID='UID'){
 #'     (XTOTABCOV) represented by taxon in sample
 #'
 #'     \item NWCA_NATSTAT (optional): Native status variable with
-#'       categories of 'NAT','ADV','CRYP','INTR','UND'.
+#'       categories of 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'.
 #'       UND taxa are ignored.
 #'    }
 #' @param sampID A character vector containing the name(s) of
@@ -518,7 +518,7 @@ calcWIS <- function(vascIn,sampID='UID'){
 #'     from NWCA
 #'
 #'     \item NWCA_NATSTAT (optional): Native status variable with
-#'       categories of 'NAT','ADV','CRYP','INTR','UND'.
+#'       categories of 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'.
 #'       UND taxa are ignored.
 #'    }
 #' @param sampID A character vector containing the name(s) of
@@ -644,7 +644,7 @@ calcCC <- function(vascIn,sampID='UID'){
 #'     occurrence across all taxa for a UID
 #'
 #'     \item NWCA_NATSTAT: Native status variable with
-#'     categories of 'NAT','ADV','CRYP','INTR','UND'
+#'     categories of 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'
 #'  }
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
@@ -860,7 +860,7 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
 #' \item XABCOV: Mean percent cover of taxon across plots
 #'
 #' \item Optional: NWCA_NATSTAT: Native status variable with categories of
-#' 'NAT','ADV','CRYP','INTR','UND'
+#' 'NAT', 'ADV', 'CRYP', 'INTR', 'UND'
 #' }
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default

@@ -22,8 +22,8 @@ calcTreeCoverMets(treeIn, sampID = "UID")
 \item RESULT: measured value
 }
 The following parameters are used in
-calculating tree metrics: 'VSMALL_TREE','SMALL_TREE','LMED_TREE'
-,'HMED_TREE','TALL_TREE','VTALL_TREE'.  Additional parameters
+calculating tree metrics: 'VSMALL_TREE', 'SMALL_TREE', 'LMED_TREE'
+, 'HMED_TREE', 'TALL_TREE', 'VTALL_TREE'.  Additional parameters
 or variables are ignored.}
 
 \item{sampID}{A character vector containing the name(s) of

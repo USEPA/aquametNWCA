@@ -32,8 +32,8 @@ XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 }
 \description{
 This internal function calculates metrics for traits
-that are indicator values (0 or 1). Not intended to be used on its
-own. Output feeds into \code{int.combTraits()} function. Used in 
+that are indicator values (0 or 1). Output feeds into 
+\code{int.combTraits()} function. Used in 
 \code{calcWIS()} function.
 }
 \section{Warning}{

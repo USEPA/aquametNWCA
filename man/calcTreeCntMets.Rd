@@ -18,8 +18,8 @@ calcTreeCntMets(treeIn, sampID = "UID")
 \item RESULT: measured value
 }
 The following parameters are used in calculating tree metrics:
-'XXTHIN_TREE','XTHIN_TREE','THIN_TREE', 'JR_TREE','THICK_TREE',
-'XTHICK_TREE','XXTHICK_TREE'. Additional parameters or variables
+'XXTHIN_TREE', 'XTHIN_TREE', 'THIN_TREE', 'JR_TREE', 'THICK_TREE', 
+'XTHICK_TREE', 'XXTHICK_TREE'. Additional parameters or variables
 are ignored.}
 
 \item{sampID}{A character vector containing the name(s) of

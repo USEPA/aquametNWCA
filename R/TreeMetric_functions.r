@@ -17,8 +17,8 @@
 #' \item RESULT: measured value
 #' }
 #' The following parameters are used in
-#' calculating tree metrics: 'XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG',
-#' 'JR_SNAG','THICK_SNAG','XTHICK_SNAG','XXTHICK_SNAG'.
+#' calculating tree metrics: 'XXTHIN_SNAG', 'XTHIN_SNAG', 'THIN_SNAG', 
+#' 'JR_SNAG', 'THICK_SNAG', 'XTHICK_SNAG', 'XXTHICK_SNAG'.
 #' Additional parameters or variables are ignored.
 #' 
 #' @param sampID A character vector containing the name(s) of
@@ -91,11 +91,11 @@ calcSnagMets <- function(treeIn,sampID='UID'){
 
     allSnagsOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_snags)
 
-    allSnagsOut1 <- subset(allSnagOut,!is.na(SAMPID))
+    allSnagsOut1 <- subset(allSnagsOut,!is.na(SAMPID))
 
-    allSnagsOut2 <- reshape2::melt(allSnagOut1,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
+    allSnagsOut2 <- reshape2::melt(allSnagsOut1,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
 
-    allSnagsOut3 <- plyr::mutate(allSnagOut2,METRIC=as.character(METRIC),RESULT=0)
+    allSnagsOut3 <- plyr::mutate(allSnagsOut2,METRIC=as.character(METRIC),RESULT=0)
 
     allSnagsOut4 <- allSnagsOut3
   }
@@ -129,8 +129,8 @@ calcSnagMets <- function(treeIn,sampID='UID'){
 #' \item RESULT: measured value
 #' }
 #' The following parameters are used in calculating tree metrics:
-#' 'XXTHIN_TREE','XTHIN_TREE','THIN_TREE', 'JR_TREE','THICK_TREE',
-#' 'XTHICK_TREE','XXTHICK_TREE'. Additional parameters or variables
+#' 'XXTHIN_TREE', 'XTHIN_TREE', 'THIN_TREE', 'JR_TREE', 'THICK_TREE', 
+#' 'XTHICK_TREE', 'XXTHICK_TREE'. Additional parameters or variables
 #' are ignored.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
@@ -240,8 +240,8 @@ calcTreeCntMets <- function(treeIn,sampID='UID'){
 #' \item RESULT: measured value
 #' }
 #' The following parameters are used in
-#' calculating tree metrics: 'VSMALL_TREE','SMALL_TREE','LMED_TREE'
-#' ,'HMED_TREE','TALL_TREE','VTALL_TREE'.  Additional parameters
+#' calculating tree metrics: 'VSMALL_TREE', 'SMALL_TREE', 'LMED_TREE'
+#' , 'HMED_TREE', 'TALL_TREE', 'VTALL_TREE'.  Additional parameters
 #' or variables are ignored.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
