@@ -76,7 +76,7 @@ calcSnagMets <- function(treeIn,sampID='UID'){
     names(empty_snags) <- c("TOTN_SNAGS","XN_SNAGS","TOTN_JR_SNAG","TOTN_THICK_SNAG","TOTN_THIN_SNAG","TOTN_XTHICK_SNAG","TOTN_XTHIN_SNAG"
                             ,"TOTN_XXTHIN_SNAG","XN_JR_SNAG","XN_THICK_SNAG","XN_THIN_SNAG","XN_XTHICK_SNAG","XN_XTHIN_SNAG","XN_XXTHIN_SNAG")
 
-    allSnagsOut2 <- subset(gtools::smartbind(allSnagsOut1,empty_snags),!is.na(SAMPID))
+    allSnagsOut2 <- subset(merge(allSnagsOut1, empty_snags, all=TRUE),!is.na(SAMPID))
 
     # Merge with the all UIDs and fill in missing values with zeroes
     allSnagsOut3 <- merge(allUIDs,allSnagsOut2,by='SAMPID',all.x=T)
@@ -89,7 +89,7 @@ calcSnagMets <- function(treeIn,sampID='UID'){
     names(empty_snags) <- c("TOTN_SNAGS","XN_SNAGS","TOTN_JR_SNAG","TOTN_THICK_SNAG","TOTN_THIN_SNAG","TOTN_XTHICK_SNAG","TOTN_XTHIN_SNAG"
                             ,"TOTN_XXTHIN_SNAG","XN_JR_SNAG","XN_THICK_SNAG","XN_THIN_SNAG","XN_XTHICK_SNAG","XN_XTHIN_SNAG","XN_XXTHIN_SNAG")
 
-    allSnagsOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_snags)
+    allSnagsOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F), empty_snags, all=TRUE)
 
     allSnagsOut1 <- subset(allSnagsOut,!is.na(SAMPID))
 
@@ -186,7 +186,7 @@ calcTreeCntMets <- function(treeIn,sampID='UID'){
                             ,"TOTN_XXTHICK_TREE","TOTN_XXTHIN_TREE","XN_JR_TREE","XN_THICK_TREE","XN_THIN_TREE","XN_XTHICK_TREE","XN_XTHIN_TREE"
                             ,"XN_XXTHICK_TREE","XN_XXTHIN_TREE")
 
-    allTreesOut2 <- subset(gtools::smartbind(allTreesOut1,empty_trees),!is.na(SAMPID))
+    allTreesOut2 <- subset(merge(allTreesOut1, empty_trees, all=TRUE),!is.na(SAMPID))
 
     allTreesOut3 <- merge(allUIDs,allTreesOut2,by='SAMPID',all.x=T)
 
@@ -198,7 +198,7 @@ calcTreeCntMets <- function(treeIn,sampID='UID'){
                             ,"TOTN_XXTHICK_TREE","TOTN_XXTHIN_TREE","XN_JR_TREE","XN_THICK_TREE","XN_THIN_TREE","XN_XTHICK_TREE","XN_XTHIN_TREE"
                             ,"XN_XXTHICK_TREE","XN_XXTHIN_TREE")
 
-    allTreesOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_trees)
+    allTreesOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F), empty_trees, all=TRUE)
 
     allTreesOut1 <- subset(allTreesOut,!is.na(SAMPID))
 
@@ -308,7 +308,7 @@ calcTreeCoverMets <- function(treeIn,sampID='UID'){
     names(empty_tspp) <- c("N_TREESPP","N_TALL_TREE","N_HMED_TREE","N_LMED_TREE","N_SMALL_TREE","N_VSMALL_TREE","N_VTALL_TREE","N_TREE_UPPER"
                            ,"N_TREE_MID","N_TREE_GROUND","PCTN_TREE_UPPER","PCTN_TREE_MID","PCTN_TREE_GROUND")
 
-    tsppOut2 <- subset(gtools::smartbind(tsppOut1,empty_tspp),!is.na(SAMPID))
+    tsppOut2 <- subset(merge(tsppOut1, empty_tspp, all=TRUE),!is.na(SAMPID))
 
     tsppOut3 <- merge(allUIDs,tsppOut2,by='SAMPID',all.x=T)
 
@@ -319,7 +319,7 @@ calcTreeCoverMets <- function(treeIn,sampID='UID'){
     names(empty_tspp) <- c("N_TREESPP","N_TALL_TREE","N_HMED_TREE","N_LMED_TREE","N_SMALL_TREE","N_VSMALL_TREE","N_VTALL_TREE","N_TREE_UPPER"
                            ,"N_TREE_MID","N_TREE_GROUND","PCTN_TREE_UPPER","PCTN_TREE_MID","PCTN_TREE_GROUND")
 
-    tsppOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_tspp)
+    tsppOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F), empty_tspp, all=TRUE)
     tsppOut1 <- subset(tsppOut,!is.na(SAMPID))
     tsppOut2 <- reshape2::melt(tsppOut1,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
     tsppOut3 <- plyr::mutate(tsppOut2,METRIC=as.character(METRIC),RESULT=0)
@@ -354,7 +354,7 @@ calcTreeCoverMets <- function(treeIn,sampID='UID'){
                            ,"IMP_LMED_TREE","IMP_SMALL_TREE","IMP_VSMALL_TREE","IMP_VTALL_TREE","FREQ_TREE_UPPER","FREQ_TREE_MID","FREQ_TREE_GROUND"
                            ,"XCOV_TREE_UPPER","XCOV_TREE_MID","XCOV_TREE_GROUND","IMP_TREE_UPPER","IMP_TREE_MID","IMP_TREE_GROUND")
 
-    tcvrOut2 <- subset(gtools::smartbind(tcvrOut1,empty_tcvr),!is.na(SAMPID))
+    tcvrOut2 <- subset(merge(tcvrOut1, empty_tcvr, all=TRUE),!is.na(SAMPID))
 
     tcvrOut3 <- merge(allUIDs,tcvrOut2,by='SAMPID',all.x=T)
 
@@ -368,7 +368,7 @@ calcTreeCoverMets <- function(treeIn,sampID='UID'){
                            ,"IMP_LMED_TREE","IMP_SMALL_TREE","IMP_VSMALL_TREE","IMP_VTALL_TREE","FREQ_TREE_UPPER","FREQ_TREE_MID","FREQ_TREE_GROUND"
                            ,"XCOV_TREE_UPPER","XCOV_TREE_MID","XCOV_TREE_GROUND","IMP_TREE_UPPER","IMP_TREE_MID","IMP_TREE_GROUND")
 
-    tcvrOut <- gtools::smartbind(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F),empty_tcvr)
+    tcvrOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F), empty_tcvr, all=TRUE)
     tcvrOut1 <- subset(tcvrOut,!is.na(SAMPID))
     tcvrOut2 <- reshape2::melt(tcvrOut1,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
     tcvrOut3 <- plyr::mutate(tcvrOut2,METRIC=as.character(METRIC),RESULT=0)
