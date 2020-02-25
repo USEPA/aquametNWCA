@@ -4,8 +4,13 @@
 \alias{prepareData}
 \title{Prepare data for calculating metrics}
 \usage{
-prepareData(vascIn, sampID = "UID", inTaxa = taxaNWCA,
-  inNatCC = ccNatNWCA, inWIS = wisNWCA)
+prepareData(
+  vascIn,
+  sampID = "UID",
+  inTaxa = taxaNWCA,
+  inNatCC = ccNatNWCA,
+  inWIS = wisNWCA
+)
 }
 \arguments{
 \item{vascIn}{Data frame containing cover data summarized by

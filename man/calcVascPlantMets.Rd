@@ -4,8 +4,13 @@
 \alias{calcVascPlantMets}
 \title{Calculate NWCA 2011 vascular plant metrics based on form V-2}
 \usage{
-calcVascPlantMets(vascIn, taxaIn = taxaNWCA, taxaCC = ccNatNWCA,
-  taxaWIS = wisNWCA, sampID = "UID")
+calcVascPlantMets(
+  vascIn,
+  taxaIn = taxaNWCA,
+  taxaCC = ccNatNWCA,
+  taxaWIS = wisNWCA,
+  sampID = "UID"
+)
 }
 \arguments{
 \item{vascIn}{A data frame with the following variables (at a minimum): 

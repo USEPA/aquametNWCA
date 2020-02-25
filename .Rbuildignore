@@ -1,3 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README-.*\.png$
+^README\.Rmd$
+^doc$
+^Meta$

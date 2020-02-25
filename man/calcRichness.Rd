@@ -4,8 +4,15 @@
 \alias{calcRichness}
 \title{Calculate richness metrics}
 \usage{
-calcRichness(byUIDspp, byPlotspp, byUIDgen, byPlotgen, byUIDfam, byPlotfam,
-  sampID = "UID")
+calcRichness(
+  byUIDspp,
+  byPlotspp,
+  byUIDgen,
+  byPlotgen,
+  byUIDfam,
+  byPlotfam,
+  sampID = "UID"
+)
 }
 \arguments{
 \item{byUIDspp}{Data frame containing species data summarized to the UID

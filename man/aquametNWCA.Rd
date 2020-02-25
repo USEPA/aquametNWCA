@@ -3,7 +3,6 @@
 \docType{package}
 \name{aquametNWCA}
 \alias{aquametNWCA}
-\alias{aquametNWCA-package}
 \title{aquametNWCA}
 \description{
 aquametNWCA: A package to calculate vegetation metrics and the 

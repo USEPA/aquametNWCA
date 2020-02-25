@@ -3,3 +3,6 @@
 .RData
 .Rproj
 
+doc
+Meta
+inst/doc

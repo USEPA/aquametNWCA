@@ -1,8 +1,8 @@
 Package: aquametNWCA
 Type: Package
 Title: NWCA 2011 Metrics and Indices
-Version: 2.3
-Depends: R (>= 3.0)
+Version: 2.3.1
+Depends: R (>= 3.6)
 Imports:
     dplyr,
     plyr,
@@ -12,7 +12,6 @@ Imports:
     gtools,
     car,
     rlang
-Date: 2017-06-07
 Author: Karen Blocksom
 Maintainer: Karen Blocksom <blocksom.karen@epa.gov>
 Description: This package calculates vegetation 
@@ -29,4 +28,4 @@ Suggests:
     rmarkdown,
     testthat
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2

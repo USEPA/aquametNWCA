@@ -4,8 +4,14 @@
 \alias{nwcaVegData}
 \title{Prepare data for calculating metrics - alternative version}
 \usage{
-nwcaVegData(vascIn, sampID = "UID", inTaxa = taxaNWCA,
-  inNatCC = ccNatNWCA, inWIS = wisNWCA, cValReg = "STATE")
+nwcaVegData(
+  vascIn,
+  sampID = "UID",
+  inTaxa = taxaNWCA,
+  inNatCC = ccNatNWCA,
+  inWIS = wisNWCA,
+  cValReg = "STATE"
+)
 }
 \arguments{
 \item{vascIn}{Data frame containing cover data summarized by
