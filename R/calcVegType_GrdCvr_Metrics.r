@@ -44,9 +44,10 @@
 #' @return Either a character string containing an error message when metric 
 #'   calculation is not successful, or a data frame. The first column of the 
 #'   data frame is the \emph{sampID} variables and subsequent columns are named
-#'   for each metric and contain metric values. A list of metrics is provided in
-#'   the document named "VegTypes_GrdCover_Metric_Descriptions.pdf" included in
-#'   the help directory for the package.
+#'   for each metric and contain metric values. A list of vegetation type and 
+#'   ground cover metrics is installed with the package. Use 
+#'   system.file("VegTypes_GrdCover_Metric_Descriptions.pdf", package="aquametNWCA") 
+#'   to locate the file. 
 #' 
 #' @references US Environmental Protection Agency. 2016. National Wetland
 #'   Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
