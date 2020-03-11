@@ -4,7 +4,7 @@
 \alias{calcTreeCntMets}
 \title{Calculate tree count metrics}
 \usage{
-calcTreeCntMets(treeIn, sampID = "UID")
+calcTreeCntMets(treeIn, nPlot, sampID = "UID")
 }
 \arguments{
 \item{treeIn}{A data frame containing the following variables:
@@ -21,6 +21,10 @@ The following parameters are used in calculating tree metrics:
 'XXTHIN_TREE', 'XTHIN_TREE', 'THIN_TREE', 'JR_TREE', 'THICK_TREE', 
 'XTHICK_TREE', 'XXTHICK_TREE'. Additional parameters or variables
 are ignored.}
+
+\item{nPlot}{A data frame with the 
+number of plots sampled associated with
+each sample, with \emph{sampID} variables and NPLOTS.}
 
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples, 'UID' by default}
@@ -47,8 +51,10 @@ calculated due to missing parameters are set to 0.
 }
 \examples{
 head(TreesEx)
+nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
+,NPLOTS=length(unique(PLOT)))
 
-tcntEx <- calcTreeCntMets(TreesEx)
+tcntEx <- calcTreeCntMets(TreesEx, nPlot=nplots, sampID='UID')
 
 head(tcntEx)
 unique(tcntEx$PARAMETER)

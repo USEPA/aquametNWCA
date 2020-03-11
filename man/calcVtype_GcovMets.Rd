@@ -5,7 +5,7 @@
 \title{Calculate NWCA 2011 vegetation types and ground surface
 attribute metrics based on data collected from field form V-3}
 \usage{
-calcVtype_GcovMets(dataIn, sampID = "UID")
+calcVtype_GcovMets(dataIn, nPlotIn, sampID = "UID")
 }
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
@@ -31,6 +31,10 @@ calculating tree metrics: 'SANDT_CLASS','SUBMERGED_AQ',
 'EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK','WD_FINE',
 'WD_COARSE','TOTAL_LITTER'. Additional parameters or variables
 are ignored.}
+
+\item{nPlotIn}{A data frame with the 
+number of plots sampled associated with
+each sample, with \emph{sampID} variables and NPLOTS.}
 
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples, 'UID' by default}
@@ -60,7 +64,13 @@ value.
 }
 \examples{
 head(Vtype_GrCovEx)
-exOut <- calcVtype_GcovMets(Vtype_GrCovEx)
+
+subVtype_GrCovEx <- subset(Vtype_GrCovEx, PARAMETER!='SANDT_CLASS') 
+
+nplots <- plyr::ddply(subVtype_GrCovEx,c('UID'),dplyr::summarise
+,NPLOTS=length(unique(PLOT)))
+
+exOut <- calcVtype_GcovMets(Vtype_GrCovEx, nPlotIn=nplots, sampID='UID')
 
 str(exOut)
 head(exOut)

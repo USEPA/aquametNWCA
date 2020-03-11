@@ -4,7 +4,7 @@
 \alias{calcSnagMets}
 \title{Calculate snag metrics}
 \usage{
-calcSnagMets(treeIn, sampID = "UID")
+calcSnagMets(treeIn, nPlot, sampID = "UID")
 }
 \arguments{
 \item{treeIn}{A data frame containing the following variables:
@@ -21,6 +21,10 @@ The following parameters are used in
 calculating tree metrics: 'XXTHIN_SNAG', 'XTHIN_SNAG', 'THIN_SNAG', 
 'JR_SNAG', 'THICK_SNAG', 'XTHICK_SNAG', 'XXTHICK_SNAG'.
 Additional parameters or variables are ignored.}
+
+\item{nPlot}{A data frame with the 
+number of plots sampled associated with
+each sample, with \emph{sampID} variables and NPLOTS.}
 
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples, 'UID' by default.}
@@ -49,7 +53,10 @@ cannot be calculated due to missing parameters are set to 0.
 \examples{
 head(TreesEx)
 
-snagEx <- calcSnagMets(TreesEx)
+nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
+,NPLOTS=length(unique(PLOT)))
+
+snagEx <- calcSnagMets(TreesEx, nPlot=nplots, sampID='UID')
 
 head(snagEx)
 unique(snagEx$PARAMETER)

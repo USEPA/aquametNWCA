@@ -21,9 +21,12 @@
 #' 'JR_SNAG', 'THICK_SNAG', 'XTHICK_SNAG', 'XXTHICK_SNAG'.
 #' Additional parameters or variables are ignored.
 #' 
+#' @param nPlot A data frame with the 
+#' number of plots sampled associated with
+#' each sample, with \emph{sampID} variables and NPLOTS.
+#' 
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default.
-#' 
 #' 
 #' @details If any of the parameters are missing, they are assumed
 #' to be zeros, and metric values associated with any metrics that
@@ -43,12 +46,16 @@
 #' 
 #' @examples
 #' head(TreesEx)
-#'
-#' snagEx <- calcSnagMets(TreesEx)
+#' 
+#' nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
+#' ,NPLOTS=length(unique(PLOT)))
+#' 
+#' snagEx <- calcSnagMets(TreesEx, nPlot=nplots, sampID='UID')
 #'
 #' head(snagEx)
 #' unique(snagEx$PARAMETER)
-calcSnagMets <- function(treeIn,sampID='UID'){
+calcSnagMets <- function(treeIn, nPlot, sampID='UID'){
+  treeIn <- merge(treeIn,nPlot,by=sampID)
   # Create vector of all samples in dataset
   for(i in 1:length(sampID)){
     if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
@@ -58,7 +65,7 @@ calcSnagMets <- function(treeIn,sampID='UID'){
   
   allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID),stringsAsFactors=F)
 
-  treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
+#  treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
   snags <- subset(treeIn,PARAMETER %in% c('XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG','JR_SNAG','THICK_SNAG','XTHICK_SNAG','XXTHICK_SNAG'))
   if(nrow(snags)>0){
     snagsOut <- plyr::ddply(snags,c('SAMPID','PARAMETER'),summarise,TOTN=sum(as.numeric(RESULT)),XN=round(TOTN/unique(NPLOTS),2))
@@ -132,6 +139,9 @@ calcSnagMets <- function(treeIn,sampID='UID'){
 #' 'XXTHIN_TREE', 'XTHIN_TREE', 'THIN_TREE', 'JR_TREE', 'THICK_TREE', 
 #' 'XTHICK_TREE', 'XXTHICK_TREE'. Additional parameters or variables
 #' are ignored.
+#' @param nPlot A data frame with the 
+#' number of plots sampled associated with
+#' each sample, with \emph{sampID} variables and NPLOTS.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
 #' 
@@ -153,12 +163,16 @@ calcSnagMets <- function(treeIn,sampID='UID'){
 #' 
 #' @examples
 #' head(TreesEx)
-#'
-#' tcntEx <- calcTreeCntMets(TreesEx)
+#' nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
+#' ,NPLOTS=length(unique(PLOT)))
+#' 
+#' tcntEx <- calcTreeCntMets(TreesEx, nPlot=nplots, sampID='UID')
 #'
 #' head(tcntEx)
 #' unique(tcntEx$PARAMETER)
-calcTreeCntMets <- function(treeIn,sampID='UID'){
+calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
+  treeIn <- merge(treeIn, nPlot, by=sampID)
+  
   for(i in 1:length(sampID)){
     if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
     else treeIn$SAMPID <- paste(treeIn$SAMPID,treeIn[,sampID[i]],sep='.')
@@ -167,7 +181,7 @@ calcTreeCntMets <- function(treeIn,sampID='UID'){
   
   allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID),stringsAsFactors=F)
   
-  treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
+#  treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
  
   tcnts <- subset(treeIn,PARAMETER %in% c('XXTHIN_TREE','XTHIN_TREE','THIN_TREE','JR_TREE','THICK_TREE','XTHICK_TREE','XXTHICK_TREE'))
   if(nrow(tcnts)>0){
@@ -243,6 +257,9 @@ calcTreeCntMets <- function(treeIn,sampID='UID'){
 #' calculating tree metrics: 'VSMALL_TREE', 'SMALL_TREE', 'LMED_TREE'
 #' , 'HMED_TREE', 'TALL_TREE', 'VTALL_TREE'.  Additional parameters
 #' or variables are ignored.
+#' @param nPlot A data frame with the 
+#' number of plots sampled associated with
+#' each sample, with \emph{sampID} variables and NPLOTS.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
 #' 
@@ -263,12 +280,16 @@ calcTreeCntMets <- function(treeIn,sampID='UID'){
 #' 
 #' @examples
 #' head(TreesEx)
-#'
-#' tcvrEx <- calcTreeCoverMets(TreesEx)
+#' nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
+#' ,NPLOTS=length(unique(PLOT)))
+#' 
+#' tcvrEx <- calcTreeCoverMets(TreesEx, nPlot=nplots, sampID='UID')
 #'
 #' head(tcvrEx)
 #' unique(tcvrEx$PARAMETER)
-calcTreeCoverMets <- function(treeIn,sampID='UID'){
+calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
+  treeIn <- merge(treeIn,nPlot,by=sampID)
+  
   for(i in 1:length(sampID)){
     if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
     else treeIn$SAMPID <- paste(treeIn$SAMPID,treeIn[,sampID[i]],sep='.')
@@ -277,7 +298,7 @@ calcTreeCoverMets <- function(treeIn,sampID='UID'){
   
   allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID),stringsAsFactors=F)
   
-  treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
+#  treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
   ##### TREE SPECIES METRICS ####################################################################################
   tcvr <- subset(treeIn,PARAMETER %in% c('VSMALL_TREE','SMALL_TREE','LMED_TREE','HMED_TREE','TALL_TREE','VTALL_TREE'))
   if(nrow(tcvr)>0){

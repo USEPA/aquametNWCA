@@ -29,6 +29,10 @@
 #' 'XXTHICK_TREE','VSMALL_TREE','SMALL_TREE','LMED_TREE','HMED_TREE',
 #' 'TALL_TREE','VTALL_TREE'. Additional parameters or variables are
 #' ignored.
+#' @param nPlotIn A data frame with the 
+#' number of plots sampled associated with
+#' each sample, with \emph{sampID} variables and NPLOTS.
+
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
 #' 
@@ -52,13 +56,16 @@
 #' 
 #' @examples
 #' head(TreesEx)
+#' 
+#' nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
+#' ,NPLOTS=length(unique(PLOT)))
 #'
-#' exOut <- calcTreeMets(TreesEx)
+#' exOut <- calcTreeMets(TreesEx, nPlotIn=nplots, sampID='UID')
 #'
 #' head(exOut)
 #' str(exOut)
 
-calcTreeMets <- function(treeIn,sampID='UID'){
+calcTreeMets <- function(treeIn, nPlotIn, sampID='UID'){
 
   datNames <- c(sampID,'PAGE','LINE','PLOT','PARAMETER','RESULT')
   if(any(datNames %nin% names(treeIn))){
@@ -66,9 +73,9 @@ calcTreeMets <- function(treeIn,sampID='UID'){
     return(NULL)
   }
 
-  snagsOut <- calcSnagMets(treeIn,sampID)
-  treeCntsOut <- calcTreeCntMets(treeIn,sampID)
-  treeCvrOut <- calcTreeCoverMets(treeIn,sampID)
+  snagsOut <- calcSnagMets(treeIn, nPlot=nPlotIn, sampID)
+  treeCntsOut <- calcTreeCntMets(treeIn, nPlot=nPlotIn, sampID)
+  treeCvrOut <- calcTreeCoverMets(treeIn, nPlot=nPlotIn, sampID)
 
   ## Merge into a single output file in wide format
   treeMetOut <- rbind(snagsOut,treeCntsOut,treeCvrOut)

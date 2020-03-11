@@ -24,7 +24,8 @@ calculating tree metrics: 'LITTER_THATCH', 'LITTER_FORB',
 'WD_COARSE', 'EXPOSED_SOIL', 'EXPOSED_GRAVEL', 'EXPOSED_ROCK'.
 Additional parameters or variables are ignored.}
 
-\item{nPlot}{Number of plots sampled associated with each sample,
+\item{nPlot}{A data frame with the 
+number of plots sampled associated with each sample,
 including \emph{sampID} variables and NPLOTS.}
 
 \item{sampID}{A character vector containing the name(s) of

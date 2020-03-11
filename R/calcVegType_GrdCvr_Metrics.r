@@ -33,6 +33,9 @@
 #' 'EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK','WD_FINE',
 #' 'WD_COARSE','TOTAL_LITTER'. Additional parameters or variables
 #' are ignored.
+#' @param nPlotIn A data frame with the 
+#' number of plots sampled associated with
+#' each sample, with \emph{sampID} variables and NPLOTS.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
 #' 
@@ -57,12 +60,18 @@
 #' 
 #' @examples
 #' head(Vtype_GrCovEx)
-#' exOut <- calcVtype_GcovMets(Vtype_GrCovEx)
+#' 
+#' subVtype_GrCovEx <- subset(Vtype_GrCovEx, PARAMETER!='SANDT_CLASS') 
+#' 
+#' nplots <- plyr::ddply(subVtype_GrCovEx,c('UID'),dplyr::summarise
+#' ,NPLOTS=length(unique(PLOT)))
+#' 
+#' exOut <- calcVtype_GcovMets(Vtype_GrCovEx, nPlotIn=nplots, sampID='UID')
 #'
 #' str(exOut)
 #' head(exOut)
 
-calcVtype_GcovMets <- function(dataIn,sampID='UID'){
+calcVtype_GcovMets <- function(dataIn, nPlotIn, sampID='UID'){
 
   datNames <- c('UID','PLOT','PARAMETER','RESULT')
   if(any(datNames %nin% names(dataIn))){
@@ -70,13 +79,13 @@ calcVtype_GcovMets <- function(dataIn,sampID='UID'){
     return(NULL)
   }
 
-  nplots <- ddply(subset(dataIn,PARAMETER!='SANDT_CLASS'),sampID,summarise,NPLOTS=length(unique(PLOT)))
+  # nplots <- ddply(subset(dataIn,PARAMETER!='SANDT_CLASS'),sampID,summarise,NPLOTS=length(unique(PLOT)))
 
-  sandtOut <- calcSandTMets(dataIn,nplots,sampID)
-  vstratOut <- calcVascStratMets(dataIn,nplots,sampID)
-  nonvascOut <- calcNonvascMets(dataIn,nplots,sampID)
-  wcovOut <- calcWcovMets(dataIn,nplots,sampID)
-  bgLittOut <- calcBareGround_LitterMets(dataIn,nplots,sampID)
+  sandtOut <- calcSandTMets(dataIn,nPlotIn,sampID)
+  vstratOut <- calcVascStratMets(dataIn,nPlotIn,sampID)
+  nonvascOut <- calcNonvascMets(dataIn,nPlotIn,sampID)
+  wcovOut <- calcWcovMets(dataIn,nPlotIn,sampID)
+  bgLittOut <- calcBareGround_LitterMets(dataIn,nPlotIn,sampID)
 
 
   vgOut <- rbind(sandtOut,vstratOut,nonvascOut,wcovOut,bgLittOut)

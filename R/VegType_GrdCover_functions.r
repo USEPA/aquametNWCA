@@ -19,8 +19,9 @@
 #' The following parameters are used in calculating
 #' vegetation type metrics: 'SANDT_CLASS', 'PAL_FARMED'.
 #' Additional parameters or variables are ignored.
-#' @param nPlot Number of plots sampled associated with
-#' each samples, with \emph{sampID} variables and NPLOTS
+#' @param nPlot A data frame with the 
+#' number of plots sampled associated with
+#' each sample, with \emph{sampID} variables and NPLOTS
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID'
 #' by default.
@@ -128,7 +129,8 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
 #' 'LIANAS', 'VTALL_VEG', 'TALL_VEG', 'HMED_VEG', 'MED_VEG', 
 #' 'SMALL_VEG', 'VSMALL_VEG'.
 #' Additional parameters or variables are ignored.
-#' @param nPlot Number of plots sampled associated with each
+#' @param nPlot A data frame with the 
+#' number of plots sampled associated with each
 #' sample with \emph{sampID} variables and NPLOTS
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples,
@@ -277,7 +279,8 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 #'  calculating tree metrics: 'PEAT_MOSS', 'BRYOPHYTES', 'LICHENS', 
 #'  'ARBOREAL', 'ALGAE', 'MACROALGAE'. Additional parameters or
 #'  variables are ignored.
-#' @param nPlot Number of plots sampled associated with each sample
+#' @param nPlot A data frame with the 
+#' number of plots sampled associated with each sample
 #'  with sampID variables and NPLOTS.
 #' @param sampID  A character vector containing the name(s) of
 #'  variable(s) necessary to identify unique samples, 'UID'
@@ -399,7 +402,8 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
 #' 'MAXIMUM_DEPTH', 'PREDOMINANT_DEPTH', 'TOTAL_WATER', 
 #' 'WATER_NOVEG', 'WATER_AQVEG', 'WATER_EMERGVEG'.
 #' Additional parameters or variables are ignored.
-#' @param nPlot Number of plots sampled associated with each
+#' @param nPlot A data frame with the 
+#' number of plots sampled associated with each
 #' sample with \emph{sampID} variables and NPLOTS
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples,
@@ -529,7 +533,8 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
 #' 'LITTER_DEPTH_SW', 'LITTER_DEPTH_NE', 'TOTAL_LITTER', 'WD_FINE', 
 #' 'WD_COARSE', 'EXPOSED_SOIL', 'EXPOSED_GRAVEL', 'EXPOSED_ROCK'.
 #' Additional parameters or variables are ignored.
-#' @param nPlot Number of plots sampled associated with each sample,
+#' @param nPlot A data frame with the 
+#' number of plots sampled associated with each sample,
 #' including \emph{sampID} variables and NPLOTS.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples

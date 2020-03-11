@@ -90,14 +90,17 @@ As with the vascular plant metrics, there is a wrapper function that calculates 
 ## 3.1 All metrics at once
 ```{r allTree.1}
 head(TreesEx)
+# Calculate nplots from tree example data
+nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
+ ,NPLOTS=length(unique(PLOT)))
 
-outTree <- calcTreeMets(TreesEx, sampID='UID')
+outTree <- calcTreeMets(TreesEx, nPlotIn=nplots, sampID='UID')
 head(outTree)
 ```
 ## 3.2 Subsets of metrics
 To calculate only snag metrics, the same dataset can be used directly with the subset functions. In this example, we only want to calculate snag metrics. 
 ```{r subTree.1}
-outSnag <- calcSnagMets(TreesEx, sampID='UID')
+outSnag <- calcSnagMets(TreesEx, nPlot=nplots, sampID='UID')
 head(outSnag)
 unique(outSnag$PARAMETER)
 ```
@@ -109,7 +112,12 @@ Both vegetation type and ground cover data are collected on the same form (V-4) 
 ```{r allVG}
 head(Vtype_GrCovEx)
 
-outVG <- calcVtype_GcovMets(Vtype_GrCovEx, sampID='UID')
+subVtype <- subset(Vtype_GrCovEx, PARAMETER!='SANDT_CLASS')
+
+nplots <- plyr::ddply(subVtype, c('UID'),dplyr::summarise
+ ,NPLOTS=length(unique(PLOT)))
+
+outVG <- calcVtype_GcovMets(Vtype_GrCovEx, nPlotIn=nplots, sampID='UID')
 
 head(outVG)
 ```
@@ -117,7 +125,6 @@ head(outVG)
 If we only want to calculate a subset of metrics, say S & T metrics and vascular strata metrics, for example, we need to supply the number of plots sampled at each site along with the data from form V-4. 
 ```{r subVG}
 library(plyr)
-nplots <- ddply(Vtype_GrCovEx,c('UID'),summarise,NPLOTS=length(unique(PLOT)))
 
 outST <- calcSandTMets(Vtype_GrCovEx, nplots, sampID='UID')
 head(outST)

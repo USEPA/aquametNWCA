@@ -3,9 +3,11 @@ library(testthat)
 
 context("Tree metric functions")
 
+nplots <- plyr::ddply(testTree,c('UID'),dplyr::summarise
+                                ,NPLOTS=length(unique(PLOT)))
 
 test_that("Snag metric values correct",
-          {snagOut <- calcSnagMets(testTree,sampID='UID')
+          {snagOut <- calcSnagMets(testTree,nplots,sampID='UID')
            compOut <- merge(testMets,snagOut,by=c('UID','PARAMETER'))
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
            expect_true(nrow(snagOut)==140)
@@ -14,7 +16,7 @@ test_that("Snag metric values correct",
           })
 
 test_that("Tree count metric values correct",
-          {tcntOut <- calcTreeCntMets(testTree,sampID='UID')
+          {tcntOut <- calcTreeCntMets(testTree,nplots,sampID='UID')
            compOut <- merge(testMets,tcntOut,by=c('UID','PARAMETER'))
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
            expect_true(nrow(tcntOut)==160)
@@ -23,7 +25,7 @@ test_that("Tree count metric values correct",
           })
 
 test_that("Tree cover metric values correct",
-          {tcvrOut <- calcTreeCoverMets(testTree,sampID='UID')
+          {tcvrOut <- calcTreeCoverMets(testTree,nplots,sampID='UID')
            compOut <- merge(testMets,tcvrOut,by=c('UID','PARAMETER'))
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
            expect_true(nrow(tcvrOut)==400)
@@ -34,7 +36,7 @@ test_that("Tree cover metric values correct",
 
 test_that("All tree metric values correct",
           {
-            treeOut <- calcTreeMets(testTree,sampID='UID')
+            treeOut <- calcTreeMets(testTree,nplots,sampID='UID')
             treeOut.long <- reshape2::melt(treeOut,id.vars=c('UID'),variable.name='PARAMETER',value.name='RESULT')
             compOut <- merge(testMets,treeOut.long,by=c('UID','PARAMETER'))
             compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))

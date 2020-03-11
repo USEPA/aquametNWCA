@@ -24,7 +24,8 @@ calculating tree metrics: 'TIME', 'MINIMUM_DEPTH',
 'WATER_NOVEG', 'WATER_AQVEG', 'WATER_EMERGVEG'.
 Additional parameters or variables are ignored.}
 
-\item{nPlot}{Number of plots sampled associated with each
+\item{nPlot}{A data frame with the 
+number of plots sampled associated with each
 sample with \emph{sampID} variables and NPLOTS}
 
 \item{sampID}{A character vector containing the name(s) of

@@ -4,7 +4,7 @@
 \alias{calcTreeCoverMets}
 \title{Calculate tree cover metrics}
 \usage{
-calcTreeCoverMets(treeIn, sampID = "UID")
+calcTreeCoverMets(treeIn, nPlot, sampID = "UID")
 }
 \arguments{
 \item{treeIn}{A data frame containing the following variables:
@@ -25,6 +25,10 @@ The following parameters are used in
 calculating tree metrics: 'VSMALL_TREE', 'SMALL_TREE', 'LMED_TREE'
 , 'HMED_TREE', 'TALL_TREE', 'VTALL_TREE'.  Additional parameters
 or variables are ignored.}
+
+\item{nPlot}{A data frame with the 
+number of plots sampled associated with
+each sample, with \emph{sampID} variables and NPLOTS.}
 
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples, 'UID' by default}
@@ -50,8 +54,10 @@ cannot be calculated due to missing parameters are set to 0.
 }
 \examples{
 head(TreesEx)
+nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
+,NPLOTS=length(unique(PLOT)))
 
-tcvrEx <- calcTreeCoverMets(TreesEx)
+tcvrEx <- calcTreeCoverMets(TreesEx, nPlot=nplots, sampID='UID')
 
 head(tcvrEx)
 unique(tcvrEx$PARAMETER)
