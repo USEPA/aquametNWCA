@@ -812,6 +812,7 @@ int.calcXBC <- function(x,sampID){
   for(i in 1:nrow(uidlist)){
     x1 <- subset(x,SAMPID==uidlist[i,])
     x2 <- dcast(x1,PLOT~SPECIES,value.var='COVER')
+      x2[is.na(x2)] <- 0
     x3 <- ecodist::distance(x2[,2:length(x2)],'bray-curtis')
     outx <- data.frame(SAMPID=uidlist[i,],XBCDIST_SPP=round(mean(x3),4),stringsAsFactors=FALSE)
     outdf <- rbind(outdf,outx)

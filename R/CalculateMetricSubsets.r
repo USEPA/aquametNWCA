@@ -1098,7 +1098,7 @@ calcBCmets <- function(vascIn,sampID='UID'){
   if('SPECIES_NAME_ID' %nin% names(vascIn)){
     uniqNames <- unique(vascIn$USDA_NAME)
     uniqNames <- plyr::mutate(uniqNames,SPECIES_NAME_ID=seq(1,length(uniqNames)))
-    vascIn <- merge(vascIn,uniqNames,by='UsDA_NAME')
+    vascIn <- merge(vascIn,uniqNames,by='USDA_NAME')
   }
 
   forDist <- plyr::ddply(vascIn,c(sampID,'PLOT','SPECIES_NAME_ID')

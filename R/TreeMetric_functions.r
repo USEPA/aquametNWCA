@@ -55,7 +55,7 @@
 #' head(snagEx)
 #' unique(snagEx$PARAMETER)
 calcSnagMets <- function(treeIn, nPlot, sampID='UID'){
-  treeIn <- merge(treeIn,nPlot,by=sampID)
+  treeIn <- merge(treeIn,nPlot,by=sampID, all.y=TRUE)
   # Create vector of all samples in dataset
   for(i in 1:length(sampID)){
     if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
@@ -171,7 +171,7 @@ calcSnagMets <- function(treeIn, nPlot, sampID='UID'){
 #' head(tcntEx)
 #' unique(tcntEx$PARAMETER)
 calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
-  treeIn <- merge(treeIn, nPlot, by=sampID)
+  treeIn <- merge(treeIn, nPlot, by=sampID, all.y=TRUE)
   
   for(i in 1:length(sampID)){
     if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
@@ -288,7 +288,7 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
 #' head(tcvrEx)
 #' unique(tcvrEx$PARAMETER)
 calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
-  treeIn <- merge(treeIn,nPlot,by=sampID)
+  treeIn <- merge(treeIn,nPlot,by=sampID, all.y=TRUE)
   
   for(i in 1:length(sampID)){
     if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
