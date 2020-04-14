@@ -78,9 +78,12 @@ calcDuration <- function(vascIn,sampID='UID'){
   }
 
   # From DURATION, create DUR_ALT variable
-  vascIn.1 <- plyr::mutate(vascIn,DUR_ALT=car::recode(DURATION,"c('ANNUAL, BIENNIAL','BIENNIAL')='ANN_BIEN';
-                  c('ANNUAL, BIENNIAL, PERENNIAL','ANNUAL, PERENNIAL','PERENNIAL, ANNUAL', 'BIENNIAL, PERENNIAL')='ANN_PEREN'"))
-
+  if('DUR_ALT' %in% names(vascIn)){
+    vascIn.1 <- vascIn
+  }else{
+    vascIn.1 <- plyr::mutate(vascIn,DUR_ALT=car::recode(DURATION,"c('ANNUAL, BIENNIAL','BIENNIAL')='ANN_BIEN';
+                    c('ANNUAL, BIENNIAL, PERENNIAL','ANNUAL, PERENNIAL','PERENNIAL, ANNUAL', 'BIENNIAL, PERENNIAL')='ANN_PEREN'"))
+  }
   durOut <- int.calcTraits_MultCat(vascIn.1,'DUR_ALT',sampID)
   
   empty_base <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
@@ -209,8 +212,12 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
                 ". Try prepareData() function to create necessary input variables.",sep=''))
     return(NULL)
   }
-
-  vascIn.1 <- plyr::mutate(vascIn,GRH_ALT=car::recode(GROWTH_HABIT,"c('FORB/HERB','FORB/HERB, SHRUB','FORB/HERB, SHRUB, SUBSHRUB'
+  # Check for GRH_ALT variable
+  if('GRH_ALT' %in% names(vascIn)){
+    vascIn.1 <- plyr::mutate(vascIn, GRH_ALT=gsub('SUBSHRUB', 'SSHRUB', GRH_ALT))
+  }else{
+    vascIn.1 <- plyr::mutate(vascIn,GRH_ALT=car::recode(GROWTH_HABIT,
+                                                        "c('FORB/HERB','FORB/HERB, SHRUB','FORB/HERB, SHRUB, SUBSHRUB'
                           ,'FORB/HERB, SUBSHRUB')='FORB';c('SUBSHRUB, FORB/HERB','SUBSHRUB, SHRUB, FORB/HERB')='SSHRUB_FORB'
                           ;c('SUBSHRUB','SUBSHRUB, SHRUB','SHRUB, SUBSHRUB','SUBSHRUB, SHRUB, TREE')='SSHRUB_SHRUB'
                           ;c('SHRUB','SHRUB, TREE','TREE, SUBSHRUB, SHRUB','SHRUB, SUBSHRUB, TREE')='SHRUB'
@@ -218,10 +225,20 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
                           ;c('VINE, FORB/HERB','SUBSHRUB, FORB/HERB, VINE','FORB/HERB, VINE')='VINE'
                           ;c('VINE, SHRUB','VINE, SUBSHRUB','SUBSHRUB, VINE','SHRUB, VINE','SHRUB, FORB/HERB, SUBSHRUB, VINE'
                           ,'SHRUB, SUBSHRUB, VINE')='VINE_SHRUB'
-                          ;c('GRAMINOID','SUBSHRUB, SHRUB, GRAMINOID')='GRAMINOID'")
-                           ,TREE_COMB=ifelse(GRH_ALT %in% c('TREE','TREE_SHRUB'),1,0)
-                           ,SHRUB_COMB=ifelse(GRH_ALT %in% c('SSHRUB_SHRUB','SSHURB_FORB','SHRUB'),1,0)
-                           ,HERB=ifelse(GRH_ALT %in% c('GRAMINOID','FORB'),1,0))
+                          ;c('GRAMINOID','SUBSHRUB, SHRUB, GRAMINOID')='GRAMINOID'"))
+  }
+  # Check for TREE_COMB variable
+  if(('TREE_COMB' %in% names(vascIn))==FALSE){
+    vascIn.1 <- plyr::mutate(vascIn.1, TREE_COMB=ifelse(GRH_ALT %in% c('TREE','TREE_SHRUB'),1,0))
+  }
+  # Check for SHRUB_COMB variable
+  if(('SHRUB_COMB' %in% names(vascIn))==FALSE){
+    vascIn.1 <- plyr::mutate(vascIn.1, SHRUB_COMB=ifelse(GRH_ALT %in% c('SSHRUB_SHRUB','SSHURB_FORB','SHRUB'),1,0))
+  }
+  # Check for HERB variable
+  if(('HERB' %in% names(vascIn))==FALSE){
+    vascIn.1 <- plyr::mutate(vascIn.1, HERB=ifelse(GRH_ALT %in% c('GRAMINOID','FORB'),1,0))
+  }
 
   sppGRH <- int.calcTraits_MultCat(vascIn.1,'GRH_ALT',sampID)
   sppGRH.1 <- int.combTraits(vascIn.1,c('TREE_COMB','SHRUB_COMB','HERB'),sampID)
