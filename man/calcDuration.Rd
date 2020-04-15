@@ -17,6 +17,10 @@ sampID variables and TAXON, with the following fields:
     \item DURATION: USDA PLANTS DURATION variable, with valid
     values "ANNUAL", "BIENNIAL", "PERENNIAL", combinations
     of these values, or blank
+    
+    \item DUR_ALT (optional): Combinations of DURATION into
+    ANNUAL, PERENNIAL, ANN_BIEN, and ANN_PEREN, as used in 
+    NWCA. Created in code if not supplied by user.
 
     \item XABCOV: Mean percent cover of taxon across plots
 

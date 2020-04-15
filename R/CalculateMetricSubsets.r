@@ -22,6 +22,10 @@
 #'     \item DURATION: USDA PLANTS DURATION variable, with valid
 #'     values "ANNUAL", "BIENNIAL", "PERENNIAL", combinations
 #'     of these values, or blank
+#'     
+#'     \item DUR_ALT (optional): Combinations of DURATION into
+#'     ANNUAL, PERENNIAL, ANN_BIEN, and ANN_PEREN, as used in 
+#'     NWCA. Created in code if not supplied by user.
 #'
 #'     \item XABCOV: Mean percent cover of taxon across plots
 #'
@@ -161,6 +165,22 @@ calcDuration <- function(vascIn,sampID='UID'){
 #'     \item GROWTH_HABIT: USDA PLANTS GROWTH_HABIT variable with valid
 #'     values FORB, GRAMINOID, HERB, SHRUB, SUBSHRUB, TREE, VINE,
 #'     NONVASCULAR, combinations of these, or blank
+#'     
+#'     \item GRH_ALT (optional): Combinations of GROWTH_HABIT variable
+#'     as used in NWCA. Created in code if not supplied by user. Valid
+#'     values include FORB, GRAMINOID, SHRUB, SSHRUB_FORB, SSHRUB_SHRUB,
+#'     TREE, TREE_SHRUB, VINE, VINE_SHRUB.
+#'     
+#'     \item TREE_COMB (optional): Indicator (1/0) for values of  
+#'     TREE or TREE_SHRUB in GRH_ALT.
+#'     If not supplied by user, will be created in code
+#'     
+#'     \item SHRUB_COMB (optional): Indicator value (0/1) for GRH_ALT 
+#'     values of SHRUB, SSHRUB_FORB, or SSHRUB_SHRUB. Created in code
+#'     if not supplied by user.
+#'     
+#'     \item HERB (optional): Indicator value (0/1) for GRH_ALT values
+#'     of GRAMINOID or FORB. Created in code if not supplied by user.
 #'
 #'     \item XABCOV: Mean percent cover of taxon across plots
 #'
