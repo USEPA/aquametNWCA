@@ -1,6 +1,6 @@
 # NWCA_TestPlantMetricCode.r
 # Purpose: Test plant metric code to make sure changes in code do not change 
-# initial metric calculations beyond the test data
+# initial metric calculations beyond the test data (for 2011 only)
 #
 # Created 4/6/2020 by Karen Blocksom
 #############################################################################

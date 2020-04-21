@@ -1133,8 +1133,8 @@ calcBCmets <- function(vascIn,sampID='UID'){
   # Need to account for cases where there is no SPECIES_NAME_ID by creating one just for this
   # calculation
   if('SPECIES_NAME_ID' %nin% names(vascIn)){
-    uniqNames <- unique(vascIn$USDA_NAME)
-    uniqNames <- plyr::mutate(uniqNames,SPECIES_NAME_ID=seq(1,length(uniqNames)))
+    uniqNames <- data.frame(TAXON=unique(vascIn$TAXON), stringsAsFactors=F)
+    uniqNames <- plyr::mutate(uniqNames,SPECIES_NAME_ID=seq(from=1,to=length(uniqNames)))
     vascIn <- merge(vascIn,uniqNames,by='USDA_NAME')
   }
 

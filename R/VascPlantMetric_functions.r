@@ -55,6 +55,11 @@
 #' head(outEx$byPlot)
 createDFs <- function(sampID='UID',tvar,vascIn,taxa){
   
+  # Drop SPECIES_NAME_ID if present here
+  if('SPECIES_NAME_ID' %in% names(taxa)){
+    subset(taxa, select=-SPECIES_NAME_ID)
+  }
+  
   # First merge the taxa list with the cover data by USDA_NAME
   vascIn.1 <- merge(vascIn,taxa,by='USDA_NAME')
   vascIn.1$tobj <- vascIn.1[,tvar] # Set tobj as the value of tvar
@@ -249,25 +254,31 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
     print(paste("Missing key variables! Should be ",sampID," PLOT, USDA_NAME, COVER, STATE, and USAC_REGION.",sep=''))
     return(NULL)
   }
+  datNames <- subset(datNames, select=c(sampID, 'PLOT','USDA_NAME','COVER','STATE','USAC_REGION'))
+  
   # Input taxa list with taxonomy and life history traits
-  taxNames <- c('USDA_NAME','FAMILY','GENUS')
-  altNames <- c('CATEGORY','GROWTH_HABIT','DURATION')
-  if(any(taxNames %nin% names(inTaxa))){
-    print("Missing key variables! Need at least USDA_NAME, FAMILY, GENUS to calculate metrics.")
-    return(NULL)
+  if(!is.null(inTaxa)){
+    taxNames <- c('USDA_NAME','FAMILY','GENUS')
+    altNames <- c('CATEGORY','GROWTH_HABIT','DURATION')
+    if(any(taxNames %nin% names(inTaxa))){
+      print("Missing key variables! Need at least USDA_NAME, FAMILY, GENUS to calculate metrics.")
+      return(NULL)
+    }
+    if(any(altNames %nin% names(inTaxa))){
+      msgNames <- altNames[altNames %nin% names(inTaxa)]
+      print(paste("Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
+                  " without these parameters in inTaxa",sep=''))
+    }
+    inTaxa <- subset(inTaxa, select=names(inTaxa) %in% c('USDA_NAME', taxNames, altNames,'SPECIES_NAME_ID'))
   }
-  if(any(altNames %nin% names(inTaxa))){
-    msgNames <- altNames[altNames %nin% names(inTaxa)]
-    print(paste("Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
-                " without these parameters in inTaxa",sep=''))
-  }
-
+  
   # Coefficients of conservatism and native status values
+  if(!is.null(inNatCC)){
     ccNames <- c('USDA_NAME','GEOG_ID')
     ccVars <- c('NWCA_CC','NWCA_NATSTAT')
   # This only applies if someone specifies a taxalist not included in the package
     if(any(ccNames %nin% names(inNatCC))){
-      print("Missing key variables! Need variables named USDA_NAME, GEOG_ID (State) to match up
+      print("Missing key variables! Need variables named USDA_NAME, GEOG_ID to match up
             with cover data. This taxa list cannot be used in calculations. Either revise file
             or use default taxa list by not specifying the inNatCC argument.")
       return(NULL)
@@ -277,7 +288,8 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
       print(paste("Warning: Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
                   " without these parameter in inNatCC."))
     }
-
+    inNatCC <- subset(inNatCC, select=names(inNatCC) %in% c('USDA_NAME','GEOG_ID','NWCA_CC','NWCA_NATSTAT'))
+  }
 
   # Wetland Indicator Status values
   if(!is.null(inWIS)){
@@ -288,6 +300,7 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
             taxa list by not specifying inWIS argument.")
       return(NULL)
     }
+    inWIS <- subset(inWIS, select=c('USDA_NAME','GEOG_ID','WIS'))
   }
 
   ## Create dfs for species level, genus, family, and order
