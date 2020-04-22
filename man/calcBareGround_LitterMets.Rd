@@ -4,7 +4,7 @@
 \alias{calcBareGround_LitterMets}
 \title{Calculate bare ground and litter metrics}
 \usage{
-calcBareGround_LitterMets(dataIn, nPlot, sampID = "UID")
+calcBareGround_LitterMets(dataIn, nPlot, sampID = "UID", survyear = "2011")
 }
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
@@ -18,10 +18,13 @@ calcBareGround_LitterMets(dataIn, nPlot, sampID = "UID")
 \item RESULT (measured value)
 }
 The following parameters are used in
-calculating tree metrics: 'LITTER_THATCH', 'LITTER_FORB', 
+calculating ground cover metrics: 'LITTER_THATCH', 'LITTER_FORB', 
 'LITTER_CONIFER', 'LITTER_DECID', 'LITTER_BROADLEAF', 
-'LITTER_DEPTH_SW', 'LITTER_DEPTH_NE', 'TOTAL_LITTER', 'WD_FINE', 
-'WD_COARSE', 'EXPOSED_SOIL', 'EXPOSED_GRAVEL', 'EXPOSED_ROCK'.
+'LITTER_DEPTH_SW', 'LITTER_DEPTH_NE', 'DEPTH_SW' (2016), 
+'DEPTH_NE' (2016), TOTAL_LITTER', 'WD_FINE', 
+'WD_COARSE', 'EXPOSED_SOIL', 'EXPOSED_GRAVEL', 'EXPOSED_ROCK',
+ 'PREDOMINANT_LITTER' (2016).
+
 Additional parameters or variables are ignored.}
 
 \item{nPlot}{A data frame with the 
@@ -30,6 +33,12 @@ including \emph{sampID} variables and NPLOTS.}
 
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples}
+
+\item{survyear}{A string with the survey year. The default is '2011'.
+Starting in 2016, parameter structure changed such that, instead of
+individual LITTER_XXXX parameters to indicate the preominant litter
+type, PREDOMINANT_LITTER was used. In addition, DEPTH_NE and DEPTH_SW
+replaced LITTER_DEPTH_NE and LITTER_DEPTH_SW.}
 }
 \value{
 Either a character string containing an error message when metric

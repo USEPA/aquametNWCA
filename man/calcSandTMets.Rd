@@ -18,7 +18,8 @@ calcSandTMets(dataIn, nPlot, sampID = "UID")
 \item RESULT: measured value
 }
 The following parameters are used in calculating
-vegetation type metrics: 'SANDT_CLASS', 'PAL_FARMED'.
+wetland type metrics: 'SANDT_CLASS' and 'PAL_FARMED', or 
+'WETLAND_TYPE' (2016).
 Additional parameters or variables are ignored.}
 
 \item{nPlot}{A data frame with the 

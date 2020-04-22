@@ -17,7 +17,8 @@
 #' \item RESULT: measured value
 #' }
 #' The following parameters are used in calculating
-#' vegetation type metrics: 'SANDT_CLASS', 'PAL_FARMED'.
+#' wetland type metrics: 'SANDT_CLASS' and 'PAL_FARMED', or 
+#' 'WETLAND_TYPE' (2016).
 #' Additional parameters or variables are ignored.
 #' @param nPlot A data frame with the 
 #' number of plots sampled associated with
@@ -125,7 +126,7 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
 #' \item RESULT: measured value
 #' }
 #' The following parameters are used in
-#' calculating tree metrics: 'SUBMERGED_AQ', 'FLOATING_AQ', 
+#' calculating vascular strata metrics: 'SUBMERGED_AQ', 'FLOATING_AQ', 
 #' 'LIANAS', 'VTALL_VEG', 'TALL_VEG', 'HMED_VEG', 'MED_VEG', 
 #' 'SMALL_VEG', 'VSMALL_VEG'.
 #' Additional parameters or variables are ignored.
@@ -276,16 +277,19 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 #'  \item RESULT: measured value
 #'  }
 #'  The following parameters are used in
-#'  calculating tree metrics: 'PEAT_MOSS', 'BRYOPHYTES', 'LICHENS', 
-#'  'ARBOREAL', 'ALGAE', 'MACROALGAE'. Additional parameters or
-#'  variables are ignored.
+#'  calculating non-vascular metrics: 'PEAT_MOSS', 'BRYOPHYTES', 'LICHENS', 
+#'  'ARBOREAL', 'ALGAE', 'MACROALGAE'. 
+#'  Additional parameters or variables are ignored. PEAT_MOSS has values of
+#'  'Y/N' for 2011 but only Y or missing for 2016.
 #' @param nPlot A data frame with the 
 #' number of plots sampled associated with each sample
 #'  with sampID variables and NPLOTS.
 #' @param sampID  A character vector containing the name(s) of
 #'  variable(s) necessary to identify unique samples, 'UID'
 #'  by default.
-#' 
+#' @param survyear A string with the survey year. The default is '2011'.
+#' Starting in 2016, ARBOREAL began being measured as a categorical 
+#' variable, ARBOREAL_ABUNDANCE.
 #' @details If any of the parameters are missing, they are assumed to
 #'  be zeros (if numeric), and metric values associated with any metrics
 #'  that cannot be calculated due to missing parameters are set to a
@@ -315,7 +319,7 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 #'
 #'  head(nvEx)
 #'  unique(nvEx$PARAMETER)
-calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
+calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
   ## Now merge back with input df
   dataIn1 <- merge(dataIn,nPlot,by=sampID)
 
@@ -330,6 +334,7 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
   
   nvstrat <- subset(dataIn1,PARAMETER %in% c('PEAT_MOSS','BRYOPHYTES','LICHENS','ARBOREAL','ALGAE','MACROALGAE') &
                       !is.na(RESULT) & RESULT!='0')
+  nvstrat <- mutate(nvstrat, PARAMETER=gsub('_ABUNDANCE', '', PARAMETER)) # This accounts for change in ARBOREAL to ARBOREAL_ABUNDANCE
 
   # Now use this data frame to calculate metrics
   ## First calculate metrics for non-vascular veg types, excluding peat moss
@@ -344,9 +349,10 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
 
   ## now count number and frequency of plots with peat moss dominant (i.e., PEAT_MOSS='Y')
   ## Need to account for situations where PEAT_MOSS not present
-  if(nrow(subset(nvstrat,PARAMETER=='PEAT_MOSS' & RESULT!='N'))>0){
-    indf2 <- plyr::ddply(subset(nvstrat,PARAMETER=='PEAT_MOSS' & RESULT!='N'),c('SAMPID'),summarise,N_PEAT_MOSS_DOM=length(PLOT)
-                   ,FREQ_PEAT_MOSS_DOM=(N_PEAT_MOSS_DOM/unique(NPLOTS))*100)
+  if(nrow(subset(nvstrat,PARAMETER=='PEAT_MOSS' & RESULT!='N' & !is.na(RESULT)))>0){
+    indf2 <- plyr::ddply(subset(nvstrat,PARAMETER=='PEAT_MOSS' & RESULT!='N' & !is.na(RESULT)),
+                         c('SAMPID'),summarise,N_PEAT_MOSS_DOM=length(PLOT),
+                   FREQ_PEAT_MOSS_DOM=(N_PEAT_MOSS_DOM/unique(NPLOTS))*100)
 
     outdf2 <- reshape2::melt(indf2,id.vars=c('SAMPID'),variable.name='PARAMETER',value.name='RESULT')
     outdf2a <- reshape2::melt(reshape2::dcast(outdf2,SAMPID~PARAMETER,value.var='RESULT'),id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
@@ -359,10 +365,15 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
 
   outdf4 <- reshape2::dcast(outdf3,SAMPID~METRIC,value.var='RESULT')
   empty_nv <- data.frame(t(rep(NA,17)),stringsAsFactors=F)
-  names(empty_nv) <- c("FREQ_ALGAE", "FREQ_ARBOREAL","FREQ_BRYOPHYTES","FREQ_LICHENS","FREQ_MACROALGAE","IMP_ALGAE"
-                       ,"IMP_ARBOREAL","IMP_BRYOPHYTES","IMP_LICHENS","IMP_MACROALGAE","XCOV_ALGAE","XCOV_ARBOREAL","XCOV_BRYOPHYTES"
-                       ,"XCOV_LICHENS","XCOV_MACROALGAE","N_PEAT_MOSS_DOM","FREQ_PEAT_MOSS_DOM")
-
+  if(survyear=='2011'){
+    names(empty_nv) <- c("FREQ_ALGAE", "FREQ_ARBOREAL","FREQ_BRYOPHYTES","FREQ_LICHENS","FREQ_MACROALGAE","IMP_ALGAE"
+                         ,"IMP_ARBOREAL","IMP_BRYOPHYTES","IMP_LICHENS","IMP_MACROALGAE","XCOV_ALGAE","XCOV_ARBOREAL","XCOV_BRYOPHYTES"
+                         ,"XCOV_LICHENS","XCOV_MACROALGAE","N_PEAT_MOSS_DOM","FREQ_PEAT_MOSS_DOM")
+  }else{
+    names(empty_nv) <- c("FREQ_ALGAE", "FREQ_BRYOPHYTES","FREQ_LICHENS","FREQ_MACROALGAE","IMP_ALGAE"
+                         ,"IMP_BRYOPHYTES","IMP_LICHENS","IMP_MACROALGAE","XCOV_ALGAE","XCOV_BRYOPHYTES"
+                         ,"XCOV_LICHENS","XCOV_MACROALGAE","N_PEAT_MOSS_DOM","FREQ_PEAT_MOSS_DOM")
+  }
   outdf5 <- subset(merge(outdf4, empty_nv, all=TRUE),!is.na(SAMPID))
 
   outdf6 <- merge(allUIDs,outdf5,by='SAMPID',all.x=T)
@@ -398,16 +409,21 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
 #' \item RESULT: measured value
 #' }
 #' The following parameters are used in
-#' calculating tree metrics: 'TIME', 'MINIMUM_DEPTH', 
+#' calculating water cover metrics: 'TIME', 'MINIMUM_DEPTH', 
 #' 'MAXIMUM_DEPTH', 'PREDOMINANT_DEPTH', 'TOTAL_WATER', 
 #' 'WATER_NOVEG', 'WATER_AQVEG', 'WATER_EMERGVEG'.
 #' Additional parameters or variables are ignored.
+#' WATER_NOVEG, WATER_AQVEG, MINIMUM_DEPTH, and 
+#' MAXIMUM_DEPTH not measured in 2016. 
 #' @param nPlot A data frame with the 
 #' number of plots sampled associated with each
 #' sample with \emph{sampID} variables and NPLOTS
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples,
 #' 'UID' by default.
+#' @param survyear A string with the survey year. The default is '2011'.
+#' Starting in 2016, only TIME, TOTAL_WATER, and PREDOMINANT_DEPTH is 
+#' measured.
 #' 
 #' @details If any of the parameters are missing, they are assumed
 #' to be zeros (if numeric), and metric values associated with any
@@ -439,7 +455,7 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID'){
 #'
 #' head(wcovEx)
 #' unique(wcovEx$METRIC)
-calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
+calcWcovMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
   ## Now merge back with input df
   dataIn1 <- merge(dataIn,nPlot,by=sampID)
 
@@ -461,14 +477,24 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
                            ,id.vars=c('SAMPID','PLOT','NPLOTS'),variable.name='PARAMETER',value.name='RESULT')
   wdep2a <- mutate(wdep2a,RESULT=ifelse(is.na(RESULT),0,as.numeric(RESULT)))
   
-  wat1 <- plyr::ddply(wdep1,c('SAMPID'),summarise
-                      ,MIN_H2O_DEPTH=ifelse(any(!is.na(MINIMUM_DEPTH)),min(MINIMUM_DEPTH,na.rm=TRUE),NA)
-                      ,MAX_H2O_DEPTH=ifelse(any(!is.na(MAXIMUM_DEPTH)),max(MAXIMUM_DEPTH,na.rm=TRUE),NA)
-                      ,XH2O_DEPTH_AA=ifelse(any(!is.na(PREDOMINANT_DEPTH))
-                                                ,round(sum(PREDOMINANT_DEPTH,na.rm=TRUE)/unique(NPLOTS),2),NA)
-                      ,MIN_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),min(TOTAL_WATER,na.rm=TRUE),NA)
-                      ,MAX_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),max(TOTAL_WATER,na.rm=TRUE),NA)
-  )
+  if(survyear=='2011'){
+    wat1 <- plyr::ddply(wdep1,c('SAMPID'),summarise
+                        ,MIN_H2O_DEPTH=ifelse(any(!is.na(MINIMUM_DEPTH)),min(MINIMUM_DEPTH,na.rm=TRUE),NA)
+                        ,MAX_H2O_DEPTH=ifelse(any(!is.na(MAXIMUM_DEPTH)),max(MAXIMUM_DEPTH,na.rm=TRUE),NA)
+                        ,XH2O_DEPTH_AA=ifelse(any(!is.na(PREDOMINANT_DEPTH))
+                                                  ,round(sum(PREDOMINANT_DEPTH,na.rm=TRUE)/unique(NPLOTS),2),NA)
+                        ,MIN_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),min(TOTAL_WATER,na.rm=TRUE),NA)
+                        ,MAX_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),max(TOTAL_WATER,na.rm=TRUE),NA)
+    )
+  }else{
+    wat1 <- plyr::ddply(wdep1,c('SAMPID'),summarise,
+                        XH2O_DEPTH_AA=ifelse(any(!is.na(PREDOMINANT_DEPTH))
+                                              ,round(sum(PREDOMINANT_DEPTH,na.rm=TRUE)/unique(NPLOTS),2),NA),
+                        MIN_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),min(TOTAL_WATER,na.rm=TRUE),NA),
+                        MAX_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),max(TOTAL_WATER,na.rm=TRUE),NA)
+    )
+    
+  }
   wat1a <- reshape2::melt(wat1,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
 
   ## Fix Inf values to 0s
@@ -489,10 +515,14 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
   watMet1 <- reshape2::dcast(watMet,SAMPID~METRIC,value.var='RESULT')
 
   empty_wat <- data.frame(t(rep(NA,18)),stringsAsFactors=F)
-  names(empty_wat) <- c("MIN_H2O_DEPTH","MAX_H2O_DEPTH","XH2O_DEPTH_AA","MIN_COV_H2O","MAX_COV_H2O","FREQ_H2O"
-                        ,"FREQ_H2O_AQVEG","FREQ_H2O_EMERGVEG","FREQ_H2O_NOVEG","XCOV_H2O","XCOV_H2O_AQVEG","XCOV_H2O_EMERGVEG"
-                        ,"XCOV_H2O_NOVEG","IMP_H2O","IMP_H2O_AQVEG","IMP_H2O_EMERGVEG","IMP_H2O_NOVEG","XH2O_DEPTH")
-
+  if(survyear=='2011'){
+    names(empty_wat) <- c("MIN_H2O_DEPTH","MAX_H2O_DEPTH","XH2O_DEPTH_AA","MIN_COV_H2O","MAX_COV_H2O","FREQ_H2O"
+                          ,"FREQ_H2O_AQVEG","FREQ_H2O_EMERGVEG","FREQ_H2O_NOVEG","XCOV_H2O","XCOV_H2O_AQVEG","XCOV_H2O_EMERGVEG"
+                          ,"XCOV_H2O_NOVEG","IMP_H2O","IMP_H2O_AQVEG","IMP_H2O_EMERGVEG","IMP_H2O_NOVEG","XH2O_DEPTH")
+  }else{
+    names(empty_wat) <- c("XH2O_DEPTH_AA","MIN_COV_H2O","MAX_COV_H2O","FREQ_H2O",
+                          "XCOV_H2O","IMP_H2O","XH2O_DEPTH")
+  }
   watMet2 <- subset(merge(watMet1, empty_wat, all=TRUE),!is.na(SAMPID))
 
   watMet3 <- merge(allUIDs,watMet2,by='SAMPID',all.x=T)
@@ -528,16 +558,24 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
 #' \item RESULT (measured value)
 #' }
 #' The following parameters are used in
-#' calculating tree metrics: 'LITTER_THATCH', 'LITTER_FORB', 
+#' calculating ground cover metrics: 'LITTER_THATCH', 'LITTER_FORB', 
 #' 'LITTER_CONIFER', 'LITTER_DECID', 'LITTER_BROADLEAF', 
-#' 'LITTER_DEPTH_SW', 'LITTER_DEPTH_NE', 'TOTAL_LITTER', 'WD_FINE', 
-#' 'WD_COARSE', 'EXPOSED_SOIL', 'EXPOSED_GRAVEL', 'EXPOSED_ROCK'.
+#' 'LITTER_DEPTH_SW', 'LITTER_DEPTH_NE', 'DEPTH_SW' (2016), 
+#' 'DEPTH_NE' (2016), TOTAL_LITTER', 'WD_FINE', 
+#' 'WD_COARSE', 'EXPOSED_SOIL', 'EXPOSED_GRAVEL', 'EXPOSED_ROCK',
+#'  'PREDOMINANT_LITTER' (2016).
+#' 
 #' Additional parameters or variables are ignored.
 #' @param nPlot A data frame with the 
 #' number of plots sampled associated with each sample,
 #' including \emph{sampID} variables and NPLOTS.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples
+#' @param survyear A string with the survey year. The default is '2011'.
+#' Starting in 2016, parameter structure changed such that, instead of
+#' individual LITTER_XXXX parameters to indicate the preominant litter
+#' type, PREDOMINANT_LITTER was used. In addition, DEPTH_NE and DEPTH_SW
+#' replaced LITTER_DEPTH_NE and LITTER_DEPTH_SW.
 #' 
 #' @details If any of the parameters are missing, they are assumed to be
 #' zeros (if numeric), and metric values associated with any metrics that
@@ -571,7 +609,7 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID'){
 #' head(bgEx)
 #' unique(bgEx$PARAMETER)
 
-calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID'){
+calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011'){
   ## Now merge back with input df
   dataIn1 <- merge(dataIn,nPlot,by=sampID)
 
@@ -586,28 +624,40 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID'){
   
   ####### LITTER TYPES
   # Need to calculate the number of quadrats sampled using the NE and SW parameters
-  litter.sub <- subset(dataIn1,PARAMETER %in% c('LITTER_DEPTH_NE','LITTER_DEPTH_SW'))
+  litter.sub <- subset(dataIn1,PARAMETER %in% c('LITTER_DEPTH_NE','LITTER_DEPTH_SW','DEPTH_NE','DEPTH_SW')) # Only one set of parameters or the other will be in any dataset
+  
   numQuads <- plyr::ddply(litter.sub,c('SAMPID'),summarise,NQUADS=length(RESULT))
 
   litter1 <- subset(dataIn1,PARAMETER %in% c('LITTER_THATCH','LITTER_FORB','LITTER_CONIFER','LITTER_DECID','LITTER_BROADLEAF'
                                              ,'LITTER_DEPTH_SW','LITTER_DEPTH_NE','TOTAL_LITTER','WD_FINE','WD_COARSE','EXPOSED_SOIL','EXPOSED_GRAVEL'
-                                             ,'EXPOSED_ROCK'))
+                                             ,'EXPOSED_ROCK','DEPTH_SW','DEPTH_NE','PREDOMINANT_LITTER'))
 
   litter2 <- merge(litter1,numQuads,by='SAMPID')
 
-  littype <- subset(litter2,PARAMETER %in% c('LITTER_THATCH','LITTER_FORB','LITTER_CONIFER','LITTER_DECID','LITTER_BROADLEAF','LITTER_NONE') & RESULT!=0)
-  rr1 <- plyr::ddply(littype,c('SAMPID'),mutate,N_LITTER_TYPE=length(unique(PARAMETER)))
-  rr2 <- plyr::ddply(rr1,c('SAMPID','PARAMETER','N_LITTER_TYPE'),summarise,NUM=length(PLOT))
-  rr3 <- plyr::ddply(rr2,c('SAMPID'),mutate,MAXN=max(NUM))
-  rr4 <- subset(rr3,MAXN==NUM)
-  rr5 <- plyr::ddply(rr4,c('SAMPID','N_LITTER_TYPE'),summarise,LITTER_TYPE=paste(PARAMETER,collapse='_'))
-  rr5 <- mutate(rr5,LITTER_TYPE=gsub('LITTER_','',LITTER_TYPE))
+  if(survyear=='2011'){
+    littype <- subset(litter2,PARAMETER %in% c('LITTER_THATCH','LITTER_FORB','LITTER_CONIFER','LITTER_DECID',
+                                               'LITTER_BROADLEAF','LITTER_NONE') & !is.na(RESULT))
+    rr1 <- plyr::ddply(littype,c('SAMPID'),mutate,N_LITTER_TYPE=length(unique(PARAMETER)))
+    rr2 <- plyr::ddply(rr1,c('SAMPID','PARAMETER','N_LITTER_TYPE'),summarise,NUM=length(PLOT))
+    rr3 <- plyr::ddply(rr2,c('SAMPID'),mutate,MAXN=max(NUM))
+    rr4 <- subset(rr3,MAXN==NUM)
+    rr5 <- plyr::ddply(rr4,c('SAMPID','N_LITTER_TYPE'),summarise,LITTER_TYPE=paste(PARAMETER,collapse='_'))
+    rr5 <- mutate(rr5,LITTER_TYPE=gsub('LITTER_','',LITTER_TYPE))
+  }else{
+    littype <- subset(litter2, PARAMETER=='PREDOMINANT_LITTER' & !is.na(RESULT)) 
+    
+    rr1 <- plyr::ddply(littype, c('SAMPID'), mutate, N_LITTER_TYPE=length(unique(RESULT)))
+    rr2 <- plyr::ddply(rr1, c('SAMPID','N_LITTER_TYPE','RESULT'), summarise, NUM=length(PLOT))
+    rr3 <- plyr::ddply(rr2, c('SAMPID'), mutate, MAXN=max(NUM))
+    rr4 <- subset(rr3, MAXN==NUM)
+    rr5 <- plyr::ddply(rr4, c('SAMPID','N_LITTER_TYPE'), summarise, LITTER_TYPE=paste(RESULT, collapse='_'))
+  }
   ## to determine median depth, we must account for any quadrats without depth recorded
-  litdep <- subset(litter2,PARAMETER %in% c('LITTER_DEPTH_SW','LITTER_DEPTH_NE'))
+  litdep <- subset(litter2,PARAMETER %in% c('LITTER_DEPTH_SW','LITTER_DEPTH_NE','DEPTH_NE','DEPTH_SW'))
 
   ss1 <- plyr::ddply(litdep,c('SAMPID'),summarise,NSAMP=length(RESULT),XDEPTH_LITTER=round(sum(as.numeric(RESULT))/unique(NQUADS),2))
 
-  litdep1 <- plyr::ddply(litdep,c('SAMPID','NPLOTS','NQUADS'),mutate,NSAMP=length(RESULT),toAdd=NQUADS-NSAMP)
+  litdep1 <- plyr::ddply(litdep,c('SAMPID','NPLOTS','NQUADS'),mutate,NSAMP=length(RESULT),toAdd=NQUADS-NSAMP) # did not use toAdd
 
   tt <- plyr::ddply(litdep1,c('SAMPID'),summarise,MEDDEPTH_LITTER=median(as.numeric(RESULT)))
 
@@ -632,24 +682,26 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID'){
   litterOut <- reshape2::dcast(loutdf4,SAMPID~METRIC,value.var='RESULT')
 
   ################# BARE GROUND
-  bgrd <- subset(dataIn1,PARAMETER %in% c('EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK','WD_FINE','WD_COARSE','TOTAL_LITTER') & RESULT!=0
-                 ,select=c('SAMPID','PLOT','PARAMETER','RESULT','NPLOTS'))
+  bgrd <- subset(dataIn1,PARAMETER %in% c('EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK','WD_FINE','WD_COARSE','TOTAL_LITTER') & 
+                   RESULT!=0 & !is.na(RESULT), select=c('SAMPID','PLOT','PARAMETER','RESULT','NPLOTS'))
   ## Need to create values for new PARAMETER='BAREGD' based on occurrence of either EXPOSED_SOIL, EXPOSED_GRAVEL, or EXPOSED_ROCK at site
   bgrd1 <- plyr::ddply(subset(bgrd,PARAMETER %in% c('EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK')
                               ,select=c('SAMPID','PLOT','NPLOTS','RESULT'))
                  ,c('SAMPID','PLOT','NPLOTS'),summarise,PARAMETER='BAREGD',RESULT=as.character(sum(as.numeric(RESULT))))
   bgrdIn <- rbind(bgrd,bgrd1)
   ## Need to fill in zeros if plot sampled and variable is zero
-  bgrdIn1 <- reshape2::melt(reshape2::dcast(bgrdIn,SAMPID+PLOT+NPLOTS~PARAMETER,value.var='RESULT'),id.vars=c('SAMPID','PLOT','NPLOTS'),variable.name='PARAMETER'
-                  ,value.name='RESULT')
+  bgrdIn1 <- reshape2::melt(reshape2::dcast(bgrdIn,SAMPID+PLOT+NPLOTS~PARAMETER,value.var='RESULT'),
+                            id.vars=c('SAMPID','PLOT','NPLOTS'),variable.name='PARAMETER',
+                            value.name='RESULT')
   bgrdIn1 <- mutate(bgrdIn1,RESULT=ifelse(is.na(RESULT),0,as.numeric(RESULT)))
 
   ## First calculate metrics for non-vascular veg types, excluding peat moss
   bgindf1 <- plyr::ddply(subset(bgrdIn1,RESULT!=0),c('SAMPID','PARAMETER'),summarise,FREQ=round((length(PLOT)/unique(NPLOTS))*100,2)
                    ,XCOV=round((sum(as.numeric(RESULT))/unique(NPLOTS)),2),IMP=round((FREQ+XCOV)/2,2))
 
-  bgoutdf <- mutate(reshape2::melt(bgindf1,id.vars=c('SAMPID','PARAMETER'),value.name='RESULT'),PARAMETER=ifelse(PARAMETER=='TOTAL_LITTER'
-                                                                                                    ,paste(variable,'LITTER',sep='_'),paste(variable,PARAMETER,sep='_')))
+  bgoutdf <- mutate(reshape2::melt(bgindf1,id.vars=c('SAMPID','PARAMETER'),value.name='RESULT'),
+                    PARAMETER=ifelse(PARAMETER=='TOTAL_LITTER',
+                                     paste(variable,'LITTER',sep='_'),paste(variable,PARAMETER,sep='_')))
 
   bgoutdf1 <- reshape2::melt(reshape2::dcast(bgoutdf,SAMPID~PARAMETER,value.var='RESULT')
                              ,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')

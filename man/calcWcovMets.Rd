@@ -4,7 +4,7 @@
 \alias{calcWcovMets}
 \title{Calculate water cover metrics}
 \usage{
-calcWcovMets(dataIn, nPlot, sampID = "UID")
+calcWcovMets(dataIn, nPlot, sampID = "UID", survyear = "2011")
 }
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
@@ -19,10 +19,12 @@ were collected
 \item RESULT: measured value
 }
 The following parameters are used in
-calculating tree metrics: 'TIME', 'MINIMUM_DEPTH', 
+calculating water cover metrics: 'TIME', 'MINIMUM_DEPTH', 
 'MAXIMUM_DEPTH', 'PREDOMINANT_DEPTH', 'TOTAL_WATER', 
 'WATER_NOVEG', 'WATER_AQVEG', 'WATER_EMERGVEG'.
-Additional parameters or variables are ignored.}
+Additional parameters or variables are ignored.
+WATER_NOVEG, WATER_AQVEG, MINIMUM_DEPTH, and 
+MAXIMUM_DEPTH not measured in 2016.}
 
 \item{nPlot}{A data frame with the 
 number of plots sampled associated with each
@@ -31,6 +33,10 @@ sample with \emph{sampID} variables and NPLOTS}
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples,
 'UID' by default.}
+
+\item{survyear}{A string with the survey year. The default is '2011'.
+Starting in 2016, only TIME, TOTAL_WATER, and PREDOMINANT_DEPTH is 
+measured.}
 }
 \value{
 Either a character string containing an error message when metric

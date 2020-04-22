@@ -35,16 +35,4 @@ table(msgCur$PARAMETER) # All tree metrics are missing in the metrics file
 
 diffMets <- filter(matchMets, RESULT.x!=RESULT.y) # Zero mismatches
 
-vegtype <- read.delim("L:/priv/CORFiles/IM-TH007/data/im/nwca/raw/tabfiles/vegtype.tab",header=TRUE,sep='\t',stringsAsFactors=F)
-
-vegPlots <- filter(vegtype, PARAMETER!='SANDT_CLASS') %>%
-  ddply(c('UID'), summarise, NPLOTS=length(unique(PLOT)))
-
-vtypeMets <- calcVtype_GcovMets(vegtype, vegPlots, sampID='UID')
-
-vtypeMets.long <- reshape2::melt(vtypeMets, id.vars=c('UID'), variable.name='PARAMETER', value.name='RESULT')
-
-matchVtype <- merge(curMets.long, vtypeMets.long, by=c('UID','PARAMETER'))
-
-diffVtype <- filter(matchVtype, RESULT.x!=RESULT.y)
 

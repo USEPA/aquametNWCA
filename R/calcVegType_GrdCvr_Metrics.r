@@ -38,6 +38,9 @@
 #' each sample, with \emph{sampID} variables and NPLOTS.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
+#' @param survyear A string with the survey year. Some parameters only
+#' measured in 2011, applies to water cover metrics and bare ground 
+#' and litter metrics.
 #' 
 #' @details If any of the parameters are missing, they are assumed to be
 #' zeros (if numeric), and metric values associated with any metrics that
@@ -71,7 +74,7 @@
 #' str(exOut)
 #' head(exOut)
 
-calcVtype_GcovMets <- function(dataIn, nPlotIn, sampID='UID'){
+calcVtype_GcovMets <- function(dataIn, nPlotIn, sampID='UID', survyear='2011'){
 
   datNames <- c('UID','PLOT','PARAMETER','RESULT')
   if(any(datNames %nin% names(dataIn))){
@@ -84,8 +87,8 @@ calcVtype_GcovMets <- function(dataIn, nPlotIn, sampID='UID'){
   sandtOut <- calcSandTMets(dataIn,nPlotIn,sampID)
   vstratOut <- calcVascStratMets(dataIn,nPlotIn,sampID)
   nonvascOut <- calcNonvascMets(dataIn,nPlotIn,sampID)
-  wcovOut <- calcWcovMets(dataIn,nPlotIn,sampID)
-  bgLittOut <- calcBareGround_LitterMets(dataIn,nPlotIn,sampID)
+  wcovOut <- calcWcovMets(dataIn,nPlotIn,sampID,survyear)
+  bgLittOut <- calcBareGround_LitterMets(dataIn,nPlotIn,sampID,survyear)
 
 
   vgOut <- rbind(sandtOut,vstratOut,nonvascOut,wcovOut,bgLittOut)

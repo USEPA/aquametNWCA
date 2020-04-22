@@ -5,7 +5,7 @@
 \title{Calculate NWCA 2011 vegetation types and ground surface
 attribute metrics based on data collected from field form V-3}
 \usage{
-calcVtype_GcovMets(dataIn, nPlotIn, sampID = "UID")
+calcVtype_GcovMets(dataIn, nPlotIn, sampID = "UID", survyear = "2011")
 }
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
@@ -38,6 +38,10 @@ each sample, with \emph{sampID} variables and NPLOTS.}
 
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples, 'UID' by default}
+
+\item{survyear}{A string with the survey year. Some parameters only
+measured in 2011, applies to water cover metrics and bare ground 
+and litter metrics.}
 }
 \value{
 Either a character string containing an error message when metric 

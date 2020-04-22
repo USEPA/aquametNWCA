@@ -4,7 +4,7 @@
 \alias{calcNonvascMets}
 \title{Calculate non-vascular metrics}
 \usage{
-calcNonvascMets(dataIn, nPlot, sampID = "UID")
+calcNonvascMets(dataIn, nPlot, sampID = "UID", survyear = "2011")
 }
 \arguments{
 \item{dataIn}{A data frame containing the following variables:
@@ -16,9 +16,10 @@ calcNonvascMets(dataIn, nPlot, sampID = "UID")
  \item RESULT: measured value
  }
  The following parameters are used in
- calculating tree metrics: 'PEAT_MOSS', 'BRYOPHYTES', 'LICHENS', 
- 'ARBOREAL', 'ALGAE', 'MACROALGAE'. Additional parameters or
- variables are ignored.}
+ calculating non-vascular metrics: 'PEAT_MOSS', 'BRYOPHYTES', 'LICHENS', 
+ 'ARBOREAL', 'ALGAE', 'MACROALGAE'. 
+ Additional parameters or variables are ignored. PEAT_MOSS has values of
+ 'Y/N' for 2011 but only Y or missing for 2016.}
 
 \item{nPlot}{A data frame with the 
 number of plots sampled associated with each sample
@@ -27,6 +28,10 @@ number of plots sampled associated with each sample
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples, 'UID'
 by default.}
+
+\item{survyear}{A string with the survey year. The default is '2011'.
+Starting in 2016, ARBOREAL began being measured as a categorical 
+variable, ARBOREAL_ABUNDANCE.}
 }
 \value{
 Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
