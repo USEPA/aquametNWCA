@@ -38,4 +38,4 @@ curMets.long <- select(curMets, -PUBLICATION_DATE, -DATE_COL, -SITE_ID, -SITE_US
 matchMets <- merge(curMets.long, plantMets.long, by=c('UID','PARAMETER')) %>%
   mutate(RESULT.x=as.numeric(RESULT.x))
 
-diffMets <- dplyr::filter(matchMets, abs(RESULT.x-RESULT.y)>0.001)
+diffMets <- dplyr::filter(matchMets, abs(RESULT.x-RESULT.y)>0.001) # Zero values here
