@@ -1134,8 +1134,8 @@ calcBCmets <- function(vascIn,sampID='UID'){
   # calculation
   if('SPECIES_NAME_ID' %nin% names(vascIn)){
     uniqNames <- data.frame(TAXON=unique(vascIn$TAXON), stringsAsFactors=F)
-    uniqNames <- plyr::mutate(uniqNames,SPECIES_NAME_ID=seq(from=1,to=length(uniqNames)))
-    vascIn <- merge(vascIn,uniqNames,by='USDA_NAME')
+    uniqNames <- plyr::mutate(uniqNames,SPECIES_NAME_ID=seq(from=1,to=nrow(uniqNames)))
+    vascIn <- merge(vascIn,uniqNames,by='TAXON')
   }
 
   forDist <- plyr::ddply(vascIn,c(sampID,'PLOT','SPECIES_NAME_ID')
@@ -1155,7 +1155,7 @@ calcBCmets <- function(vascIn,sampID='UID'){
 
     meanBC_nat <- int.calcXBC(forDist.nat,sampID) %>% plyr::rename(c('XBCDIST_SPP'='XBCDIST_NATSPP'))
 
-    xbcOut <- merge(xbcOut,meanBC_nat,by='UID',all.x=T)
+    xbcOut <- merge(xbcOut,meanBC_nat,by=sampID,all.x=T)
   }
 
   xbcOut.1 <- reshape2::melt(xbcOut,id.vars=sampID,variable.name='PARAMETER',value.name='RESULT') %>%

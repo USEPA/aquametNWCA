@@ -254,7 +254,7 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
     print(paste("Missing key variables! Should be ",sampID," PLOT, USDA_NAME, COVER, STATE, and USAC_REGION.",sep=''))
     return(NULL)
   }
-  datNames <- subset(datNames, select=c(sampID, 'PLOT','USDA_NAME','COVER','STATE','USAC_REGION'))
+  vascIn <- subset(vascIn, select=c(sampID, 'PLOT','USDA_NAME','COVER','STATE','USAC_REGION'))
   
   # Input taxa list with taxonomy and life history traits
   if(!is.null(inTaxa)){
