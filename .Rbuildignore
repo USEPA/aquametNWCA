@@ -6,3 +6,4 @@
 ^Meta$
 NWCA_TestTreeMetricCode.r
 NWCA_TestPlantMetricsCode.r
+NWCA_TestVegType-GrndCover_MetricCode.r
