@@ -259,7 +259,7 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
   # Input taxa list with taxonomy and life history traits
   if(!is.null(inTaxa)){
     taxNames <- c('USDA_NAME','FAMILY','GENUS')
-    altNames <- c('CATEGORY','GROWTH_HABIT','DURATION','DUR_ALT','GRH_ALT')
+    altNames <- c('CATEGORY','GROWTH_HABIT','DURATION','DUR_ALT','GRH_ALT','HERB','TREE_COMB','SHRUB_COMB','VINE_ALL')
     if(any(taxNames %nin% names(inTaxa))){
       print("Missing key variables! Need at least USDA_NAME, FAMILY, GENUS to calculate metrics.")
       return(NULL)
