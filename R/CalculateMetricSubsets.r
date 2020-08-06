@@ -557,10 +557,15 @@ calcWIS <- function(vascIn,sampID='UID'){
     return(NULL)
   }
 
-  vascIn <- plyr::mutate(vascIn,ECOIND=car::recode(WIS,"c('FACU')=4;c('FAC')=3;c('FACW')=2;c('OBL')=1;
+  if('ECOIND' %in% names(vascIn)){
+    vascIn <- plyr::mutate(vascIn,ECOIND=car::recode(WIS,"c('FACU')=4;c('FAC')=3;c('FACW')=2;c('OBL')=1;
                                   c('UPL','NL')=5;c('TBD',NA)=NA")
-                        ,WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD')=NA"))
-
+                           ,WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD')=NA"))
+  }else{
+    vascIn <- plyr::mutate(vascIn, WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD')=NA"))
+  }
+    
+  
   # Overall metric calculations
   vascIn.1 <- subset(vascIn,!is.na(WIS))
   sppWIS <- int.calcTraits_MultCat(vascIn.1,'WIS',sampID)
