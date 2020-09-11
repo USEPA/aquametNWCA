@@ -514,12 +514,14 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
   watMet <- rbind(wat1a,wat2a,wat3)
   watMet1 <- reshape2::dcast(watMet,SAMPID~METRIC,value.var='RESULT')
 
-  empty_wat <- data.frame(t(rep(NA,18)),stringsAsFactors=F)
+  
   if(survyear=='2011'){
+    empty_wat <- data.frame(t(rep(NA,18)),stringsAsFactors=F)
     names(empty_wat) <- c("MIN_H2O_DEPTH","MAX_H2O_DEPTH","XH2O_DEPTH_AA","MIN_COV_H2O","MAX_COV_H2O","FREQ_H2O"
                           ,"FREQ_H2O_AQVEG","FREQ_H2O_EMERGVEG","FREQ_H2O_NOVEG","XCOV_H2O","XCOV_H2O_AQVEG","XCOV_H2O_EMERGVEG"
                           ,"XCOV_H2O_NOVEG","IMP_H2O","IMP_H2O_AQVEG","IMP_H2O_EMERGVEG","IMP_H2O_NOVEG","XH2O_DEPTH")
   }else{
+    empty_wat <- data.frame(t(rep(NA,7)),stringsAsFactors=F)
     names(empty_wat) <- c("XH2O_DEPTH_AA","MIN_COV_H2O","MAX_COV_H2O","FREQ_H2O",
                           "XCOV_H2O","IMP_H2O","XH2O_DEPTH")
   }
