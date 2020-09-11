@@ -8,7 +8,8 @@ nwcaVegData(
   vascIn,
   sampID = "UID",
   inTaxa = taxaNWCA,
-  inNatCC = ccNatNWCA,
+  inNat = ccNatNWCA,
+  inCVal = ccNatNWCA,
   inWIS = wisNWCA,
   cValReg = "STATE"
 )
@@ -28,8 +29,12 @@ NWCA names, if not in USDA PLANTS
 \item COVER: Percent cover of taxon in plot, including zeros for plots in
 which a taxon does not occur. 
 
-\item \emph{cValReg} (as specified in function arguments): Region associated with Coefficients of Conservatism for site 
+\item \emph{cValReg} (as specified in function arguments): Region 
+associated with Coefficients of Conservatism for site 
 (name may be specified in function arguments) 
+
+\item STATE: Two-character postal code to correspond to native 
+status taxalist.
 
 \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation for
 sample, to correspond to those in inWIS data frame.}}
@@ -57,17 +62,24 @@ to calculate growth habit metrics
 \item SPECIES_NAME_ID (optional): Taxonomic ID number, which will be used
 in Bray-Curtis distance metrics if available. }}
 
-\item{inNatCC}{Data frame with C-values and native status:
+\item{inNat}{Data frame with native status:
 
 \itemize{ \item USDA_NAME: Taxon name
 
-\item GEOG_ID: Coefficient of Conservatism Region of taxon value
+\item GEOG_ID: Postal abbreviation for STATE of taxon
 
-\item NWCA_CC (optional): Coefficient of conservatism, as used in NWCA,
-necessary to calculate CC metrics, with default of 'STATE'
+\item NWCA_NATSTAT: Native status variable, as used in NWCA,
+necessary to calculate native status metrics. }}
 
-\item NWCA_NATSTAT (optional): Native status variable, as used in NWCA,
-necessary to calculate native status metrics }}
+\item{inCVal}{Data frame with coefficient of conservatism values:
+\itemize{ \item USDA_NAME: Taxon name
+
+\item GEOG_ID: Code indicating C region for site, as supplied with cover 
+data.
+
+\item NWCA_CVAL: Coefficient of conservatism (C-value), as used in
+NWCA, necessary to calculate metrics based on C-values.
+}}
 
 \item{inWIS}{Data frame with Wetland Indicator Status, from U.S. Army Corps
 of Engineers (USAC): \itemize{ \item USDA_NAME: Taxon name
@@ -88,7 +100,7 @@ A list containing six data frames: \itemize{ \item byUIDspp: Data
   
   \item \emph{cValReg} (as specified in function arguments): Coefficient of 
   Conservatism region associated with site, necessary for merging with 
-  inNatCC, with default of 'STATE'
+  inCVal, with default of 'STATE'
   
   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation 
   necessary for merging with inWIS.

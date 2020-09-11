@@ -8,8 +8,10 @@ prepareData(
   vascIn,
   sampID = "UID",
   inTaxa = taxaNWCA,
-  inNatCC = ccNatNWCA,
-  inWIS = wisNWCA
+  inNat = ccNatNWCA,
+  inCVal = ccNatNWCA,
+  inWIS = wisNWCA,
+  cValReg = "STATE"
 )
 }
 \arguments{
@@ -55,17 +57,24 @@ to calculate growth habit metrics
 \item SPECIES_NAME_ID (optional): Taxonomic ID number, which will be used
 in Bray-Curtis distance metrics if available. }}
 
-\item{inNatCC}{Data frame with C-values and native status:
+\item{inNat}{Data frame with native status:
 
 \itemize{ \item USDA_NAME: Taxon name
 
 \item GEOG_ID: Postal abbreviation for STATE of taxon
 
-\item NWCA_CC (optional): Coefficient of conservatism, as used in NWCA,
-necessary to calculate CC metrics
-
-\item NWCA_NATSTAT (optional): Native status variable, as used in NWCA,
+\item NWCA_NATSTAT: Native status variable, as used in NWCA,
 necessary to calculate native status metrics. }}
+
+\item{inCVal}{Data frame with coefficient of conservatism values:
+\itemize{ \item USDA_NAME: Taxon name
+
+\item GEOG_ID: Code indicating C region for site, as supplied with cover 
+data.
+
+\item NWCA_CVAL: Coefficient of conservatism (C-value), as used in
+NWCA, necessary to calculate metrics based on C-values.
+}}
 
 \item{inWIS}{Data frame with Wetland Indicator Status, from U.S. Army Corps
 of Engineers (USAC): \itemize{ \item USDA_NAME: Taxon name
@@ -74,6 +83,9 @@ of Engineers (USAC): \itemize{ \item USDA_NAME: Taxon name
 frame
 
 \item WIS: Wetland Indicator Status as provided by USAC or added for NWCA }}
+
+\item{cValReg}{String containing the name of the variable in \emph{inCVal}
+which specifies the C-value region.}
 }
 \value{
 A list containing six data frames: \itemize{ \item byUIDspp: Data
@@ -82,7 +94,7 @@ A list containing six data frames: \itemize{ \item byUIDspp: Data
   in \emph{sampID} argument
   
   \item STATE: State abbreviation of site location, necessary for merging 
-  with inNatCC
+  with inNat
   
   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation 
   necessary for merging with inWIS.

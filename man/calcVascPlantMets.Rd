@@ -7,9 +7,11 @@
 calcVascPlantMets(
   vascIn,
   taxaIn = taxaNWCA,
+  taxaNat = ccNatNWCA,
   taxaCC = ccNatNWCA,
   taxaWIS = wisNWCA,
-  sampID = "UID"
+  sampID = "UID",
+  cValReg = "STATE"
 )
 }
 \arguments{
@@ -47,7 +49,7 @@ plot). Data should already be summed by UID, PLOT, and USDA_NAME. }}
 If this data frame is not supplied, the data set taxaNWCA included
 in the package is used.}
 
-\item{taxaCC}{A data frame containing Coefficient of Conservatism and native
+\item{taxaNat}{A data frame containing native
 status as assigned for NWCA for all taxa in vascIn, with the following
 variables, at a minimum:
 \itemize{
@@ -55,9 +57,20 @@ variables, at a minimum:
 
 \item GEOG_ID: state to which value applies
 
-\item NWCA_CC: state- and taxon-specific Coefficient of Conservatism
-
 \item NWCA_NATSTAT: state- and taxon-specific native status
+}
+If this data frame is not supplied, the data set ccNWCA included in
+the package is used.}
+
+\item{taxaCC}{A data frame containing Coefficient of Conservatism 
+as assigned for NWCA for all taxa in vascIn, with the following
+variables, at a minimum:
+\itemize{
+\item USDA_NAME: USDA accepted name
+
+\item GEOG_ID: \emph{cValReg} to which value applies
+
+\item NWCA_CC: state- and taxon-specific Coefficient of Conservatism
 }
 If this data frame is not supplied, the data set ccNWCA included in
 the package is used.}
@@ -77,6 +90,9 @@ package is used.}
 
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples, 'UID' by default}
+
+\item{cValReg}{String containing the name of the variable in \emph{taxaCC}
+which specifies the C-value region.}
 }
 \value{
 Either a character string containing an error message when metric

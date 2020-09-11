@@ -81,6 +81,7 @@ calcDuration <- function(vascIn,sampID='UID'){
   return(NULL)
   }
 
+  vascIn <- subset(vascIn,!is.na(DURATION) & DURATION!='UND')
   # From DURATION, create DUR_ALT variable
   if('DUR_ALT' %in% names(vascIn)){
     vascIn.1 <- vascIn
@@ -95,7 +96,19 @@ calcDuration <- function(vascIn,sampID='UID'){
                          ,"PCTN_ANN_PEREN","PCTN_PERENNIAL","XABCOV_ANN_BIEN","XABCOV_ANN_PEREN"
                          ,"XABCOV_ANNUAL","XABCOV_PERENNIAL","XRCOV_ANN_BIEN","XRCOV_ANN_PEREN"
                          ,"XRCOV_ANNUAL","XRCOV_PERENNIAL")
-
+  
+  empty_base.nat <- data.frame(t(rep(NA,32)),stringsAsFactors=F)
+  names(empty_base.nat) <- c("N_ANN_BIEN_AC","N_ANN_BIEN_NAT","N_ANN_PEREN_AC","N_ANN_PEREN_NAT"
+                             ,"N_ANNUAL_AC","N_ANNUAL_NAT","N_PERENNIAL_AC","N_PERENNIAL_NAT"
+                             ,"PCTN_ANN_BIEN_AC","PCTN_ANN_BIEN_NAT","PCTN_ANN_PEREN_AC"
+                             ,"PCTN_ANN_PEREN_NAT","PCTN_ANNUAL_AC","PCTN_ANNUAL_NAT"
+                             ,"PCTN_PERENNIAL_AC","PCTN_PERENNIAL_NAT","XABCOV_ANN_BIEN_AC"
+                             ,"XABCOV_ANN_BIEN_NAT","XABCOV_ANN_PEREN_AC","XABCOV_ANN_PEREN_NAT"
+                             ,"XABCOV_ANNUAL_AC","XABCOV_ANNUAL_NAT","XABCOV_PERENNIAL_AC"
+                             ,"XABCOV_PERENNIAL_NAT","XRCOV_ANN_BIEN_AC","XRCOV_ANN_BIEN_NAT"
+                             ,"XRCOV_ANN_PEREN_AC","XRCOV_ANN_PEREN_NAT","XRCOV_ANNUAL_AC"
+                             ,"XRCOV_ANNUAL_NAT","XRCOV_PERENNIAL_AC","XRCOV_PERENNIAL_NAT")
+  
   if('NWCA_NATSTAT' %in% names(vascIn.1)){
     # Assign native status values to grouped categories
     vascIn.2 <- plyr::mutate(vascIn.1,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
@@ -119,18 +132,6 @@ calcDuration <- function(vascIn,sampID='UID'){
                                             ,'ANN_PEREN_AC','PERENNIAL_NAT','PERENNIAL_AC'),sampID)
     
     durOut <- rbind(durOut,multTraits)
-    
-    empty_base.nat <- data.frame(t(rep(NA,32)),stringsAsFactors=F)
-    names(empty_base.nat) <- c("N_ANN_BIEN_AC","N_ANN_BIEN_NAT","N_ANN_PEREN_AC","N_ANN_PEREN_NAT"
-                               ,"N_ANNUAL_AC","N_ANNUAL_NAT","N_PERENNIAL_AC","N_PERENNIAL_NAT"
-                               ,"PCTN_ANN_BIEN_AC","PCTN_ANN_BIEN_NAT","PCTN_ANN_PEREN_AC"
-                               ,"PCTN_ANN_PEREN_NAT","PCTN_ANNUAL_AC","PCTN_ANNUAL_NAT"
-                               ,"PCTN_PERENNIAL_AC","PCTN_PERENNIAL_NAT","XABCOV_ANN_BIEN_AC"
-                               ,"XABCOV_ANN_BIEN_NAT","XABCOV_ANN_PEREN_AC","XABCOV_ANN_PEREN_NAT"
-                               ,"XABCOV_ANNUAL_AC","XABCOV_ANNUAL_NAT","XABCOV_PERENNIAL_AC"
-                               ,"XABCOV_PERENNIAL_NAT","XRCOV_ANN_BIEN_AC","XRCOV_ANN_BIEN_NAT"
-                               ,"XRCOV_ANN_PEREN_AC","XRCOV_ANN_PEREN_NAT","XRCOV_ANNUAL_AC"
-                               ,"XRCOV_ANNUAL_NAT","XRCOV_PERENNIAL_AC","XRCOV_PERENNIAL_NAT")
 
     empty_base <- cbind(empty_base, empty_base.nat)
   }
@@ -141,7 +142,8 @@ calcDuration <- function(vascIn,sampID='UID'){
     reshape2::melt(id.vars=c(sampID), variable.name='PARAMETER', value.name='RESULT') %>%
     dplyr::filter(!is.na(eval(as.name(sampID[1])))) %>%
     plyr::mutate(RESULT = ifelse(is.na(RESULT), 0, RESULT)
-                 , PARAMETER=as.character(PARAMETER))
+                 , PARAMETER=as.character(PARAMETER)) %>%
+    subset(PARAMETER %in% names(empty_base))
   
   return(durOut.1)
 
@@ -232,6 +234,9 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
                 ". Try prepareData() function to create necessary input variables.",sep=''))
     return(NULL)
   }
+  
+  vascIn <- subset(vascIn,!is.na(GROWTH_HABIT) & GROWTH_HABIT!='UND')
+  
   # Check for GRH_ALT variable
   if('GRH_ALT' %in% names(vascIn)){
     vascIn.1 <- plyr::mutate(vascIn, GRH_ALT=gsub('SUBSHRUB', 'SSHRUB', GRH_ALT))
@@ -266,15 +271,30 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
   
   empty_base <- data.frame(t(rep(NA,48)), stringsAsFactors=F)
   names(empty_base)<-c("N_FORB","N_GRAMINOID","N_SHRUB","N_SSHRUB_FORB","N_SSHRUB_SHRUB"
-  ,"N_TREE","N_TREE_SHRUB","N_VINE","N_VINE_SHRUB","PCTN_FORB"
-  ,"PCTN_GRAMINOID","PCTN_SHRUB","PCTN_SSHRUB_FORB","PCTN_SSHRUB_SHRUB","PCTN_TREE"
-  ,"PCTN_TREE_SHRUB","PCTN_VINE","PCTN_VINE_SHRUB","XABCOV_FORB","XABCOV_GRAMINOID"
-  ,"XABCOV_SHRUB","XABCOV_SSHRUB_FORB","XABCOV_SSHRUB_SHRUB","XABCOV_TREE","XABCOV_TREE_SHRUB"
-  ,"XABCOV_VINE","XABCOV_VINE_SHRUB","XRCOV_FORB","XRCOV_GRAMINOID","XRCOV_SHRUB"
-  ,"XRCOV_SSHRUB_FORB","XRCOV_SSHRUB_SHRUB","XRCOV_TREE","XRCOV_TREE_SHRUB","XRCOV_VINE"
-  ,"XRCOV_VINE_SHRUB","N_TREE_COMB","PCTN_TREE_COMB","XABCOV_TREE_COMB","XRCOV_TREE_COMB"
-  ,"N_SHRUB_COMB","PCTN_SHRUB_COMB","XABCOV_SHRUB_COMB","XRCOV_SHRUB_COMB","N_HERB"
-  ,"PCTN_HERB","XABCOV_HERB","XRCOV_HERB")
+                  ,"N_TREE","N_TREE_SHRUB","N_VINE","N_VINE_SHRUB","PCTN_FORB"
+                  ,"PCTN_GRAMINOID","PCTN_SHRUB","PCTN_SSHRUB_FORB","PCTN_SSHRUB_SHRUB","PCTN_TREE"
+                  ,"PCTN_TREE_SHRUB","PCTN_VINE","PCTN_VINE_SHRUB","XABCOV_FORB","XABCOV_GRAMINOID"
+                  ,"XABCOV_SHRUB","XABCOV_SSHRUB_FORB","XABCOV_SSHRUB_SHRUB","XABCOV_TREE","XABCOV_TREE_SHRUB"
+                  ,"XABCOV_VINE","XABCOV_VINE_SHRUB","XRCOV_FORB","XRCOV_GRAMINOID","XRCOV_SHRUB"
+                  ,"XRCOV_SSHRUB_FORB","XRCOV_SSHRUB_SHRUB","XRCOV_TREE","XRCOV_TREE_SHRUB","XRCOV_VINE"
+                  ,"XRCOV_VINE_SHRUB","N_TREE_COMB","PCTN_TREE_COMB","XABCOV_TREE_COMB","XRCOV_TREE_COMB"
+                  ,"N_SHRUB_COMB","PCTN_SHRUB_COMB","XABCOV_SHRUB_COMB","XRCOV_SHRUB_COMB","N_HERB"
+                  ,"PCTN_HERB","XABCOV_HERB","XRCOV_HERB")
+  
+  empty_base.nat <- data.frame(t(rep(NA,56)), stringsAsFactors=F)
+  names(empty_base.nat)<-c("N_GRAMINOID_AC","PCTN_GRAMINOID_AC"
+                           ,"XABCOV_GRAMINOID_AC","XRCOV_GRAMINOID_AC","N_GRAMINOID_NAT","PCTN_GRAMINOID_NAT","XABCOV_GRAMINOID_NAT"
+                           ,"XRCOV_GRAMINOID_NAT","N_FORB_AC","PCTN_FORB_AC","XABCOV_FORB_AC","XRCOV_FORB_AC"
+                           ,"N_FORB_NAT","PCTN_FORB_NAT","XABCOV_FORB_NAT","XRCOV_FORB_NAT","N_HERB_AC"
+                           ,"PCTN_HERB_AC","XABCOV_HERB_AC","XRCOV_HERB_AC","N_HERB_NAT","PCTN_HERB_NAT"
+                           ,"XABCOV_HERB_NAT","XRCOV_HERB_NAT","N_SHRUB_COMB_AC","PCTN_SHRUB_COMB_AC","XABCOV_SHRUB_COMB_AC"
+                           ,"XRCOV_SHRUB_COMB_AC","N_SHRUB_COMB_NAT","PCTN_SHRUB_COMB_NAT","XABCOV_SHRUB_COMB_NAT","XRCOV_SHRUB_COMB_NAT"
+                           ,"N_TREE_COMB_AC","PCTN_TREE_COMB_AC","XABCOV_TREE_COMB_AC","XRCOV_TREE_COMB_AC","N_TREE_COMB_NAT"
+                           ,"PCTN_TREE_COMB_NAT","XABCOV_TREE_COMB_NAT","XRCOV_TREE_COMB_NAT","N_VINE_AC","PCTN_VINE_AC"
+                           ,"XABCOV_VINE_AC","XRCOV_VINE_AC","N_VINE_NAT","PCTN_VINE_NAT","XABCOV_VINE_NAT"
+                           ,"XRCOV_VINE_NAT","N_VINE_SHRUB_AC","PCTN_VINE_SHRUB_AC","XABCOV_VINE_SHRUB_AC","XRCOV_VINE_SHRUB_AC"
+                           ,"N_VINE_SHRUB_NAT","PCTN_VINE_SHRUB_NAT","XABCOV_VINE_SHRUB_NAT","XRCOV_VINE_SHRUB_NAT")
+  
 
   if('NWCA_NATSTAT' %in% names(vascIn.1)){
     vascIn.2 <- plyr::mutate(vascIn.1,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
@@ -297,20 +317,6 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
                               ,sampID)
     grhOut <- rbind(grhOut,multTraits)
     
-    empty_base.nat <- data.frame(t(rep(NA,56)), stringsAsFactors=F)
-    names(empty_base.nat)<-c("N_GRAMINOID_AC","PCTN_GRAMINOID_AC"
-    ,"XABCOV_GRAMINOID_AC","XRCOV_GRAMINOID_AC","N_GRAMINOID_NAT","PCTN_GRAMINOID_NAT","XABCOV_GRAMINOID_NAT"
-    ,"XRCOV_GRAMINOID_NAT","N_FORB_AC","PCTN_FORB_AC","XABCOV_FORB_AC","XRCOV_FORB_AC"
-    ,"N_FORB_NAT","PCTN_FORB_NAT","XABCOV_FORB_NAT","XRCOV_FORB_NAT","N_HERB_AC"
-    ,"PCTN_HERB_AC","XABCOV_HERB_AC","XRCOV_HERB_AC","N_HERB_NAT","PCTN_HERB_NAT"
-    ,"XABCOV_HERB_NAT","XRCOV_HERB_NAT","N_SHRUB_COMB_AC","PCTN_SHRUB_COMB_AC","XABCOV_SHRUB_COMB_AC"
-    ,"XRCOV_SHRUB_COMB_AC","N_SHRUB_COMB_NAT","PCTN_SHRUB_COMB_NAT","XABCOV_SHRUB_COMB_NAT","XRCOV_SHRUB_COMB_NAT"
-    ,"N_TREE_COMB_AC","PCTN_TREE_COMB_AC","XABCOV_TREE_COMB_AC","XRCOV_TREE_COMB_AC","N_TREE_COMB_NAT"
-    ,"PCTN_TREE_COMB_NAT","XABCOV_TREE_COMB_NAT","XRCOV_TREE_COMB_NAT","N_VINE_AC","PCTN_VINE_AC"
-    ,"XABCOV_VINE_AC","XRCOV_VINE_AC","N_VINE_NAT","PCTN_VINE_NAT","XABCOV_VINE_NAT"
-    ,"XRCOV_VINE_NAT","N_VINE_SHRUB_AC","PCTN_VINE_SHRUB_AC","XABCOV_VINE_SHRUB_AC","XRCOV_VINE_SHRUB_AC"
-    ,"N_VINE_SHRUB_NAT","PCTN_VINE_SHRUB_NAT","XABCOV_VINE_SHRUB_NAT","XRCOV_VINE_SHRUB_NAT")
-    
     empty_base <- cbind(empty_base, empty_base.nat)
 
   }
@@ -321,7 +327,8 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
     reshape2::melt(id.vars=c(sampID), variable.name='PARAMETER', value.name='RESULT') %>%
     dplyr::filter(!is.na(eval(as.name(sampID[1])))) %>%
     plyr::mutate(RESULT = ifelse(is.na(RESULT), 0, RESULT)
-                 , PARAMETER=as.character(PARAMETER))
+                 , PARAMETER=as.character(PARAMETER)) %>%
+    subset(PARAMETER %in% names(empty_base))
   
 
   return(grhOut.1)
@@ -347,8 +354,8 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
 #'     \item TAXON: Taxon name
 #'
 #'     \item CATEGORY: USDA PLANTS category variable, with valid values
-#'     of DICOT, FERN, GYMNOSPERM, HORSETAIL, LICHEN, LIVERWORT,
-#'     LYCOPOD, MONOCOT, MOSS, or blank
+#'     of DICOT, FERN, GYMNOSPERM, HORSETAIL, LIVERWORT,
+#'     LYCOPOD, MONOCOT, QUILLWORT, or blank
 #'
 #'     \item XABCOV: Mean percent cover of taxon across plots
 #'
@@ -403,7 +410,7 @@ calcCategory <- function(vascIn,sampID='UID'){
     return(NULL)
   }
 
-  vascIn.1 <- subset(vascIn,!is.na(CATEGORY))
+  vascIn.1 <- subset(vascIn,!is.na(CATEGORY) & CATEGORY!='UND')
   catOut <- int.calcTraits_MultCat(vascIn.1,'CATEGORY',sampID)
   
   empty_base <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
@@ -411,6 +418,20 @@ calcCategory <- function(vascIn,sampID='UID'){
                          ,"PCTN_FERN","PCTN_GYMNOSPERM","PCTN_MONOCOT","XABCOV_DICOT"
                          ,"XABCOV_FERN","XABCOV_GYMNOSPERM","XABCOV_MONOCOT"
                          ,"XRCOV_DICOT","XRCOV_FERN","XRCOV_GYMNOSPERM","XRCOV_MONOCOT")
+  
+  empty_base.nat <- data.frame(t(rep(NA,40)),stringsAsFactors=F)
+  names(empty_base.nat) <- c("N_DICOTS_NAT","PCTN_DICOTS_NAT","XABCOV_DICOTS_NAT","XRCOV_DICOTS_NAT"     
+                             ,"N_DICOTS_ALIEN","PCTN_DICOTS_ALIEN","XABCOV_DICOTS_ALIEN"
+                             ,"XRCOV_DICOTS_ALIEN","N_DICOTS_CRYP","PCTN_DICOTS_CRYP"
+                             ,"XABCOV_DICOTS_CRYP","XRCOV_DICOTS_CRYP","N_DICOTS_AC","PCTN_DICOTS_AC"       
+                             ,"XABCOV_DICOTS_AC","XRCOV_DICOTS_AC","N_FERNS_NAT","PCTN_FERNS_NAT"
+                             ,"XABCOV_FERNS_NAT","XRCOV_FERNS_NAT","N_FERNS_INTR","PCTN_FERNS_INTR"
+                             ,"XABCOV_FERNS_INTR","XRCOV_FERNS_INTR","N_MONOCOTS_NAT","PCTN_MONOCOTS_NAT"
+                             ,"XABCOV_MONOCOTS_NAT","XRCOV_MONOCOTS_NAT","N_MONOCOTS_ALIEN"
+                             ,"PCTN_MONOCOTS_ALIEN","XABCOV_MONOCOTS_ALIEN","XRCOV_MONOCOTS_ALIEN"
+                             ,"N_MONOCOTS_CRYP","PCTN_MONOCOTS_CRYP","XABCOV_MONOCOTS_CRYP"
+                             ,"XRCOV_MONOCOTS_CRYP","N_MONOCOTS_AC","PCTN_MONOCOTS_AC"
+                             ,"XABCOV_MONOCOTS_AC","XRCOV_MONOCOTS_AC")
   
   
   if('NWCA_NATSTAT' %in% names(vascIn)){
@@ -432,20 +453,7 @@ calcCategory <- function(vascIn,sampID='UID'){
     multTraits <- int.combTraits(vascIn.2,c('DICOTS_NAT','DICOTS_ALIEN','DICOTS_CRYP','DICOTS_AC','FERNS_NAT','FERNS_INTR','MONOCOTS_NAT','MONOCOTS_ALIEN'
                                     ,'MONOCOTS_CRYP','MONOCOTS_AC'),sampID)
     catOut <- rbind(catOut,multTraits)
-    
-    empty_base.nat <- data.frame(t(rep(NA,40)),stringsAsFactors=F)
-    names(empty_base.nat) <- c("N_DICOTS_NAT","PCTN_DICOTS_NAT","XABCOV_DICOTS_NAT","XRCOV_DICOTS_NAT"     
-                               ,"N_DICOTS_ALIEN","PCTN_DICOTS_ALIEN","XABCOV_DICOTS_ALIEN"
-                               ,"XRCOV_DICOTS_ALIEN","N_DICOTS_CRYP","PCTN_DICOTS_CRYP"
-                               ,"XABCOV_DICOTS_CRYP","XRCOV_DICOTS_CRYP","N_DICOTS_AC","PCTN_DICOTS_AC"       
-                               ,"XABCOV_DICOTS_AC","XRCOV_DICOTS_AC","N_FERNS_NAT","PCTN_FERNS_NAT"
-                               ,"XABCOV_FERNS_NAT","XRCOV_FERNS_NAT","N_FERNS_INTR","PCTN_FERNS_INTR"
-                               ,"XABCOV_FERNS_INTR","XRCOV_FERNS_INTR","N_MONOCOTS_NAT","PCTN_MONOCOTS_NAT"
-                               ,"XABCOV_MONOCOTS_NAT","XRCOV_MONOCOTS_NAT","N_MONOCOTS_ALIEN"
-                               ,"PCTN_MONOCOTS_ALIEN","XABCOV_MONOCOTS_ALIEN","XRCOV_MONOCOTS_ALIEN"
-                               ,"N_MONOCOTS_CRYP","PCTN_MONOCOTS_CRYP","XABCOV_MONOCOTS_CRYP"
-                               ,"XRCOV_MONOCOTS_CRYP","N_MONOCOTS_AC","PCTN_MONOCOTS_AC"
-                               ,"XABCOV_MONOCOTS_AC","XRCOV_MONOCOTS_AC")
+  
     
     empty_base <- cbind(empty_base, empty_base.nat)
 
@@ -457,7 +465,8 @@ calcCategory <- function(vascIn,sampID='UID'){
     reshape2::melt(id.vars=c(sampID), variable.name='PARAMETER', value.name='RESULT') %>%
     dplyr::filter(!is.na(eval(as.name(sampID[1])))) %>%
     plyr::mutate(RESULT = ifelse(is.na(RESULT), 0, RESULT)
-                 , PARAMETER=as.character(PARAMETER))
+                 , PARAMETER=as.character(PARAMETER)) %>%
+    filter(PARAMETER %in% names(empty_base))
   
   return(catOut.1)
 }
@@ -557,12 +566,12 @@ calcWIS <- function(vascIn,sampID='UID'){
     return(NULL)
   }
 
-  if('ECOIND' %in% names(vascIn)){
-    vascIn <- plyr::mutate(vascIn,ECOIND=car::recode(WIS,"c('FACU')=4;c('FAC')=3;c('FACW')=2;c('OBL')=1;
-                                  c('UPL','NL')=5;c('TBD',NA)=NA")
-                           ,WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD')=NA"))
+  if('ECOIND' %in% names(vascIn)){ # NEED TO DEAL WITH NOL species
+    vascIn <- plyr::mutate(vascIn, WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD','UND','NOL')=NA"))
   }else{
-    vascIn <- plyr::mutate(vascIn, WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD')=NA"))
+    vascIn <- plyr::mutate(vascIn,ECOIND=car::recode(WIS,"c('FACU')=4;c('FAC')=3;c('FACW')=2;c('OBL')=1;
+                                  c('UPL','NL')=5;c('TBD',NA,'UND','NOL')=NA") # This places taxa with UND with missing
+                           ,WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD','UND','NOL')=NA"))
   }
     
   
@@ -584,7 +593,11 @@ calcWIS <- function(vascIn,sampID='UID'){
   names(empty_base) <- c("N_FAC","N_FACU","N_FACW","N_OBL","N_UPL","PCTN_FAC"         
   ,"PCTN_FACU","PCTN_FACW","PCTN_OBL","PCTN_UPL","XABCOV_FAC","XABCOV_FACU"      
   ,"XABCOV_FACW","XABCOV_OBL","XABCOV_UPL","XRCOV_FAC","XRCOV_FACU","XRCOV_FACW"       
-  ,"XRCOV_OBL","XRCOV_UPL","WETIND_COV_ALL","WETIND_FREQ_ALL")   
+  ,"XRCOV_OBL","XRCOV_UPL","WETIND_COV_ALL","WETIND_FREQ_ALL")  
+  
+  empty_base.nat <- data.frame(t(rep(NA,5)), stringsAsFactors=F)
+  names(empty_base.nat) <- c("WETIND_COV_NAT","WETIND_FREQ_NAT"  
+                             ,"N_OBLFACW_AC","XABCOV_OBLFACW_AC","XRCOV_OBLFACW_AC") 
   
   # Metrics using only subsets of data based on NATSTAT_ALT
   if('NWCA_NATSTAT' %in% names(vascIn)){
@@ -610,10 +623,6 @@ calcWIS <- function(vascIn,sampID='UID'){
 
     wisOut <- rbind(wisOut,wisOut.nat,ofOut)
     
-    empty_base.nat <- data.frame(t(rep(NA,5)), stringsAsFactors=F)
-    names(empty_base.nat) <- c("WETIND_COV_NAT","WETIND_FREQ_NAT"  
-                               ,"N_OBLFACW_AC","XABCOV_OBLFACW_AC","XRCOV_OBLFACW_AC") 
-    
     empty_base <- cbind(empty_base, empty_base.nat)
     
   }
@@ -624,7 +633,8 @@ calcWIS <- function(vascIn,sampID='UID'){
     reshape2::melt(id.vars=c(sampID), variable.name='PARAMETER', value.name='RESULT') %>%
     dplyr::filter(!is.na(eval(as.name(sampID[1])))) %>%
     plyr::mutate(RESULT = ifelse(is.na(RESULT)|is.infinite(RESULT),0,RESULT)
-                 , PARAMETER=as.character(PARAMETER))
+                 , PARAMETER=as.character(PARAMETER)) %>%
+    subset(PARAMETER %in% names(empty_base))
   
 
   return(wisOut.1)

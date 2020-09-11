@@ -11,8 +11,8 @@ test_that("Data frames created with correct structure",
           expect_true(length(testDFs)==2)
           expect_true(class(testDFs)=='list')
           expect_equal(names(testDFs),c('byUID','byPlot'))
-          expect_equal(names(testDFs$byUID),c('UID','STATE','USAC_REGION','TAXON','NUM','XABCOV','NPLOTS','DISTINCT'))
-          expect_equal(names(testDFs$byPlot),c('UID','STATE','USAC_REGION','PLOT','TAXON','COVER','DISTINCT'))
+          expect_equivalent(names(testDFs$byUID),c('UID','STATE','USAC_REGION','TAXON','NUM','XABCOV','NPLOTS','DISTINCT'))
+          expect_equivalent(names(testDFs$byPlot),c('UID','STATE','USAC_REGION','TAXON','PLOT','COVER','DISTINCT'))
 })
 
 
@@ -126,7 +126,8 @@ test_that("VMMI metric calculations",
 
 test_that("All vascular plant metrics correct",
           {
-            metOut <- calcVascPlantMets(testVasc,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID')
+            metOut <- calcVascPlantMets(testVasc,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, 
+                                        taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID', cValReg='STATE')
             metOut.long <- melt(metOut,id.vars='UID',variable.name='PARAMETER',value.name='RESULT')
             compOut <- merge(testMets,metOut.long,by=c('UID','PARAMETER'))
             compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))

@@ -15,8 +15,8 @@ UID and TAXON, with the following fields:
     \item TAXON: Taxon name
 
     \item CATEGORY: USDA PLANTS category variable, with valid values
-    of DICOT, FERN, GYMNOSPERM, HORSETAIL, LICHEN, LIVERWORT,
-    LYCOPOD, MONOCOT, MOSS, or blank
+    of DICOT, FERN, GYMNOSPERM, HORSETAIL, LIVERWORT,
+    LYCOPOD, MONOCOT, QUILLWORT, or blank
 
     \item XABCOV: Mean percent cover of taxon across plots
 

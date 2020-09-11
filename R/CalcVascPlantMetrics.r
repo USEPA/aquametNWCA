@@ -39,7 +39,7 @@
 #' }
 #' If this data frame is not supplied, the data set taxaNWCA included
 #' in the package is used.
-#' @param taxaCC A data frame containing Coefficient of Conservatism and native
+#' @param taxaNat A data frame containing native
 #' status as assigned for NWCA for all taxa in vascIn, with the following
 #' variables, at a minimum:
 #' \itemize{
@@ -47,13 +47,22 @@
 #'
 #' \item GEOG_ID: state to which value applies
 #'
-#' \item NWCA_CC: state- and taxon-specific Coefficient of Conservatism
-#'
 #' \item NWCA_NATSTAT: state- and taxon-specific native status
 #' }
 #' If this data frame is not supplied, the data set ccNWCA included in
 #' the package is used.
+#' @param taxaCC A data frame containing Coefficient of Conservatism 
+#' as assigned for NWCA for all taxa in vascIn, with the following
+#' variables, at a minimum:
+#' \itemize{
+#' \item USDA_NAME: USDA accepted name
 #'
+#' \item GEOG_ID: \emph{cValReg} to which value applies
+#'
+#' \item NWCA_CC: state- and taxon-specific Coefficient of Conservatism
+#' }
+#' If this data frame is not supplied, the data set ccNWCA included in
+#' the package is used.
 #' @param taxaWIS A data frame containing Wetland Indicator Status as assigned
 #' by USAC and reconciled by USDA PLANTS, with the following variables, at a
 #' minimum:
@@ -68,7 +77,8 @@
 #' package is used.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
-#' 
+#' @param cValReg String containing the name of the variable in \emph{taxaCC}
+#'  which specifies the C-value region.
 #' @return Either a character string containing an error message when metric
 #' calculation is not successful, or a data frame. The first column(s) of the
 #' data frame contain the \emph{sampID} variables, and subsequent columns are 
@@ -91,8 +101,9 @@
 #'
 #' str(exOut)
 #' head(exOut)
-calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID'){
-  prepDat <- prepareData(vascIn,sampID,taxaIn,taxaCC,taxaWIS)
+calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, taxaCC=ccNatNWCA,
+                              taxaWIS=wisNWCA,sampID='UID',cValReg='STATE'){
+  prepDat <- prepareData(vascIn,sampID,taxaIn,taxaNat,taxaCC,taxaWIS,cValReg)
 
   print("Initial datasets prepared for metric calculation.")
 

@@ -22,8 +22,12 @@
 #'   \item COVER: Percent cover of taxon in plot, including zeros for plots in
 #'   which a taxon does not occur. 
 #'   
-#'   \item \emph{cValReg} (as specified in function arguments): Region associated with Coefficients of Conservatism for site 
+#'   \item \emph{cValReg} (as specified in function arguments): Region 
+#'   associated with Coefficients of Conservatism for site 
 #'   (name may be specified in function arguments) 
+#'   
+#'   \item STATE: Two-character postal code to correspond to native 
+#'   status taxalist.
 #'   
 #'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation for
 #'   sample, to correspond to those in inWIS data frame.}
@@ -48,17 +52,23 @@
 #'   
 #'   \item SPECIES_NAME_ID (optional): Taxonomic ID number, which will be used
 #'   in Bray-Curtis distance metrics if available. }
-#' @param inNatCC Data frame with C-values and native status:
+#' @param inNat Data frame with native status:
 #'   
 #'   \itemize{ \item USDA_NAME: Taxon name
 #'   
-#'   \item GEOG_ID: Coefficient of Conservatism Region of taxon value
+#'   \item GEOG_ID: Postal abbreviation for STATE of taxon
 #'   
-#'   \item NWCA_CC (optional): Coefficient of conservatism, as used in NWCA,
-#'   necessary to calculate CC metrics, with default of 'STATE'
-#'   
-#'   \item NWCA_NATSTAT (optional): Native status variable, as used in NWCA,
-#'   necessary to calculate native status metrics }
+#'   \item NWCA_NATSTAT: Native status variable, as used in NWCA,
+#'   necessary to calculate native status metrics. }
+#' @param inCVal Data frame with coefficient of conservatism values:
+#'  \itemize{ \item USDA_NAME: Taxon name
+#'  
+#'  \item GEOG_ID: Code indicating C region for site, as supplied with cover 
+#'  data.
+#'  
+#'  \item NWCA_CVAL: Coefficient of conservatism (C-value), as used in
+#'  NWCA, necessary to calculate metrics based on C-values.
+#'  }
 #' @param inWIS Data frame with Wetland Indicator Status, from U.S. Army Corps
 #'   of Engineers (USAC): \itemize{ \item USDA_NAME: Taxon name
 #'   
@@ -81,7 +91,7 @@
 #'   
 #'   \item \emph{cValReg} (as specified in function arguments): Coefficient of 
 #'   Conservatism region associated with site, necessary for merging with 
-#'   inNatCC, with default of 'STATE'
+#'   inCVal, with default of 'STATE'
 #'   
 #'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation 
 #'   necessary for merging with inWIS.
@@ -165,13 +175,13 @@
 #' prepEx <- nwcaVegData(vascIn=VascPlantEx, cValReg='STATE')
 #' 
 #' str(prepEx)
-nwcaVegData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWIS=wisNWCA,cValReg="STATE"){
+nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, inCVal=ccNatNWCA, inWIS=wisNWCA, cValReg="STATE"){
   # Read in various input datasets, and create output dataset based on available
   # types of data - must have cover data and taxonomic data at the very least
   # If
-  datNames <- c(sampID,'PLOT','USDA_NAME','COVER',cValReg,'USAC_REGION')
-  if(any(datNames %nin% names(vascIn))){
-    print(paste("Missing key variables! Should be ",sampID," PLOT, USDA_NAME, COVER,",cValReg, " and USAC_REGION.",sep=''))
+  datNames <- c(sampID,'PLOT','USDA_NAME','COVER','STATE',cValReg,'USAC_REGION') 
+  if(any(unique(datNames) %nin% names(vascIn))){
+    print(paste("Missing key variables! Should be ", unique(datNames), ".",sep=''))
     return(NULL)
   }
   # Input taxa list with taxonomy and life history traits
@@ -188,19 +198,25 @@ nwcaVegData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
   }
   
   # Coefficients of conservatism and native status values
-  ccNames <- c('USDA_NAME','GEOG_ID')
-  ccVars <- c('NWCA_CC','NWCA_NATSTAT')
+  ccNatNames <- c('USDA_NAME','GEOG_ID')
+  ccVars <- c('NWCA_CC')
+  natVars <- c('NWCA_NATSTAT')
   # This only applies if someone specifies a taxalist not included in the package
-  if(any(ccNames %nin% names(inNatCC))){
+  if(any(ccNatNames %nin% names(inNat))|any(ccNatNames %nin% names(inCVal))){
     print("Missing key variables! Need variables named USDA_NAME, GEOG_ID to match up
           with cover data. This taxa list cannot be used in calculations. Either revise file
-          or use default taxa list by not specifying the inNatCC argument.")
+          or use default taxa list by not specifying the inNat argument.")
     return(NULL)
   }
-  if(any(ccVars %nin% names(inNatCC))){
-    msgNames <- ccVars[ccVars %nin% names(inNatCC)]
+  if(any(ccVars %nin% names(inCVal))){
+    msgNames <- ccVars[ccVars %nin% names(inCVal)]
     print(paste("Warning: Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
-                " without these parameter in inNatCC."))
+                " without these parameter in inCVal."))
+  }
+  if(any(natVars %nin% names(inNat))){
+    msgNames <- natVars[natVars %nin% names(inNat)]
+    print(paste("Warning: Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
+                " without these parameter in inCVal."))
   }
   
   
@@ -233,8 +249,13 @@ nwcaVegData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
   }
   
   # If all taxa match taxalist, merge now with CC/native status by C of C region
-  if(!is.null(inNatCC)){
-    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inNatCC,by.x=c('TAXON',cValReg),by.y=c('USDA_NAME','GEOG_ID'))
+  if(!is.null(inNat)){
+    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inNat,by.x=c('TAXON','STATE'),by.y=c('USDA_NAME','GEOG_ID'))
+  }else{
+    dfSPP.byUID.1b <- dfSPP.byUID.1a
+  }
+  if(!is.null(inCVal)){
+    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inCVal,by.x=c('TAXON',cValReg),by.y=c('USDA_NAME','GEOG_ID'))
   }else{
     dfSPP.byUID.1b <- dfSPP.byUID.1a
   }
@@ -254,7 +275,7 @@ nwcaVegData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
   dfSPP[[1]] <- dfSPP.byUID.fin
   
   ## Also want to add NWCA_NATSTAT to dfSPP[[2]], byPlot
-  dfSPP.byPlot <- merge(dfSPP[[2]],inNatCC,by.x=c(cValReg,'TAXON'),by.y=c('GEOG_ID','USDA_NAME'))
+  dfSPP.byPlot <- merge(dfSPP[[2]],inCVal,by.x=c(cValReg,'TAXON'),by.y=c('GEOG_ID','USDA_NAME'))
   dfSPP[[2]] <- dfSPP.byPlot
   
   # Create datasets for genus and family levels which will only be used for richness metrics
@@ -341,13 +362,15 @@ nwcaVegInput <- function(sampID='UID',tvar,vascIn,taxa,cValReg='STATE'){
   byPlot <- plyr::mutate(vascIn.1,TAXON=ifelse(!is.na(tobj) & tobj!='',tobj,USDA_NAME))
   # Sum COVER by SAMPID, PLOT, and TAXON to ensure there is only one row per species in input data, set DISTINCT as 1 to be
   # taxon counter
-  byPlot1 <- plyr::ddply(byPlot,c(sampID,cValReg,'USAC_REGION','PLOT','TAXON'),summarise,COVER=sum(COVER)
+  byVars <- unique(c(sampID, cValReg, 'USAC_REGION','TAXON','STATE'))
+    
+  byPlot1 <- plyr::ddply(byPlot,c(byVars,'PLOT'),summarise,COVER=sum(COVER)
                          ,DISTINCT=ifelse(COVER>0,1,0),.progress='tk')
   byPlot1$COVER[byPlot1$COVER>100] <- 100 # Cap sums at 100 percent
   print("Done with plot summing")
   
   ## Calculate frequency and relative frequency variables by taxon
-  byUID1 <- plyr::ddply(byPlot1,c(sampID,cValReg,'USAC_REGION','TAXON'),summarise,NUM=sum(DISTINCT),XABCOV=mean(COVER)
+  byUID1 <- plyr::ddply(byPlot1,byVars,summarise,NUM=sum(DISTINCT),XABCOV=mean(COVER)
                         ,NPLOTS=length(unique(PLOT)))
   byUID2 <- plyr::mutate(byUID1,DISTINCT=1)
   

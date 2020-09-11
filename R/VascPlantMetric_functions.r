@@ -133,17 +133,23 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa){
 #'   
 #'   \item SPECIES_NAME_ID (optional): Taxonomic ID number, which will be used
 #'   in Bray-Curtis distance metrics if available. }
-#' @param inNatCC Data frame with C-values and native status:
+#' @param inNat Data frame with native status:
 #'   
 #'   \itemize{ \item USDA_NAME: Taxon name
 #'   
 #'   \item GEOG_ID: Postal abbreviation for STATE of taxon
 #'   
-#'   \item NWCA_CC (optional): Coefficient of conservatism, as used in NWCA,
-#'   necessary to calculate CC metrics
-#'   
-#'   \item NWCA_NATSTAT (optional): Native status variable, as used in NWCA,
+#'   \item NWCA_NATSTAT: Native status variable, as used in NWCA,
 #'   necessary to calculate native status metrics. }
+#' @param inCVal Data frame with coefficient of conservatism values:
+#'  \itemize{ \item USDA_NAME: Taxon name
+#'  
+#'  \item GEOG_ID: Code indicating C region for site, as supplied with cover 
+#'  data.
+#'  
+#'  \item NWCA_CVAL: Coefficient of conservatism (C-value), as used in
+#'  NWCA, necessary to calculate metrics based on C-values.
+#'  }
 #' @param inWIS Data frame with Wetland Indicator Status, from U.S. Army Corps
 #'   of Engineers (USAC): \itemize{ \item USDA_NAME: Taxon name
 #'   
@@ -151,6 +157,8 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa){
 #'   frame
 #'   
 #'   \item WIS: Wetland Indicator Status as provided by USAC or added for NWCA }
+#' @param cValReg String containing the name of the variable in \emph{inCVal}
+#'  which specifies the C-value region.
 #'   
 #' @details This function calls the createDFs() function, which sums cover by
 #'   \emph{sampID} variables, PLOT, TAXON, with sums > 100 truncated to 100
@@ -162,7 +170,7 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa){
 #'   in \emph{sampID} argument
 #'   
 #'   \item STATE: State abbreviation of site location, necessary for merging 
-#'   with inNatCC
+#'   with inNat
 #'   
 #'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation 
 #'   necessary for merging with inWIS.
@@ -245,7 +253,8 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa){
 #' prepEx <- prepareData(VascPlantEx)
 #' 
 #' str(prepEx)
-prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,inWIS=wisNWCA){
+prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, # NEED TO UPDATE THIS WITH NEW CC AND NATIVE STATUS FILES
+                        inCVal=ccNatNWCA, inWIS=wisNWCA, cValReg='STATE'){
   # Read in various input datasets, and create output dataset based on available
   # types of data - must have cover data and taxonomic data at the very least
   # If
@@ -273,22 +282,40 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
   }
   
   # Coefficients of conservatism and native status values
-  if(!is.null(inNatCC)){
-    ccNames <- c('USDA_NAME','GEOG_ID')
-    ccVars <- c('NWCA_CC','NWCA_NATSTAT')
+  if(!is.null(inNat)){
+    natNames <- c('USDA_NAME','GEOG_ID')
+    natVars <- c('NWCA_NATSTAT')
   # This only applies if someone specifies a taxalist not included in the package
-    if(any(ccNames %nin% names(inNatCC))){
+    if(any(natNames %nin% names(inNat))){
       print("Missing key variables! Need variables named USDA_NAME, GEOG_ID to match up
             with cover data. This taxa list cannot be used in calculations. Either revise file
-            or use default taxa list by not specifying the inNatCC argument.")
+            or use default taxa list by not specifying the inNat argument.")
       return(NULL)
     }
-    if(any(ccVars %nin% names(inNatCC))){
-      msgNames <- ccVars[ccVars %nin% names(inNatCC)]
+    if(any(natVars %nin% names(inNat))){
+      msgNames <- natVars[natVars %nin% names(inNat)]
       print(paste("Warning: Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
-                  " without these parameter in inNatCC."))
+                  " without these parameter in inNat."))
     }
-    inNatCC <- subset(inNatCC, select=names(inNatCC) %in% c('USDA_NAME','GEOG_ID','NWCA_CC','NWCA_NATSTAT'))
+    inNatCC <- subset(inNat, select=names(inNat) %in% c('USDA_NAME','GEOG_ID','NWCA_NATSTAT'))
+  }
+ 
+  if(!is.null(inCVal)){
+    ccNames <- c('USDA_NAME','GEOG_ID')
+    ccVars <- c('NWCA_CC')
+    # This only applies if someone specifies a taxalist not included in the package
+    if(any(ccNames %nin% names(inCVal))){
+      print("Missing key variables! Need variables named USDA_NAME, GEOG_ID to match up
+            with cover data. This taxa list cannot be used in calculations. Either revise file
+            or use default taxa list by not specifying the inCVal argument.")
+      return(NULL)
+    }
+    if(any(ccVars %nin% names(inCVal))){
+      msgNames <- ccVars[ccVars %nin% names(inCVal)]
+      print(paste("Warning: Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
+                  " without these parameter in inCVal."))
+    }
+    inCVal <- subset(inCVal, select=names(inCVal) %in% c('USDA_NAME','GEOG_ID','NWCA_CC'))
   }
 
   # Wetland Indicator Status values
@@ -320,9 +347,15 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
     return(NULL)
   }
 
-  # If all taxa match taxalist, merge now with CC/native status by STATE
-  if(!is.null(inNatCC)){
-    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inNatCC,by.x=c('TAXON','STATE'),by.y=c('USDA_NAME','GEOG_ID'))
+  # If all taxa match taxalist, merge now with CC/native status by cValReg
+  if(!is.null(inCVal)){
+    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inCVal,by.x=c('TAXON',cValReg),by.y=c('USDA_NAME','GEOG_ID'))
+  }else{
+    dfSPP.byUID.1b <- dfSPP.byUID.1a
+  }
+  # merge with native status by STATE
+  if(!is.null(inNat)){
+    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inNat,by.x=c('TAXON','STATE'),by.y=c('USDA_NAME','GEOG_ID'))
   }else{
     dfSPP.byUID.1b <- dfSPP.byUID.1a
   }
@@ -342,7 +375,7 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
   dfSPP[[1]] <- dfSPP.byUID.fin
 
   ## Also want to add NWCA_NATSTAT to dfSPP[[2]], byPlot
-  dfSPP.byPlot <- merge(dfSPP[[2]],inNatCC,by.x=c('STATE','TAXON'),by.y=c('GEOG_ID','USDA_NAME'))
+  dfSPP.byPlot <- merge(dfSPP[[2]],inNat,by.x=c('STATE','TAXON'),by.y=c('GEOG_ID','USDA_NAME'))
   dfSPP[[2]] <- dfSPP.byPlot
 
   # Create datasets for genus and family levels which will only be used for richness metrics
