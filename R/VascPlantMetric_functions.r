@@ -259,7 +259,7 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
   # Input taxa list with taxonomy and life history traits
   if(!is.null(inTaxa)){
     taxNames <- c('USDA_NAME','FAMILY','GENUS')
-    altNames <- c('CATEGORY','GROWTH_HABIT','DURATION')
+    altNames <- c('CATEGORY','GROWTH_HABIT','DURATION','DUR_ALT','GRH_ALT','HERB','TREE_COMB','SHRUB_COMB','VINE_ALL')
     if(any(taxNames %nin% names(inTaxa))){
       print("Missing key variables! Need at least USDA_NAME, FAMILY, GENUS to calculate metrics.")
       return(NULL)
@@ -300,7 +300,7 @@ prepareData <- function(vascIn,sampID='UID',inTaxa=taxaNWCA,inNatCC=ccNatNWCA,in
             taxa list by not specifying inWIS argument.")
       return(NULL)
     }
-    inWIS <- subset(inWIS, select=c('USDA_NAME','GEOG_ID','WIS'))
+    inWIS <- subset(inWIS, select=names(inWIS) %in% c('USDA_NAME','GEOG_ID','WIS','ECOIND'))
   }
 
   ## Create dfs for species level, genus, family, and order
