@@ -523,11 +523,23 @@ calcCategory <- function(vascIn,sampID='UID'){
 #' In addition WIS indices based on all and native species only (if
 #' NWCA_NATSTAT is provided in the input data frame), with the
 #' suffixes ALL and NAT, respectively. WIS values recoded as numeric
-#' with OBL=1, FACW=2, FAC=3, FACU=4, UPL=5:
+#' with OBL=1, FACW=2, FAC=3, FACU=4, UPL=5 for WETIND metrics and as
+#' OBL=5, FACW=4, FAC=3 FACU=2, and UPD=1 for WETIND2 metrics:
 #' \itemize{ \item WETIND_COV_ALL, WETIND_COV_NAT: Wetland Index, weighted by
-#' taxon cover
+#' taxon cover, based on numeric conversion of WIS, with lower numbers 
+#' indicating wetter conditions
 #' 
-#' \item WETIND_FREQ_ALL, WETIND_FREQ_NAT: Wetland Index, weight by frequency } 
+#' \item WETIND_FREQ_ALL, WETIND_FREQ_NAT: Wetland Index, weight by frequency, 
+#' based on numeric conversion of WIS, with lower numbers 
+#' indicating wetter conditions } 
+#' 
+#' \itemize{ \item WETIND2_COV_ALL, WETIND2_COV_NAT: Wetland Index, weighted by
+#' taxon cover, based on numeric conversion of WIS, with higher numbers 
+#' indicating wetter conditions
+#' 
+#' \item WETIND2_FREQ_ALL, WETIND2_FREQ_NAT: Wetland Index, weight by frequency, 
+#' based on numeric conversion of WIS, with higher numbers 
+#' indicating wetter conditions } 
 #' 
 #' If NWCA_NATSTAT is provided in the input data frame, the following metrics
 #' are calculated based on Alien + Cryptogenic species: 
@@ -567,11 +579,16 @@ calcWIS <- function(vascIn,sampID='UID'){
   }
 
   if('ECOIND' %in% names(vascIn)){ # NEED TO DEAL WITH NOL species
-    vascIn <- plyr::mutate(vascIn, WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD','UND','NOL')=NA"))
+    vascIn <- plyr::mutate(vascIn, WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD','UND','NOL')=NA"),
+                           ECOIND1=ECOIND,
+                           ECOIND2=car::recode(WIS,"c('FACU')=2;c('FAC')=3;c('FACW')=4;c('OBL')=5;
+                                  c('UPL','NL')=1;c('TBD',NA,'UND','NOL')=NA"))
   }else{
-    vascIn <- plyr::mutate(vascIn,ECOIND=car::recode(WIS,"c('FACU')=4;c('FAC')=3;c('FACW')=2;c('OBL')=1;
-                                  c('UPL','NL')=5;c('TBD',NA,'UND','NOL')=NA") # This places taxa with UND with missing
-                           ,WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD','UND','NOL')=NA"))
+    vascIn <- plyr::mutate(vascIn,ECOIND1=car::recode(WIS,"c('FACU')=4;c('FAC')=3;c('FACW')=2;c('OBL')=1;
+                                  c('UPL','NL')=5;c('TBD',NA,'UND','NOL')=NA"), # This places taxa with UND with missing
+                           WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD','UND','NOL')=NA"),
+                           ECOIND2 = car::recode(WIS,"c('FACU')=2;c('FAC')=3;c('FACW')=4;c('OBL')=5;
+                                  c('UPL','NL')=1;c('TBD',NA,'UND','NOL')=NA")) # Alternate version of ECOIND numbering so higher numbers are for wetter conditions
   }
     
   
@@ -580,24 +597,28 @@ calcWIS <- function(vascIn,sampID='UID'){
   sppWIS <- int.calcTraits_MultCat(vascIn.1,'WIS',sampID)
 
   ## Calculate Wetland indicator status metrics and melt into long format
-  vascIn.2 <- subset(vascIn.1,!is.na(ECOIND)) %>%
-    plyr::mutate(ECOIND=as.numeric(ECOIND)) %>%
-    plyr::ddply(c(sampID),summarise
-                        ,WETIND_COV_ALL=round(sum(XABCOV*ECOIND)/sum(XABCOV),2)
-                        ,WETIND_FREQ_ALL=round(sum(FREQ*ECOIND)/sum(FREQ),2)) %>%
+  vascIn.2 <- subset(vascIn.1,!is.na(ECOIND1)) %>%
+    plyr::mutate(ECOIND1=as.numeric(ECOIND1), ECOIND2= as.numeric(ECOIND2)) %>%
+    plyr::ddply(c(sampID),summarise,
+                        WETIND_COV_ALL=round(sum(XABCOV*ECOIND1)/sum(XABCOV),2),
+                        WETIND_FREQ_ALL=round(sum(FREQ*ECOIND1)/sum(FREQ),2),
+                WETIND2_COV_ALL=round(sum(XABCOV*ECOIND2)/sum(XABCOV),2),
+                WETIND2_FREQ_ALL=round(sum(FREQ*ECOIND2)/sum(FREQ),2)) %>%
     reshape2::melt(id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT')
 
   wisOut <- rbind(sppWIS,vascIn.2)
   
   empty_base <- data.frame(t(rep(NA,22)), stringsAsFactors=F)
-  names(empty_base) <- c("N_FAC","N_FACU","N_FACW","N_OBL","N_UPL","PCTN_FAC"         
-  ,"PCTN_FACU","PCTN_FACW","PCTN_OBL","PCTN_UPL","XABCOV_FAC","XABCOV_FACU"      
-  ,"XABCOV_FACW","XABCOV_OBL","XABCOV_UPL","XRCOV_FAC","XRCOV_FACU","XRCOV_FACW"       
-  ,"XRCOV_OBL","XRCOV_UPL","WETIND_COV_ALL","WETIND_FREQ_ALL")  
+  names(empty_base) <- c("N_FAC","N_FACU","N_FACW","N_OBL","N_UPL","PCTN_FAC",         
+  "PCTN_FACU","PCTN_FACW","PCTN_OBL","PCTN_UPL","XABCOV_FAC","XABCOV_FACU",      
+  "XABCOV_FACW","XABCOV_OBL","XABCOV_UPL","XRCOV_FAC","XRCOV_FACU","XRCOV_FACW",       
+  "XRCOV_OBL","XRCOV_UPL","WETIND_COV_ALL","WETIND_FREQ_ALL","WETIND2_COV_ALL",
+  "WETIND2_FREQ_ALL")  
   
   empty_base.nat <- data.frame(t(rep(NA,5)), stringsAsFactors=F)
-  names(empty_base.nat) <- c("WETIND_COV_NAT","WETIND_FREQ_NAT"  
-                             ,"N_OBLFACW_AC","XABCOV_OBLFACW_AC","XRCOV_OBLFACW_AC") 
+  names(empty_base.nat) <- c("WETIND_COV_NAT","WETIND_FREQ_NAT",
+                             "WETIND2_COV_NAT","WETIND2_FREQ_NAT",
+                             "N_OBLFACW_AC","XABCOV_OBLFACW_AC","XRCOV_OBLFACW_AC") 
   
   # Metrics using only subsets of data based on NATSTAT_ALT
   if('NWCA_NATSTAT' %in% names(vascIn)){
@@ -608,10 +629,13 @@ calcWIS <- function(vascIn,sampID='UID'){
     vascIn.nat.1 <- subset(vascIn.nat,NWCA_NATSTAT=='NAT')
 
     ## Calculate Wetland indicator status metrics and melt into long format
-    wisOut.nat <- subset(vascIn.nat.1,!is.na(ECOIND)) %>%
-      plyr::mutate(ECOIND=as.numeric(ECOIND)) %>%
-      plyr::ddply(c(sampID),summarise,WETIND_COV_NAT=round(sum(XABCOV*ECOIND)/sum(XABCOV),2)
-                          ,WETIND_FREQ_NAT=round(sum(FREQ*ECOIND)/sum(FREQ),2)) %>%
+    wisOut.nat <- subset(vascIn.nat.1,!is.na(ECOIND1)) %>%
+      plyr::mutate(ECOIND1=as.numeric(ECOIND1), ECOIND2 = as.numeric(ECOIND2)) %>%
+      plyr::ddply(c(sampID),summarise,
+                  WETIND_COV_NAT=round(sum(XABCOV*ECOIND1)/sum(XABCOV),2),
+                  WETIND_FREQ_NAT=round(sum(FREQ*ECOIND1)/sum(FREQ),2),
+                  WETIND2_COV_NAT=round(sum(XABCOV*ECOIND2)/sum(XABCOV),2),
+                  WETIND2_FREQ_NAT=round(sum(FREQ*ECOIND2)/sum(FREQ),2)) %>%
             reshape2::melt(id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT') %>%
               plyr::mutate(PARAMETER=as.character(PARAMETER))
 

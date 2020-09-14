@@ -52,11 +52,23 @@ Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
 In addition WIS indices based on all and native species only (if
 NWCA_NATSTAT is provided in the input data frame), with the
 suffixes ALL and NAT, respectively. WIS values recoded as numeric
-with OBL=1, FACW=2, FAC=3, FACU=4, UPL=5:
+with OBL=1, FACW=2, FAC=3, FACU=4, UPL=5 for WETIND metrics and as
+OBL=5, FACW=4, FAC=3 FACU=2, and UPD=1 for WETIND2 metrics:
 \itemize{ \item WETIND_COV_ALL, WETIND_COV_NAT: Wetland Index, weighted by
-taxon cover
+taxon cover, based on numeric conversion of WIS, with lower numbers 
+indicating wetter conditions
 
-\item WETIND_FREQ_ALL, WETIND_FREQ_NAT: Wetland Index, weight by frequency } 
+\item WETIND_FREQ_ALL, WETIND_FREQ_NAT: Wetland Index, weight by frequency, 
+based on numeric conversion of WIS, with lower numbers 
+indicating wetter conditions } 
+
+\itemize{ \item WETIND2_COV_ALL, WETIND2_COV_NAT: Wetland Index, weighted by
+taxon cover, based on numeric conversion of WIS, with higher numbers 
+indicating wetter conditions
+
+\item WETIND2_FREQ_ALL, WETIND2_FREQ_NAT: Wetland Index, weight by frequency, 
+based on numeric conversion of WIS, with higher numbers 
+indicating wetter conditions } 
 
 If NWCA_NATSTAT is provided in the input data frame, the following metrics
 are calculated based on Alien + Cryptogenic species: 
