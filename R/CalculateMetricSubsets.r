@@ -608,14 +608,14 @@ calcWIS <- function(vascIn,sampID='UID'){
 
   wisOut <- rbind(sppWIS,vascIn.2)
   
-  empty_base <- data.frame(t(rep(NA,22)), stringsAsFactors=F)
+  empty_base <- data.frame(t(rep(NA,24)), stringsAsFactors=F)
   names(empty_base) <- c("N_FAC","N_FACU","N_FACW","N_OBL","N_UPL","PCTN_FAC",         
   "PCTN_FACU","PCTN_FACW","PCTN_OBL","PCTN_UPL","XABCOV_FAC","XABCOV_FACU",      
   "XABCOV_FACW","XABCOV_OBL","XABCOV_UPL","XRCOV_FAC","XRCOV_FACU","XRCOV_FACW",       
   "XRCOV_OBL","XRCOV_UPL","WETIND_COV_ALL","WETIND_FREQ_ALL","WETIND2_COV_ALL",
   "WETIND2_FREQ_ALL")  
   
-  empty_base.nat <- data.frame(t(rep(NA,5)), stringsAsFactors=F)
+  empty_base.nat <- data.frame(t(rep(NA,7)), stringsAsFactors=F)
   names(empty_base.nat) <- c("WETIND_COV_NAT","WETIND_FREQ_NAT",
                              "WETIND2_COV_NAT","WETIND2_FREQ_NAT",
                              "N_OBLFACW_AC","XABCOV_OBLFACW_AC","XRCOV_OBLFACW_AC") 
