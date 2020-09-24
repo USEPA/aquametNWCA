@@ -4,7 +4,7 @@
 \alias{createDFs}
 \title{Create data frames for function input}
 \usage{
-createDFs(sampID = "UID", tvar, vascIn, taxa)
+createDFs(sampID = "UID", tvar, vascIn, taxa, cValReg = "NWC_CREG")
 }
 \arguments{
 \item{sampID}{A character vector containing the name(s) of
@@ -21,9 +21,14 @@ the following variables:
 
 \item PLOT:  Plot number of data (1 to 5 possible)
 
-\item STATE: State postal code of site
+\item STATE: Two-letter state postal code of site, used to link
+native status to taxa in native status taxalist
 
-\item USAC_REGION: U.S. Army Corps of Engineers Region Name
+\item USAC_REGION: U.S. Army Corps of Engineers Region abbreviation for
+  sample, to correspond to those in Wetland Indicator Status taxalist
+
+\item Variable named in \emph{cValReg}: NWCA C-value region abbreviation for sample, to correspond
+those in C-value taxalist
 
 \item USDA_NAME: Taxon name, must match with taxa data frame
 
@@ -33,7 +38,10 @@ the following variables:
 \item{taxa}{Data frame containing USDA_NAME, GENUS, CATEGORY,
 GROWTH_HABIT, and DURATION variables. Dataset taxaNWCA is the
 default if not specified. These variables are assumed to be
-populated with abbreviations as found in UsDA PLANTS database.}
+populated with abbreviations as found in USDA PLANTS database.}
+
+\item{cValReg}{String containing the name of the variable in \emph{vascIn}
+which specifies the C-value region.}
 }
 \value{
 A list containing two data frames. The first data frame summarizes
@@ -58,7 +66,7 @@ level specified. Not intended for use on its own.
 head(VascPlantEx)
 data(taxaNWCA)
 
-outEx <- createDFs(sampID='UID','GENUS',VascPlantEx,taxaNWCA)
+outEx <- createDFs(sampID='UID','GENUS',VascPlantEx,taxaNWCA,cValReg='STATE')
 head(outEx$byUID)
 head(outEx$byPlot)
 }

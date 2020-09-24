@@ -55,9 +55,9 @@ only on native status.
 }
 \examples{
 head(VascPlantEx)
-exPlant <- prepareData(VascPlantEx)
+exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 
-natEx <- calcCC(exPlant$byUIDspp)
+natEx <- calcNative(exPlant$byUIDspp)
 
 head(natEx)
 unique(natEx$PARAMETER)

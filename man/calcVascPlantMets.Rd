@@ -11,7 +11,7 @@ calcVascPlantMets(
   taxaCC = ccNatNWCA,
   taxaWIS = wisNWCA,
   sampID = "UID",
-  cValReg = "STATE"
+  cValReg = "NWC_CREG"
 )
 }
 \arguments{
@@ -113,7 +113,8 @@ This function calculates the NWCA 2011 vascular plant metrics.
 \examples{
 head(VascPlantEx)
 
-exOut <- calcVascPlantMets(VascPlantEx,taxaNWCA,ccNatNWCA,wisNWCA)
+exOut <- calcVascPlantMets(VascPlantEx,taxaIn = taxaNWCA, taxaNat = ccNatNWCA,
+ taxaCC = ccNatNWCA, taxaWIS = wisNWCA, cValReg ='STATE')
 
 str(exOut)
 head(exOut)

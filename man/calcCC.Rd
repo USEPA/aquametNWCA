@@ -2,7 +2,7 @@
 % Please edit documentation in R/CalculateMetricSubsets.r
 \name{calcCC}
 \alias{calcCC}
-\title{Calculate Wetland Indicator Status metrics}
+\title{Calculate Coefficient of Conservatism metrics}
 \usage{
 calcCC(vascIn, sampID = "UID")
 }
@@ -54,13 +54,13 @@ Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
    }
 }
 \description{
-This function calculates Wetland Indicator Status (WIS)
+This function calculates C of C 
 metrics, including variations based on native status,
 if NWCA_NATSTAT is present in the input data frame.
 }
 \examples{
 head(VascPlantEx)
-exPlant <- prepareData(VascPlantEx)
+exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 
 ccEx <- calcCC(exPlant$byUIDspp)
 

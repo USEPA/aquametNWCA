@@ -65,7 +65,7 @@
 #' 
 #' @examples
 #'  head(VascPlantEx)
-#'  exPlant <- prepareData(VascPlantEx)
+#'  exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 #'
 #'  durEx <- calcDuration(exPlant$byUIDspp)
 #'  head(durEx)
@@ -218,7 +218,7 @@ calcDuration <- function(vascIn,sampID='UID'){
 #' Environmental Protection Agency, Washington, DC.
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx)
+#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 #'
 #' ghEx <- calcGrowthHabit(exPlant$byUIDspp)
 #'
@@ -393,7 +393,7 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
 #' 
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx)
+#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 #'
 #' catEx <- calcCategory(exPlant$byUIDspp)
 #'
@@ -561,7 +561,7 @@ calcCategory <- function(vascIn,sampID='UID'){
 #' 
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx)
+#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 #'
 #' wisEx <- calcWIS(exPlant$byUIDspp)
 #'
@@ -665,12 +665,12 @@ calcWIS <- function(vascIn,sampID='UID'){
 }
 
 
-# Metrics using CC values
+# Metrics using C values
 #' @export
 #' 
-#' @title Calculate Wetland Indicator Status metrics
+#' @title Calculate Coefficient of Conservatism metrics
 #' 
-#' @description This function calculates Wetland Indicator Status (WIS)
+#' @description This function calculates C of C 
 #' metrics, including variations based on native status,
 #' if NWCA_NATSTAT is present in the input data frame.
 #' 
@@ -726,7 +726,7 @@ calcWIS <- function(vascIn,sampID='UID'){
 #'   
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx)
+#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 #'
 #' ccEx <- calcCC(exPlant$byUIDspp)
 #'
@@ -844,9 +844,9 @@ calcCC <- function(vascIn,sampID='UID'){
 #' 
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx)
+#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 #'
-#' natEx <- calcCC(exPlant$byUIDspp)
+#' natEx <- calcNative(exPlant$byUIDspp)
 #'
 #' head(natEx)
 #' unique(natEx$PARAMETER)
@@ -989,7 +989,7 @@ calcNative <- function(vascIn,sampID='UID'){
 #' 
 #' @examples
 #'   head(VascPlantEx)
-#'   exPlant <- prepareData(VascPlantEx)
+#'   exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 #'
 #'   richEx <- calcRichness(exPlant$byUIDspp,exPlant$byPlotspp,
 #'          exPlant$byUIDgen,exPlant$byPlotgen,exPlant$byUIDfam,exPlant$byPlotfam)
@@ -1095,7 +1095,7 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
 #' 
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx)
+#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 #'
 #' divEx <- calcDiversity(exPlant$byUIDspp)
 #'
@@ -1262,7 +1262,7 @@ calcBCmets <- function(vascIn,sampID='UID'){
 #' 
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx)
+#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 #'
 #' vmmiEx <- calcVMMImets(exPlant$byUIDspp)
 #'

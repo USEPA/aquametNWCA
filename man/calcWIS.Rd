@@ -89,7 +89,7 @@ if NWCA_NATSTAT is present in the input data frame.
 }
 \examples{
 head(VascPlantEx)
-exPlant <- prepareData(VascPlantEx)
+exPlant <- prepareData(VascPlantEx, cValReg='STATE')
 
 wisEx <- calcWIS(exPlant$byUIDspp)
 

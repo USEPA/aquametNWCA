@@ -97,13 +97,16 @@
 #' @examples
 #' head(VascPlantEx)
 #'
-#' exOut <- calcVascPlantMets(VascPlantEx,taxaNWCA,ccNatNWCA,wisNWCA)
+#' exOut <- calcVascPlantMets(VascPlantEx,taxaIn = taxaNWCA, taxaNat = ccNatNWCA,
+#'  taxaCC = ccNatNWCA, taxaWIS = wisNWCA, cValReg ='STATE')
 #'
 #' str(exOut)
 #' head(exOut)
 calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, taxaCC=ccNatNWCA,
-                              taxaWIS=wisNWCA,sampID='UID',cValReg='STATE'){
-  prepDat <- prepareData(vascIn,sampID,taxaIn,taxaNat,taxaCC,taxaWIS,cValReg)
+                              taxaWIS=wisNWCA,sampID='UID',cValReg='NWC_CREG'){
+  print(cValReg)
+  prepDat <- prepareData(vascIn,sampID,inTaxa = taxaIn, inNat = taxaNat, inCVal = taxaCC,
+                         inWIS = taxaWIS, cValReg=cValReg)
 
   print("Initial datasets prepared for metric calculation.")
 

@@ -16,7 +16,7 @@ test_that("Data frames created with correct structure",
 })
 
 
-dfTest <- prepareData(testVasc,sampID='UID')
+dfTest <- prepareData(testVasc,sampID='UID',cValReg='STATE')
 
 test_that("Richness metric values are correct",
           {
@@ -116,7 +116,7 @@ test_that("Mean Bray-Curtis metric values correct",
 test_that("VMMI metric calculations",
           {
            metOut <- calcVMMImets(testForCalc)
-           metOut.long <- melt(metOut,id.vars='UID',variable.name='PARAMETER',value.name='RESULT')
+           metOut.long <- reshape2::melt(metOut,id.vars='UID',variable.name='PARAMETER',value.name='RESULT')
            compOut <- merge(testMets,metOut.long,by=c('UID','PARAMETER'))
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
            expect_true(nrow(metOut.long)==40)
@@ -128,7 +128,7 @@ test_that("All vascular plant metrics correct",
           {
             metOut <- calcVascPlantMets(testVasc,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, 
                                         taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID', cValReg='STATE')
-            metOut.long <- melt(metOut,id.vars='UID',variable.name='PARAMETER',value.name='RESULT')
+            metOut.long <- reshape2::melt(metOut,id.vars='UID',variable.name='PARAMETER',value.name='RESULT')
             compOut <- merge(testMets,metOut.long,by=c('UID','PARAMETER'))
             compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
             expect_true(nrow(metOut.long)==3520)
