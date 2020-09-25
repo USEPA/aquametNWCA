@@ -384,14 +384,14 @@ prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
 
   # If all taxa match taxalist, merge now with CC/native status by cValReg
   if(!is.null(inCVal)){
-    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inCVal,by.x=c('TAXON',cValReg),by.y=c('USDA_NAME','GEOG_ID'))
+    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inCVal,by.x=c('TAXON',cValReg),by.y=c('USDA_NAME','GEOG_ID'), all.x=TRUE)
     print(names(dfSPP.byUID.1b))
   }else{
     dfSPP.byUID.1b <- dfSPP.byUID.1a
   }
   # merge with native status by STATE
   if(!is.null(inNat)){
-    dfSPP.byUID.1c <- merge(dfSPP.byUID.1b,inNat,by.x=c('TAXON','STATE'),by.y=c('USDA_NAME','GEOG_ID'))
+    dfSPP.byUID.1c <- merge(dfSPP.byUID.1b,inNat,by.x=c('TAXON','STATE'),by.y=c('USDA_NAME','GEOG_ID'), all.x=TRUE)
   }else{
     dfSPP.byUID.1c <- dfSPP.byUID.1b
   }
