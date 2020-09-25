@@ -81,7 +81,7 @@ calcDuration <- function(vascIn,sampID='UID'){
   return(NULL)
   }
 
-  vascIn <- subset(vascIn,!is.na(DURATION) & DURATION!='UND')
+  vascIn <- subset(vascIn,!is.na(DURATION) & toupper(DURATION)!='UND')
   # From DURATION, create DUR_ALT variable
   if('DUR_ALT' %in% names(vascIn)){
     vascIn.1 <- vascIn
@@ -235,7 +235,7 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
     return(NULL)
   }
   
-  vascIn <- subset(vascIn,!is.na(GROWTH_HABIT) & GROWTH_HABIT!='UND')
+  vascIn <- subset(vascIn,!is.na(GROWTH_HABIT) & toupper(GROWTH_HABIT)!='UND')
   
   # Check for GRH_ALT variable
   if('GRH_ALT' %in% names(vascIn)){
@@ -410,7 +410,7 @@ calcCategory <- function(vascIn,sampID='UID'){
     return(NULL)
   }
 
-  vascIn.1 <- subset(vascIn,!is.na(CATEGORY) & CATEGORY!='UND')
+  vascIn.1 <- subset(vascIn,!is.na(CATEGORY) & toupper(CATEGORY)!='UND')
   catOut <- int.calcTraits_MultCat(vascIn.1,'CATEGORY',sampID)
   
   empty_base <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
