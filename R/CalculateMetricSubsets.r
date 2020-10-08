@@ -86,8 +86,10 @@ calcDuration <- function(vascIn,sampID='UID'){
   if('DUR_ALT' %in% names(vascIn)){
     vascIn.1 <- vascIn
   }else{
-    vascIn.1 <- plyr::mutate(vascIn,DUR_ALT=car::recode(DURATION,"c('ANNUAL, BIENNIAL','BIENNIAL')='ANN_BIEN';
-                    c('ANNUAL, BIENNIAL, PERENNIAL','ANNUAL, PERENNIAL','PERENNIAL, ANNUAL', 'BIENNIAL, PERENNIAL')='ANN_PEREN'"))
+    vascIn.1 <- plyr::mutate(vascIn,DUR_ALT=car::recode(DURATION,"c('ANNUAL, BIENNIAL','BIENNIAL','BIENNIAL, AN')='ANN_BIEN';
+                    c('ANNUAL, BIENNIAL, PERENNIAL','ANNUAL, PERENNIAL','PERENNIAL, ANNUAL', 'BIENNIAL, PERENNIAL',
+                          'ANNUAL, PERENNIAL, BIENNIAL', 'BIENNIAL, PERENNIAL, AN')='ANN_PEREN';
+                      c('PERENNIAL, ANNUAL, BIENNIAL','PERENNIAL, AN','PERENNIAL, BIENNIAL','PERENNIAL, BIENNIAL, ANNUAL','PERENNIAL, BIENNIAL, AN')='PERENNIAL'"))
   }
   durOut <- int.calcTraits_MultCat(vascIn.1,'DUR_ALT',sampID)
   
@@ -242,15 +244,15 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
     vascIn.1 <- plyr::mutate(vascIn, GRH_ALT=gsub('SUBSHRUB', 'SSHRUB', GRH_ALT))
   }else{
     vascIn.1 <- plyr::mutate(vascIn,GRH_ALT=car::recode(GROWTH_HABIT,
-                                                        "c('FORB/HERB','FORB/HERB, SHRUB','FORB/HERB, SHRUB, SUBSHRUB'
-                          ,'FORB/HERB, SUBSHRUB')='FORB';c('SUBSHRUB, FORB/HERB','SUBSHRUB, SHRUB, FORB/HERB')='SSHRUB_FORB'
-                          ;c('SUBSHRUB','SUBSHRUB, SHRUB','SHRUB, SUBSHRUB','SUBSHRUB, SHRUB, TREE')='SSHRUB_SHRUB'
-                          ;c('SHRUB','SHRUB, TREE','TREE, SUBSHRUB, SHRUB','SHRUB, SUBSHRUB, TREE')='SHRUB'
-                          ;c('TREE, SHRUB','TREE, SHRUB, VINE')='TREE_SHRUB'
-                          ;c('VINE, FORB/HERB','SUBSHRUB, FORB/HERB, VINE','FORB/HERB, VINE')='VINE'
+                           "c('FORB/HERB','FORB/HERB, SHRUB','FORB/HERB, SHRUB, SUBSHRUB','FORB/HERB, SUBSHRUB','FORB/HERB, SUBSHRUB, SHRUB')='FORB';
+                           c('SUBSHRUB, FORB/HERB','SUBSHRUB, SHRUB, FORB/HERB','SUBSHRUB, FORB/HERB, SHRUB')='SSHRUB_FORB'
+                          ;c('SUBSHRUB','SUBSHRUB, SHRUB','SHRUB, SUBSHRUB','SUBSHRUB, SHRUB, TREE','SHRUB, FORB/HERB, SUBSHRUB')='SSHRUB_SHRUB'
+                          ;c('SHRUB','SHRUB, TREE','TREE, SUBSHRUB, SHRUB','SHRUB, SUBSHRUB, TREE','SUBSHRUB, FORB/HERB, SHRUB, TREE','SHRUB,')='SHRUB'
+                          ;c('TREE, SHRUB','TREE, SHRUB, VINE','TREE, SHRUB, SUBSHRUB')='TREE_SHRUB'
+                          ;c('VINE, FORB/HERB','SUBSHRUB, FORB/HERB, VINE','FORB/HERB, VINE','FORB/HERB, VINE, SUBSHRUB','VINE, FORB/HERB, SUBSHRUB','VINE, HERBACEOUS')='VINE'
                           ;c('VINE, SHRUB','VINE, SUBSHRUB','SUBSHRUB, VINE','SHRUB, VINE','SHRUB, FORB/HERB, SUBSHRUB, VINE'
-                          ,'SHRUB, SUBSHRUB, VINE')='VINE_SHRUB'
-                          ;c('GRAMINOID','SUBSHRUB, SHRUB, GRAMINOID')='GRAMINOID'"))
+                          ,'SHRUB, SUBSHRUB, VINE','VINE, TREE, SHRUB','SHRUB, VINE, FORB/HERB','SUBSHRUB, VINE, SHRUB','SUBSHRUB, VINE, FORB/HERB','	SHRUB, VINE, SUBSHRUB','SHRUB, FORB/HERB, VINE','VINE, WOODY')='VINE_SHRUB'
+                          ;c('GRAMINOID','SUBSHRUB, SHRUB, GRAMINOID','GRAMINOID, SHRUB, SUBSHRUB','GRAMINOID, SHRUB, VINE','SUBSHRUB, GRAMINOID, SHRUB')='GRAMINOID'"))
   }
   # Check for TREE_COMB variable
   if(('TREE_COMB' %in% names(vascIn))==FALSE){
@@ -258,11 +260,11 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
   }
   # Check for SHRUB_COMB variable
   if(('SHRUB_COMB' %in% names(vascIn))==FALSE){
-    vascIn.1 <- plyr::mutate(vascIn.1, SHRUB_COMB=ifelse(GRH_ALT %in% c('SSHRUB_SHRUB','SSHURB_FORB','SHRUB'),1,0))
+    vascIn.1 <- plyr::mutate(vascIn.1, SHRUB_COMB=ifelse(GRH_ALT %in% c('SSHRUB_SHRUB','SHRUB'),1,0))
   }
   # Check for HERB variable
   if(('HERB' %in% names(vascIn))==FALSE){
-    vascIn.1 <- plyr::mutate(vascIn.1, HERB=ifelse(GRH_ALT %in% c('GRAMINOID','FORB'),1,0))
+    vascIn.1 <- plyr::mutate(vascIn.1, HERB=ifelse(GRH_ALT %in% c('GRAMINOID','FORB','SSHRUB_FORB'),1,0))
   }
 
   sppGRH <- int.calcTraits_MultCat(vascIn.1,'GRH_ALT',sampID)
@@ -741,7 +743,8 @@ calcCC <- function(vascIn,sampID='UID'){
   ## Calculate mean CC and FQAI indices
   totals <- plyr::ddply(vascIn,c(sampID),summarise,SUBTOTFREQ=sum(FREQ),SUBXTOTABCOV=sum(XABCOV))
   vascIn.1 <- merge(subset(vascIn,select=names(vascIn) %nin% c('TOTFREQ','XTOTABCOV')),totals,by=sampID)
-  vascIn.2 <- plyr::ddply(subset(vascIn.1,NWCA_CC!='Und'),c(sampID),summarise,XC=round(sum(as.numeric(NWCA_CC))/length(unique(TAXON)),2)
+  vascIn.2 <- plyr::ddply(subset(vascIn.1,toupper(NWCA_CC)!='UND'),c(sampID),summarise,
+                          XC=round(sum(as.numeric(NWCA_CC))/length(unique(TAXON)),2)
                         ,FQAI=round(sum(as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
                         ,XC_FREQ=round(sum((FREQ/SUBTOTFREQ)*100*as.numeric(NWCA_CC))/length(unique(TAXON)),2)
                         ,FQAI_FREQ=round(sum((FREQ/SUBTOTFREQ)*100*as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
@@ -751,6 +754,18 @@ calcCC <- function(vascIn,sampID='UID'){
 
   ccOut <- reshape2::melt(vascIn.2,id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT') %>%
     plyr::mutate(PARAMETER=paste(as.character(PARAMETER),'ALL',sep='_'))
+  
+  # Create empty data frame 
+  empty_base <- data.frame(t(rep(NA,26)), stringsAsFactors=F)
+  names(empty_base) <- c("XC_ALL","FQAI_ALL","XC_FREQ_ALL","FQAI_FREQ_ALL","XC_COV_ALL","FQAI_COV_ALL",
+                         'N_HTOL','PCTN_HTOL','XABCOV_HTOL','XRCOV_HTOL',
+                         'N_HSEN','PCTN_HSEN','XABCOV_HSEN','XRCOV_HSEN',
+                         'N_TOL','PCTN_TOL','XABCOV_TOL','XRCOV_TOL',
+                         'N_ISEN','PCTN_ISEN','XABCOV_ISEN','XRCOV_ISEN',
+                         'N_SEN', 'PCTN_SEN','XABCOV_SEN','XRCOV_SEN')  
+  
+  empty_base.nat <- data.frame(t(rep(NA,6)), stringsAsFactors=F)
+  names(empty_base.nat) <- c('XC_NAT','FQAI_NAT','XC_FREQ_NAT','FQAI_FREQ_NAT','XC_COV_NAT','FQAI_COV_NAT') 
 
   # Now create recoded indicator variables based on NWCA_CC values
   vascIn.alt <- plyr::mutate(vascIn,SEN=ifelse(NWCA_CC %in% c('7','8','9','10'),1,0),ISEN=ifelse(NWCA_CC %in% c('5','6'),1,0)
@@ -779,10 +794,19 @@ calcCC <- function(vascIn,sampID='UID'){
       plyr::mutate(PARAMETER=paste(as.character(PARAMETER),'NAT',sep='_'))
 
     ccOut <- rbind(ccOut,vascIn1b.nat)
+    
+    empty_base <- cbind(empty_base, empty_base.nat)
 
   }
 
-  outdf <- plyr::mutate(ccOut,RESULT=ifelse(is.na(RESULT)|is.infinite(RESULT),0,RESULT))
+  outdf <- reshape2::dcast(ccOut,stats::formula(paste(paste(sampID,collapse='+'),'~PARAMETER',sep=''))
+                           ,value.var='RESULT') %>%
+    merge(empty_base, all=TRUE) %>%
+    reshape2::melt(id.vars=c(sampID), variable.name='PARAMETER', value.name='RESULT') %>%
+    dplyr::filter(!is.na(eval(as.name(sampID[1])))) %>%
+    plyr::mutate(RESULT = ifelse(is.na(RESULT)|is.infinite(RESULT),0,RESULT)
+                 , PARAMETER=as.character(PARAMETER)) %>%
+    subset(PARAMETER %in% names(empty_base))
 
   return(outdf)
 }
