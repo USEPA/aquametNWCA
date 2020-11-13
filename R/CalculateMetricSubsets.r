@@ -266,12 +266,16 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
   if(('HERB' %in% names(vascIn))==FALSE){
     vascIn.1 <- plyr::mutate(vascIn.1, HERB=ifelse(GRH_ALT %in% c('GRAMINOID','FORB','SSHRUB_FORB'),1,0))
   }
+  # Combine VINE and VINE_SHRUB
+  if(('VINE_ALL' %in% names(vascIn))==FALSE){
+    vascIn.1 <- plyr::mutate(vascIn.1, VINE_ALL=ifelse(GRH_ALT %in% c('VINE','VINE_SHRUB'), 1, 0))
+  }
 
   sppGRH <- int.calcTraits_MultCat(vascIn.1,'GRH_ALT',sampID)
-  sppGRH.1 <- int.combTraits(vascIn.1,c('TREE_COMB','SHRUB_COMB','HERB'),sampID)
+  sppGRH.1 <- int.combTraits(vascIn.1,c('TREE_COMB','SHRUB_COMB','HERB','VINE_ALL'),sampID)
   grhOut <- rbind(sppGRH,sppGRH.1)
   
-  empty_base <- data.frame(t(rep(NA,48)), stringsAsFactors=F)
+  empty_base <- data.frame(t(rep(NA,52)), stringsAsFactors=F)
   names(empty_base)<-c("N_FORB","N_GRAMINOID","N_SHRUB","N_SSHRUB_FORB","N_SSHRUB_SHRUB"
                   ,"N_TREE","N_TREE_SHRUB","N_VINE","N_VINE_SHRUB","PCTN_FORB"
                   ,"PCTN_GRAMINOID","PCTN_SHRUB","PCTN_SSHRUB_FORB","PCTN_SSHRUB_SHRUB","PCTN_TREE"
@@ -281,9 +285,10 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
                   ,"XRCOV_SSHRUB_FORB","XRCOV_SSHRUB_SHRUB","XRCOV_TREE","XRCOV_TREE_SHRUB","XRCOV_VINE"
                   ,"XRCOV_VINE_SHRUB","N_TREE_COMB","PCTN_TREE_COMB","XABCOV_TREE_COMB","XRCOV_TREE_COMB"
                   ,"N_SHRUB_COMB","PCTN_SHRUB_COMB","XABCOV_SHRUB_COMB","XRCOV_SHRUB_COMB","N_HERB"
-                  ,"PCTN_HERB","XABCOV_HERB","XRCOV_HERB")
+                  ,"PCTN_HERB","XABCOV_HERB","XRCOV_HERB","N_VINE_ALL"
+                  ,"PCTN_VINE_ALL","XABCOV_VINE_ALL","XRCOV_VINE_ALL")
   
-  empty_base.nat <- data.frame(t(rep(NA,56)), stringsAsFactors=F)
+  empty_base.nat <- data.frame(t(rep(NA,64)), stringsAsFactors=F)
   names(empty_base.nat)<-c("N_GRAMINOID_AC","PCTN_GRAMINOID_AC"
                            ,"XABCOV_GRAMINOID_AC","XRCOV_GRAMINOID_AC","N_GRAMINOID_NAT","PCTN_GRAMINOID_NAT","XABCOV_GRAMINOID_NAT"
                            ,"XRCOV_GRAMINOID_NAT","N_FORB_AC","PCTN_FORB_AC","XABCOV_FORB_AC","XRCOV_FORB_AC"
@@ -295,7 +300,9 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
                            ,"PCTN_TREE_COMB_NAT","XABCOV_TREE_COMB_NAT","XRCOV_TREE_COMB_NAT","N_VINE_AC","PCTN_VINE_AC"
                            ,"XABCOV_VINE_AC","XRCOV_VINE_AC","N_VINE_NAT","PCTN_VINE_NAT","XABCOV_VINE_NAT"
                            ,"XRCOV_VINE_NAT","N_VINE_SHRUB_AC","PCTN_VINE_SHRUB_AC","XABCOV_VINE_SHRUB_AC","XRCOV_VINE_SHRUB_AC"
-                           ,"N_VINE_SHRUB_NAT","PCTN_VINE_SHRUB_NAT","XABCOV_VINE_SHRUB_NAT","XRCOV_VINE_SHRUB_NAT")
+                           ,"N_VINE_SHRUB_NAT","PCTN_VINE_SHRUB_NAT","XABCOV_VINE_SHRUB_NAT","XRCOV_VINE_SHRUB_NAT"
+                           ,"N_VINE_ALL_AC","PCTN_VINE_ALL_AC","XABCOV_VINE_ALL_AC","XRCOV_VINE_ALL_AC"
+                           ,"N_VINE_ALL_NAT","PCTN_VINE_ALL_NAT","XABCOV_VINE_ALL_NAT","XRCOV_VINE_ALL_NAT")
   
 
   if('NWCA_NATSTAT' %in% names(vascIn.1)){
@@ -312,10 +319,13 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
                          ,VINE_AC=ifelse(GRH_ALT=='VINE' & AC==1,1,0),VINE_NAT=ifelse(GRH_ALT=='VINE' & NATSTAT_ALT=='NAT',1,0)
                          ,VINE_SHRUB_AC=ifelse(GRH_ALT=='VINE_SHRUB' & AC==1,1,0)
                          ,VINE_SHRUB_NAT=ifelse(GRH_ALT=='VINE_SHRUB' & NATSTAT_ALT=='NAT',1,0)
+                         ,VINE_ALL_AC=ifelse(VINE_ALL==1 & AC==1,1,0)
+                         ,VINE_ALL_NAT=ifelse(VINE_ALL==1 & NATSTAT_ALT=='NAT',1,0)
       )
 
     multTraits <- int.combTraits(vascIn.2,c('GRAMINOID_AC','GRAMINOID_NAT','FORB_AC','FORB_NAT','HERB_AC','HERB_NAT','SHRUB_COMB_AC','SHRUB_COMB_NAT'
-                                        ,'TREE_COMB_AC','TREE_COMB_NAT','VINE_AC','VINE_NAT','VINE_SHRUB_AC','VINE_SHRUB_NAT')
+                                        ,'TREE_COMB_AC','TREE_COMB_NAT','VINE_AC','VINE_NAT','VINE_SHRUB_AC','VINE_SHRUB_NAT'
+                                        ,'VINE_ALL_AC','VINE_ALL_NAT')
                               ,sampID)
     grhOut <- rbind(grhOut,multTraits)
     
@@ -415,11 +425,16 @@ calcCategory <- function(vascIn,sampID='UID'){
   vascIn.1 <- subset(vascIn,!is.na(CATEGORY) & toupper(CATEGORY)!='UND')
   catOut <- int.calcTraits_MultCat(vascIn.1,'CATEGORY',sampID)
   
-  empty_base <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
-  names(empty_base) <- c("N_DICOT","N_FERN","N_GYMNOSPERM","N_MONOCOT","PCTN_DICOT"
-                         ,"PCTN_FERN","PCTN_GYMNOSPERM","PCTN_MONOCOT","XABCOV_DICOT"
-                         ,"XABCOV_FERN","XABCOV_GYMNOSPERM","XABCOV_MONOCOT"
-                         ,"XRCOV_DICOT","XRCOV_FERN","XRCOV_GYMNOSPERM","XRCOV_MONOCOT")
+  empty_base <- data.frame(t(rep(NA,32)),stringsAsFactors=F)
+  names(empty_base) <- c("N_DICOT","N_FERN","N_GYMNOSPERM","N_MONOCOT","N_LYCOPOD","N_HORSETAIL"
+                         ,"N_QUILLWORT","N_LIVERWORT","PCTN_DICOT"
+                         ,"PCTN_FERN","PCTN_GYMNOSPERM","PCTN_MONOCOT","PCTN_LYCOPOD","PCTN_HORSETAIL"
+                         ,"PCTN_QUILLWORT","PCTN_LIVERWORT","XABCOV_DICOT"
+                         ,"XABCOV_FERN","XABCOV_GYMNOSPERM","XABCOV_MONOCOT","XABCOV_LYCOPOD","XABCOV_HORSETAIL"
+                         ,"XABCOV_QUILLWORT","XABCOV_LIVERWORT"
+                         ,"XRCOV_DICOT","XRCOV_FERN","XRCOV_GYMNOSPERM","XRCOV_MONOCOT"
+                         ,"XRCOV_LYCOPOD","XRCOV_HORSETAIL"
+                         ,"XRCOV_QUILLWORT","XRCOV_LIVERWORT")
   
   empty_base.nat <- data.frame(t(rep(NA,40)),stringsAsFactors=F)
   names(empty_base.nat) <- c("N_DICOTS_NAT","PCTN_DICOTS_NAT","XABCOV_DICOTS_NAT","XRCOV_DICOTS_NAT"     
@@ -595,8 +610,14 @@ calcWIS <- function(vascIn,sampID='UID'){
     
   
   # Overall metric calculations
-  vascIn.1 <- subset(vascIn,!is.na(WIS))
+  vascIn.1 <- subset(vascIn,!is.na(WIS)) %>%
+    plyr::mutate(OBL_FACW = ifelse(WIS %in% c('OBL','FACW'), 1, 0),
+                 OBL_FACW_FAC = ifelse(WIS %in% c('OBL','FACW','FAC'), 1, 0),
+                 FAC_FACU = ifelse(WIS %in% c('FACU','FAC'), 1, 0))
+  
   sppWIS <- int.calcTraits_MultCat(vascIn.1,'WIS',sampID)
+  
+  multTraits <- int.combTraits(vascIn.1,c('OBL_FACW','OBL_FACW_FAC','FAC_FACU'),sampID)
 
   ## Calculate Wetland indicator status metrics and melt into long format
   vascIn.2 <- subset(vascIn.1,!is.na(ECOIND1)) %>%
@@ -608,13 +629,17 @@ calcWIS <- function(vascIn,sampID='UID'){
                 WETIND2_FREQ_ALL=round(sum(FREQ*ECOIND2)/sum(FREQ),2)) %>%
     reshape2::melt(id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT')
 
-  wisOut <- rbind(sppWIS,vascIn.2)
+  wisOut <- rbind(sppWIS, multTraits, vascIn.2)
   
-  empty_base <- data.frame(t(rep(NA,24)), stringsAsFactors=F)
-  names(empty_base) <- c("N_FAC","N_FACU","N_FACW","N_OBL","N_UPL","PCTN_FAC",         
-  "PCTN_FACU","PCTN_FACW","PCTN_OBL","PCTN_UPL","XABCOV_FAC","XABCOV_FACU",      
-  "XABCOV_FACW","XABCOV_OBL","XABCOV_UPL","XRCOV_FAC","XRCOV_FACU","XRCOV_FACW",       
-  "XRCOV_OBL","XRCOV_UPL","WETIND_COV_ALL","WETIND_FREQ_ALL","WETIND2_COV_ALL",
+  empty_base <- data.frame(t(rep(NA,36)), stringsAsFactors=F)
+  names(empty_base) <- c("N_FAC","N_FACU","N_FACW","N_OBL","N_UPL",
+                         "N_OBL_FACW", "N_OBL_FACW_FAC", "N_FAC_FACU", "PCTN_FAC",         
+  "PCTN_FACU","PCTN_FACW","PCTN_OBL","PCTN_UPL","PCTN_OBL_FACW", "PCTN_OBL_FACW_FAC", 
+  "PCTN_FAC_FACU","XABCOV_FAC","XABCOV_FACU",      
+  "XABCOV_FACW","XABCOV_OBL","XABCOV_UPL","XABCOV_OBL_FACW", "XABCOV_OBL_FACW_FAC",
+  "XABCOV_FAC_FACU","XRCOV_FAC","XRCOV_FACU","XRCOV_FACW",       
+  "XRCOV_OBL","XRCOV_UPL","XRCOV_OBL_FACW", "XRCOV_OBL_FACW_FAC", "XRCOV_FAC_FACU",
+  "WETIND_COV_ALL","WETIND_FREQ_ALL","WETIND2_COV_ALL",
   "WETIND2_FREQ_ALL")  
   
   empty_base.nat <- data.frame(t(rep(NA,7)), stringsAsFactors=F)

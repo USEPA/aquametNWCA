@@ -203,14 +203,23 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
     allTreesOut2 <- subset(merge(allTreesOut1, empty_trees, all=TRUE),!is.na(SAMPID))
 
     allTreesOut3 <- merge(allUIDs,allTreesOut2,by='SAMPID',all.x=T)
+    
+    allTreesOut3a <- plyr::ddply(allTreesOut3, c('SAMPID'), mutate, 
+                                  TOTN_SMALL = sum(TOTN_XXTHIN_TREE,TOTN_XTHIN_TREE,na.rm=T),
+                                  TOTN_MID = sum(TOTN_THIN_TREE, TOTN_JR_TREE, na.rm=T),
+                                  TOTN_LARGE = sum(TOTN_THICK_TREE, TOTN_XTHICK_TREE, TOTN_XXTHICK_TREE, na.rm=T),
+                                  XN_SMALL = sum(XN_XXTHIN_TREE,XN_XTHIN_TREE,na.rm=T),
+                                  XN_MID = sum(XN_THIN_TREE, XN_JR_TREE, na.rm=T),
+                                  XN_LARGE = sum(XN_THICK_TREE, XN_XTHICK_TREE,XN_XXTHICK_TREE, na.rm=T))
 
-    allTreesOut4 <- reshape2::melt(allTreesOut3,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
+    allTreesOut4 <- reshape2::melt(allTreesOut3a,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
     allTreesOut4 <- plyr::mutate(allTreesOut4,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),0,RESULT))
   }else{
     empty_trees <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
     names(empty_trees) <- c("TOTN_TREES","XN_TREES","TOTN_JR_TREE","TOTN_THICK_TREE","TOTN_THIN_TREE","TOTN_XTHICK_TREE","TOTN_XTHIN_TREE"
                             ,"TOTN_XXTHICK_TREE","TOTN_XXTHIN_TREE","XN_JR_TREE","XN_THICK_TREE","XN_THIN_TREE","XN_XTHICK_TREE","XN_XTHIN_TREE"
-                            ,"XN_XXTHICK_TREE","XN_XXTHIN_TREE")
+                            ,"XN_XXTHICK_TREE","XN_XXTHIN_TREE","TOTN_SMALL","TOTN_MID","TOTN_LARGE",
+                            "XN_SMALL","XN_MID","XN_LARGE")
 
     allTreesOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F), empty_trees, all=TRUE)
 
@@ -222,7 +231,8 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
 
     allTreesOut4 <- allTreesOut3
   }
-  print("Done with tree count metrics")
+  
+    print("Done with tree count metrics")
   treeOut <- merge(samples, allTreesOut4, by='SAMPID') %>% 
     plyr::rename(c('METRIC'='PARAMETER')) %>%
     dplyr::select(-SAMPID)
