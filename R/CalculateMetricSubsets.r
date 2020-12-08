@@ -258,17 +258,28 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
 
     vascIn.1 <- vascIn.1
     vascIn.1$GRH_ALT <- vascIn.1$GROWTH_HABIT
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('FORB/HERB','FORB/HERB, SHRUB','FORB/HERB, SHRUB, SUBSHRUB'
-                                             ,'FORB/HERB, SUBSHRUB')] <- 'FORB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('SUBSHRUB, FORB/HERB','SUBSHRUB, SHRUB, FORB/HERB')] <- 'SSHRUB_FORB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('SUBSHRUB','SUBSHRUB, SHRUB','SHRUB, SUBSHRUB','SUBSHRUB, SHRUB, TREE')] <- 'SSHRUB_SHRUB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('SHRUB','SHRUB, TREE','TREE, SUBSHRUB, SHRUB','SHRUB, SUBSHRUB, TREE')] <- 'SHRUB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('TREE, SHRUB','TREE, SHRUB, VINE')] <- 'TREE_SHRUB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('VINE, FORB/HERB','SUBSHRUB, FORB/HERB, VINE','FORB/HERB, VINE')] <- 'VINE'
+    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('FORB/HERB','FORB/HERB, SHRUB','FORB/HERB, SHRUB, SUBSHRUB',
+                                             'FORB/HERB, SUBSHRUB','FORB/HERB, SUBSHRUB, SHRUB')] <- 'FORB'
+    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('SUBSHRUB, FORB/HERB','SUBSHRUB, SHRUB, FORB/HERB',
+                                             'SUBSHRUB, FORB/HERB, SHRUB')] <- 'SSHRUB_FORB'
+    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('SUBSHRUB','SUBSHRUB, SHRUB','SHRUB, SUBSHRUB',
+                                    'SUBSHRUB, SHRUB, TREE','SHRUB, FORB/HERB, SUBSHRUB')] <- 'SSHRUB_SHRUB'
+    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('SHRUB','SHRUB, TREE','TREE, SUBSHRUB, SHRUB',
+                                             'SHRUB, SUBSHRUB, TREE','SUBSHRUB, FORB/HERB, SHRUB, TREE',
+                                             'SHRUB,')] <- 'SHRUB'
+    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('TREE, SHRUB','TREE, SHRUB, VINE','TREE, SHRUB, SUBSHRUB')] <- 'TREE_SHRUB'
+    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('VINE, FORB/HERB','SUBSHRUB, FORB/HERB, VINE',
+                                             'FORB/HERB, VINE','FORB/HERB, VINE, SUBSHRUB',
+                                             'VINE, FORB/HERB, SUBSHRUB','VINE, HERBACEOUS')] <- 'VINE'
     vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('VINE, SHRUB','VINE, SUBSHRUB','SUBSHRUB, VINE','SHRUB, VINE',
-                                             'SHRUB, FORB/HERB, SUBSHRUB, VINE'
-                                             ,'SHRUB, SUBSHRUB, VINE')] <- 'VINE_SHRUB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('GRAMINOID','SUBSHRUB, SHRUB, GRAMINOID')] <- 'GRAMINOID'
+                                             'SHRUB, FORB/HERB, SUBSHRUB, VINE',
+                                             'SHRUB, SUBSHRUB, VINE','VINE, TREE, SHRUB',
+                                             'SHRUB, VINE, FORB/HERB','SUBSHRUB, VINE, SHRUB',
+                                             'SUBSHRUB, VINE, FORB/HERB','SHRUB, VINE, SUBSHRUB',
+                                             'SHRUB, FORB/HERB, VINE','VINE, WOODY')] <- 'VINE_SHRUB'
+    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('GRAMINOID','SUBSHRUB, SHRUB, GRAMINOID',
+                                             'GRAMINOID, SHRUB, SUBSHRUB','GRAMINOID, SHRUB, VINE',
+                                             'SUBSHRUB, GRAMINOID, SHRUB')] <- 'GRAMINOID'
     
 
   }
@@ -278,11 +289,11 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
    }
   # Check for SHRUB_COMB variable
   if(('SHRUB_COMB' %in% names(vascIn))==FALSE){
-    vascIn.1$SHRUB_COMB <- with(vascIn.1, ifelse(GRH_ALT %in% c('SSHRUB_SHRUB','SSHURB_FORB','SHRUB'), 1, 0))
+    vascIn.1$SHRUB_COMB <- with(vascIn.1, ifelse(GRH_ALT %in% c('SSHRUB_SHRUB','SHRUB'), 1, 0))
   }
   # Check for HERB variable
   if(('HERB' %in% names(vascIn))==FALSE){
-    vascIn.1$HERB <- with(vascIn.1, ifelse(GRH_ALT %in% c('GRAMINOID','FORB'), 1, 0))
+    vascIn.1$HERB <- with(vascIn.1, ifelse(GRH_ALT %in% c('GRAMINOID','FORB','SSHRUB_FORB'), 1, 0))
   }
   # Combine VINE and VINE_SHRUB
   if(('VINE_ALL' %in% names(vascIn))==FALSE){
