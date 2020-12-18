@@ -336,26 +336,6 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
   
 
   if('NWCA_NATSTAT' %in% names(vascIn.1)){
-# <<<<<<< HEAD
-#     vascIn.2 <- plyr::mutate(vascIn.1,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
-#                               ,NATSTAT_ALT=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT)
-#                               ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
-# 
-#     vascIn.2 <- plyr::mutate(vascIn.2,GRAMINOID_AC=ifelse(GRH_ALT=='GRAMINOID' & AC==1,1,0)
-#                          ,GRAMINOID_NAT=ifelse(GRH_ALT=='GRAMINOID' & NATSTAT_ALT=='NAT',1,0)
-#                          ,FORB_AC=ifelse(GRH_ALT=='FORB' & AC==1,1,0),FORB_NAT=ifelse(GRH_ALT=='FORB' & NATSTAT_ALT=='NAT',1,0)
-#                          ,HERB_AC=ifelse(HERB==1 & AC==1,1,0),HERB_NAT=ifelse(HERB==1 & NATSTAT_ALT=='NAT',1,0)
-#                          ,SHRUB_COMB_AC=ifelse(SHRUB_COMB==1 & AC==1,1,0),SHRUB_COMB_NAT=ifelse(SHRUB_COMB==1 & NATSTAT_ALT=='NAT',1,0)
-#                          ,TREE_COMB_AC=ifelse(TREE_COMB==1 & AC==1,1,0),TREE_COMB_NAT=ifelse(TREE_COMB==1 & NATSTAT_ALT=='NAT',1,0)
-#                          ,VINE_AC=ifelse(GRH_ALT=='VINE' & AC==1,1,0),VINE_NAT=ifelse(GRH_ALT=='VINE' & NATSTAT_ALT=='NAT',1,0)
-#                          ,VINE_SHRUB_AC=ifelse(GRH_ALT=='VINE_SHRUB' & AC==1,1,0)
-#                          ,VINE_SHRUB_NAT=ifelse(GRH_ALT=='VINE_SHRUB' & NATSTAT_ALT=='NAT',1,0)
-#                          ,VINE_ALL_AC=ifelse(VINE_ALL==1 & AC==1,1,0)
-#                          ,VINE_ALL_NAT=ifelse(VINE_ALL==1 & NATSTAT_ALT=='NAT',1,0)
-#       )
-# 
-# 
-# =======
     vascIn.2 <- vascIn.1
     vascIn.2$ALIEN <- with(vascIn.2, ifelse(NWCA_NATSTAT %in% c('INTR','ADV'), 1, 0))
     vascIn.2$NATSTAT_ALT <- with(vascIn.2, ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN', NWCA_NATSTAT))
@@ -686,31 +666,44 @@ calcWIS <- function(vascIn,sampID='UID'){
     vascIn$ECOIND1[is.na(vascIn$WIS)|vascIn$WIS %in% c('TBD','UND','NOL')] <- NA
     vascIn$ECOIND2 <- with(vascIn, ifelse(is.na(ECOIND1), NA, 6-as.integer(ECOIND1)))
     
-    vascIn <- plyr::mutate(vascIn,ECOIND=car::recode(WIS,"c('FACU')=4;c('FAC')=3;c('FACW')=2;c('OBL')=1;
-                                  c('UPL','NL')=5;c('TBD',NA,'UND','NOL')=NA") # This places taxa with UND with missing
-                           ,WIS=car::recode(WIS,"c('UPL','NL')='UPL';c(NA,'TBD','UND','NOL')=NA"))
-  }
+   }
     
   
   # Overall metric calculations
-  vascIn.1 <- subset(vascIn,!is.na(WIS)) %>%
-    plyr::mutate(OBL_FACW = ifelse(WIS %in% c('OBL','FACW'), 1, 0),
-                 OBL_FACW_FAC = ifelse(WIS %in% c('OBL','FACW','FAC'), 1, 0),
-                 FAC_FACU = ifelse(WIS %in% c('FACU','FAC'), 1, 0))
+  vascIn.1 <- subset(vascIn, !is.na(WIS))
   
+  vascIn.1$OBL_FACW <- ifelse(vascIn.1$WIS %in% c('OBL','FACW'), 1, 0)
+  vascIn.1$OBL_FACW_FAC <- ifelse(vascIn.1$WIS %in% c('OBL','FACW','FAC'), 1, 0)
+  vascIn.1$FAC_FACU <- ifelse(vascIn.1$WIS %in% c('FACU','FAC'), 1, 0)
+
   sppWIS <- int.calcTraits_MultCat(vascIn.1,'WIS',sampID)
   
   multTraits <- int.combTraits(vascIn.1,c('OBL_FACW','OBL_FACW_FAC','FAC_FACU'),sampID)
 
   ## Calculate Wetland indicator status metrics and melt into long format
-  vascIn.2 <- subset(vascIn.1,!is.na(ECOIND1)) %>%
-    plyr::mutate(ECOIND1=as.numeric(ECOIND1), ECOIND2= as.numeric(ECOIND2)) %>%
-    plyr::ddply(c(sampID),summarise,
-                        WETIND_COV_ALL=round(sum(XABCOV*ECOIND1)/sum(XABCOV),2),
-                        WETIND_FREQ_ALL=round(sum(FREQ*ECOIND1)/sum(FREQ),2),
-                WETIND2_COV_ALL=round(sum(XABCOV*ECOIND2)/sum(XABCOV),2),
-                WETIND2_FREQ_ALL=round(sum(FREQ*ECOIND2)/sum(FREQ),2)) %>%
-    reshape2::melt(id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT')
+  vascIn.2a <- subset(vascIn.1,!is.na(ECOIND1))
+  
+  vascIn.2a[,c('ECOIND1','ECOIND2')] <- lapply(vascIn.2a[,c('ECOIND1','ECOIND2')], as.numeric)
+  
+  vascIn.2b <- aggregate(x = list(coveco1 = vascIn.2a$XABCOV*vascIn.2a$ECOIND1, 
+                                  freqeco1 = vascIn.2a$FREQ*vascIn.2a$ECOIND1,
+                                  coveco2 = vascIn.2a$XABCOV*vascIn.2a$ECOIND2, 
+                                  freqeco2 = vascIn.2a$FREQ*vascIn.2a$ECOIND2,
+                                  sumabcov = vascIn.2a$XABCOV,
+                                  sumfreq = vascIn.2a$FREQ),
+                         by = vascIn.2a[c(sampID)],
+                         FUN = sum)
+  
+  vascIn.2b$WETIND_COV_ALL <- with(vascIn.2b, round(coveco1/sumabcov, 2))
+  vascIn.2b$WETIND_FREQ_ALL <- with(vascIn.2b, round(freqeco1/sumfreq, 2))
+  vascIn.2b$WETIND2_COV_ALL <- with(vascIn.2b, round(coveco2/sumabcov, 2))
+  vascIn.2b$WETIND2_FREQ_ALL <- with(vascIn.2b, round(freqeco2/sumfreq, 2))
+  vascIn.2b <- subset(vascIn.2b, select=c(sampID, 'WETIND_COV_ALL','WETIND_FREQ_ALL','WETIND2_COV_ALL','WETIND2_FREQ_ALL'))
+  
+  vascIn.2 <- reshape(vascIn.2b, idvar = sampID, direction = 'long',
+          varying= c('WETIND_COV_ALL','WETIND_FREQ_ALL','WETIND2_COV_ALL','WETIND2_FREQ_ALL'),
+          timevar = 'PARAMETER', v.names = 'RESULT',
+          times = c('WETIND_COV_ALL','WETIND_FREQ_ALL','WETIND2_COV_ALL','WETIND2_FREQ_ALL'))
 
   wisOut <- rbind(sppWIS, multTraits, vascIn.2)
   
@@ -732,45 +725,70 @@ calcWIS <- function(vascIn,sampID='UID'){
   
   # Metrics using only subsets of data based on NATSTAT_ALT
   if('NWCA_NATSTAT' %in% names(vascIn)){
-    vascIn.nat <- plyr::mutate(vascIn,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
-                           ,NATSTAT_ALT=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT)
-                           ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
-
+    vascIn.nat <- vascIn
+    vascIn.nat$ALIEN <- with(vascIn.nat, ifelse(NWCA_NATSTAT %in% c('INTR','ADV'), 1, 0))
+    vascIn.nat$NATSTAT_ALT <- with(vascIn.nat, ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT))
+    vascIn.nat$AC <- with(vascIn.nat, ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
+    
     vascIn.nat.1 <- subset(vascIn.nat,NWCA_NATSTAT=='NAT')
 
     ## Calculate Wetland indicator status metrics and melt into long format
-    wisOut.nat <- subset(vascIn.nat.1,!is.na(ECOIND1)) %>%
-      plyr::mutate(ECOIND1=as.numeric(ECOIND1), ECOIND2 = as.numeric(ECOIND2)) %>%
-      plyr::ddply(c(sampID),summarise,
-                  WETIND_COV_NAT=round(sum(XABCOV*ECOIND1)/sum(XABCOV),2),
-                  WETIND_FREQ_NAT=round(sum(FREQ*ECOIND1)/sum(FREQ),2),
-                  WETIND2_COV_NAT=round(sum(XABCOV*ECOIND2)/sum(XABCOV),2),
-                  WETIND2_FREQ_NAT=round(sum(FREQ*ECOIND2)/sum(FREQ),2)) %>%
-            reshape2::melt(id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT') %>%
-              plyr::mutate(PARAMETER=as.character(PARAMETER))
+    wisOut.nat.a <- subset(vascIn.nat.1,!is.na(ECOIND1))
+    wisOut.nat.a[,c('ECOIND1','ECOIND2')] <- lapply(wisOut.nat.a[,c('ECOIND1','ECOIND2')], as.numeric)
+    
+    wisOut.nat.b <- aggregate(x = list(coveco1 = wisOut.nat.a$XABCOV*wisOut.nat.a$ECOIND1, 
+                                    freqeco1 = wisOut.nat.a$FREQ*wisOut.nat.a$ECOIND1,
+                                    coveco2 = wisOut.nat.a$XABCOV*wisOut.nat.a$ECOIND2, 
+                                    freqeco2 = wisOut.nat.a$FREQ*wisOut.nat.a$ECOIND2,
+                                    sumabcov = wisOut.nat.a$XABCOV,
+                                    sumfreq = wisOut.nat.a$FREQ),
+                           by = wisOut.nat.a[c(sampID)],
+                           FUN = sum)
+    
+    wisOut.nat.b$WETIND_COV_NAT <- with(wisOut.nat.b, round(coveco1/sumabcov, 2))
+    wisOut.nat.b$WETIND_FREQ_NAT <- with(wisOut.nat.b, round(freqeco1/sumfreq, 2))
+    wisOut.nat.b$WETIND2_COV_NAT <- with(wisOut.nat.b, round(coveco2/sumabcov, 2))
+    wisOut.nat.b$WETIND2_FREQ_NAT <- with(wisOut.nat.b, round(freqeco2/sumfreq, 2))
+    wisOut.nat.b <- subset(wisOut.nat.b, select=c(sampID, 'WETIND_COV_NAT','WETIND_FREQ_NAT',
+                                                  'WETIND2_COV_NAT','WETIND2_FREQ_NAT'))
+    
+    wisOut.nat.2 <- reshape(wisOut.nat.b, idvar = sampID, direction = 'long',
+                        varying= c('WETIND_COV_NAT','WETIND_FREQ_NAT','WETIND2_COV_NAT','WETIND2_FREQ_NAT'),
+                        timevar = 'PARAMETER', v.names = 'RESULT',
+                        times = c('WETIND_COV_NAT','WETIND_FREQ_NAT','WETIND2_COV_NAT','WETIND2_FREQ_NAT'))
+    
+    
+    
+    vascIn.obl <- vascIn.nat
+    vascIn.obl$OBLFACW_AC <- with(vascIn.obl, ifelse(WIS %in% c('OBL','FACW') & NATSTAT_ALT %in% c('ALIEN','CRYP'),1,0))
+    
+    ofOut <- int.calcTraits_Indicator(vascIn.obl,'OBLFACW_AC',sampID) 
+    ofOut$PARAMETER <- as.character(ofOut$PARAMETER)
+    
+    ofOut <- subset(ofOut, PARAMETER %nin% c('PCTN_OBLFACW_AC'))
 
-    # Obligate and facultative wet alien and cryptogenic species
-    vascIn.obl <- plyr::mutate(vascIn.nat,OBLFACW_AC=ifelse(WIS %in% c('OBL','FACW') & NATSTAT_ALT %in% c('ALIEN','CRYP'),1,0))
-    ofOut <- int.calcTraits_Indicator(vascIn.obl,'OBLFACW_AC',sampID) %>%
-      plyr::mutate(PARAMETER=as.character(PARAMETER)) %>%
-      subset(PARAMETER %nin% c('PCTN_OBLFACW_AC'))
-
-    wisOut <- rbind(wisOut,wisOut.nat,ofOut)
+    wisOut <- rbind(wisOut,wisOut.nat.2,ofOut)
     
     empty_base <- cbind(empty_base, empty_base.nat)
     
   }
 
-  wisOut.1 <- reshape2::dcast(wisOut,stats::formula(paste(paste(sampID,collapse='+'),'~PARAMETER',sep=''))
-                              ,value.var='RESULT') %>%
-    merge(empty_base, all=TRUE) %>%
-    reshape2::melt(id.vars=c(sampID), variable.name='PARAMETER', value.name='RESULT') %>%
-    dplyr::filter(!is.na(eval(as.name(sampID[1])))) %>%
-    plyr::mutate(RESULT = ifelse(is.na(RESULT)|is.infinite(RESULT),0,RESULT)
-                 , PARAMETER=as.character(PARAMETER)) %>%
-    subset(PARAMETER %in% names(empty_base))
+  wisOut.1a <- reshape(wisOut, idvar = c(sampID), direction = 'wide',
+                   timevar = 'PARAMETER', v.names = 'RESULT')
+  names(wisOut.1a) <- gsub("RESULT\\.", "", names(wisOut.1a))
   
-
+  wisOut.1a <- merge(wisOut.1a, empty_base, all=TRUE)
+  
+  wisOut.1b <- reshape(wisOut.1a, idvar = sampID, direction = 'long',
+                       varying= names(wisOut.1a)[!names(wisOut.1a) %in% c(sampID)],
+                       timevar = 'PARAMETER', v.names = 'RESULT',
+                       times = names(wisOut.1a)[!names(wisOut.1a) %in% c(sampID)])
+  wisOut.1b <- subset(wisOut.1b, !is.na(eval(as.name(sampID[1]))))
+  wisOut.1b$RESULT <- with(wisOut.1b, ifelse(is.na(RESULT), 0, RESULT))
+  wisOut.1b$PARAMETER <- with(wisOut.1b, as.character(PARAMETER))
+  
+  wisOut.1 <- subset(wisOut.1b, PARAMETER %in% names(empty_base))
+  
   return(wisOut.1)
 }
 
@@ -849,22 +867,6 @@ calcCC <- function(vascIn,sampID='UID'){
   }
 
   ## Calculate mean CC and FQAI indices
-
-  # totals.alt <- plyr::ddply(vascIn,c(sampID),summarise,SUBTOTFREQ=sum(FREQ),SUBXTOTABCOV=sum(XABCOV))
-  # vascIn.1 <- merge(subset(vascIn,select=names(vascIn) %nin% c('TOTFREQ','XTOTABCOV')),totals,by=sampID)
-  # vascIn.2 <- plyr::ddply(subset(vascIn.1,toupper(NWCA_CC)!='UND'),c(sampID),summarise,
-  #                             
-  #                         XC=round(sum(as.numeric(NWCA_CC))/length(unique(TAXON)),2)
-  #                       ,FQAI=round(sum(as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
-  #                       ,XC_FREQ=round(sum((FREQ/SUBTOTFREQ)*100*as.numeric(NWCA_CC))/length(unique(TAXON)),2)
-  #                       ,FQAI_FREQ=round(sum((FREQ/SUBTOTFREQ)*100*as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
-  #                       ,XC_COV=round(sum((XABCOV/SUBXTOTABCOV)*100*as.numeric(NWCA_CC))/length(unique(TAXON)),2)
-  #                       ,FQAI_COV=round(sum((XABCOV/SUBXTOTABCOV)*100*as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
-  # )
-  # 
-  # ccOut <- reshape2::melt(vascIn.2,id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT') %>%
-  #   plyr::mutate(PARAMETER=paste(as.character(PARAMETER),'ALL',sep='_'))
-# 
   vascIn.sub <- subset(vascIn, toupper(NWCA_CC)!='UND')
   
   totals <- aggregate(x = list(SUBTOTFREQ = vascIn$FREQ, SUBXTOTABCOV = vascIn$XABCOV), by = vascIn[c(sampID)],
@@ -906,11 +908,6 @@ calcCC <- function(vascIn,sampID='UID'){
   
   vascIn.2c <- merge(vascIn.2a, vascIn.2b, by = sampID)
   
-  # vascIn.2 <- with(vascIn.2, aggregate(x = list(XC = NWCA_CC, FQAI = NWCA_CC, XC_FREQ = XC_FREQ,
-  #                                               FQAI_FREQ = FQAI_FREQ, XC_COV = XC_COV,
-  #                                               FQAI_COV = FQAI_COV), by = vascIn.2[c(sampID)],
-  #                                      FUN = function(x){round(sum(x), 2)}))
-
   ccOut <- reshape(vascIn.2c, idvar = sampID, direction = 'long',
                    varying = names(vascIn.2c)[!names(vascIn.2c) %in% sampID],
                    timevar = 'variable', v.names = 'RESULT',
@@ -918,9 +915,6 @@ calcCC <- function(vascIn,sampID='UID'){
   
   ccOut$PARAMETER <- paste(ccOut$variable, 'ALL', sep = '_')
   ccOut$variable <- NULL
-  
-  # ccOut <- reshape2::melt(vascIn.2,id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT') %>%
-  #   plyr::mutate(PARAMETER=paste(as.character(PARAMETER),'ALL',sep='_'))
   
   # Create empty data frame 
   empty_base <- data.frame(t(rep(NA,26)), stringsAsFactors=F)
@@ -942,9 +936,6 @@ calcCC <- function(vascIn,sampID='UID'){
   vascIn.alt$TOL <- with(vascIn.alt, ifelse(NWCA_CC %in% c('4','3','2','1','0'), 1, 0))
   vascIn.alt$HTOL <- with(vascIn.alt, ifelse(NWCA_CC %in% c('0','1','2'), 1, 0))
   vascIn.alt$HSEN <- with(vascIn.alt, ifelse(NWCA_CC %in% c('9','10'), 1, 0))
-  # vascIn.alt <- plyr::mutate(vascIn,SEN=ifelse(NWCA_CC %in% c('7','8','9','10'),1,0),ISEN=ifelse(NWCA_CC %in% c('5','6'),1,0)
-  #                         ,TOL=ifelse(NWCA_CC %in% c('4','3','2','1','0'),1,0),HTOL=ifelse(NWCA_CC %in% c('0','1','2'),1,0)
-  #                         ,HSEN=ifelse(NWCA_CC %in% c('9','10'),1,0))
 
   multTraits <- int.combTraits(vascIn.alt, c('SEN','TOL','ISEN','HTOL','HSEN'), sampID)
 
@@ -996,11 +987,7 @@ calcCC <- function(vascIn,sampID='UID'){
     vascIn.2b.nat$NUMTAXA <- NULL
     
     vascIn.2c.nat <- merge(vascIn.2a.nat, vascIn.2b.nat, by = sampID)
-    # vascIn.2.nat <- with(vascIn.2.nat, aggregate(x = list(XC = XC, FQAI = FQAI, XC_FREQ = XC_FREQ,
-    #                                               FQAI_FREQ = FQAI_FREQ, XC_COV = XC_COV,
-    #                                               FQAI_COV = FQAI_COV), by = vascIn.2.nat[c(sampID)],
-    #                                      FUN = function(x){round(sum(x), 2)}))
-    
+
     ccOut.nat <- reshape(vascIn.2c.nat, idvar = sampID, direction = 'long',
                          varying = names(vascIn.2c.nat)[!names(vascIn.2c.nat) %in% sampID],
                          timevar = 'variable', v.names = 'RESULT',
@@ -1008,19 +995,6 @@ calcCC <- function(vascIn,sampID='UID'){
     
     ccOut.nat$PARAMETER <- paste(ccOut.nat$variable, 'NAT', sep = '_')
     ccOut.nat$variable <- NULL
-
-    # totals.nat <- plyr::ddply(vascIn.nat,c(sampID),summarise,SUBTOTFREQ=sum(FREQ),SUBXTOTABCOV=sum(XABCOV))
-    # vascIn1.nat <- merge(subset(vascIn.nat,select=names(vascIn.nat) %nin% c('TOTFREQ','XTOTABCOV')),totals.nat,by=sampID)
-    # vascIn1a.nat <- plyr::ddply(subset(vascIn1.nat,NWCA_CC!='Und'),c(sampID),summarise
-    #                           ,XC=round(sum(as.numeric(NWCA_CC))/length(unique(TAXON)),2)
-    #                       ,FQAI=round(sum(as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
-    #                       ,XC_FREQ=round(sum((FREQ/SUBTOTFREQ)*100*as.numeric(NWCA_CC))/length(unique(TAXON)),2)
-    #                       ,FQAI_FREQ=round(sum((FREQ/SUBTOTFREQ)*100*as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2)
-    #                       ,XC_COV=round(sum((XABCOV/SUBXTOTABCOV)*100*as.numeric(NWCA_CC))/length(unique(TAXON)),2)
-    #                       ,FQAI_COV=round(sum((XABCOV/SUBXTOTABCOV)*100*as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2))
-
-    # vascIn1b.nat <- reshape2::melt(vascIn1a.nat,id.vars=c(sampID),variable.name='PARAMETER',value.name='RESULT') %>%
-    #   plyr::mutate(PARAMETER=paste(as.character(PARAMETER),'NAT',sep='_'))
 
 
     ccOut <- rbind(ccOut,ccOut.nat)
@@ -1030,15 +1004,6 @@ calcCC <- function(vascIn,sampID='UID'){
   }
 
   
-  # outdf <- reshape2::dcast(ccOut,stats::formula(paste(paste(sampID,collapse='+'),'~PARAMETER',sep=''))
-  #                          ,value.var='RESULT') %>%
-  #   merge(empty_base, all=TRUE) %>%
-  #   reshape2::melt(id.vars=c(sampID), variable.name='PARAMETER', value.name='RESULT') %>%
-  #   dplyr::filter(!is.na(eval(as.name(sampID[1])))) %>%
-  #   plyr::mutate(RESULT = ifelse(is.na(RESULT)|is.infinite(RESULT),0,RESULT)
-  #                , PARAMETER=as.character(PARAMETER)) %>%
-  #   subset(PARAMETER %in% names(empty_base))
-
   outdf <- reshape(ccOut, idvar = c(sampID), direction = 'wide',
                    timevar = 'PARAMETER', v.names = 'RESULT')
   names(outdf) <- gsub("RESULT\\.", "", names(outdf))
