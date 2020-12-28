@@ -64,25 +64,38 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa, cValReg='NWC_CREG'){
   
   # Drop SPECIES_NAME_ID if present here
   if('SPECIES_NAME_ID' %in% names(taxa)){
-    subset(taxa, select=-SPECIES_NAME_ID)
+    taxa <- subset(taxa, select=-SPECIES_NAME_ID)
   }
   
   # First merge the taxa list with the cover data by USDA_NAME
   vascIn.1 <- merge(vascIn,taxa,by='USDA_NAME')
   vascIn.1$tobj <- vascIn.1[,tvar] # Set tobj as the value of tvar
-  vascIn.1 <- plyr::mutate(vascIn.1,COVER=as.numeric(COVER)) # Make sure COVER is numeric
+  vascIn.1$COVER <- with(vascIn.1, as.numeric(COVER)) # Make sure COVER is numeric
+  
   # Set value for TAXON as either specified taxon level above species, or as USDA_NAME
-  byPlot <- plyr::mutate(vascIn.1,TAXON=ifelse(!is.na(tobj) & tobj!='',tobj,USDA_NAME))
+  byPlot <- vascIn.1
+  byPlot$TAXON <- with(byPlot, ifelse(!is.na(tobj) & tobj!='',tobj,USDA_NAME))
+  
   # Sum COVER by SAMPID, PLOT, and TAXON to ensure there is only one row per species in input data, set DISTINCT as 1 to be
   # taxon counter
   if(cValReg=='STATE'){
-    byPlot1 <- plyr::ddply(byPlot,c(sampID,'STATE','USAC_REGION','PLOT','TAXON'),
-                           summarise,COVER=sum(COVER)
-                           ,DISTINCT=ifelse(COVER>0,1,0),.progress='tk')
+    byPlot1 <- aggregate(x = list(COVER = byPlot$COVER), 
+                         by = byPlot[,c(sampID, 'STATE', 'USAC_REGION', 'PLOT', 'TAXON')],
+                         FUN = sum)
+    byPlot1$DISTINCT <- with(byPlot1, ifelse(COVER>0,1,0))
+    
+    # byPlot1 <- plyr::ddply(byPlot,c(sampID,'STATE','USAC_REGION','PLOT','TAXON'),
+    #                        summarise,COVER=sum(COVER)
+    #                        ,DISTINCT=ifelse(COVER>0,1,0),.progress='tk')
   }else{
-    byPlot1 <- plyr::ddply(byPlot,c(sampID,'STATE','USAC_REGION',cValReg,'PLOT','TAXON'),
-                           summarise,COVER=sum(COVER)
-                           ,DISTINCT=ifelse(COVER>0,1,0),.progress='tk')
+    byPlot1 <- aggregate(x = list(COVER = byPlot$COVER),
+                         by = byPlot[,c(sampID, 'STATE', 'USAC_REGION', cValReg, 'PLOT', 'TAXON')],
+                         FUN = sum)
+    byPlot1$DISTINCT <- with(byPlot1, ifelse(COVER>0,1,0))
+    
+    # byPlot1 <- plyr::ddply(byPlot,c(sampID,'STATE','USAC_REGION',cValReg,'PLOT','TAXON'),
+    #                        summarise,COVER=sum(COVER)
+    #                        ,DISTINCT=ifelse(COVER>0,1,0),.progress='tk')
   }
   
   byPlot1$COVER[byPlot1$COVER>100] <- 100 # Cap sums at 100 percent
@@ -90,19 +103,49 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa, cValReg='NWC_CREG'){
 
   ## Calculate frequency and relative frequency variables by taxon
   if(cValReg=='STATE'){
-    byUID1 <- plyr::ddply(byPlot1,c(sampID,'STATE','USAC_REGION','TAXON'),
-                          summarise,NUM=sum(DISTINCT),XABCOV=mean(COVER)
-                          ,NPLOTS=length(unique(PLOT)))
+    byUID.sum <- aggregate(x = list(NUM = byPlot1$DISTINCT),
+                           by = byPlot1[c(sampID,'STATE','USAC_REGION','TAXON')],
+                           FUN = sum)
+    
+    byUID.mean <- aggregate(x = list(XABCOV = byPlot1$COVER),
+                            byPlot1[,c(sampID,'STATE','USAC_REGION','TAXON')],
+                            FUN = mean)
+    
+    byUID.length <- aggregate(x = list(NPLOTS = byPlot1$PLOT),
+                              byPlot1[,c(sampID,'STATE','USAC_REGION','TAXON')],
+                              FUN = function(x){length(unique(x))})
+    
+    byUID1a <- merge(byUID.sum, byUID.mean, by = c(sampID,'STATE','USAC_REGION','TAXON'))
+    byUID1 <- merge(byUID1a, byUID.length, by = c(sampID,'STATE','USAC_REGION','TAXON'))
+    
+    # byUID1 <- plyr::ddply(byPlot1,c(sampID,'STATE','USAC_REGION','TAXON'),
+    #                       summarise,NUM=sum(DISTINCT),XABCOV=mean(COVER)
+    #                       ,NPLOTS=length(unique(PLOT)))
   }else{
-    byUID1 <- plyr::ddply(byPlot1,c(sampID,'STATE','USAC_REGION',cValReg,'TAXON'),
-                        summarise,NUM=sum(DISTINCT),XABCOV=mean(COVER)
-                        ,NPLOTS=length(unique(PLOT)))
+    byUID.sum <- aggregate(x = list(NUM = byPlot1$DISTINCT),
+                           by = byPlot1[,c(sampID,'STATE','USAC_REGION',cValReg,'TAXON')],
+                           FUN = sum)
+    
+    byUID.mean <- aggregate(x = list(XABCOV = byPlot1$COVER),
+                            by = byPlot1[,c(sampID,'STATE','USAC_REGION',cValReg,'TAXON')],
+                            FUN = mean)
+    
+    byUID.length <- aggregate(x = list(NPLOTS = byPlot1$PLOT),
+                              by = byPlot1[,c(sampID,'STATE','USAC_REGION',cValReg,'TAXON')],
+                              FUN = function(x){length(unique(x))})
+    
+    byUID1a <- merge(byUID.sum, byUID.mean, by = c(sampID,'STATE','USAC_REGION',cValReg,'TAXON'))
+    byUID1 <- merge(byUID1a, byUID.length, by = c(sampID,'STATE','USAC_REGION',cValReg,'TAXON'))
+    
+    # byUID1 <- plyr::ddply(byPlot1,c(sampID,'STATE','USAC_REGION',cValReg,'TAXON'),
+    #                     summarise,NUM=sum(DISTINCT),XABCOV=mean(COVER)
+    #                     ,NPLOTS=length(unique(PLOT)))
   }
-  byUID2 <- plyr::mutate(byUID1,DISTINCT=1)
-
+  byUID1$DISTINCT <- 1
+  
   print("Done with sampID summing")
 
-  byDF <- list(byUID=byUID2,byPlot=byPlot1)
+  byDF <- list(byUID=byUID1,byPlot=byPlot1)
   return(byDF)
 }
 
@@ -402,11 +445,31 @@ prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
     dfSPP.byUID.1d <- dfSPP.byUID.1c
   }
  print(names(dfSPP.byUID.1d))
+ 
   # Calculate totals and add them to output data frame
-  dfSPP.byUID.fin <- plyr::ddply(dfSPP.byUID.1d,sampID,mutate,TOTN=length(TAXON)
-                                 ,XTOTABCOV=sum(XABCOV),TOTFREQ=sum(NUM/NPLOTS)*100) %>%
-    plyr::mutate(sXRCOV=XABCOV/XTOTABCOV*100, FREQ=(NUM/NPLOTS)*100
-                 ,sRFREQ=(FREQ/TOTFREQ)*100)
+ dfSPP.byUID.length <- aggregate(x = list(TOTN = dfSPP.byUID.1d$TAXON),
+                                 by = dfSPP.byUID.1d[c(sampID)],
+                                 FUN = length)
+ 
+ dfSPP.byUID.1d$TOTFREQ <- with(dfSPP.byUID.1d, NUM/NPLOTS)
+ dfSPP.byUID.sum <- aggregate(x = list(TOTFREQ = dfSPP.byUID.1d$TOTFREQ, XTOTABCOV = dfSPP.byUID.1d$XABCOV),
+                              by = dfSPP.byUID.1d[c(sampID)], 
+                              FUN = sum)
+ dfSPP.byUID.sum$TOTFREQ <- dfSPP.byUID.sum$TOTFREQ*100
+ 
+ dfSPP.byUID.1d$TOTFREQ <- NULL
+ 
+ dfSPP.byUID.fin <- merge(dfSPP.byUID.1d, dfSPP.byUID.length, by = sampID)
+ dfSPP.byUID.fin <- merge(dfSPP.byUID.fin, dfSPP.byUID.sum, by = sampID)
+ 
+ dfSPP.byUID.fin$sXRCOV <- with(dfSPP.byUID.fin, XABCOV/XTOTABCOV*100)
+ dfSPP.byUID.fin$FREQ <- with(dfSPP.byUID.fin, NUM/NPLOTS*100)
+ dfSPP.byUID.fin$sRFREQ <- with(dfSPP.byUID.fin, (FREQ/TOTFREQ)*100)
+ 
+  # dfSPP.byUID.fin <- plyr::ddply(dfSPP.byUID.1d,sampID,mutate,TOTN=length(TAXON)
+  #                                ,XTOTABCOV=sum(XABCOV),TOTFREQ=sum(NUM/NPLOTS)*100) %>%
+  #   plyr::mutate(sXRCOV=XABCOV/XTOTABCOV*100, FREQ=(NUM/NPLOTS)*100
+  #                ,sRFREQ=(FREQ/TOTFREQ)*100)
 
   dfSPP[[1]] <- dfSPP.byUID.fin
 
