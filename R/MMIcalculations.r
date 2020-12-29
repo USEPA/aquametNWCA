@@ -88,8 +88,10 @@ calcVMMI_fromMets <- function(metsIn,sampID='UID'){
 
   # Create ECO_X_WETGRP if not present but NWCA_ECO4 and NWCA_WETGRP are both provided
   if('ECO_X_WETGRP' %nin% names(metsIn) & sum(c('NWCA_ECO4','NWCA_WET_GRP') %in% names(metsIn))==2){
-    metsIn <- plyr::mutate(metsIn,ECO_X_WETGRP=ifelse(NWCA_WET_GRP %in% c('EH','EW'),paste('ALL',NWCA_WET_GRP,sep='-')
-                                                    ,paste(NWCA_ECO4,NWCA_WET_GRP,sep='-')))
+    metsIn$ECO_X_WETGRP <- with(metsIn, ifelse(NWCA_WET_GRP %in% c('EH','EW'),paste('ALL',NWCA_WET_GRP,sep='-')
+                                               ,paste(NWCA_ECO4,NWCA_WET_GRP,sep='-')))
+    # metsIn <- plyr::mutate(metsIn,ECO_X_WETGRP=ifelse(NWCA_WET_GRP %in% c('EH','EW'),paste('ALL',NWCA_WET_GRP,sep='-')
+    #                                                 ,paste(NWCA_ECO4,NWCA_WET_GRP,sep='-')))
   }
 
   # Identify key variables in input dataset
@@ -103,8 +105,13 @@ calcVMMI_fromMets <- function(metsIn,sampID='UID'){
   necMets <- c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')
   metsIn[,necMets] <- lapply(metsIn[,necMets],as.numeric)
 
-  metsIn.long <- reshape2::melt(metsIn,id.vars=keyVars,variable.name='PARAMETER',value.name='RESULT'
-                              ,measure.vars=c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'))
+  metsIn.long <- reshape(metsIn, idvar = keyVars, direction = 'long',
+                         varying= c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'),
+                         timevar = 'PARAMETER', v.names = 'RESULT',
+                         times = c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'))
+  
+  # metsIn.long <- reshape2::melt(metsIn,id.vars=keyVars,variable.name='PARAMETER',value.name='RESULT'
+  #                             ,measure.vars=c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'))
 
   # Set metric scoring thresholds
   metTholds <- data.frame(PARAMETER=c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'),CEILING=c(38.59,40,100,100)
@@ -124,13 +131,23 @@ calcVMMI_fromMets <- function(metsIn,sampID='UID'){
 
   ## Calculate scores and add scored version of  metric (METRIC_SC) to data frame. SC = rescaled
   #metric score that is used in MMI calculations
-  scored.mets <- plyr::mutate(vMet[,c(keyVars,'PARAMETER')]
-                              ,RESULT=with(vMet,mapply(scoreMet,DIRECTION,RESULT,FLOOR,CEILING))) %>%
-    mutate(PARAMETER=paste(as.character(PARAMETER),'SC',sep='_'))
+  scored.mets <- vMet[,c(keyVars, 'PARAMETER')]
+  scored.mets$RESULT <- with(scored.mets, mapply(scoreMet,DIRECTION,RESULT,FLOOR,CEILING))
+  scored.mets$PARAMETER <- with(scored.mets, paste(as.character(PARAMETER), 'SC', sep='_'))
+  # scored.mets <- plyr::mutate(vMet[,c(keyVars,'PARAMETER')]
+  #                             ,RESULT=with(vMet,mapply(scoreMet,DIRECTION,RESULT,FLOOR,CEILING))) %>%
+  #   mutate(PARAMETER=paste(as.character(PARAMETER),'SC',sep='_'))
 
   ## Now that we have scored metrics, we can calculate MMI scores and merge with MMI thresholds to determine condition
-  mmi <- plyr::ddply(scored.mets,keyVars,summarise,VMMI=round(sum(RESULT)*(10/4),1)) %>%
-    reshape2::melt(id.vars=keyVars,variable.name='PARAMETER',value.name='RESULT')
+  mmi.1 <- aggregate(x = list(VMMI = scored.mets$RESULT), by = scored.mets[,keyVars],
+                     FUN = sum)
+  mmi.1$VMMI <- with(mmi.1, round(VMMI*(10/4), 1))
+  
+  mmi <- reshape(mmi.1, idvar = keyVars, direction = 'long',
+                 varying = 'VMMI', timevar = 'PARAMETER', v.names='RESULT',
+                 times = 'VMMI')
+  # mmi <- plyr::ddply(scored.mets,keyVars,summarise,VMMI=round(sum(RESULT)*(10/4),1)) %>%
+  #   reshape2::melt(id.vars=keyVars,variable.name='PARAMETER',value.name='RESULT')
 
   mmiOut <- rbind(scored.mets,mmi)
 
@@ -145,15 +162,23 @@ calcVMMI_fromMets <- function(metsIn,sampID='UID'){
   if('ECO_X_WETGRP' %in% names(mmi)){
     mmi.1 <- merge(mmi,mmiTholds,by='ECO_X_WETGRP')
 
-    cond <- plyr::mutate(mmi.1,VEGCOND=ifelse(RESULT>=p25,'GOOD',ifelse(RESULT>=p05,'FAIR','POOR')))
+    cond <- mmi.1
+    cond$VEGCOND <- with(mmi.1, ifelse(RESULT>=p25,'GOOD',ifelse(RESULT>=p05,'FAIR','POOR')))
 
-    cond.long <- reshape2::melt(cond,id.vars=keyVars,measure.vars=c('VEGCOND')
-                                ,variable.name='PARAMETER',value.name='RESULT')
+    cond.long <- reshape(cond, idvar = keyVars, direction = 'long',
+                         varying = 'VEGCOND', times = 'VEGCOND',
+                         timevar = 'PARAMETER', v.names = 'RESULT')
+    # cond.long <- reshape2::melt(cond,id.vars=keyVars,measure.vars=c('VEGCOND')
+    #                             ,variable.name='PARAMETER',value.name='RESULT')
 
     mmiOut <- rbind(mmiOut,cond.long)
   }
 
-  mmiOut.wide <- reshape2::dcast(mmiOut,eval(paste(paste(keyVars,collapse='+'),"~PARAMETER",sep='')),value.var='RESULT')
+  mmiOut.wide <- reshape(mmiOut, idvar = c(keyVars), direction = 'wide',
+                         timevar = 'PARAMETER', v.names = 'RESULT')
+  names(mmiOut.wide) <- gsub("RESULT\\.", "", names(mmiOut.wide))
+  
+  # mmiOut.wide <- reshape2::dcast(mmiOut,eval(paste(paste(keyVars,collapse='+'),"~PARAMETER",sep='')),value.var='RESULT')
 
 return(mmiOut.wide)
 }

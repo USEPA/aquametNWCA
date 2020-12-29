@@ -1,7 +1,7 @@
 Package: aquametNWCA
 Type: Package
 Title: NWCA 2011 Metrics and Indices
-Version: 2.3.4
+Version: 2.3.5
 Depends: R (>= 3.6)
 Imports:
     dplyr,

@@ -146,14 +146,25 @@ calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, taxaCC=c
   print("Done with Bray-Curtis distance.")
 
   # Now create df with just XTOTABCOV by UID
-  xtotabcov <- reshape2::melt(unique(subset(sppForCalc,select=c(sampID,'XTOTABCOV'))),id.vars='UID'
-                              ,variable.name='PARAMETER',value.name='RESULT')
+  sppForCalc.in <- unique(subset(sppForCalc, select = c(sampID, 'XTOTABCOV')))
+  
+  varNames <- names(sppForCalc.in)[!names(sppForCalc.in) %in% c(sampID)]
+  xtotabcov <- reshape(sppForCalc.in, idvar = sampID, direction = 'long',
+                       varying = varNames, times = varNames,
+                       timevar = 'PARAMETER', v.names = 'RESULT')
+  # xtotabcov <- reshape2::melt(unique(subset(sppForCalc,select=c(sampID,'XTOTABCOV'))),id.vars='UID'
+  #                             ,variable.name='PARAMETER',value.name='RESULT')
 
   ### COMBINE ALL PLANT METRICS INTO A SINGLE DF
   allOut <- rbind(xtotabcov,richMets,divMets,durMets,grhMets,catMets,wisMets,ccMets,natMets,xbcMets)
-
-  formula <- paste(paste(sampID,collapse='+'),'~PARAMETER',sep='')
-  finOut <- reshape2::dcast(allOut,eval(formula),value.var='RESULT')
+  
+  finOut <- reshape(allOut, idvar = c(sampID), direction = 'wide',
+                    timevar = 'PARAMETER', v.names = 'RESULT')
+  
+  names(finOut) <- gsub("RESULT\\.", "", names(finOut))
+  # formula <- paste(paste(sampID,collapse='+'),'~PARAMETER',sep='')
+  # finOut <- reshape2::dcast(allOut,eval(formula),value.var='RESULT')
+  
   return(finOut)
 }
 
