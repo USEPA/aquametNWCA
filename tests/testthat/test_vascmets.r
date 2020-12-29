@@ -38,7 +38,7 @@ test_that("Category metric function values correct",
           catOut <- calcCategory(testForCalc)
            compOut <- merge(testMets,catOut,by=c('UID','PARAMETER'))
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
-           expect_true(nrow(catOut)==560)
+           expect_true(nrow(catOut)==640)
            expect_true(nrow(compOut)==nrow(catOut))
            expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)
 })

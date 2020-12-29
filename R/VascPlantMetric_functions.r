@@ -524,14 +524,29 @@ prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
 #'   
 #'   
 int.calcRich <- function(x,y,tlevel,sampID) {
-  xx1 <- plyr::ddply(x,sampID,summarise,TOTN_TAXA=sum(DISTINCT))
+  xx1 <- aggregate(x = list(TOTN_TAXA = x$DISTINCT), by = x[c(sampID)], FUN = sum)
+  # xx1 <- plyr::ddply(x,sampID,summarise,TOTN_TAXA=sum(DISTINCT))
   ## Now calculate richness by plot to obtain average richness per plot
   yy1 <- merge(subset(y,select=c(sampID,'PLOT','DISTINCT')),xx1,by=sampID)
-  yy2 <- plyr::ddply(yy1,c(sampID,'PLOT','TOTN_TAXA'),summarise,N_TAXA=sum(DISTINCT))
-  yy3 <- plyr::ddply(yy2,c(sampID,'TOTN_TAXA'),summarise,XN_TAXA=round(mean(N_TAXA),2),MEDN_TAXA=median(N_TAXA)
-               ,SDN_TAXA=round(sd(N_TAXA),2))
+  yy2 <- aggregate(x = list(N_TAXA = yy1$DISTINCT), by = yy1[c(sampID, 'PLOT', 'TOTN_TAXA')], FUN = sum)
+  # yy2 <- plyr::ddply(yy1,c(sampID,'PLOT','TOTN_TAXA'),summarise,N_TAXA=sum(DISTINCT))
+  yy3 <- aggregate(x = list(XN_TAXA = yy2$N_TAXA), by = yy2[c(sampID, 'TOTN_TAXA')], 
+                   FUN = function(z){round(mean(z),2)})
+  yy4 <- aggregate(x = list(MEDN_TAXA = yy2$N_TAXA), by = yy2[c(sampID, 'TOTN_TAXA')], FUN = median)
+  yy5 <- aggregate(x = list(SDN_TAXA = yy2$N_TAXA), by = yy2[c(sampID, 'TOTN_TAXA')], 
+                   FUN = function(z){round(sd(z),2)})
+  # yy3 <- plyr::ddply(yy2,c(sampID,'TOTN_TAXA'),summarise,XN_TAXA=round(mean(N_TAXA),2),MEDN_TAXA=median(N_TAXA)
+  #              ,SDN_TAXA=round(sd(N_TAXA),2))
+  
+  zz1 <- merge(yy3, yy4, by = c(sampID, 'TOTN_TAXA')) 
+  zz2 <- merge(zz1, yy5, by = c(sampID, 'TOTN_TAXA'))
+  
+  outdf <- reshape(zz2, idvar = sampID, direction = 'long',
+                   varying= names(zz2)[!names(zz2) %in% c(sampID)],
+                   timevar = 'PARAMETER', v.names = 'RESULT',
+                   times = names(zz2)[!names(zz2) %in% c(sampID)])
 
-  outdf <- reshape2::melt(yy3,id.vars=sampID,variable.name='PARAMETER',value.name='RESULT')
+  # outdf <- reshape2::melt(yy3,id.vars=sampID,variable.name='PARAMETER',value.name='RESULT')
   outdf$PARAMETER <- gsub('TAXA',tlevel,outdf$PARAMETER)
   if(tlevel!='SPP'){
     outdf <- subset(outdf,PARAMETER!='NPLOTS')
@@ -572,14 +587,51 @@ int.calcRich <- function(x,y,tlevel,sampID) {
 int.calcTraits_MultCat <- function(vascIn,trait,sampID){
   vascIn1 <- subset(vascIn,!is.na(eval(as.name(trait))) & eval(as.name(trait))!='')
 
-  vascIn2 <- plyr::ddply(vascIn1,c(sampID,trait),summarise,N=length(TAXON),PCTN=round(N/unique(TOTN)*100,2)
-                 ,XABCOV=round(sum(XABCOV),2),XRCOV=round(sum(sXRCOV),2))
-  outdf <- reshape2::melt(vascIn2,id.vars=c(sampID,trait))
+  vascIn.length <- aggregate(x = list(N = vascIn1$TAXON), by = vascIn1[c(sampID, trait)],
+                             FUN = length)
   
-  formula <- paste(paste(paste(sampID,collapse='+'),'~variable',sep=''),trait,sep='+')
-  outdf1 <- reshape2::melt(reshape2::dcast(outdf,eval(formula),value.var='value'),id.vars=sampID,variable.name='PARAMETER'
-                           ,value.name='RESULT')
-  outdf1 <- plyr::mutate(outdf1,RESULT=ifelse(is.na(RESULT),0,RESULT),PARAMETER=as.character(PARAMETER))
+  vascIn1a <- merge(vascIn1, vascIn.length, by = c(sampID, trait))
+  
+  vascIn1.pctn <- aggregate(x = list(uniqN = vascIn1a$TOTN), by = vascIn1a[c(sampID, trait, 'N')],
+                             FUN = unique)
+  
+  vascIn1.pctn$PCTN <- with(vascIn1.pctn, round(N/uniqN*100, 2))
+  vascIn1.pctn$uniqN <- NULL
+  
+  vascIn.sum <- aggregate(x = list(XABCOV = vascIn1$XABCOV, XRCOV = vascIn1$sXRCOV),
+                          by = vascIn1[c(sampID, trait)], 
+                          FUN = function(x){round(sum(x), 2)})
+  
+  vascIn2 <- merge(vascIn1.pctn, vascIn.sum, by = c(sampID, trait))
+  
+  # vascIn2 <- plyr::ddply(vascIn1,c(sampID,trait),summarise,N=length(TAXON),PCTN=round(N/unique(TOTN)*100,2)
+  #                ,XABCOV=round(sum(XABCOV),2),XRCOV=round(sum(sXRCOV),2))
+  outdf <- reshape(vascIn2, idvar = c(sampID, trait), direction = 'long',
+                   varying= names(vascIn2)[!names(vascIn2) %in% c(sampID, trait)],
+                   timevar = 'variable', v.names = 'value',
+                   times = names(vascIn2)[!names(vascIn2) %in% c(sampID, trait)])
+  
+  outdf$variable <- paste(outdf$variable, outdf[,trait], sep='_')
+  outdf[,trait] <- NULL
+  
+ # outdf <- reshape2::melt(vascIn2,id.vars=c(sampID,trait))
+  outdf.wide <- reshape(outdf, idvar = c(sampID), direction = 'wide',
+                        timevar = 'variable', v.names='value')
+
+  names(outdf.wide) <- gsub("value\\.", "", names(outdf.wide))
+  
+  outdf1 <- reshape(outdf.wide, idvar = sampID, direction = 'long',
+                    varying = names(outdf.wide)[!names(outdf.wide) %in% c(sampID)],
+                    timevar = 'PARAMETER', v.names = 'RESULT',
+                    times = names(outdf.wide)[!names(outdf.wide) %in% c(sampID)])
+  
+  outdf1$RESULT <- with(outdf1, ifelse(is.na(RESULT), 0, RESULT))
+  outdf1$PARAMETER <- with(outdf1, as.character(PARAMETER))
+  
+  # formula <- paste(paste(paste(sampID,collapse='+'),'~variable',sep=''),trait,sep='+')
+  # outdf1 <- reshape2::melt(reshape2::dcast(outdf,eval(formula),value.var='value'),id.vars=sampID,variable.name='PARAMETER'
+  #                          ,value.name='RESULT')
+  # outdf1 <- plyr::mutate(outdf1,RESULT=ifelse(is.na(RESULT),0,RESULT),PARAMETER=as.character(PARAMETER))
   return(outdf1)
 }
 
@@ -628,18 +680,60 @@ int.calcTraits_MultCat <- function(vascIn,trait,sampID){
 int.calcTraits_MultCat.alt <- function(vascIn,trait,sampID){
   vascIn1 <- subset(vascIn,!is.na(eval(as.name(trait))) & eval(as.name(trait))!='')
 
-  vascIn2 <- plyr::ddply(vascIn1,c(sampID,trait),summarise,PCTN=round(length(TAXON)/unique(TOTN)*100,2)
-                 ,XABCOV=round(sum(XABCOV),2),XRCOV=round(sum(sXRCOV),2),RFREQ=round(sum(sRFREQ),2)
-                 ,RIMP=round((RFREQ+XRCOV)/2,2))
-  outdf <- reshape2::melt(vascIn2,id.vars=c(sampID,trait))
+  vascIn1.ntax <- aggregate(x = list(NTAX = vascIn1$TAXON), by = vascIn1[c(sampID, trait)],
+                            FUN = length)
   
-  formula <- paste(paste(paste(sampID,collapse='+'),'~variable',sep=''),trait,sep='+')
-  outdf1 <- reshape2::melt(reshape2::dcast(outdf,eval(formula),value.var='value'),id.vars=sampID,variable.name='PARAMETER'
-                           ,value.name='RESULT') %>%
-    plyr::mutate(PARAMETER=as.character(PARAMETER)) %>%
-    dplyr::filter(substring(PARAMETER,nchar(PARAMETER)-3,nchar(PARAMETER))!='_UND') %>%
-    plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT)
-                         ,PARAMETER=paste(as.character(PARAMETER),'SPP',sep=''))
+  vascIn1a <- merge(vascIn1, vascIn1.ntax, by = c(sampID, trait))
+  
+  vascIn1.pctn <- aggregate(x = list(uniqN = vascIn1a$TOTN), by = vascIn1a[c(sampID, trait,'NTAX')],
+                            FUN = unique)
+  
+  vascIn1.pctn$PCTN <- with(vascIn1.pctn, round(NTAX/uniqN*100, 2))
+  vascIn1.pctn$uniqN <- NULL
+  vascIn1.pctn$NTAX <- NULL
+  
+  vascIn1.sum <- aggregate(x = list(XABCOV = vascIn1$XABCOV, XRCOV = vascIn1$sXRCOV,
+                           RFREQ = vascIn1$sRFREQ), by = vascIn1[c(sampID, trait)],
+                           FUN = function(z){round(sum(z),2)})
+  vascIn1.sum$RIMP <- with(vascIn1.sum, round((RFREQ+XRCOV)/2, 2))
+  
+  vascIn2 <- merge(vascIn1.pctn, vascIn1.sum, by = c(sampID, trait))
+  
+  # vascIn2 <- plyr::ddply(vascIn1,c(sampID,trait),summarise,PCTN=round(length(TAXON)/unique(TOTN)*100,2)
+  #                ,XABCOV=round(sum(XABCOV),2),XRCOV=round(sum(sXRCOV),2),RFREQ=round(sum(sRFREQ),2)
+  #                ,RIMP=round((RFREQ+XRCOV)/2,2))
+  # outdf <- reshape2::melt(vascIn2,id.vars=c(sampID,trait))
+  
+  outdf <- reshape(vascIn2, idvar = c(sampID, trait), direction = 'long',
+                   varying= names(vascIn2)[!names(vascIn2) %in% c(sampID, trait)],
+                   timevar = 'variable', v.names = 'value',
+                   times = names(vascIn2)[!names(vascIn2) %in% c(sampID, trait)])
+  
+  outdf$variable <- paste(outdf$variable, outdf[,trait], sep='_')
+  outdf[, trait] <- NULL
+  
+  # outdf <- reshape2::melt(vascIn2,id.vars=c(sampID,trait))
+  outdf.wide <- reshape(outdf, idvar = c(sampID), direction = 'wide',
+                        timevar = 'variable', v.names='value')
+  
+  names(outdf.wide) <- gsub("value\\.", "", names(outdf.wide))
+  
+  outdf1 <- reshape(outdf.wide, idvar = sampID, direction = 'long',
+                    varying = names(outdf.wide)[!names(outdf.wide) %in% c(sampID)],
+                    timevar = 'PARAMETER', v.names = 'RESULT',
+                    times = names(outdf.wide)[!names(outdf.wide) %in% c(sampID)])
+  
+  outdf1 <- subset(outdf1, substring(PARAMETER,nchar(PARAMETER)-3,nchar(PARAMETER))!='_UND')
+  outdf1$RESULT <- with(outdf1, ifelse(is.na(RESULT), 0, RESULT))
+  outdf1$PARAMETER <- with(outdf1, paste(as.character(PARAMETER), 'SPP', sep=''))
+  
+  # formula <- paste(paste(paste(sampID,collapse='+'),'~variable',sep=''),trait,sep='+')
+  # outdf1 <- reshape2::melt(reshape2::dcast(outdf,eval(formula),value.var='value'),id.vars=sampID,variable.name='PARAMETER'
+  #                          ,value.name='RESULT') %>%
+  #   plyr::mutate(PARAMETER=as.character(PARAMETER)) %>%
+    # dplyr::filter(substring(PARAMETER,nchar(PARAMETER)-3,nchar(PARAMETER))!='_UND') %>%
+    # plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT)
+    #                      ,PARAMETER=paste(as.character(PARAMETER),'SPP',sep=''))
 
   return(outdf1)
 }
@@ -685,24 +779,63 @@ int.calcTraits_Indicator <- function(vascIn,trait,sampID){
     
   UIDs <- data.frame(SAMPID=unique(subset(vascIn,select='SAMPID')),stringsAsFactors=FALSE)
   vascIn1 <- subset(vascIn,eval(as.name(trait))==1)
+  
   if(nrow(vascIn1)>0){
-    vascIn2 <- plyr::ddply(vascIn1,c('SAMPID'),summarise,N=length(TAXON),PCTN=round(N/unique(TOTN)*100,2)
-                   ,XABCOV=round(sum(XABCOV),2),XRCOV=round(sum(sXRCOV),2))
-
-    outdf <- reshape2::melt(vascIn2,id.vars='SAMPID')
-    outdf$variable <- paste(outdf$variable,trait,sep='_')
-
+    vascIn.length <- aggregate(x = list(N = vascIn1$TAXON), by = vascIn1[c('SAMPID')],
+                               FUN = length)
     
-    outdf1 <- reshape2::melt(merge(UIDs,dcast(outdf,SAMPID~variable),by='SAMPID',all.x=TRUE),id.vars='SAMPID',variable.name='PARAMETER'
-                   ,value.name='RESULT')
-    outdf1 <- plyr::mutate(outdf1,RESULT=ifelse(is.na(RESULT),0,RESULT)) 
+    vascIn1a <- merge(vascIn1, vascIn.length, by = c('SAMPID'))
+    
+    vascIn1.pctn <- aggregate(x = list(uniqN = vascIn1a$TOTN), by = vascIn1a[c('SAMPID','N')],
+                              FUN = unique)
+
+    vascIn1.pctn$PCTN <- with(vascIn1.pctn, round(N/uniqN*100, 2))
+    vascIn1.pctn$uniqN <- NULL
+    
+    vascIn.sum <- aggregate(x = list(XABCOV = vascIn1$XABCOV, XRCOV = vascIn1$sXRCOV),
+                            by = vascIn1[c('SAMPID')], 
+                            FUN = function(x){round(sum(x), 2)})
+    
+    vascIn2 <- merge(vascIn1.pctn, vascIn.sum, by = c('SAMPID'))
+    
+    # vascIn2 <- plyr::ddply(vascIn1,c('SAMPID'),summarise,N=length(TAXON),PCTN=round(N/unique(TOTN)*100,2)
+    #                ,XABCOV=round(sum(XABCOV),2),XRCOV=round(sum(sXRCOV),2))
+
+    outdf <- reshape(vascIn2, idvar = c('SAMPID'), direction = 'long',
+            varying= names(vascIn2)[!names(vascIn2) %in% c('SAMPID')],
+            timevar = 'variable', v.names = 'value',
+            times = names(vascIn2)[!names(vascIn2) %in% c('SAMPID')])
+    
+    # outdf <- reshape2::melt(vascIn2,id.vars='SAMPID')
+    outdf$variable <- paste(outdf$variable, trait, sep='_')
+    
+    outdf.wide <- reshape(outdf, idvar = c('SAMPID'), direction = 'wide',
+                          timevar = 'variable', v.names='value')
+    
+    names(outdf.wide) <- gsub("value\\.", "", names(outdf.wide))
+    
+    outdf1 <- reshape(outdf.wide, idvar = 'SAMPID', direction = 'long',
+                      varying = names(outdf.wide)[!names(outdf.wide) %in% c('SAMPID')],
+                      timevar = 'PARAMETER', v.names = 'RESULT',
+                      times = names(outdf.wide)[!names(outdf.wide) %in% c('SAMPID')])
+    
+    outdf1$RESULT <- with(outdf1, ifelse(is.na(RESULT), 0, RESULT))
+    outdf1$PARAMETER <- with(outdf1, as.character(PARAMETER))
+    
+    # outdf1 <- reshape2::melt(merge(UIDs,dcast(outdf,SAMPID~variable),by='SAMPID',all.x=TRUE),id.vars='SAMPID',variable.name='PARAMETER'
+    #                ,value.name='RESULT')
+    # outdf1 <- plyr::mutate(outdf1,RESULT=ifelse(is.na(RESULT),0,RESULT)) 
   }else{
     numUIDs <- length(unique(vascIn$SAMPID))
-    outdf1 <- data.frame(SAMPID=rep(unique(vascIn$SAMPID),4),PARAMETER=c(rep('N',numUIDs),rep('PCTN',numUIDs),rep('XABCOV',numUIDs)
-                                                                ,rep('XRCOV',numUIDs)),RESULT=0,stringsAsFactors=F)
+    outdf1 <- data.frame(SAMPID=rep(unique(vascIn$SAMPID),4), 
+                         PARAMETER=c(rep('N',numUIDs),rep('PCTN', numUIDs), rep('XABCOV',numUIDs)
+                                , rep('XRCOV',numUIDs)), RESULT=0, stringsAsFactors=F)
       outdf1$PARAMETER <- paste(outdf1$PARAMETER,trait,sep='_')
   }
-  outdf2 <- merge(samples,outdf1,by='SAMPID') %>% dplyr::select(-SAMPID)
+  
+  outdf2 <- merge(samples, outdf1, by='SAMPID') 
+  outdf2$SAMPID <- NULL
+  
   return(outdf2)
 }
 
@@ -798,18 +931,61 @@ int.calcTraits_Indicator.alt <- function(vascIn,trait,sampID){
   samples <- unique(subset(vascIn,select=c(sampID,'SAMPID')))
   
   UIDs <- data.frame(SAMPID=unique(subset(vascIn,select='SAMPID')),stringsAsFactors=FALSE)
-  vascIn1 <- subset(vascIn,eval(as.name(trait))==1)
-  vascIn2 <- plyr::ddply(vascIn1,c('SAMPID'),summarise,PCTN=round(length(TAXON)/unique(TOTN)*100,2)
-                 ,XABCOV=round(sum(XABCOV),2),XRCOV=round(sum(sXRCOV),2)
-                 ,RFREQ=round(sum(sRFREQ),2),RIMP=round((RFREQ+XRCOV)/2,2))
-
-  outdf <- reshape2::melt(vascIn2,id.vars='SAMPID')
-  outdf$variable <- paste(outdf$variable,trait,sep='_')
-  outdf1 <- reshape2::melt(merge(UIDs,dcast(outdf,SAMPID~variable),by='SAMPID',all.x=TRUE),id.vars='SAMPID',variable.name='PARAMETER'
-                 ,value.name='RESULT')
-  outdf1 <- plyr::mutate(outdf1,RESULT=ifelse(is.na(RESULT),0,RESULT))
+  vascIn1 <- subset(vascIn, eval(as.name(trait))==1)
   
-  outdf2 <- merge(samples,outdf1,by='SAMPID') %>% dplyr::select(-SAMPID)
+  vascIn1.ntax <- aggregate(x = list(NTAX = vascIn1$TAXON), by = vascIn1[c('SAMPID')],
+                            FUN = length)
+  
+  vascIn1a <- merge(vascIn1, vascIn1.ntax, by = c('SAMPID'))
+  
+  vascIn1.pctn <- aggregate(x = list(uniqN = vascIn1a$TOTN), by = vascIn1a[c('SAMPID','NTAX')],
+                            FUN = unique)
+  
+  vascIn1.pctn$PCTN <- with(vascIn1.pctn, round(NTAX/uniqN*100, 2))
+  vascIn1.pctn$uniqN <- NULL
+  vascIn1.pctn$NTAX <- NULL
+  
+  vascIn1.sum <- aggregate(x = list(XABCOV = vascIn1$XABCOV, XRCOV = vascIn1$sXRCOV,
+                                    RFREQ = vascIn1$sRFREQ), by = vascIn1[c('SAMPID')],
+                           FUN = function(z){round(sum(z),2)})
+  
+  vascIn1.sum$RIMP <- with(vascIn1.sum, round((RFREQ+XRCOV)/2, 2))
+  
+  vascIn2 <- merge(vascIn1.pctn, vascIn1.sum, by = c('SAMPID'))
+  
+  # vascIn2 <- plyr::ddply(vascIn1,c('SAMPID'),summarise,PCTN=round(length(TAXON)/unique(TOTN)*100,2)
+  #                ,XABCOV=round(sum(XABCOV),2),XRCOV=round(sum(sXRCOV),2)
+  #                ,RFREQ=round(sum(sRFREQ),2),RIMP=round((RFREQ+XRCOV)/2,2))
+
+  outdf <- reshape(vascIn2, idvar = c('SAMPID'), direction = 'long',
+                   varying= names(vascIn2)[!names(vascIn2) %in% c('SAMPID')],
+                   timevar = 'variable', v.names = 'value',
+                   times = names(vascIn2)[!names(vascIn2) %in% c('SAMPID')])
+  
+  outdf$variable <- paste(outdf$variable, trait, sep='_')
+  
+  outdf.wide <- reshape(outdf, idvar = c('SAMPID'), direction = 'wide',
+                        timevar = 'variable', v.names='value')
+  
+  names(outdf.wide) <- gsub("value\\.", "", names(outdf.wide))
+  
+  outdf1 <- reshape(outdf.wide, idvar = 'SAMPID', direction = 'long',
+                    varying = names(outdf.wide)[!names(outdf.wide) %in% c('SAMPID')],
+                    timevar = 'PARAMETER', v.names = 'RESULT',
+                    times = names(outdf.wide)[!names(outdf.wide) %in% c('SAMPID')])
+  
+  outdf1 <- subset(outdf1, substring(PARAMETER,nchar(PARAMETER)-3,nchar(PARAMETER))!='_UND')
+  outdf1$RESULT <- with(outdf1, ifelse(is.na(RESULT), 0, RESULT))
+
+  # outdf <- reshape2::melt(vascIn2,id.vars='SAMPID')
+  # outdf$variable <- paste(outdf$variable,trait,sep='_')
+  # outdf1 <- reshape2::melt(merge(UIDs,dcast(outdf,SAMPID~variable),by='SAMPID',all.x=TRUE),id.vars='SAMPID',variable.name='PARAMETER'
+  #                ,value.name='RESULT')
+  # outdf1 <- plyr::mutate(outdf1,RESULT=ifelse(is.na(RESULT),0,RESULT))
+  
+  outdf2 <- merge(samples, outdf1, by='SAMPID')
+  outdf2$SAMPID <- NULL
+  
   return(outdf2)
 }
 
@@ -853,15 +1029,45 @@ int.calcTraits_Indicator.alt <- function(vascIn,trait,sampID){
 int.calcIndices <- function(vascIn,subgrp=NULL,sampID){
   
   ## Calculate mean CC and FQAI indices
-  vascIn.1 <- plyr::ddply(vascIn,sampID,mutate,SUBXTOTABCOV=sum(XABCOV))
+  vascIn.sum <- aggregate(x = list(SUBXTOTABCOV = vascIn$XABCOV),
+                        by = vascIn[c(sampID)], FUN = sum)
+  
+  vascIn.1 <- merge(vascIn, vascIn.sum, by = c(sampID))
+  # vascIn.1 <- plyr::ddply(vascIn,sampID,mutate,SUBXTOTABCOV=sum(XABCOV))
   ## Calculate diversity indices
-  vascIn.2 <- plyr::ddply(vascIn.1,sampID,summarise,H=round(-1*sum((XABCOV/SUBXTOTABCOV)*log(XABCOV/SUBXTOTABCOV)),4)
-                 ,J=round(H/log(length(TAXON)),4),D=round(1-sum((XABCOV/SUBXTOTABCOV)^2),4))
+  vascIn.1$xrcov <- with(vascIn.1, (XABCOV/SUBXTOTABCOV))
+  vascIn.1$hcalc <- with(vascIn.1, xrcov*log(xrcov))
+  vascIn.1$dcalc <- with(vascIn.1, xrcov^2)
 
-  ## Combine all three data frames into one
-  outdf <- reshape2::melt(vascIn.2,id.vars=sampID,variable.name='PARAMETER',value.name='RESULT') %>%
-        plyr::mutate(PARAMETER=paste(as.character(PARAMETER),subgrp,sep='_')
-                     ,RESULT=ifelse(is.na(RESULT)|is.infinite(RESULT),0,RESULT))
+  vascIn.1.sum <- aggregate(x = list(Hsub = vascIn.1$hcalc, Dsub = vascIn.1$dcalc),
+                            by = vascIn.1[c(sampID)], 
+                            FUN = sum)
+  
+  vascIn.1.jcalc <- aggregate(x = list(jcalc = vascIn.1$TAXON), 
+                              by = vascIn.1[c(sampID)],
+                              FUN = length)
+  
+  vascIn.2 <- merge(vascIn.1.sum, vascIn.1.jcalc, by = sampID)
+  vascIn.2$H <- with(vascIn.2, round(-1*Hsub, 4))
+  vascIn.2$J <- with(vascIn.2, round(H/log(jcalc), 4))
+  vascIn.2$D <- with(vascIn.2, round(1 - Dsub, 4))
+  
+  vascIn.3 <- subset(vascIn.2, select=c(sampID, 'H','J','D'))
+  
+  # vascIn.2 <- plyr::ddply(vascIn.1,sampID,summarise,H=round(-1*sum((XABCOV/SUBXTOTABCOV)*log(XABCOV/SUBXTOTABCOV)),4)
+  #                ,J=round(H/log(length(TAXON)),4),D=round(1-sum((XABCOV/SUBXTOTABCOV)^2),4))
+
+  outdf <- reshape(vascIn.3, idvar = sampID, direction = 'long',
+          varying = c('H','J','D'),
+          timevar = 'PARAMETER', v.names = 'RESULT',
+          times = c('H','J','D'))
+  
+  outdf$PARAMETER <- with(outdf, paste(as.character(PARAMETER),subgrp,sep='_'))
+  outdf$RESULT <- with(outdf, ifelse(is.na(RESULT)|is.infinite(RESULT),0,RESULT))
+  
+  # outdf <- reshape2::melt(vascIn.2,id.vars=sampID,variable.name='PARAMETER',value.name='RESULT') %>%
+  #       plyr::mutate(PARAMETER=paste(as.character(PARAMETER),subgrp,sep='_')
+  #                    ,RESULT=ifelse(is.na(RESULT)|is.infinite(RESULT),0,RESULT))
 
   return(outdf)
 }
@@ -902,15 +1108,37 @@ int.calcIndices <- function(vascIn,subgrp=NULL,sampID){
 #' 
 #' @author Karen Blocksom
 int.calcRichNS <- function(x,y,natstat,grpname,sampID) {
-  xx1 <- plyr::ddply(subset(x,NWCA_NATSTAT %in% natstat),sampID,summarise,TOTN_TAXA=sum(DISTINCT))
+  xin <- subset(x, NWCA_NATSTAT %in% natstat)
+  xx1 <- aggregate(x = list(TOTN_TAXA = xin$DISTINCT), by = xin[c(sampID)],
+                   FUN = sum)
+  
+  # xx1 <- plyr::ddply(subset(x,NWCA_NATSTAT %in% natstat),sampID,summarise,TOTN_TAXA=sum(DISTINCT))
   ## Now calculate richness by plot to obtain average richness per plot
-  yy1 <- merge(subset(y,NWCA_NATSTAT %in% natstat,select=c(sampID,'PLOT','DISTINCT')),xx1,by=sampID)
-  yy2 <- plyr::ddply(yy1,c(sampID,'PLOT','TOTN_TAXA'),summarise,N_TAXA=sum(DISTINCT))
-  yy3 <- plyr::ddply(yy2,c(sampID,'TOTN_TAXA'),summarise,XN_TAXA=round(mean(N_TAXA),2),MEDN_TAXA=median(N_TAXA)
-                     ,SDN_TAXA=round(sd(N_TAXA),2))
-
-  outdf <- reshape2::melt(yy3,id.vars=sampID,variable.name='PARAMETER',value.name='RESULT')
-  outdf$PARAMETER <- gsub('TAXA',grpname,outdf$PARAMETER)
+  yy1 <- merge(subset(y,NWCA_NATSTAT %in% natstat,
+                      select=c(sampID,'PLOT','DISTINCT')),xx1,by=sampID)
+  yy2 <- aggregate(x = list(N_TAXA = yy1$DISTINCT), 
+                   by = yy1[c(sampID, 'PLOT','TOTN_TAXA')],
+                   FUN = sum)
+  # yy2 <- plyr::ddply(yy1,c(sampID,'PLOT','TOTN_TAXA'),summarise,N_TAXA=sum(DISTINCT))
+  yy3 <- aggregate(x = list(XN_TAXA = yy2$N_TAXA), by = yy2[c(sampID, 'TOTN_TAXA')], 
+                   FUN = function(z){round(mean(z),2)})
+  yy4 <- aggregate(x = list(MEDN_TAXA = yy2$N_TAXA), by = yy2[c(sampID, 'TOTN_TAXA')], FUN = median)
+  yy5 <- aggregate(x = list(SDN_TAXA = yy2$N_TAXA), by = yy2[c(sampID, 'TOTN_TAXA')], 
+                   FUN = function(z){round(sd(z),2)})
+  
+  # yy3 <- plyr::ddply(yy2,c(sampID,'TOTN_TAXA'),summarise,XN_TAXA=round(mean(N_TAXA),2),MEDN_TAXA=median(N_TAXA)
+  #                    ,SDN_TAXA=round(sd(N_TAXA),2))
+  zz1 <- merge(yy3, yy4, by = c(sampID, 'TOTN_TAXA')) 
+  zz2 <- merge(zz1, yy5, by = c(sampID, 'TOTN_TAXA'))
+  
+  outdf <- reshape(zz2, idvar = sampID, direction = 'long',
+                   varying= names(zz2)[!names(zz2) %in% c(sampID)],
+                   timevar = 'PARAMETER', v.names = 'RESULT',
+                   times = names(zz2)[!names(zz2) %in% c(sampID)])
+  
+  # outdf <- reshape2::melt(yy3,id.vars=sampID,variable.name='PARAMETER',value.name='RESULT')
+  outdf$PARAMETER <- gsub('TAXA', grpname, outdf$PARAMETER)
+  
   return(outdf)
 }
 
@@ -951,18 +1179,24 @@ int.calcXBC <- function(x,sampID){
   samples <- unique(subset(x,select=c(sampID,'SAMPID')))
   
   
-  uidlist <- data.frame(SAMPID=unique(x$SAMPID),stringsAsFactors=FALSE)
-  outdf <- data.frame(SAMPID=numeric(0),XBCDIST=numeric(0),stringsAsFactors=FALSE)
+  uidlist <- data.frame(SAMPID=unique(x$SAMPID), stringsAsFactors=FALSE)
+  outdf <- data.frame(SAMPID=numeric(0), XBCDIST=numeric(0), stringsAsFactors=FALSE)
 
   for(i in 1:nrow(uidlist)){
-    x1 <- subset(x,SAMPID==uidlist[i,])
-    x2 <- dcast(x1,PLOT~SPECIES,value.var='COVER')
+    x1 <- subset(x,SAMPID==uidlist[i,], select = c('PLOT','SPECIES','COVER'))
+    x2 <- reshape(x1, idvar = c('PLOT'), direction = 'wide',
+                  timevar = 'SPECIES', v.names='COVER')
+    
+    names(x2) <- gsub("COVER\\.", "", names(x2))
+    # x2 <- dcast(x1,PLOT~SPECIES,value.var='COVER')
       x2[is.na(x2)] <- 0
     x3 <- ecodist::distance(x2[,2:length(x2)],'bray-curtis')
     outx <- data.frame(SAMPID=uidlist[i,],XBCDIST_SPP=round(mean(x3),4),stringsAsFactors=FALSE)
     outdf <- rbind(outdf,outx)
   }
-  outdf.1 <- merge(samples,outdf,by='SAMPID') %>% dplyr::select(-SAMPID)
+  
+  outdf.1 <- merge(samples, outdf, by='SAMPID') 
+  outdf.1$SAMPID <- NULL
 
   return(outdf.1)
 }

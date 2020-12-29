@@ -1103,7 +1103,9 @@ calcNative <- function(vascIn,sampID='UID'){
   
   sppNATSTAT <- int.calcTraits_MultCat.alt(vascIn,'NWCA_NATSTAT',sampID)
 
-  alienTrait <- int.calcTraits_Indicator.alt(vascIn,'ALIEN',sampID) %>% plyr::mutate(PARAMETER=paste(PARAMETER,'SPP',sep=''))
+  alienTrait <- int.calcTraits_Indicator.alt(vascIn,'ALIEN',sampID) 
+  alienTrait$PARAMETER <- with(alienTrait, paste(PARAMETER,'SPP',sep=''))
+  
   acTrait <- int.calcTraits_Indicator.alt(vascIn,'AC',sampID)
 
   natstatOut <- rbind(sppNATSTAT,alienTrait,acTrait)
@@ -1474,7 +1476,7 @@ calcBCmets <- function(vascIn,sampID='UID'){
   # This df needs to be in wide format
   forDist <- plyr::mutate(forDist,SPECIES=paste('s',SPECIES_NAME_ID,sep=''))
 
-  meanBC <- int.calcXBC(forDist,sampID)
+  meanBC <- int.calcXBC(forDist, sampID)
 
   xbcOut <- meanBC
 
