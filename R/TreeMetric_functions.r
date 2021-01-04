@@ -228,9 +228,11 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
 #  treeIn <- plyr::ddply(treeIn,c('SAMPID'),mutate,NPLOTS=length(unique(PLOT)))
  
   tcnts <- subset(treeIn,PARAMETER %in% c('XXTHIN_TREE','XTHIN_TREE','THIN_TREE','JR_TREE','THICK_TREE','XTHICK_TREE','XXTHICK_TREE'))
+  
+  
   if(nrow(tcnts)>0){
     tcntsOut <- aggregate(x = list(TOTN = tcnts$RESULT), by = tcnts[c('SAMPID','PARAMETER','NPLOTS')],
-                            FUN = function(x){sum(as.numeric())})
+                            FUN = function(x){sum(as.numeric(x))})
     
     # tcnts.1a <- merge(tcnts, tcnts.sum, by = c('SAMPID','PARAMETER'))
     # 
@@ -274,16 +276,6 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
     allTreesOut2 <- subset(merge(allTreesOut1, empty_trees, all=TRUE),!is.na(SAMPID))
 
     allTreesOut3 <- merge(allUIDs, allTreesOut2, by='SAMPID', all.x=T)
-    ## FIX THIS SECTION!!!!
-    allTreesOut3$TOTN_SMALL <- with(allTreesOut3, rowSums(c('TOTN_XXTHIN_TREE','TOTN_XTHIN_TREE'), na.rm=TRUE))
-    allTreesOut3$TOTN_MID <- with(allTreesOut3, rowSums(c('TOTN_THIN_TREE', 'TOTN_JR_TREE'), na.rm=TRUE))
-    allTreesOut3$TOTN_LARGE <- with(allTreesOut3, rowSums(c('TOTN_THICK_TREE', 'TOTN_XTHICK_TREE', 
-                                                            'TOTN_XXTHICK_TREE'), 
-                                                          na.rm=TRUE))
-    allTreesOut3$XN_SMALL <- with(allTreesOut3, rowSums(c('XN_XXTHIN_TREE','XN_XTHIN_TREE'), na.rm=TRUE))
-    allTreesOut3$XN_MID <- with(allTreesOut3, rowSums(c('XN_THIN_TREE', 'XN_JR_TREE'), na.rm=TRUE))
-    allTreesOut3$XN_LARGE <- with(allTreesOut3, rowSums(c('XN_THICK_TREE', 'XN_XTHICK_TREE', 'XN_XXTHICK_TREE'), 
-                                                        na.rm=TRUE))
     # allTreesOut3a <- plyr::ddply(allTreesOut3, c('SAMPID'), mutate, 
     #                               TOTN_SMALL = sum(TOTN_XXTHIN_TREE,TOTN_XTHIN_TREE,na.rm=T),
     #                               TOTN_MID = sum(TOTN_THIN_TREE, TOTN_JR_TREE, na.rm=T),
@@ -297,9 +289,26 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
                             varying = varNames, times = varNames,
                             timevar = 'METRIC', v.names = 'RESULT')
     # allTreesOut4 <- reshape2::melt(allTreesOut3a,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
-    allTreesOut4$METRIC <- with(allTreesout4, as.character(METRIC))
+    allTreesOut4$METRIC <- with(allTreesOut4, as.character(METRIC))
     allTreesOut4$RESULT <- with(allTreesOut4, ifelse(is.na(RESULT),0,RESULT))
     # allTreesOut4 <- plyr::mutate(allTreesOut4,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),0,RESULT))
+    
+    allTreesOut4.wide <- reshape(allTreesOut4, idvar='SAMPID', direction = 'wide',
+                                 timevar = 'METRIC', v.names = 'RESULT')
+    names(allTreesOut4.wide) <- gsub('RESULT\\.', '', names(allTreesOut4.wide))
+    
+    allTreesOut4.wide$TOTN_SMALL <- with(allTreesOut4.wide, TOTN_XXTHIN_TREE+TOTN_XTHIN_TREE)
+    allTreesOut4.wide$TOTN_MID <- with(allTreesOut4.wide, TOTN_THIN_TREE+TOTN_JR_TREE)
+    allTreesOut4.wide$TOTN_LARGE <- with(allTreesOut4.wide, TOTN_THICK_TREE+TOTN_XTHICK_TREE+TOTN_XXTHICK_TREE)
+    allTreesOut4.wide$XN_SMALL <- with(allTreesOut4.wide, XN_XXTHIN_TREE+XN_XTHIN_TREE)
+    allTreesOut4.wide$XN_MID <- with(allTreesOut4.wide, XN_THIN_TREE+XN_JR_TREE)
+    allTreesOut4.wide$XN_LARGE <- with(allTreesOut4.wide, XN_THICK_TREE+XN_XTHICK_TREE+XN_XXTHICK_TREE)
+    
+    varNames <- names(allTreesOut4.wide)[!names(allTreesOut4.wide) %in% c('SAMPID')]
+    allTreesOut5 <- reshape(allTreesOut4.wide, idvar='SAMPID', direction = 'long',
+                            varying = varNames, times = varNames,
+                            timevar = 'METRIC', v.names = 'RESULT')
+    
   }else{
     empty_trees <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
     names(empty_trees) <- c("TOTN_TREES","XN_TREES","TOTN_JR_TREE","TOTN_THICK_TREE","TOTN_THIN_TREE","TOTN_XTHICK_TREE","TOTN_XTHIN_TREE"
@@ -318,13 +327,13 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
     # allTreesOut2 <- reshape2::melt(allTreesOut1,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
 
     allTreesOut2$METRIC <- with(allTreesOut2, as.character(METRIC))
-    allTreesout2$RESULT <- 0
+    allTreesOut2$RESULT <- 0
 
-    allTreesOut4 <- allTreesOut2
+    allTreesOut5 <- allTreesOut2
   }
   
     print("Done with tree count metrics")
-  treeOut <- merge(samples, allTreesOut4, by='SAMPID') 
+  treeOut <- merge(samples, allTreesOut5, by='SAMPID') 
   treeOut$PARAMETER <- treeOut$METRIC
   treeOut$METRIC <- NULL
   treeOut$SAMPID <- NULL
@@ -408,7 +417,8 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
   tcvr <- subset(treeIn,PARAMETER %in% c('VSMALL_TREE','SMALL_TREE','LMED_TREE','HMED_TREE','TALL_TREE','VTALL_TREE'))
 
   if(nrow(tcvr)>0){
-    tspp <- reshape(subset(treeIn, PARAMETER=='TREE_SPECIES'), 
+    tspp <- reshape(subset(treeIn, PARAMETER=='TREE_SPECIES', 
+                           select = c('SAMPID','PAGE','LINE','PLOT','PARAMETER','RESULT')), 
                     idvar = c('SAMPID','PAGE','LINE','PLOT'), direction = 'wide',
                     timevar = 'PARAMETER', v.names = 'RESULT')
     names(tspp) <- gsub('RESULT\\.', '', names(tspp)) 
@@ -424,17 +434,19 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
 
     ntrspp <- aggregate(x = list(N_TREESPP = tcvr1$TREE_SPECIES), 
                         by = tcvr1[c('SAMPID')], FUN = function(x){length(unique(x))})
-    totspp <- merge(tcvr1, ntrspp, by = 'SAMPID')
+    totspp <- merge(tcvr1, ntrspp, by = c('SAMPID'))
     # totspp <- plyr::ddply(tcvr1,c('SAMPID'),mutate,N_TREESPP=length(unique(TREE_SPECIES)))
-    totspp1 <- reshape(totspp, idvar = 'SAMPID', direction = 'long',
+    totspp1 <- reshape(ntrspp, idvar = 'SAMPID', direction = 'long',
                        varying = 'N_TREESPP', times = 'N_TREESPP',
                        timevar = 'METRIC', v.names = 'RESULT')
     
-    totspp1 <- unique(totspp1)
     # totspp1 <- unique(reshape2::melt(totspp,id.vars='SAMPID',measure.vars='N_TREESPP',variable.name='METRIC',value.name='RESULT'))
     
-    totspp.pos <- subset(totspp, RESULT!='0')
-    tspp1a <- aggregate(x = list(N = totspp.pos$TREE_SPECIES), by = totspp.pos[c('SAMPID','PARAMETER')],
+    totspp.pos <- subset(totspp, RESULT!='0' & !is.na(RESULT), 
+                         select = c('SAMPID','PARAMETER','PARAM_ALT','TREE_SPECIES'))
+    
+    tspp1a <- aggregate(x = list(N = totspp.pos$TREE_SPECIES), 
+                        by = totspp.pos[c('SAMPID','PARAMETER')],
                         FUN = function(x){length(unique(x))})
     tspp1a <- subset(tspp1a, !is.na(PARAMETER))
     # tspp1a <- subset(plyr::ddply(subset(totspp,RESULT!='0'),c('SAMPID','PARAMETER'),summarise,N=length(unique(TREE_SPECIES))),!is.na(PARAMETER))
@@ -444,14 +456,12 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
                         FUN = function(x){length(unique(x))})
     tspp1b <- subset(tspp1b, !is.na(PARAM_ALT))
     
-    tspp1c <- aggregate(x = list(uniqN = totspp.pos$N_TREESPP), 
-                        by = totspp.pos[c('SAMPID','PARAM_ALT')],
-                        FUN = unique)
+    tspp1c <- merge(tspp1b, ntrspp, by='SAMPID')
     tspp1c <- subset(tspp1c, !is.na(PARAM_ALT))
     
-    tspp1bc <- merge(tspp1b, tspp1c, by=c('SAMPID','PARAM_ALT')) 
-    tspp1bc$PCTN <- with(tspp1bc, round((N/uniqN)*100, 2))
-    tspp1bc$uniqN <- NULL
+    # tspp1bc <- merge(tspp1b, tspp1c, by=c('SAMPID','PARAM_ALT')) 
+    tspp1c$PCTN <- with(tspp1c, round((N/N_TREESPP)*100, 2))
+    tspp1c$N_TREESPP <- NULL
     
     # tspp1b <- subset(plyr::ddply(subset(totspp,RESULT!='0'),c('SAMPID','PARAM_ALT'),summarise,N=length(unique(TREE_SPECIES))
     #                        ,PCTN=round((N/unique(N_TREESPP))*100,2)),!is.na(PARAM_ALT))
@@ -463,16 +473,17 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
     # tspp2a <- reshape2::melt(tspp1a,id.vars=c('SAMPID','PARAMETER'),variable.name='METRIC',value.name='RESULT')
     # tspp2a <- plyr::mutate(tspp2a,METRIC=paste(METRIC,PARAMETER,sep='_'))
 
-    tspp2bc <- reshape(tspp1bc, idvar = c('SAMPID','PARAM_ALT'), direction = 'long',
+    tspp2c <- reshape(tspp1c, idvar = c('SAMPID','PARAM_ALT'), direction = 'long',
                        varying = c('PCTN','N'), times = c('PCTN','N'),
                        timevar = 'METRIC', v.names = 'RESULT')
-    tspp2bc$METRIC <- with(tspp2bc, paste(METRIC, PARAM_ALT, sep='_'))
+    tspp2c$METRIC <- with(tspp2c, paste(METRIC, PARAM_ALT, sep='_'))
     # tspp2b <- reshape2::melt(tspp1bc,id.vars=c('SAMPID','PARAM_ALT'),variable.name='METRIC',value.name='RESULT')
     # tspp2b <- plyr::mutate(tspp2b,METRIC=paste(METRIC,PARAM_ALT,sep='_'))
 
-    tsppOut <- rbind(totspp1,subset(tspp2a,select=-PARAMETER),subset(tspp2bc,select=-PARAM_ALT))
+    tsppOut <- rbind(totspp1,subset(tspp2a,select=-PARAMETER),subset(tspp2c,select=-PARAM_ALT))
     tsppOut1 <- reshape(tsppOut, idvar = c('SAMPID'), direction = 'wide',
                         timevar = 'METRIC', v.names = 'RESULT')
+    names(tsppOut1) <- gsub("RESULT\\.", "", names(tsppOut1))
     # tsppOut1 <- reshape2::dcast(tsppOut,SAMPID~METRIC,value.var='RESULT')
 
     empty_tspp <- data.frame(t(rep(NA,13)))
@@ -547,6 +558,8 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
     tcvr3a$XCOV <- with(tcvr3a, round(sumcov/uniqN, 2))
     tcvr3a$IMP <- with(tcvr3a, round((FREQ + XCOV)/2, 2))
   
+    tcvr3a <- subset(tcvr3a, select = c('SAMPID','PARAMETER','FREQ','XCOV','IMP'))
+    
     # tcvr3a <- plyr::ddply(subset(tcvr2a,COV!=0),c('SAMPID','PARAMETER'),summarise,FREQ=round((length(unique(PLOT))/unique(NPLOTS))*100,2)
     #                 ,XCOV=round((sum(as.numeric(COV))/unique(NPLOTS)),2),IMP=round((FREQ+XCOV)/2,2))
     tcvr3b.uniq <- aggregate(x = list(uniqN = tcvr2b$NPLOTS),
@@ -565,16 +578,18 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
     tcvr3b$XCOV <- with(tcvr3b, round(sumcov/uniqN, 2))
     tcvr3b$IMP <- with(tcvr3b, round((FREQ + XCOV)/2, 2))
     
+    tcvr3b <- subset(tcvr3b, select = c('SAMPID','PARAM_ALT','FREQ','XCOV','IMP'))
+    
     # tcvr3b <- plyr::ddply(subset(tcvr2b,COV!=0),c('SAMPID','PARAM_ALT'),summarise,FREQ=round((length(unique(PLOT))/unique(NPLOTS))*100,2)
     #                 ,XCOV=round((sum(as.numeric(COV))/unique(NPLOTS)),2),IMP=round((FREQ+XCOV)/2,2))
-    varNames.a <- names(tcvr3a)[!names(tcvr3a) %in% c('SAMPID')]
+    varNames.a <- names(tcvr3a)[!names(tcvr3a) %in% c('SAMPID','PARAMETER')]
     tcvr4a <- reshape(tcvr3a, idvar = c('SAMPID','PARAMETER'), direction = 'long',
                       varying = varNames.a, times = varNames.a,
                       timevar = 'METRIC', v.names = 'RESULT')
     tcvr4a$METRIC = with(tcvr4a, paste(METRIC, PARAMETER, sep='_'))
     # tcvr4a <- reshape2::melt(tcvr3a,id.vars=c('SAMPID','PARAMETER'),variable.name='METRIC',value.name='RESULT')
     # tcvr4a <- plyr::mutate(tcvr4a,METRIC=paste(METRIC,PARAMETER,sep='_'))
-    varNames.b <- names(tcvr3b)[!names(tcvr3b) %in% c('SAMPID')]
+    varNames.b <- names(tcvr3b)[!names(tcvr3b) %in% c('SAMPID','PARAM_ALT')]
     tcvr4b <- reshape(tcvr3b, idvar = c('SAMPID','PARAM_ALT'), direction = 'long',
                       varying = varNames.b, times = varNames.b,
                       timevar = 'METRIC', v.names = 'RESULT')
@@ -585,6 +600,7 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
     tcvrOut <- rbind(subset(tcvr4a,select=-PARAMETER),subset(tcvr4b,select=-PARAM_ALT))
     tcvrOut1 <- reshape(tcvrOut, idvar = 'SAMPID', direction = 'wide',
                         timevar = 'METRIC', v.names = 'RESULT')
+    names(tcvrOut1) <- gsub("RESULT\\.", '', names(tcvrOut1))
     # tcvrOut1 <- reshape2::dcast(tcvrOut,SAMPID~METRIC,value.var='RESULT')
 
     empty_tcvr <- data.frame(t(rep(NA,27)),stringsAsFactors=F)
