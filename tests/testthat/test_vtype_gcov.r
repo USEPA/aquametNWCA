@@ -49,7 +49,8 @@ test_that("Water cover metric values correct",
 })
 
 test_that("Bare ground and litter metric values correct",
-{bglitOut <- calcBareGround_LitterMets(testVCGC,nplots)
+{
+ bglitOut <- calcBareGround_LitterMets(testVCGC,nplots)
  compOut <- merge(testMets,bglitOut,by=c('UID','PARAMETER'))
  expect_true(nrow(bglitOut)==250)
  expect_true(nrow(compOut)==nrow(bglitOut))
@@ -59,3 +60,4 @@ test_that("Bare ground and litter metric values correct",
  compOut.num <- dplyr::mutate(compOut.num,RESULT.x=as.numeric(RESULT.x),RESULT.y=as.numeric(RESULT.y))
  expect_equal(as.numeric(compOut.num$RESULT.x),as.numeric(compOut.num$RESULT.y),tolerance=0.001)            
 })
+

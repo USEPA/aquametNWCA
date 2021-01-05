@@ -127,15 +127,24 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
 
   vhet8 <- merge(allUIDs,vhet7,by='SAMPID',all.x=T)
 
-  vhet9 <- reshape2::melt(vhet8,id.vars='SAMPID',measure.vars=c('D_SANDT','H_SANDT','J_SANDT','DOM_SANDT','N_SANDT'),variable.name='METRIC'
-                ,value.name='RESULT')
-  vhet9 <- mutate(vhet9,METRIC=as.character(METRIC),RESULT=ifelse(METRIC=='DOM_SANDT' & is.na(RESULT),'MISSING'
-                                                                  ,ifelse(is.na(RESULT),0,RESULT)))
+  vhet9 <- reshape(vhet8, idvar = c('SAMPID'), direction = 'long',
+                   times = c('D_SANDT','H_SANDT','J_SANDT','DOM_SANDT','N_SANDT'),
+                   varying = c('D_SANDT','H_SANDT','J_SANDT','DOM_SANDT','N_SANDT'),
+                   timevar = 'METRIC', v.names = 'RESULT')
+  # vhet9 <- reshape2::melt(vhet8,id.vars='SAMPID',measure.vars=c('D_SANDT','H_SANDT','J_SANDT','DOM_SANDT','N_SANDT'),variable.name='METRIC'
+  #               ,value.name='RESULT')
+  vhet9$METRIC <- with(vhet9, as.character(METRIC))
+  vhet9$RESULT <- with(vhet9, ifelse(METRIC=='DOM_SANDT' & is.na(RESULT),'MISSING'
+                                     ,ifelse(is.na(RESULT),0,RESULT)))
+  # vhet9 <- mutate(vhet9,METRIC=as.character(METRIC),RESULT=ifelse(METRIC=='DOM_SANDT' & is.na(RESULT),'MISSING'
+  #                                                                 ,ifelse(is.na(RESULT),0,RESULT)))
 
   print("Done with veg heterogeneity metrics")
-  vhetOut <- merge(samples,vhet9,by='SAMPID') %>%
-    plyr::rename(c('METRIC'='PARAMETER')) %>%
-    dplyr::select(-SAMPID)
+  vhetOut <- merge(samples, vhet9, by='SAMPID') 
+  vhetOut$PARAMETER <- vhetOut$METRIC
+  
+  vhetOut <- vhetOut[,c(sampID, 'PARAMETER', 'RESULT')]
+  
   return(vhetOut)
 }
 
@@ -275,6 +284,8 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
   
   vstrat1$minN <- NULL
   vstrat1$maxN <- NULL
+  vstrat1$PLOTSAMP <- NULL
+  vstrat1$NPLOTS <- NULL
   
   # vstrat1 <- unique(plyr::ddply(vstratPlot,c('SAMPID','N_VASC_STRATA','XTOTCOV_VASC_STRATA'),summarise
   #                               ,XN_VASC_STRATA=sum(N_VSTRATA)/unique(NPLOTS)
@@ -416,7 +427,7 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
   vtOut$METRIC <- NULL
   
   vtOut.1 <- merge(samples,vtOut,by='SAMPID') 
-  vtOut.1$SAMPID <- NULL
+  vtOut.1 <- vtOut.1[, c(sampID, 'PARAMETER', 'RESULT')]
     
   return(vtOut.1)
 }
@@ -498,29 +509,84 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
   
   nvstrat <- subset(dataIn1,PARAMETER %in% c('PEAT_MOSS','BRYOPHYTES','LICHENS','ARBOREAL','ALGAE','MACROALGAE') &
                       !is.na(RESULT) & RESULT!='0')
-  nvstrat <- mutate(nvstrat, PARAMETER=gsub('_ABUNDANCE', '', PARAMETER)) # This accounts for change in ARBOREAL to ARBOREAL_ABUNDANCE
+  nvstrat$PARAMETER <- with(nvstrat, gsub('_ABUNDANCE', '', PARAMETER))
+  # nvstrat <- mutate(nvstrat, PARAMETER=gsub('_ABUNDANCE', '', PARAMETER)) # This accounts for change in ARBOREAL to ARBOREAL_ABUNDANCE
 
   # Now use this data frame to calculate metrics
   ## First calculate metrics for non-vascular veg types, excluding peat moss
-  indf1 <- plyr::ddply(subset(nvstrat,PARAMETER!='PEAT_MOSS' & RESULT!=0),c('SAMPID','PARAMETER'),summarise
-                       ,FREQ=(length(PLOT)/unique(NPLOTS))*100
-                 ,XCOV=(sum(as.numeric(RESULT))/unique(NPLOTS)),IMP=(FREQ+XCOV)/2)
+  nvstrat.sub <- subset(nvstrat,PARAMETER!='PEAT_MOSS' & RESULT!=0)
+  indf1.sum <- aggregate(x = list(XCOV = nvstrat.sub$RESULT),
+                         by = nvstrat.sub[c('SAMPID','PARAMETER','NPLOTS')],
+                         FUN = function(x){sum(as.numeric(x))})
+  
+  indf1.length <- aggregate(x = list(FREQ = nvstrat.sub$PLOT), 
+                            by = nvstrat.sub[c('SAMPID','PARAMETER','NPLOTS')],
+                            FUN = length)
+  
+  indf1 <- merge(indf1.sum, indf1.length, by = c('SAMPID','PARAMETER','NPLOTS'), all=TRUE)
+  
+  indf1$FREQ <- with(indf1, FREQ/NPLOTS*100)
+  indf1$XCOV <- with(indf1, XCOV/NPLOTS)
+  indf1$IMP <- with(indf1, (FREQ + XCOV)/2)
+  indf1$NPLOTS <- NULL
+  # indf1 <- plyr::ddply(subset(nvstrat,PARAMETER!='PEAT_MOSS' & RESULT!=0),c('SAMPID','PARAMETER'),summarise
+  #                      ,FREQ=(length(PLOT)/unique(NPLOTS))*100
+  #                ,XCOV=(sum(as.numeric(RESULT))/unique(NPLOTS)),IMP=(FREQ+XCOV)/2)
 
-  outdf <- mutate(reshape2::melt(indf1,id.vars=c('SAMPID','PARAMETER'),value.name='RESULT'),PARAMETER=paste(variable,PARAMETER,sep='_'))
+  outdf <- reshape(indf1, idvar = c('SAMPID','PARAMETER'), direction = 'long',
+                        varying = c('XCOV','FREQ','IMP'), times = c('XCOV','FREQ','IMP'),
+                        timevar = 'variable', v.names = 'RESULT') 
+  outdf$PARAMETER <- with(outdf, paste(variable, PARAMETER, sep = '_'))
+  outdf$variable <- NULL
+  
+  # outdf <- mutate(reshape2::melt(indf1,id.vars=c('SAMPID','PARAMETER'),value.name='RESULT'),PARAMETER=paste(variable,PARAMETER,sep='_'))
 
-  outdf1 <- reshape2::melt(reshape2::dcast(outdf,SAMPID~PARAMETER,value.var='RESULT'),id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
+  outdf.wide <- reshape(outdf, idvar = 'SAMPID', direction = 'wide',
+                        timevar = 'PARAMETER', v.names = 'RESULT')
+  names(outdf.wide) <- gsub("RESULT\\.", "", names(outdf.wide))
+  
+  varNames <- names(outdf.wide)[!names(outdf.wide) %in% c('SAMPID')]
+  outdf1 <- reshape(outdf.wide, idvar = "SAMPID", direction = "long",
+                    varying = varNames, times = varNames,
+                    timevar = 'METRIC', v.names = 'RESULT')
+  
+  # outdf1 <- reshape2::melt(reshape2::dcast(outdf,SAMPID~PARAMETER,value.var='RESULT'),id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
   outdf1$RESULT[is.na(outdf1$RESULT)] <- 0
 
   ## now count number and frequency of plots with peat moss dominant (i.e., PEAT_MOSS='Y')
   ## Need to account for situations where PEAT_MOSS not present
   if(nrow(subset(nvstrat,PARAMETER=='PEAT_MOSS' & RESULT!='N' & !is.na(RESULT)))>0){
-    indf2 <- plyr::ddply(subset(nvstrat,PARAMETER=='PEAT_MOSS' & RESULT!='N' & !is.na(RESULT)),
-                         c('SAMPID'),summarise,N_PEAT_MOSS_DOM=length(PLOT),
-                   FREQ_PEAT_MOSS_DOM=(N_PEAT_MOSS_DOM/unique(NPLOTS))*100)
+    nvstrat.peat <- subset(nvstrat,PARAMETER=='PEAT_MOSS' & RESULT!='N' & !is.na(RESULT))
 
-    outdf2 <- reshape2::melt(indf2,id.vars=c('SAMPID'),variable.name='PARAMETER',value.name='RESULT')
-    outdf2a <- reshape2::melt(reshape2::dcast(outdf2,SAMPID~PARAMETER,value.var='RESULT'),id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
-    outdf2a <- mutate(outdf2a,RESULT=ifelse(is.na(RESULT),0,RESULT))
+    indf2 <- aggregate(x = list(N_PEAT_MOSS_DOM = nvstrat.peat$PLOT),
+                       by = nvstrat.peat[c('SAMPID','NPLOTS')],
+                       FUN = length)
+    
+    indf2$FREQ_PEAT_MOSS_DOM <- with(indf2, N_PEAT_MOSS_DOM/NPLOTS*100)
+    indf2$NPLOTS <- NULL
+    
+    # indf2 <- plyr::ddply(subset(nvstrat,PARAMETER=='PEAT_MOSS' & RESULT!='N' & !is.na(RESULT)),
+    #                      c('SAMPID'),summarise,N_PEAT_MOSS_DOM=length(PLOT),
+    #                FREQ_PEAT_MOSS_DOM=(N_PEAT_MOSS_DOM/unique(NPLOTS))*100)
+
+    outdf2 <- reshape(indf2, idvar = c('SAMPID'), direction = 'long',
+                      varying = c('N_PEAT_MOSS_DOM','FREQ_PEAT_MOSS_DOM'),
+                      times = c('N_PEAT_MOSS_DOM','FREQ_PEAT_MOSS_DOM'),
+                      timevar = 'PARAMETER', v.names = 'RESULT')
+    
+    # outdf2 <- reshape2::melt(indf2,id.vars=c('SAMPID'),variable.name='PARAMETER',value.name='RESULT')
+    outdf2.wide <- reshape(outdf2, idvar = c('SAMPID'), direction = 'wide',
+                           timevar = 'PARAMETER', v.names = 'RESULT')
+    names(outdf2.wide) <- gsub("RESULT\\.", "", names(outdf2.wide))
+    
+    
+    outdf2a <- reshape(outdf2.wide, idvar = 'SAMPID', direction = 'long',
+                       varying = c('N_PEAT_MOSS_DOM','FREQ_PEAT_MOSS_DOM'),
+                       times = c('N_PEAT_MOSS_DOM','FREQ_PEAT_MOSS_DOM'),
+                       timevar = 'METRIC', v.names = 'RESULT')
+    # outdf2a <- reshape2::melt(reshape2::dcast(outdf2,SAMPID~PARAMETER,value.var='RESULT'),id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
+    outdf2a$RESULT <- with(outdf2a, ifelse(is.na(RESULT),0,RESULT))
+    # outdf2a <- mutate(outdf2a,RESULT=ifelse(is.na(RESULT),0,RESULT))
 
     outdf3 <- rbind(outdf1,outdf2a)
   }else{
@@ -542,13 +608,20 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
 
   outdf6 <- merge(allUIDs,outdf5,by='SAMPID',all.x=T)
 
-  outdf7 <- reshape2::melt(outdf6,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
-  outdf7 <- mutate(outdf7,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),0,RESULT))
+  varNames <- names(outdf6)[!names(outdf6) %in% c('SAMPID')]
+  outdf7 <- reshape(outdf6, idvar = 'SAMPID', direction = 'long',
+                    varying = varNames, times = varNames,
+                    timevar = 'METRIC', v.names = 'RESULT')
+  outdf7$METRIC <- with(outdf7, as.character(METRIC))
+  outdf7$RESULT <- with(outdf7, ifelse(is.na(RESULT),0,RESULT))
+  # outdf7 <- reshape2::melt(outdf6,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
+  # outdf7 <- mutate(outdf7,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),0,RESULT))
   print("Done with non-vascular strata metrics")
 
-  nvOut <- merge(samples,outdf7,by='SAMPID') %>%
-    plyr::rename(c('METRIC'='PARAMETER')) %>%
-    dplyr::select(-SAMPID)
+  nvOut <- merge(samples,outdf7,by='SAMPID') 
+  nvOut$PARAMETER <- nvOut$METRIC
+  nvOut <- nvOut[, c(sampID, 'PARAMETER', 'RESULT')]
+  
   return(nvOut)
 }
 
@@ -619,7 +692,7 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
 #'
 #' head(wcovEx)
 #' unique(wcovEx$METRIC)
-calcWcovMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
+calcWcovMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
   ## Now merge back with input df
   dataIn1 <- merge(dataIn,nPlot,by=sampID)
 
@@ -635,55 +708,149 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
   ####### WATER COVER AND DEPTH
   wdep <- subset(dataIn1,PARAMETER %in% c('TIME','MINIMUM_DEPTH','MAXIMUM_DEPTH','PREDOMINANT_DEPTH','TOTAL_WATER'
                                           ,'WATER_NOVEG','WATER_AQVEG','WATER_EMERGVEG'))
-  wdep1 <- reshape2::dcast(mutate(wdep,RESULT=as.numeric(RESULT)),SAMPID+PLOT+NPLOTS~PARAMETER,value.var='RESULT')
+  wdep$RESULT <- with(wdep, as.numeric(RESULT))
+  wdep <- subset(wdep, select = c('SAMPID', 'PLOT', 'NPLOTS', 'PARAMETER', 'RESULT'))
+  
+  wdep1 <- reshape(wdep, idvar = c('SAMPID','PLOT','NPLOTS'), direction = 'wide',
+                   timevar = 'PARAMETER', v.names = 'RESULT')
+  names(wdep1) <- gsub("RESULT\\.", "", names(wdep1))
+  # wdep1 <- reshape2::dcast(mutate(wdep,RESULT=as.numeric(RESULT)),SAMPID+PLOT+NPLOTS~PARAMETER,value.var='RESULT')
+  
   wdep2 <- subset(wdep,RESULT %nin% c("") & !is.na(RESULT) & PARAMETER %in% c('TOTAL_WATER','WATER_NOVEG','WATER_AQVEG','WATER_EMERGVEG'))
-  wdep2a <- reshape2::melt(reshape2::dcast(wdep2,SAMPID+PLOT+NPLOTS~PARAMETER,value.var='RESULT')
-                           ,id.vars=c('SAMPID','PLOT','NPLOTS'),variable.name='PARAMETER',value.name='RESULT')
-  wdep2a <- mutate(wdep2a,RESULT=ifelse(is.na(RESULT),0,as.numeric(RESULT)))
+  
+  wdep2a.wide <- reshape(wdep2, idvar = c('SAMPID','PLOT','NPLOTS'), direction = 'wide',
+                         timevar = 'PARAMETER', v.names = 'RESULT')
+  names(wdep2a.wide) <- gsub("RESULT\\.", "", names(wdep2a.wide))
+  
+  varNames <- names(wdep2a.wide)[!names(wdep2a.wide) %in% c('SAMPID','PLOT','NPLOTS')]
+  wdep2a <- reshape(wdep2a.wide, idvar = c('SAMPID','PLOT','NPLOTS'), direction = 'long',
+                    times = varNames, varying = varNames,
+                    timevar = 'PARAMETER', v.names = 'RESULT')
+  # wdep2a <- reshape2::melt(reshape2::dcast(wdep2,SAMPID+PLOT+NPLOTS~PARAMETER,value.var='RESULT')
+  #                          ,id.vars=c('SAMPID','PLOT','NPLOTS'),variable.name='PARAMETER',value.name='RESULT')
+  wdep2a$RESULT <- with(wdep2a, ifelse(is.na(RESULT),0,as.numeric(RESULT)))
+  # wdep2a <- mutate(wdep2a,RESULT=ifelse(is.na(RESULT),0,as.numeric(RESULT)))
   
   if(survyear=='2011'){
-    wat1 <- plyr::ddply(wdep1,c('SAMPID'),summarise
-                        ,MIN_H2O_DEPTH=ifelse(any(!is.na(MINIMUM_DEPTH)),min(MINIMUM_DEPTH,na.rm=TRUE),NA)
-                        ,MAX_H2O_DEPTH=ifelse(any(!is.na(MAXIMUM_DEPTH)),max(MAXIMUM_DEPTH,na.rm=TRUE),NA)
-                        ,XH2O_DEPTH_AA=ifelse(any(!is.na(PREDOMINANT_DEPTH))
-                                                  ,round(sum(PREDOMINANT_DEPTH,na.rm=TRUE)/unique(NPLOTS),2),NA)
-                        ,MIN_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),min(TOTAL_WATER,na.rm=TRUE),NA)
-                        ,MAX_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),max(TOTAL_WATER,na.rm=TRUE),NA)
-    )
+    wat1.min <- aggregate(x = list(MIN_H2O_DEPTH = wdep1$MINIMUM_DEPTH, MIN_COV_H2O = wdep1$TOTAL_WATER),
+                          by = wdep1[c('SAMPID','NPLOTS')],
+                          FUN = function(x){ifelse(any(!is.na(x)),min(x,na.rm=TRUE),NA)})
+    
+    wat1.max <- aggregate(x = list(MAX_H2O_DEPTH = wdep1$MAXIMUM_DEPTH, MAX_COV_H2O = wdep1$TOTAL_WATER),
+                          by = wdep1[c('SAMPID','NPLOTS')],
+                          FUN = function(x){ifelse(any(!is.na(x)),max(x,na.rm=TRUE),NA)})
+    
+    wat1.sum <- aggregate(x = list(XH2O_DEPTH_AA = wdep1$PREDOMINANT_DEPTH),
+                           by = wdep1[c('SAMPID','NPLOTS')],
+                           FUN = function(x){ifelse(any(!is.na(x))
+                                                    ,sum(x,na.rm=TRUE),NA)})
+    wat1.sum$XH2O_DEPTH_AA <- with(wat1.sum, round(XH2O_DEPTH_AA/NPLOTS, 2))
+    
+    
+    wat1 <- merge(wat1.min, wat1.max, by = c('SAMPID','NPLOTS'))
+    wat1 <- merge(wat1, wat1.sum, by = c('SAMPID','NPLOTS'))
+    # wat1 <- plyr::ddply(wdep1,c('SAMPID'),summarise
+    #                     ,MIN_H2O_DEPTH=ifelse(any(!is.na(MINIMUM_DEPTH)),min(MINIMUM_DEPTH,na.rm=TRUE),NA)
+    #                     ,MAX_H2O_DEPTH=ifelse(any(!is.na(MAXIMUM_DEPTH)),max(MAXIMUM_DEPTH,na.rm=TRUE),NA)
+    #                     ,XH2O_DEPTH_AA=ifelse(any(!is.na(PREDOMINANT_DEPTH))
+    #                                               ,round(sum(PREDOMINANT_DEPTH,na.rm=TRUE)/unique(NPLOTS),2),NA)
+    #                     ,MIN_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),min(TOTAL_WATER,na.rm=TRUE),NA)
+    #                     ,MAX_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),max(TOTAL_WATER,na.rm=TRUE),NA)
+    # )
   }else{
-    wat1 <- plyr::ddply(wdep1,c('SAMPID'),summarise,
-                        XH2O_DEPTH_AA=ifelse(any(!is.na(PREDOMINANT_DEPTH))
-                                              ,round(sum(PREDOMINANT_DEPTH,na.rm=TRUE)/unique(NPLOTS),2),NA),
-                        MIN_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),min(TOTAL_WATER,na.rm=TRUE),NA),
-                        MAX_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),max(TOTAL_WATER,na.rm=TRUE),NA)
-    )
+    wat1.min <- aggregate(x = list(MIN_COV_H2O = wdep1$TOTAL_WATER),
+                          by = wdep1[c('SAMPID','NPLOTS')],
+                          FUN = function(x){ifelse(any(!is.na(x)),min(x,na.rm=TRUE),NA)})
+    
+    wat1.max <- aggregate(x = list(MAX_COV_H2O = wdep1$TOTAL_WATER),
+                          by = wdep1[c('SAMPID','NPLOTS')],
+                          FUN = function(x){ifelse(any(!is.na(x)),max(x,na.rm=TRUE),NA)})
+    
+    wat1.sum <- aggregate(x = list(XH2O_DEPTH_AA = wdep1$PREDOMINANT_DEPTH),
+                          by = wdep1[c('SAMPID','NPLOTS')],
+                          FUN = function(x){ifelse(any(!is.na(x))
+                                                   ,sum(x,na.rm=TRUE),NA)})
+    wat1.sum$XH2O_DEPTH_AA <- with(wat1.sum, round(XH2O_DEPTH_AA/NPLOTS, 2))
+    
+    wat1 <- merge(wat1.min, wat1.max, by = c('SAMPID','NPLOTS'))
+    wat1 <- merge(wat1, wat1.sum, by = c('SAMPID','NPLOTS'))
+    
+    # wat1 <- plyr::ddply(wdep1,c('SAMPID'),summarise,
+    #                     XH2O_DEPTH_AA=ifelse(any(!is.na(PREDOMINANT_DEPTH))
+    #                                           ,round(sum(PREDOMINANT_DEPTH,na.rm=TRUE)/unique(NPLOTS),2),NA),
+    #                     MIN_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),min(TOTAL_WATER,na.rm=TRUE),NA),
+    #                     MAX_COV_H2O=ifelse(any(!is.na(TOTAL_WATER)),max(TOTAL_WATER,na.rm=TRUE),NA)
+    # )
     
   }
-  wat1a <- reshape2::melt(wat1,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
+  
+  varNames <- names(wat1)[!names(wat1) %in% c('SAMPID','NPLOTS')]
+  wat1a <- reshape(wat1, idvar = c('SAMPID'), direction = 'long',
+                   times = varNames, varying = varNames,
+                   timevar = 'METRIC', v.names = 'RESULT')
+  # wat1a <- reshape2::melt(wat1,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
 
   ## Fix Inf values to 0s
-  wat1a <- mutate(wat1a,RESULT=ifelse(RESULT %in% c('Inf','-Inf'),0,ifelse(RESULT=='Inf_-Inf','',RESULT)),METRIC=as.character(METRIC))
-
-  wat2 <- plyr::ddply(subset(wdep2a,RESULT>0),c('SAMPID','PARAMETER'),summarise,FREQ_H2O=round((length(as.numeric(RESULT))/unique(NPLOTS))*100,2)
-                ,XCOV_H2O=round(sum(as.numeric(RESULT))/unique(NPLOTS),2)
-                ,IMP_H2O=round((FREQ_H2O+XCOV_H2O)/2,2))
-  wat2a <- reshape2::melt(wat2,id.vars=c('SAMPID','PARAMETER'),variable.name='METRIC',value.name='RESULT')
-  wat2a <- mutate(wat2a,METRIC=as.character(ifelse(PARAMETER=='TOTAL_WATER',as.character(METRIC),paste(METRIC,substring(PARAMETER,7),sep='_')))
-                  ,PARAMETER=NULL)
+  wat1a$RESULT <- with(wat1a, ifelse(RESULT %in% c('Inf','-Inf'),0,ifelse(RESULT=='Inf_-Inf','',RESULT)))
+  wat1a$METRIC <- with(wat1a, as.character(METRIC))
+  wat1a$NPLOTS <- NULL
+  # wat1a <- mutate(wat1a,RESULT=ifelse(RESULT %in% c('Inf','-Inf'),0,ifelse(RESULT=='Inf_-Inf','',RESULT)),METRIC=as.character(METRIC))
+  wdep2a.sub <- subset(wdep2a, as.numeric(RESULT)>0)
+  
+  wat2.sum <- aggregate(x = list(XCOV_H2O = wdep2a.sub$RESULT),
+                        by = wdep2a.sub[c('SAMPID','PARAMETER','NPLOTS')],
+                        FUN = function(x){sum(as.numeric(x))})
+  
+  wat2.freq <- aggregate(x = list(FREQ_H2O = wdep2a.sub$RESULT),
+                         by = wdep2a.sub[c('SAMPID','PARAMETER','NPLOTS')],
+                         FUN = function(x){length(as.numeric(x))})
+  
+  wat2 <- merge(wat2.sum, wat2.freq, by = c('SAMPID','PARAMETER','NPLOTS'), all=TRUE)
+  
+  wat2$FREQ_H2O <- with(wat2, round(FREQ_H2O/NPLOTS*100, 2))
+  wat2$XCOV_H2O <- with(wat2, round(XCOV_H2O/NPLOTS, 2))
+  wat2$IMP_H2O <- with(wat2, round((FREQ_H2O + XCOV_H2O)/2, 2))
+  wat2$NPLOTS <- NULL
+  # wat2 <- plyr::ddply(subset(wdep2a,RESULT>0),c('SAMPID','PARAMETER'),summarise,FREQ_H2O=round((length(as.numeric(RESULT))/unique(NPLOTS))*100,2)
+  #               ,XCOV_H2O=round(sum(as.numeric(RESULT))/unique(NPLOTS),2)
+  #               ,IMP_H2O=round((FREQ_H2O+XCOV_H2O)/2,2))
+  wat2a <- reshape(wat2, idvar = c('SAMPID','PARAMETER'), direction = 'long',
+                   times = c('FREQ_H2O','XCOV_H2O','IMP_H2O'), 
+                   varying = c('FREQ_H2O','XCOV_H2O','IMP_H2O'),
+                   timevar = 'METRIC', v.names = 'RESULT')
+  # wat2a <- reshape2::melt(wat2,id.vars=c('SAMPID','PARAMETER'),variable.name='METRIC',value.name='RESULT')
+  wat2a$METRIC <- with(wat2a, ifelse(PARAMETER=='TOTAL_WATER', as.character(METRIC), 
+                                     as.character(paste(METRIC,substring(PARAMETER,7),sep='_'))))
+  
+  wat2a$PARAMETER <- NULL
+  # wat2a <- mutate(wat2a,METRIC=as.character(ifelse(PARAMETER=='TOTAL_WATER',as.character(METRIC),paste(METRIC,substring(PARAMETER,7),sep='_')))
+  #                 ,PARAMETER=NULL)
 
   ## Now pull only PREDOMINANT_DEPTH that is not missing and >0 to calculate XH2O_DEPTH
-  wat3 <- plyr::ddply(subset(wdep1,PREDOMINANT_DEPTH>0 & !is.na(PREDOMINANT_DEPTH)),c('SAMPID'),summarise,METRIC='XH2O_DEPTH'
-                ,RESULT=mean(PREDOMINANT_DEPTH,na.rm=TRUE))
+  wdep1.pos <- subset(wdep1,PREDOMINANT_DEPTH>0 & !is.na(PREDOMINANT_DEPTH))
+  
+  wat3 <- aggregate(x = list(RESULT = wdep1.pos$PREDOMINANT_DEPTH), 
+                    by = wdep1.pos[c('SAMPID')], 
+                    FUN = function(x){mean(x, na.rm = TRUE)})
+  wat3$METRIC <- 'XH2O_DEPTH'
+  # wat3 <- plyr::ddply(subset(wdep1,PREDOMINANT_DEPTH>0 & !is.na(PREDOMINANT_DEPTH)),c('SAMPID'),summarise,METRIC='XH2O_DEPTH'
+  #               ,RESULT=mean(PREDOMINANT_DEPTH,na.rm=TRUE))
 
   watMet <- rbind(wat1a,wat2a,wat3)
-  watMet1 <- reshape2::dcast(watMet,SAMPID~METRIC,value.var='RESULT')
+  
+  watMet1 <- reshape(watMet, idvar = 'SAMPID', direction = 'wide',
+                     timevar = 'METRIC', v.names = 'RESULT')
+  names(watMet1) <- gsub("RESULT\\.", "", names(watMet1)) 
+  # watMet1 <- reshape2::dcast(watMet,SAMPID~METRIC,value.var='RESULT')
 
   
   if(survyear=='2011'){
     empty_wat <- data.frame(t(rep(NA,18)),stringsAsFactors=F)
-    names(empty_wat) <- c("MIN_H2O_DEPTH","MAX_H2O_DEPTH","XH2O_DEPTH_AA","MIN_COV_H2O","MAX_COV_H2O","FREQ_H2O"
-                          ,"FREQ_H2O_AQVEG","FREQ_H2O_EMERGVEG","FREQ_H2O_NOVEG","XCOV_H2O","XCOV_H2O_AQVEG","XCOV_H2O_EMERGVEG"
-                          ,"XCOV_H2O_NOVEG","IMP_H2O","IMP_H2O_AQVEG","IMP_H2O_EMERGVEG","IMP_H2O_NOVEG","XH2O_DEPTH")
+    names(empty_wat) <- c("MIN_H2O_DEPTH","MAX_H2O_DEPTH","XH2O_DEPTH_AA","MIN_COV_H2O",
+                          "MAX_COV_H2O","FREQ_H2O","FREQ_H2O_AQVEG","FREQ_H2O_EMERGVEG",
+                          "FREQ_H2O_NOVEG","XCOV_H2O","XCOV_H2O_AQVEG","XCOV_H2O_EMERGVEG",
+                          "XCOV_H2O_NOVEG","IMP_H2O","IMP_H2O_AQVEG","IMP_H2O_EMERGVEG",
+                          "IMP_H2O_NOVEG","XH2O_DEPTH")
   }else{
     empty_wat <- data.frame(t(rep(NA,7)),stringsAsFactors=F)
     names(empty_wat) <- c("XH2O_DEPTH_AA","MIN_COV_H2O","MAX_COV_H2O","FREQ_H2O",
@@ -693,14 +860,21 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
 
   watMet3 <- merge(allUIDs,watMet2,by='SAMPID',all.x=T)
 
-  watMet4 <- reshape2::melt(watMet3,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
-  watMet4 <- mutate(watMet4,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),'0',RESULT))
+  varNames <- names(watMet3)[!names(watMet3) %in% c('SAMPID','NPLOTS')]
+  watMet4 <- reshape(watMet3, idvar = 'SAMPID', direction = 'long',
+                     times = varNames, varying = varNames,
+                     timevar = 'METRIC', v.names = 'RESULT')
+  
+  # watMet4 <- reshape2::melt(watMet3,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
+  watMet4$METRIC <- with(watMet4, as.character(METRIC))
+  watMet4$RESULT <- with(watMet4, ifelse(is.na(RESULT),'0',RESULT))
+  # watMet4 <- mutate(watMet4,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),'0',RESULT))
 
   print("Done with water depth metrics")
-  watMetOut <- merge(samples,watMet4,by='SAMPID') %>%
-    plyr::rename(c('METRIC'='PARAMETER')) %>%
-    dplyr::select(-SAMPID)
-  
+  watMetOut <- merge(samples,watMet4,by='SAMPID') 
+  watMetOut$PARAMETER <- watMetOut$METRIC
+  watMetOut <- watMetOut[, c(sampID, 'PARAMETER', 'RESULT')]
+
   return(watMetOut)
 }
 
@@ -777,7 +951,7 @@ calcWcovMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
 
 calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011'){
   ## Now merge back with input df
-  dataIn1 <- merge(dataIn,nPlot,by=sampID)
+  dataIn1 <- merge(dataIn, nPlot, by=sampID)
 
   # Create vector of all samples in dataset
   for(i in 1:length(sampID)){
@@ -792,47 +966,122 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011')
   # Need to calculate the number of quadrats sampled using the NE and SW parameters
   litter.sub <- subset(dataIn1,PARAMETER %in% c('LITTER_DEPTH_NE','LITTER_DEPTH_SW','DEPTH_NE','DEPTH_SW')) # Only one set of parameters or the other will be in any dataset
   
-  numQuads <- plyr::ddply(litter.sub,c('SAMPID'),summarise,NQUADS=length(RESULT))
+  numQuads <- aggregate(x = list(NQUADS = litter.sub$RESULT),
+                        by = litter.sub[c('SAMPID')], FUN = length)
+  # numQuads <- plyr::ddply(litter.sub,c('SAMPID'),summarise,NQUADS=length(RESULT))
 
-  litter1 <- subset(dataIn1,PARAMETER %in% c('LITTER_THATCH','LITTER_FORB','LITTER_CONIFER','LITTER_DECID','LITTER_BROADLEAF'
-                                             ,'LITTER_DEPTH_SW','LITTER_DEPTH_NE','TOTAL_LITTER','WD_FINE','WD_COARSE','EXPOSED_SOIL','EXPOSED_GRAVEL'
-                                             ,'EXPOSED_ROCK','DEPTH_SW','DEPTH_NE','PREDOMINANT_LITTER'))
+  litter1 <- subset(dataIn1,PARAMETER %in% c('LITTER_THATCH','LITTER_FORB','LITTER_CONIFER',
+                                             'LITTER_DECID','LITTER_BROADLEAF',
+                                             'LITTER_DEPTH_SW','LITTER_DEPTH_NE',
+                                             'TOTAL_LITTER','WD_FINE','WD_COARSE',
+                                             'EXPOSED_SOIL','EXPOSED_GRAVEL',
+                                             'EXPOSED_ROCK','DEPTH_SW','DEPTH_NE',
+                                             'PREDOMINANT_LITTER'))
 
-  litter2 <- merge(litter1,numQuads,by='SAMPID')
+  litter2 <- merge(litter1, numQuads, by='SAMPID')
+  litter2 <- subset(litter2, select = c('SAMPID', 'PLOT','PARAMETER','RESULT','NPLOTS','NQUADS'))
 
   if(survyear=='2011'){
-    littype <- subset(litter2,PARAMETER %in% c('LITTER_THATCH','LITTER_FORB','LITTER_CONIFER','LITTER_DECID',
+    littype <- subset(litter2, PARAMETER %in% c('LITTER_THATCH','LITTER_FORB','LITTER_CONIFER','LITTER_DECID',
                                                'LITTER_BROADLEAF','LITTER_NONE') & !is.na(RESULT))
-    rr1 <- plyr::ddply(littype,c('SAMPID'),mutate,N_LITTER_TYPE=length(unique(PARAMETER)))
-    rr2 <- plyr::ddply(rr1,c('SAMPID','PARAMETER','N_LITTER_TYPE'),summarise,NUM=length(PLOT))
-    rr3 <- plyr::ddply(rr2,c('SAMPID'),mutate,MAXN=max(NUM))
-    rr4 <- subset(rr3,MAXN==NUM)
-    rr5 <- plyr::ddply(rr4,c('SAMPID','N_LITTER_TYPE'),summarise,LITTER_TYPE=paste(PARAMETER,collapse='_'))
-    rr5 <- mutate(rr5,LITTER_TYPE=gsub('LITTER_','',LITTER_TYPE))
+    
+    rr1 <- aggregate(x = list(N_LITTER_TYPE = littype$PARAMETER),
+                     by = littype[c('SAMPID')],
+                     FUN = function(x){length(unique(x))})
+    
+    rr1 <- merge(littype, rr1, by = 'SAMPID')
+    # rr1 <- plyr::ddply(littype,c('SAMPID'),mutate,N_LITTER_TYPE=length(unique(PARAMETER)))
+    rr2 <- aggregate(x = list(NUM = rr1$PLOT), by = rr1[c('SAMPID','PARAMETER','N_LITTER_TYPE')],
+                     FUN = length)
+    # rr2 <- plyr::ddply(rr1,c('SAMPID','PARAMETER','N_LITTER_TYPE'),summarise,NUM=length(PLOT))
+    rr3 <- aggregate(x = list(MAXN = rr2$NUM), by = rr2[c('SAMPID')], FUN = max)
+    rr3 <- merge(rr2, rr3, by = 'SAMPID')
+    # rr3 <- plyr::ddply(rr2,c('SAMPID'),mutate,MAXN=max(NUM))
+    rr4 <- subset(rr3, MAXN==NUM)
+    rr5 <- aggregate(x = list(LITTER_TYPE = rr4$PARAMETER), 
+                     by = rr4[c('SAMPID','N_LITTER_TYPE')],
+                     FUN = function(x){paste(x,collapse='_')})
+    # rr5 <- plyr::ddply(rr4,c('SAMPID','N_LITTER_TYPE'),summarise,LITTER_TYPE=paste(PARAMETER,collapse='_'))
+    rr5$LITTER_TYPE <- with(rr5, gsub('LITTER_','',LITTER_TYPE))
+    # rr5 <- mutate(rr5,LITTER_TYPE=gsub('LITTER_','',LITTER_TYPE))
   }else{
     littype <- subset(litter2, PARAMETER=='PREDOMINANT_LITTER' & !is.na(RESULT)) 
     
-    rr1 <- plyr::ddply(littype, c('SAMPID'), mutate, N_LITTER_TYPE=length(unique(RESULT)))
-    rr2 <- plyr::ddply(rr1, c('SAMPID','N_LITTER_TYPE','RESULT'), summarise, NUM=length(PLOT))
-    rr3 <- plyr::ddply(rr2, c('SAMPID'), mutate, MAXN=max(NUM))
+    rr1 <- aggregate(x = list(N_LITTER_TYPE = littype$RESULT),
+                     by = littype[c('SAMPID')],
+                     FUN = function(x){length(unique(x))})
+    
+    rr1 <- merge(littype, rr1, by = 'SAMPID')
+    rr2 <- aggregate(x = list(NUM = rr1$PLOT), by = rr1[c('SAMPID','RESULT','N_LITTER_TYPE')],
+                     FUN = length)
+    rr3 <- aggregate(x = list(MAXN = rr2$NUM), by = rr2[c('SAMPID')], FUN = max)
+    rr3 <- merge(rr2, rr3, by = 'SAMPID')
     rr4 <- subset(rr3, MAXN==NUM)
-    rr5 <- plyr::ddply(rr4, c('SAMPID','N_LITTER_TYPE'), summarise, LITTER_TYPE=paste(RESULT, collapse='_'))
+    rr5 <- aggregate(x = list(LITTER_TYPE = rr4$RESULT), 
+                     by = rr4[c('SAMPID','N_LITTER_TYPE')],
+                     FUN = function(x){paste(x,collapse='_')})
+
+    # rr1 <- plyr::ddply(littype, c('SAMPID'), mutate, N_LITTER_TYPE=length(unique(RESULT)))
+    # rr2 <- plyr::ddply(rr1, c('SAMPID','N_LITTER_TYPE','RESULT'), summarise, NUM=length(PLOT))
+    # rr3 <- plyr::ddply(rr2, c('SAMPID'), mutate, MAXN=max(NUM))
+    # rr4 <- subset(rr3, MAXN==NUM)
+    # rr5 <- plyr::ddply(rr4, c('SAMPID','N_LITTER_TYPE'), summarise, LITTER_TYPE=paste(RESULT, collapse='_'))
   }
   ## to determine median depth, we must account for any quadrats without depth recorded
   litdep <- subset(litter2,PARAMETER %in% c('LITTER_DEPTH_SW','LITTER_DEPTH_NE','DEPTH_NE','DEPTH_SW'))
 
-  ss1 <- plyr::ddply(litdep,c('SAMPID'),summarise,NSAMP=length(RESULT),XDEPTH_LITTER=round(sum(as.numeric(RESULT))/unique(NQUADS),2))
+  ss1.sum <- aggregate(x = list(XDEPTH_LITTER = litdep$RESULT), 
+                       by = litdep[c('SAMPID','NQUADS')],
+                       FUN = function(x){sum(as.numeric(x))})
+  
+  ss1.length <- aggregate(x = list(NSAMP = litdep$RESULT), 
+                          by = litdep[c('SAMPID','NQUADS')],
+                          FUN = length)
+  
+  ss1 <- merge(ss1.sum, ss1.length, by = c('SAMPID','NQUADS'))
+  ss1$XDEPTH_LITTER <- with(ss1, round(XDEPTH_LITTER/NQUADS, 2))
+  # ss1 <- plyr::ddply(litdep,c('SAMPID'),summarise,NSAMP=length(RESULT),XDEPTH_LITTER=round(sum(as.numeric(RESULT))/unique(NQUADS),2))
 
-  litdep1 <- plyr::ddply(litdep,c('SAMPID','NPLOTS','NQUADS'),mutate,NSAMP=length(RESULT),toAdd=NQUADS-NSAMP) # did not use toAdd
+  litdep1 <- aggregate(x = list(NSAMP = litdep$RESULT), 
+                       by = litdep[c('SAMPID','NPLOTS','NQUADS')],
+                       FUN = length)
+  
+  litdep1 <- merge(litdep, litdep1, by = c('SAMPID','NPLOTS','NQUADS'))
+  
+  # litdep1 <- plyr::ddply(litdep,c('SAMPID','NPLOTS','NQUADS'),mutate,NSAMP=length(RESULT),toAdd=NQUADS-NSAMP) # did not use toAdd
 
-  tt <- plyr::ddply(litdep1,c('SAMPID'),summarise,MEDDEPTH_LITTER=median(as.numeric(RESULT)))
+  tt <- aggregate(x = list(MEDDEPTH_LITTER = litdep1$RESULT),
+                  by = litdep1[c('SAMPID')], 
+                  FUN = function(x){median(as.numeric(x))})
+  # tt <- plyr::ddply(litdep1,c('SAMPID'),summarise,MEDDEPTH_LITTER=median(as.numeric(RESULT)))
+  
+  varNames <- names(rr5)[!names(rr5) %in% 'SAMPID']
+  rr5.long <- reshape(rr5, idvar = 'SAMPID', direction = 'long',
+                      times = varNames, varying = varNames,
+                      timevar = 'METRIC', v.names = 'RESULT')
+  
+  ss1.long <- reshape(ss1, idvar = 'SAMPID', direction = 'long',
+                      times = 'XDEPTH_LITTER', varying = 'XDEPTH_LITTER',
+                      timevar = 'METRIC', v.names = 'RESULT') 
+  ss1.long <- subset(ss1.long, select = c('SAMPID','METRIC','RESULT'))
+  
+  varNames <- names(tt)[!names(tt) %in% 'SAMPID']
+  tt.long <- reshape(tt, idvar = 'SAMPID', direction = 'long',
+                      times = varNames, varying = varNames,
+                      timevar = 'METRIC', v.names = 'RESULT')
+  
+  loutdf <- rbind(rr5.long, ss1.long, tt.long)
+  loutdf$METRIC <- with(loutdf, as.character(METRIC))
 
-  loutdf <- rbind(reshape2::melt(rr5,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
-                  ,reshape2::melt(ss1,id.vars='SAMPID'
-                  ,measure.vars='XDEPTH_LITTER',variable.name='METRIC',value.name='RESULT')
-                  ,reshape2::melt(tt,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT'))
-  loutdf <- mutate(loutdf,METRIC=as.character(METRIC))
-  loutdf1 <- reshape2::dcast(loutdf,SAMPID~METRIC,value.var='RESULT')
+  # loutdf <- rbind(reshape2::melt(rr5,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
+  #                 ,reshape2::melt(ss1,id.vars='SAMPID'
+  #                 ,measure.vars='XDEPTH_LITTER',variable.name='METRIC',value.name='RESULT')
+  #                 ,reshape2::melt(tt,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT'))
+  # loutdf <- mutate(loutdf,METRIC=as.character(METRIC))
+  loutdf1 <- reshape(loutdf, idvar = 'SAMPID', direction = 'wide',
+                     timevar = 'METRIC', v.names = 'RESULT')
+  names(loutdf1) <- gsub("RESULT\\.", "", names(loutdf1))
+  # loutdf1 <- reshape2::dcast(loutdf,SAMPID~METRIC,value.var='RESULT')
 
   empty_lit <- data.frame(t(rep(NA,4)),stringsAsFactors=FALSE)
   names(empty_lit) <- c('N_LITTER_TYPE','LITTER_TYPE','XDEPTH_LITTER','MEDDEPTH_LITTER')
@@ -841,67 +1090,152 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011')
 
   loutdf3 <- merge(allUIDs,loutdf2,by='SAMPID',all.x=T)
 
-  loutdf4 <- reshape2::melt(loutdf3,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
-  loutdf4 <- mutate(loutdf4,METRIC=as.character(METRIC))
+  varNames <- names(loutdf3)[!names(loutdf3) %in% 'SAMPID']
+  loutdf4 <- reshape(loutdf3, idvar = 'SAMPID', direction = 'long',
+                     times = varNames, varying = varNames,
+                     timevar = 'METRIC', v.names = 'RESULT')
+  # loutdf4 <- reshape2::melt(loutdf3,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
+  loutdf4$METRIC <- with(loutdf4, as.character(METRIC))
+  # loutdf4 <- mutate(loutdf4,METRIC=as.character(METRIC))
 
   print("Done with litter metrics")
-  litterOut <- reshape2::dcast(loutdf4,SAMPID~METRIC,value.var='RESULT')
+  litterOut <- reshape(loutdf4, idvar = 'SAMPID', direction = 'wide',
+                       timevar = 'METRIC', v.names = 'RESULT') 
+  names(litterOut) <- gsub("RESULT\\.", "", names(litterOut))
+  # litterOut <- reshape2::dcast(loutdf4,SAMPID~METRIC,value.var='RESULT')
 
   ################# BARE GROUND
-  bgrd <- subset(dataIn1,PARAMETER %in% c('EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK','WD_FINE','WD_COARSE','TOTAL_LITTER') & 
+  bgrd <- subset(dataIn1,PARAMETER %in% c('EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK',
+                                          'WD_FINE','WD_COARSE','TOTAL_LITTER') & 
                    RESULT!=0 & !is.na(RESULT), select=c('SAMPID','PLOT','PARAMETER','RESULT','NPLOTS'))
   ## Need to create values for new PARAMETER='BAREGD' based on occurrence of either EXPOSED_SOIL, EXPOSED_GRAVEL, or EXPOSED_ROCK at site
-  bgrd1 <- plyr::ddply(subset(bgrd,PARAMETER %in% c('EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK')
-                              ,select=c('SAMPID','PLOT','NPLOTS','RESULT'))
-                 ,c('SAMPID','PLOT','NPLOTS'),summarise,PARAMETER='BAREGD',RESULT=as.character(sum(as.numeric(RESULT))))
-  bgrdIn <- rbind(bgrd,bgrd1)
+  bgrd.sub <- subset(bgrd, PARAMETER %in% c('EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK'))
+  
+  bgrd1 <- aggregate(x = list(RESULT = bgrd.sub$RESULT), 
+                     by = bgrd.sub[c('SAMPID','PLOT','NPLOTS')],
+                     FUN = function(x){as.character(sum(as.numeric(x)))})
+  bgrd1$PARAMETER <- 'BAREGD'
+  # bgrd1 <- plyr::ddply(subset(bgrd,PARAMETER %in% c('EXPOSED_SOIL','EXPOSED_GRAVEL','EXPOSED_ROCK')
+  #                             ,select=c('SAMPID','PLOT','NPLOTS','RESULT'))
+  #                ,c('SAMPID','PLOT','NPLOTS'),summarise,PARAMETER='BAREGD',RESULT=as.character(sum(as.numeric(RESULT))))
+  bgrdIn <- rbind(bgrd, bgrd1)
   ## Need to fill in zeros if plot sampled and variable is zero
-  bgrdIn1 <- reshape2::melt(reshape2::dcast(bgrdIn,SAMPID+PLOT+NPLOTS~PARAMETER,value.var='RESULT'),
-                            id.vars=c('SAMPID','PLOT','NPLOTS'),variable.name='PARAMETER',
-                            value.name='RESULT')
-  bgrdIn1 <- mutate(bgrdIn1,RESULT=ifelse(is.na(RESULT),0,as.numeric(RESULT)))
+  bgrdIn1.wide <- reshape(bgrdIn, idvar = c('SAMPID','PLOT','NPLOTS'), direction = 'wide',
+                     timevar = 'PARAMETER', v.names = 'RESULT')
+  names(bgrdIn1.wide) <- gsub("RESULT\\.", "", names(bgrdIn1.wide))
+  
+  varNames <- names(bgrdIn1.wide)[!names(bgrdIn1.wide) %in% c('SAMPID','PLOT','NPLOTS')]
+  bgrdIn1 <- reshape(bgrdIn1.wide, idvar = c('SAMPID','PLOT','NPLOTS'), direction = 'long',
+                     times = varNames, varying = varNames,
+                     timevar = 'PARAMETER', v.names = 'RESULT')
+  # bgrdIn1 <- reshape2::melt(reshape2::dcast(bgrdIn,SAMPID+PLOT+NPLOTS~PARAMETER,value.var='RESULT'),
+  #                           id.vars=c('SAMPID','PLOT','NPLOTS'),variable.name='PARAMETER',
+  #                           value.name='RESULT')
+  bgrdIn1$RESULT <- with(bgrdIn1, ifelse(is.na(RESULT),0,as.numeric(RESULT)))
+  # bgrdIn1 <- mutate(bgrdIn1,RESULT=ifelse(is.na(RESULT),0,as.numeric(RESULT)))
 
-  ## First calculate metrics for non-vascular veg types, excluding peat moss
-  bgindf1 <- plyr::ddply(subset(bgrdIn1,RESULT!=0),c('SAMPID','PARAMETER'),summarise,FREQ=round((length(PLOT)/unique(NPLOTS))*100,2)
-                   ,XCOV=round((sum(as.numeric(RESULT))/unique(NPLOTS)),2),IMP=round((FREQ+XCOV)/2,2))
-
-  bgoutdf <- mutate(reshape2::melt(bgindf1,id.vars=c('SAMPID','PARAMETER'),value.name='RESULT'),
-                    PARAMETER=ifelse(PARAMETER=='TOTAL_LITTER',
-                                     paste(variable,'LITTER',sep='_'),paste(variable,PARAMETER,sep='_')))
-
-  bgoutdf1 <- reshape2::melt(reshape2::dcast(bgoutdf,SAMPID~PARAMETER,value.var='RESULT')
-                             ,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
-  bgoutdf1 <- mutate(bgoutdf1,RESULT=ifelse(is.na(RESULT),0,RESULT),METRIC=as.character(METRIC))
-  bgoutdf2 <- reshape2::dcast(bgoutdf1,SAMPID~METRIC,value.var='RESULT')
+  bgrdIn1.sub <- subset(bgrdIn1,RESULT!=0)
+  bgindf1.freq <- aggregate(x = list(FREQ = bgrdIn1.sub$RESULT),
+                            by = bgrdIn1.sub[c('SAMPID','PARAMETER','NPLOTS')],
+                            FUN = length)
+    
+  bgindf1.sum <- aggregate(x = list(XCOV = bgrdIn1.sub$RESULT),
+                           by = bgrdIn1.sub[c('SAMPID','PARAMETER','NPLOTS')],
+                           FUN = function(x){sum(as.numeric(x))})
+ 
+  bgindf1 <- merge(bgindf1.sum, bgindf1.freq, by = c('SAMPID','PARAMETER','NPLOTS'), all=TRUE)
+  bgindf1$FREQ <- with(bgindf1, round(FREQ/NPLOTS*100, 2))
+  bgindf1$XCOV <- with(bgindf1, round(XCOV/NPLOTS, 2))
+  bgindf1$IMP <- with(bgindf1, round((FREQ + XCOV)/2, 2))
+ 
+  
+  # bgindf1 <- plyr::ddply(subset(bgrdIn1,RESULT!=0),c('SAMPID','PARAMETER'),summarise,FREQ=round((length(PLOT)/unique(NPLOTS))*100,2)
+  #                  ,XCOV=round((sum(as.numeric(RESULT))/unique(NPLOTS)),2),IMP=round((FREQ+XCOV)/2,2))
+  bgoutdf <- reshape(bgindf1, idvar = c('SAMPID','PARAMETER'), direction = 'long',
+                     times = c('XCOV','FREQ','IMP'), varying = c('XCOV','FREQ','IMP'),
+                     timevar = 'variable', v.names = 'RESULT')
+  
+  bgoutdf$PARAMETER <- with(bgoutdf, ifelse(PARAMETER=='TOTAL_LITTER',
+                                      paste(variable,'LITTER',sep='_'),paste(variable,PARAMETER,sep='_')))
+  bgoutdf <- bgoutdf[,c('SAMPID','PARAMETER','RESULT')]
+  
+  # bgoutdf <- mutate(reshape2::melt(bgindf1,id.vars=c('SAMPID','PARAMETER'),value.name='RESULT'),
+  #                   PARAMETER=ifelse(PARAMETER=='TOTAL_LITTER',
+  #                                    paste(variable,'LITTER',sep='_'),paste(variable,PARAMETER,sep='_')))
+  bgoutdf1.wide <- reshape(bgoutdf, idvar = 'SAMPID', direction = 'wide',
+                           timevar = 'PARAMETER', v.names = 'RESULT')
+  names(bgoutdf1.wide) <- gsub("RESULT\\.", "", names(bgoutdf1.wide))
+  
+  varNames <- names(bgoutdf1.wide)[!names(bgoutdf1.wide) %in% c('SAMPID')]
+  bgoutdf1 <- reshape(bgoutdf1.wide, idvar = c('SAMPID'), direction = 'long',
+                      times = varNames, varying = varNames,
+                      timevar = 'METRIC', v.names = 'RESULT')
+  
+  # bgoutdf1 <- reshape2::melt(reshape2::dcast(bgoutdf,SAMPID~PARAMETER,value.var='RESULT')
+  #                            ,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
+  bgoutdf1$RESULT <- with(bgoutdf1, ifelse(is.na(RESULT),0,RESULT))
+  bgoutdf1$METRIC <- with(bgoutdf1, as.character(METRIC))
+  # bgoutdf1 <- mutate(bgoutdf1,RESULT=ifelse(is.na(RESULT),0,RESULT),METRIC=as.character(METRIC))
+  bgoutdf2 <- reshape(bgoutdf1, idvar = 'SAMPID', direction = 'wide',
+                      timevar = 'METRIC', v.names = 'RESULT')
+  names(bgoutdf2) <- gsub("RESULT\\.", "", names(bgoutdf2))
+  # bgoutdf2 <- reshape2::dcast(bgoutdf1,SAMPID~METRIC,value.var='RESULT')
 
   empty_bg <- data.frame(t(rep(NA,21)),stringsAsFactors=FALSE)
-  names(empty_bg) <- c("FREQ_BAREGD","FREQ_EXPOSED_GRAVEL","FREQ_EXPOSED_ROCK","FREQ_EXPOSED_SOIL","FREQ_LITTER","FREQ_WD_COARSE"
-                       ,"FREQ_WD_FINE","IMP_BAREGD","IMP_EXPOSED_GRAVEL","IMP_EXPOSED_ROCK","IMP_EXPOSED_SOIL","IMP_LITTER"
-                       ,"IMP_WD_COARSE","IMP_WD_FINE","XCOV_BAREGD","XCOV_EXPOSED_GRAVEL","XCOV_EXPOSED_ROCK","XCOV_EXPOSED_SOIL"
-                       ,"XCOV_LITTER","XCOV_WD_COARSE","XCOV_WD_FINE")
+  names(empty_bg) <- c("FREQ_BAREGD","FREQ_EXPOSED_GRAVEL","FREQ_EXPOSED_ROCK",
+                       "FREQ_EXPOSED_SOIL","FREQ_LITTER","FREQ_WD_COARSE",
+                       "FREQ_WD_FINE","IMP_BAREGD","IMP_EXPOSED_GRAVEL",
+                       "IMP_EXPOSED_ROCK","IMP_EXPOSED_SOIL","IMP_LITTER",
+                       "IMP_WD_COARSE","IMP_WD_FINE","XCOV_BAREGD",
+                       "XCOV_EXPOSED_GRAVEL","XCOV_EXPOSED_ROCK","XCOV_EXPOSED_SOIL",
+                       "XCOV_LITTER","XCOV_WD_COARSE","XCOV_WD_FINE")
 
   bgoutdf3 <- subset(merge(bgoutdf2, empty_bg, all=TRUE),!is.na(SAMPID))
 
   bgoutdf4 <- merge(allUIDs,bgoutdf3,by='SAMPID',all.x=T)
 
-  bgoutdf5 <- reshape2::melt(bgoutdf4,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
-  bgoutdf5 <- mutate(bgoutdf5,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),0,RESULT))
+  varNames <- names(bgoutdf4)[!names(bgoutdf4) %in% c('SAMPID')]
+  bgoutdf5 <- reshape(bgoutdf4, idvar = 'SAMPID', direction = 'long',
+                      times = varNames, varying = varNames,
+                      timevar = 'METRIC', v.names = 'RESULT')
+  # bgoutdf5 <- reshape2::melt(bgoutdf4,id.vars=c('SAMPID'),variable.name='METRIC',value.name='RESULT')
+  bgoutdf5$METRIC <- with(bgoutdf5, as.character(METRIC))
+  bgoutdf5$RESULT <- with(bgoutdf5, ifelse(is.na(RESULT),0,RESULT))
+  # bgoutdf5 <- mutate(bgoutdf5,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),0,RESULT))
 
   print("Done with bare ground metrics")
-  bgrdOut <- reshape2::dcast(bgoutdf5,SAMPID~METRIC,value.var='RESULT')
+  bgrdOut <- reshape(bgoutdf5, idvar = 'SAMPID', direction = 'wide',
+                     timevar = 'METRIC', v.names = 'RESULT')
+  names(bgrdOut) <- gsub("RESULT\\.", "", names(bgrdOut))
+  # bgrdOut <- reshape2::dcast(bgoutdf5,SAMPID~METRIC,value.var='RESULT')
 
   # Now combine bare ground and litter metrics to perform a final check
   combOut <- merge(litterOut,bgrdOut,by='SAMPID',all=T)
-  combOut.1 <- reshape2::melt(combOut,id.vars=c('SAMPID'))
-    combOut.1 <- mutate(combOut.1,value=ifelse(is.na(value) & variable!='LITTER_TYPE',0,value))
-  # Need to determine whether missing LITTER_TYPE value should be ABSENT or NONE
-  combOut.wide <- reshape2::dcast(combOut.1,SAMPID~variable,value.var='value')
-  combOut.wide <- mutate(combOut.wide,LITTER_TYPE=ifelse(is.na(LITTER_TYPE) & XDEPTH_LITTER==0 & XCOV_LITTER==0 & FREQ_LITTER==0
-                                               ,'ABSENT',ifelse(is.na(LITTER_TYPE),'NONE',LITTER_TYPE)))
-  combOut.long <- reshape2::melt(combOut.wide,id.vars='SAMPID',variable.name='PARAMETER',value.name='RESULT')
   
-  finOut <- merge(samples,combOut.long,by='SAMPID') %>%
-    dplyr::select(-SAMPID)
+  varNames <- names(combOut)[!names(combOut) %in% c('SAMPID')]
+  combOut.1 <- reshape(combOut, idvar = 'SAMPID', direction = 'long',
+                       times = varNames, varying = varNames,
+                       timevar = 'variable', v.names = 'value')
+  # combOut.1 <- reshape2::melt(combOut,id.vars=c('SAMPID'))
+  combOut.1$value <- with(combOut.1, ifelse(is.na(value) & variable!='LITTER_TYPE',0,value))
+    # combOut.1 <- mutate(combOut.1,value=ifelse(is.na(value) & variable!='LITTER_TYPE',0,value))
+  # Need to determine whether missing LITTER_TYPE value should be ABSENT or NONE
+  combOut.wide <- reshape(combOut.1, idvar = 'SAMPID', direction = 'wide',
+                          timevar = 'variable', v.names = 'value')
+  names(combOut.wide) <- gsub("value\\.", "", names(combOut.wide))
+  # combOut.wide <- reshape2::dcast(combOut.1,SAMPID~variable,value.var='value')
+  combOut.wide$LITTER_TYPE <- with(combOut.wide, ifelse(is.na(LITTER_TYPE) & XDEPTH_LITTER==0 & XCOV_LITTER==0 & FREQ_LITTER==0, 'ABSENT', ifelse(is.na(LITTER_TYPE),'NONE',LITTER_TYPE)))
+  # combOut.wide <- mutate(combOut.wide,LITTER_TYPE=ifelse(is.na(LITTER_TYPE) & XDEPTH_LITTER==0 & XCOV_LITTER==0 & FREQ_LITTER==0
+  #                                              ,'ABSENT',ifelse(is.na(LITTER_TYPE),'NONE',LITTER_TYPE)))
+  varNames <- names(combOut.wide)[!names(combOut.wide) %in% c('SAMPID')]
+  combOut.long <- reshape(combOut.wide, idvar = 'SAMPID', direction = 'long',
+                       times = varNames, varying = varNames,
+                       timevar = 'PARAMETER', v.names = 'RESULT')
+  # combOut.long <- reshape2::melt(combOut.wide,id.vars='SAMPID',variable.name='PARAMETER',value.name='RESULT')
+  
+  finOut <- merge(samples, combOut.long, by='SAMPID') 
+  finOut <- finOut[c(sampID, 'PARAMETER', 'RESULT')]
+    
   return(finOut)
 }
 
