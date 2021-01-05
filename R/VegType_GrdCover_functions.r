@@ -68,20 +68,55 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
   
   allUIDs <- data.frame(SAMPID=unique(dataIn1$SAMPID),stringsAsFactors=F)
   
-  vhet <- reshape2::dcast(dataIn1,SAMPID+PLOT+NPLOTS~PARAMETER,value.var='RESULT')
+  vhet <- reshape(dataIn1, idvar = c('SAMPID','PLOT','NPLOTS'), direction = 'wide',
+                  timevar = 'PARAMETER', v.names = 'RESULT')
+  names(vhet) <- gsub("RESULT\\.", "", names(vhet))
+  
+  # vhet <- reshape2::dcast(dataIn1,SAMPID+PLOT+NPLOTS~PARAMETER,value.var='RESULT')
 
   ## First calculate heterogeneity metrics ## Account for datasets without PF parameter so that wide form will not have it
   if('PAL_FARMED' %in% names(vhet)==TRUE){
-    vhet <- mutate(vhet,SANDT_CLASS=ifelse(is.na(PAL_FARMED),SANDT_CLASS,'PF'))
+    vhet$SANDT_CLASS <- with(vhet, ifelse(is.na(PAL_FARMED),SANDT_CLASS,'PF'))
+    # vhet <- mutate(vhet,SANDT_CLASS=ifelse(is.na(PAL_FARMED),SANDT_CLASS,'PF'))
   }
-  vhet1 <- plyr::ddply(subset(vhet,!is.na(SANDT_CLASS)),c('SAMPID'),mutate,N_SANDT=length(unique(SANDT_CLASS)))
-  vhet2 <- plyr::ddply(vhet1,c('SAMPID','NPLOTS','SANDT_CLASS','N_SANDT'),summarise,FREQ=length(SANDT_CLASS)/unique(NPLOTS))
-  vhet3 <- plyr::ddply(vhet2,c('SAMPID'),mutate,MAXF=max(FREQ))
-  vhet4 <- subset(vhet3,MAXF==FREQ)
-  vhet4a <- plyr::ddply(vhet4,c('SAMPID','N_SANDT'),summarise,DOM_SANDT=paste(SANDT_CLASS,collapse='-'))
+  vhet <- subset(vhet, !is.na(SANDT_CLASS)) 
+  
+  vhet1.n <- aggregate(x = list(N_SANDT = vhet$SANDT_CLASS), 
+                       by = vhet[c('SAMPID')], FUN = function(x){length(unique(x))})
+  vhet1 <- merge(vhet, vhet1.n, by='SAMPID')
+  # vhet1 <- plyr::ddply(subset(vhet,!is.na(SANDT_CLASS)),c('SAMPID'),mutate,N_SANDT=length(unique(SANDT_CLASS)))
+  
+  vhet2 <- aggregate(x = list(FREQ = vhet1$PLOT), 
+                     by = vhet1[c('SAMPID','NPLOTS','SANDT_CLASS','N_SANDT')],
+                     FUN = length)
+  
+  vhet2$FREQ <- with(vhet2, FREQ/NPLOTS)
+  # vhet2 <- plyr::ddply(vhet1,c('SAMPID','NPLOTS','SANDT_CLASS','N_SANDT'),summarise,FREQ=length(SANDT_CLASS)/unique(NPLOTS))
+  vhet3.maxf <- aggregate(x = list(MAXF = vhet2$FREQ), by = vhet2[c('SAMPID')], FUN = max)
+  vhet3 <- merge(vhet2, vhet3.maxf, by='SAMPID')
+  # vhet3 <- plyr::ddply(vhet2,c('SAMPID'),mutate,MAXF=max(FREQ))
+  vhet4 <- subset(vhet3, MAXF==FREQ)
+  # Must aggregate in case there are two dominant classes
+  vhet4a <- aggregate(x = list(DOM_SANDT = vhet4$SANDT_CLASS), 
+                      by = vhet4[c('SAMPID','N_SANDT')],
+                      FUN = function(x){paste(x, collapse = '-')})
+  # vhet4a <- plyr::ddply(vhet4,c('SAMPID','N_SANDT'),summarise,DOM_SANDT=paste(SANDT_CLASS,collapse='-'))
 
-  vhet5 <- plyr::ddply(vhet2,c('SAMPID','NPLOTS'),summarise,D_SANDT=round(1-sum(FREQ*FREQ),4),H_SANDT=round(-1*(sum(FREQ*log(FREQ))),4)
-                 ,J_SANDT=round(ifelse(H_SANDT!=0 & unique(N_SANDT)!=1,H_SANDT/log(unique(N_SANDT)),0),4))
+  vhet5.d <- aggregate(x = list(D_SANDT = vhet2$FREQ), by = vhet2[c('SAMPID','NPLOTS')],
+                       FUN = function(x){round(1 - sum(x*x), 4)})
+  
+  vhet5.h <- aggregate(x = list(H_SANDT = vhet2$FREQ), by = vhet2[c('SAMPID','NPLOTS')],
+                       FUN = function(x){round(-1*sum(x*log(x)),4)})
+  
+  vhet5.jcalc <- aggregate(x = list(uniqST = vhet2$N_SANDT), by = vhet2[c('SAMPID','NPLOTS')],
+                           FUN = function(x){unique(x)}) 
+  
+  vhet5 <- merge(vhet5.d, vhet5.h, by=c('SAMPID','NPLOTS'))
+  vhet5 <- merge(vhet5, vhet5.jcalc, by=c('SAMPID','NPLOTS'))
+  vhet5$J_SANDT <- with(vhet5, round(ifelse(H_SANDT!=0 & uniqST!=1,H_SANDT/log(uniqST),0),4))
+  
+  # vhet5 <- plyr::ddply(vhet2,c('SAMPID','NPLOTS'),summarise,D_SANDT=round(1-sum(FREQ*FREQ),4),H_SANDT=round(-1*(sum(FREQ*log(FREQ))),4)
+  #                ,J_SANDT=round(ifelse(H_SANDT!=0 & unique(N_SANDT)!=1,H_SANDT/log(unique(N_SANDT)),0),4))
 
   vhet6 <- merge(vhet4a,vhet5,by='SAMPID')
   # create an empty data frame with all of the metric names as variables to ensure all are included in output
@@ -186,19 +221,65 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
   
   allUIDs <- data.frame(SAMPID=unique(dataIn1$SAMPID),stringsAsFactors=F)
 
-  vstrat <- subset(dataIn1,PARAMETER %in% c('SUBMERGED_AQ','FLOATING_AQ','LIANAS','VTALL_VEG','TALL_VEG','HMED_VEG','MED_VEG'
-                                            ,'SMALL_VEG','VSMALL_VEG') & !is.na(RESULT) & RESULT!='0')
-  vstrat <- plyr::ddply(vstrat,c('SAMPID'),mutate,N_VASC_STRATA=length(unique(PARAMETER))
-                  ,XTOTCOV_VASC_STRATA=sum(as.numeric(RESULT))/NPLOTS,PLOTSAMP=length(unique(PLOT)))
+  vstrat <- subset(dataIn1,PARAMETER %in% c('SUBMERGED_AQ','FLOATING_AQ','LIANAS','VTALL_VEG',
+                                            'TALL_VEG','HMED_VEG','MED_VEG',
+                                            'SMALL_VEG','VSMALL_VEG') & !is.na(RESULT) & RESULT!='0')
+  
+  vstrat.sum <- aggregate(x = list(XTOTCOV_VASC_STRATA = vstrat$RESULT), 
+                          by = vstrat[c('SAMPID','NPLOTS')],
+                          FUN = function(x){sum(as.numeric(x))})
+  vstrat.sum$XTOTCOV_VASC_STRATA <- with(vstrat.sum, XTOTCOV_VASC_STRATA/NPLOTS)
+  
+  vstrat.cnt <- aggregate(x = list(N_VASC_STRATA = vstrat$PARAMETER, PLOTSAMP = vstrat$PLOT),
+                          by = vstrat[c('SAMPID')], FUN = function(x){length(unique(x))})
+  
+  vstrat <- merge(vstrat, vstrat.sum, by=c('SAMPID','NPLOTS'))
+  vstrat <- merge(vstrat, vstrat.cnt, by='SAMPID')
+  
+  # vstrat <- plyr::ddply(vstrat,c('SAMPID'),mutate,N_VASC_STRATA=length(unique(PARAMETER))
+  #                 ,XTOTCOV_VASC_STRATA=sum(as.numeric(RESULT))/NPLOTS,PLOTSAMP=length(unique(PLOT)))
 
-  vstratPlot <- plyr::ddply(vstrat,c('SAMPID','PLOT','N_VASC_STRATA','NPLOTS','XTOTCOV_VASC_STRATA','PLOTSAMP'),summarise,N_VSTRATA=length(unique(PARAMETER))
-                      ,SUM_PLOT=sum(as.numeric(RESULT)))
-
-
-  vstrat1 <- unique(plyr::ddply(vstratPlot,c('SAMPID','N_VASC_STRATA','XTOTCOV_VASC_STRATA'),summarise
-                                ,XN_VASC_STRATA=sum(N_VSTRATA)/unique(NPLOTS)
-                          ,RG_VASC_STRATA=ifelse(unique(PLOTSAMP)==unique(NPLOTS)
-                          ,max(N_VSTRATA)-min(N_VSTRATA),max(N_VSTRATA)-0)))
+  vstratPlot.n <- aggregate(x = list(N_VSTRATA = vstrat$PARAMETER), 
+                            by = vstrat[c('SAMPID','PLOT','N_VASC_STRATA','NPLOTS',
+                                          'XTOTCOV_VASC_STRATA','PLOTSAMP')],
+                            FUN = function(x){length(unique(x))})
+  
+  vstratPlot.sum <- aggregate(x = list(SUM_PLOT = vstrat$RESULT), 
+                              by = vstrat[c('SAMPID','PLOT','N_VASC_STRATA','NPLOTS',
+                                            'XTOTCOV_VASC_STRATA','PLOTSAMP')],
+                              FUN = function(x){sum(as.numeric(x))})
+  
+  vstratPlot <- merge(vstratPlot.n, vstratPlot.sum, by=c('SAMPID','PLOT','N_VASC_STRATA',
+                                                         'NPLOTS','XTOTCOV_VASC_STRATA','PLOTSAMP'))
+  # vstratPlot <- plyr::ddply(vstrat,c('SAMPID','PLOT','N_VASC_STRATA','NPLOTS','XTOTCOV_VASC_STRATA','PLOTSAMP'),summarise,N_VSTRATA=length(unique(PARAMETER))
+  #                     ,SUM_PLOT=sum(as.numeric(RESULT)))
+ 
+  vstrat1.sum <- aggregate(x = list(XN_VASC_STRATA = vstratPlot$N_VSTRATA),
+                           by = vstratPlot[c('SAMPID','N_VASC_STRATA','XTOTCOV_VASC_STRATA','NPLOTS','PLOTSAMP')],
+                           FUN = sum)
+  
+  vstrat1.min <- aggregate(x = list(minN = vstratPlot$N_VSTRATA),
+                           by = vstratPlot[c('SAMPID','N_VASC_STRATA','XTOTCOV_VASC_STRATA','NPLOTS','PLOTSAMP')],
+                           FUN = min)
+  
+  vstrat1.max <- aggregate(x = list(maxN = vstratPlot$N_VSTRATA),
+                           by = vstratPlot[c('SAMPID','N_VASC_STRATA','XTOTCOV_VASC_STRATA','NPLOTS','PLOTSAMP')],
+                           FUN = max)
+  
+  vstrat1 <- merge(vstrat1.sum, vstrat1.min, 
+                   by=c('SAMPID','N_VASC_STRATA','XTOTCOV_VASC_STRATA','NPLOTS','PLOTSAMP'))
+  vstrat1 <- merge(vstrat1, vstrat1.max, c('SAMPID','N_VASC_STRATA','XTOTCOV_VASC_STRATA','NPLOTS','PLOTSAMP'))
+  
+  vstrat1$XN_VASC_STRATA <- with(vstrat1, XN_VASC_STRATA/NPLOTS)
+  vstrat1$RG_VASC_STRATA <- with(vstrat1, ifelse(PLOTSAMP==NPLOTS, maxN - minN, maxN - 0))
+  
+  vstrat1$minN <- NULL
+  vstrat1$maxN <- NULL
+  
+  # vstrat1 <- unique(plyr::ddply(vstratPlot,c('SAMPID','N_VASC_STRATA','XTOTCOV_VASC_STRATA'),summarise
+  #                               ,XN_VASC_STRATA=sum(N_VSTRATA)/unique(NPLOTS)
+  #                         ,RG_VASC_STRATA=ifelse(unique(PLOTSAMP)==unique(NPLOTS)
+  #                         ,max(N_VSTRATA)-min(N_VSTRATA),max(N_VSTRATA)-0)))
 
   empty_vstrat <- data.frame(t(rep(NA,4)),stringsAsFactors=FALSE)
   names(empty_vstrat) <- c('N_VASC_STRATA','XTOTCOV_VASC_STRATA','XN_VASC_STRATA','RG_VASC_STRATA')
@@ -207,53 +288,136 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 
   vstrat3 <- merge(allUIDs,vstrat2,by='SAMPID',all.x=T)
 
-  vstratMet <- reshape2::melt(vstrat3,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
-  vstratMet <- mutate(vstratMet,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),0,RESULT))
+  varNames <- names(vstrat3)[!names(vstrat3) %in% c('SAMPID')]
+  vstratMet <- reshape(vstrat3, idvar = 'SAMPID', direction = 'long',
+                       varying = varNames, times = varNames,
+                       timevar = 'METRIC', v.names = 'RESULT')
+  
+  vstratMet$METRIC <- with(vstratMet, as.character(METRIC))
+  vstratMet$RESULT <- with(vstratMet, ifelse(is.na(RESULT),0,RESULT))
+  # vstratMet <- reshape2::melt(vstrat3,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
+  # vstratMet <- mutate(vstratMet,METRIC=as.character(METRIC),RESULT=ifelse(is.na(RESULT),0,RESULT))
 
   ## Calculate frequency, mean cover, relative mean cover, and relative importance by vascular stratum
-  indf1 <- plyr::ddply(subset(vstrat,RESULT!=0),c('SAMPID','PARAMETER'),summarise,FREQ=round((length(PLOT)/unique(NPLOTS))*100,2)
-                 ,XCOV=round((sum(as.numeric(RESULT))/unique(NPLOTS)),2)
-                 ,XRCOV=round((XCOV/unique(XTOTCOV_VASC_STRATA))*100,2),IMP=round((FREQ+XCOV)/2,2))
+  vstrat.pos <- subset(vstrat,RESULT!=0)
+  
+  indf1.length <- aggregate(x = list(FREQ = vstrat.pos$PLOT), 
+                            by = vstrat.pos[c('SAMPID','PARAMETER','NPLOTS','XTOTCOV_VASC_STRATA')],
+                            FUN = length)
+  
+  indf1.sum <- aggregate(x = list(XCOV = vstrat.pos$RESULT), 
+                         by = vstrat.pos[c('SAMPID','PARAMETER','NPLOTS','XTOTCOV_VASC_STRATA')],
+                         FUN = function(x){sum(as.numeric(x))})
+  
+  indf1 <- merge(indf1.length, indf1.sum, by = c('SAMPID','PARAMETER','NPLOTS','XTOTCOV_VASC_STRATA'), all=TRUE)
+  indf1$FREQ <- with(indf1, round(FREQ/NPLOTS*100, 2))
+  indf1$XCOV <- with(indf1, round(XCOV/NPLOTS, 2))
+  indf1$XRCOV <- with(indf1, round(XCOV/XTOTCOV_VASC_STRATA*100, 2))
+  indf1$IMP <- with(indf1, round((FREQ + XCOV)/2, 2))
+  
+  # Now drop variables
+  indf1$XTOTCOV_VASC_STRATA <- NULL
+  indf1$NPLOTS <- NULL
+  
+  # indf1 <- plyr::ddply(subset(vstrat,RESULT!=0),c('SAMPID','PARAMETER'),summarise,FREQ=round((length(PLOT)/unique(NPLOTS))*100,2)
+  #                ,XCOV=round((sum(as.numeric(RESULT))/unique(NPLOTS)),2)
+  #                ,XRCOV=round((XCOV/unique(XTOTCOV_VASC_STRATA))*100,2),IMP=round((FREQ+XCOV)/2,2))
 
-  outdf <- mutate(reshape2::melt(indf1,id.vars=c('SAMPID','PARAMETER'),value.name='RESULT'),PARAMETER=paste(variable,PARAMETER,sep='_'))
+  outdf <- reshape(indf1, idvar = c('SAMPID','PARAMETER'), direction = 'long',
+                   varying = c('FREQ','XCOV','XRCOV','IMP'), times = c('FREQ','XCOV','XRCOV','IMP'),
+                   timevar = 'variable', v.names = 'RESULT')
+  
+  outdf$PARAMETER <- with(outdf, paste(variable, PARAMETER, sep = '_'))
+  outdf$variable <- NULL
+  # outdf <- mutate(reshape2::melt(indf1,id.vars=c('SAMPID','PARAMETER'),value.name='RESULT'),PARAMETER=paste(variable,PARAMETER,sep='_'))
 
-  outdf1 <- reshape2::melt(reshape2::dcast(outdf,SAMPID~PARAMETER,value.var='RESULT'),id.vars='SAMPID'
-                           ,variable.name='METRIC',value.name='RESULT')
+  outdf.wide <- reshape(outdf, idvar = c('SAMPID'), direction = 'wide',
+                        timevar = 'PARAMETER', v.names = 'RESULT')
+  names(outdf.wide) <- gsub("RESULT\\.", "", names(outdf.wide))
+  
+  varNames <- names(outdf.wide)[!names(outdf.wide) %in% c('SAMPID')]
+  outdf1 <- reshape(outdf.wide, idvar = c('SAMPID'), direction = 'long',
+                    varying = varNames, times = varNames,
+                    timevar = 'METRIC', v.names = 'RESULT')
+  # outdf1 <- reshape2::melt(reshape2::dcast(outdf,SAMPID~PARAMETER,value.var='RESULT'),id.vars='SAMPID'
+  #                          ,variable.name='METRIC',value.name='RESULT')
   outdf1$RESULT[is.na(outdf1$RESULT)] <- 0
 
   ## Calculate diversity indices
-  div1 <- plyr::ddply(indf1,c('SAMPID'),summarise,H_VASC_STRATA=round(-1*sum((XRCOV/100)*log(XRCOV/100)),4)
-                ,J_VASC_STRATA=round(H_VASC_STRATA/log(length(PARAMETER)),4)
-                ,D_VASC_STRATA=round(1-sum((XRCOV/100)^2),4))
-  div1 <- mutate(div1,J_VASC_STRATA=ifelse(!is.na(J_VASC_STRATA),J_VASC_STRATA,0))
+  div1.h <- aggregate(x = list(H_VASC_STRATA = indf1$XRCOV), 
+                      by = indf1[c('SAMPID')], FUN = function(x){round(-1*sum((x/100)*log(x/100)), 4)})
+  
+  div1.j <- aggregate(x = list(J_VASC_STRATA = indf1$PARAMETER), 
+                      by = indf1[c('SAMPID')], FUN = length)
+  
+  div1.d <- aggregate(x = list(D_VASC_STRATA = indf1$XRCOV),
+                      by = indf1[c('SAMPID')],
+                      FUN = function(x){round(1 - sum((x/100)^2), 4)})
+  
+  div1 <- merge(div1.h, div1.j, by = 'SAMPID', all=TRUE)
+  div1 <- merge(div1, div1.d, by='SAMPID', all=TRUE)
+  
+  div1$J_VASC_STRATA <- with(div1, round(H_VASC_STRATA/log(J_VASC_STRATA), 4))
+  div1$J_VASC_STRATA <- with(div1, ifelse(!is.na(J_VASC_STRATA),J_VASC_STRATA,0))
+  
+  # div1 <- plyr::ddply(indf1,c('SAMPID'),summarise,H_VASC_STRATA=round(-1*sum((XRCOV/100)*log(XRCOV/100)),4)
+  #               ,J_VASC_STRATA=round(H_VASC_STRATA/log(length(PARAMETER)),4)
+  #               ,D_VASC_STRATA=round(1-sum((XRCOV/100)^2),4))
+  # div1 <- mutate(div1,J_VASC_STRATA=ifelse(!is.na(J_VASC_STRATA),J_VASC_STRATA,0))
+  
+  div1.long <- reshape(div1, idvar = 'SAMPID', direction = 'long',
+                       varying = c('H_VASC_STRATA','J_VASC_STRATA','D_VASC_STRATA'), 
+                       times = c('H_VASC_STRATA','J_VASC_STRATA','D_VASC_STRATA'),
+                       timevar = 'METRIC', v.names = 'RESULT')
 
-  outdf2 <- rbind(outdf1,reshape2::melt(div1,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT'))
+  outdf2 <- rbind(outdf1, div1.long)
+  # outdf2 <- rbind(outdf1,reshape2::melt(div1,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT'))
 
   empty_vtype <- data.frame(t(rep(NA,39)),stringsAsFactors=FALSE)
-  names(empty_vtype) <- c("FREQ_FLOATING_AQ","FREQ_HMED_VEG","FREQ_LIANAS","FREQ_MED_VEG","FREQ_SMALL_VEG","FREQ_SUBMERGED_AQ"
-                          ,"FREQ_TALL_VEG","FREQ_VSMALL_VEG","FREQ_VTALL_VEG","IMP_FLOATING_AQ","IMP_HMED_VEG","IMP_LIANAS"
-                          ,"IMP_MED_VEG","IMP_SMALL_VEG","IMP_SUBMERGED_AQ","IMP_TALL_VEG","IMP_VSMALL_VEG","IMP_VTALL_VEG"
-                          ,"XCOV_FLOATING_AQ","XCOV_HMED_VEG","XCOV_LIANAS","XCOV_MED_VEG","XCOV_SMALL_VEG","XCOV_SUBMERGED_AQ"
-                          ,"XCOV_TALL_VEG","XCOV_VSMALL_VEG","XCOV_VTALL_VEG","XRCOV_FLOATING_AQ","XRCOV_HMED_VEG","XRCOV_LIANAS"
-                          ,"XRCOV_MED_VEG","XRCOV_SMALL_VEG","XRCOV_SUBMERGED_AQ","XRCOV_TALL_VEG","XRCOV_VSMALL_VEG","XRCOV_VTALL_VEG"
-                          ,"H_VASC_STRATA","J_VASC_STRATA","D_VASC_STRATA")
+  names(empty_vtype) <- c("FREQ_FLOATING_AQ","FREQ_HMED_VEG","FREQ_LIANAS","FREQ_MED_VEG",
+                          "FREQ_SMALL_VEG","FREQ_SUBMERGED_AQ",
+                          "FREQ_TALL_VEG","FREQ_VSMALL_VEG","FREQ_VTALL_VEG",
+                          "IMP_FLOATING_AQ","IMP_HMED_VEG","IMP_LIANAS",
+                          "IMP_MED_VEG","IMP_SMALL_VEG","IMP_SUBMERGED_AQ",
+                          "IMP_TALL_VEG","IMP_VSMALL_VEG","IMP_VTALL_VEG",
+                          "XCOV_FLOATING_AQ","XCOV_HMED_VEG","XCOV_LIANAS",
+                          "XCOV_MED_VEG","XCOV_SMALL_VEG","XCOV_SUBMERGED_AQ",
+                          "XCOV_TALL_VEG","XCOV_VSMALL_VEG","XCOV_VTALL_VEG",
+                          "XRCOV_FLOATING_AQ","XRCOV_HMED_VEG","XRCOV_LIANAS",
+                          "XRCOV_MED_VEG","XRCOV_SMALL_VEG","XRCOV_SUBMERGED_AQ",
+                          "XRCOV_TALL_VEG","XRCOV_VSMALL_VEG","XRCOV_VTALL_VEG",
+                          "H_VASC_STRATA","J_VASC_STRATA","D_VASC_STRATA")
 
-  outdf3 <- reshape2::dcast(outdf2,SAMPID~METRIC,value.var='RESULT')
+  outdf3 <- reshape(outdf2, idvar = 'SAMPID', direction = 'wide',
+                    timevar = 'METRIC', v.names = 'RESULT')
+  
+  names(outdf3) <- gsub("RESULT\\.", "", names(outdf3))
+  # outdf3 <- reshape2::dcast(outdf2,SAMPID~METRIC,value.var='RESULT')
 
   outdf4 <- subset(merge(outdf3, empty_vtype, all=TRUE),!is.na(SAMPID))
 
   outdf5 <- merge(allUIDs,outdf4,by='SAMPID',all.x=T)
 
-  outdf6 <- reshape2::melt(outdf5,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
-  outdf6 <- mutate(outdf6,METRIC=as.character(METRIC)
-                   ,RESULT=ifelse(METRIC %nin% c('D_VASC_STRATA','H_VASC_STRATA') & is.na(RESULT),0,RESULT))
+  varNames <- names(outdf5)[!names(outdf5) %in% c('SAMPID')]
+  outdf6 <- reshape(outdf5, idvar = 'SAMPID', direction = 'long',
+                    varying = varNames, times = varNames,
+                    timevar = 'METRIC', v.names = 'RESULT')
+  # outdf6 <- reshape2::melt(outdf5,id.vars='SAMPID',variable.name='METRIC',value.name='RESULT')
+  outdf6$METRIC <- with(outdf6, as.character(METRIC))
+  outdf6$RESULT <- with(outdf6, ifelse(METRIC %nin% c('D_VASC_STRATA','H_VASC_STRATA') & is.na(RESULT),0,RESULT))
+  # outdf6 <- mutate(outdf6,METRIC=as.character(METRIC)
+  #                  ,RESULT=ifelse(METRIC %nin% c('D_VASC_STRATA','H_VASC_STRATA') & is.na(RESULT),0,RESULT))
 
   print("Done with vascular strata metrics")
 
   # Now combine vtypeMet and vhet8 into a single data frame and widen it
-  vtOut <- rbind(outdf6,vstratMet) %>% plyr::rename(c('METRIC'='PARAMETER'))
-  vtOut.1 <- merge(samples,vtOut,by='SAMPID') %>%
-    dplyr::select(-SAMPID)
+  vtOut <- rbind(outdf6,vstratMet) 
+  vtOut$PARAMETER <- vtOut$METRIC
+  vtOut$METRIC <- NULL
+  
+  vtOut.1 <- merge(samples,vtOut,by='SAMPID') 
+  vtOut.1$SAMPID <- NULL
+    
   return(vtOut.1)
 }
 
@@ -321,7 +485,7 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 #'  unique(nvEx$PARAMETER)
 calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
   ## Now merge back with input df
-  dataIn1 <- merge(dataIn,nPlot,by=sampID)
+  dataIn1 <- merge(dataIn, nPlot, by=sampID)
 
   # Create vector of all samples in dataset
   for(i in 1:length(sampID)){

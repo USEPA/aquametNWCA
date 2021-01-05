@@ -19,7 +19,8 @@ test_that("S & T metric values correct",
 })
 
 test_that("Vascular stratum metric values correct",
-{vstratOut <- calcVascStratMets(testVCGC,nplots)
+{
+ vstratOut <- calcVascStratMets(testVCGC,nplots)
  compOut <- merge(testMets,vstratOut,by=c('UID','PARAMETER'))
  expect_true(nrow(vstratOut)==430)
  expect_true(nrow(compOut)==nrow(vstratOut))
@@ -28,7 +29,8 @@ test_that("Vascular stratum metric values correct",
 })
 
 test_that("Non-vascular metric values correct",
-{nvascOut <- calcNonvascMets(testVCGC,nplots)
+{
+ nvascOut <- calcNonvascMets(testVCGC,nplots)
  compOut <- merge(testMets,nvascOut,by=c('UID','PARAMETER'))
  expect_true(nrow(nvascOut)==170)
  expect_true(nrow(compOut)==nrow(nvascOut))
@@ -37,7 +39,8 @@ test_that("Non-vascular metric values correct",
 })
 
 test_that("Water cover metric values correct",
-{wcovOut <- calcWcovMets(testVCGC,nplots)
+{
+ wcovOut <- calcWcovMets(testVCGC,nplots)
  compOut <- merge(testMets,wcovOut,by=c('UID','PARAMETER'))
  expect_true(nrow(wcovOut)==180)
  expect_true(nrow(compOut)==nrow(wcovOut))
