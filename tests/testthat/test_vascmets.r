@@ -131,7 +131,7 @@ test_that("All vascular plant metrics correct",
             metOut.long <- reshape2::melt(metOut,id.vars='UID',variable.name='PARAMETER',value.name='RESULT')
             compOut <- merge(testMets,metOut.long,by=c('UID','PARAMETER'))
             compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
-            expect_true(nrow(metOut.long)==3520)
+            expect_true(nrow(metOut.long)==3920)
             expect_true(nrow(metOut.long)==nrow(compOut))
             expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)
           })
