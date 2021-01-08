@@ -1447,7 +1447,8 @@ calcBCmets <- function(vascIn,sampID='UID'){
             by = vascIn[,c(sampID,'PLOT','SPECIES_NAME_ID')],
             FUN = sum)
   # This df needs to be in wide format
-  forDist <- plyr::mutate(forDist,SPECIES=paste('s',SPECIES_NAME_ID,sep=''))
+  forDist$SPECIES <- with(forDist, paste('s',SPECIES_NAME_ID,sep=''))
+  # forDist <- plyr::mutate(forDist,SPECIES=paste('s',SPECIES_NAME_ID,sep=''))
 
   meanBC <- int.calcXBC(forDist, sampID)
 
@@ -1461,7 +1462,9 @@ calcBCmets <- function(vascIn,sampID='UID'){
     forDist.nat$SPECIES <- with(forDist.nat, paste('s', SPECIES_NAME_ID, sep=''))
     forDist.nat <- subset(forDist.nat, NWCA_NATSTAT=='NAT')
     
-    meanBC_nat <- int.calcXBC(forDist.nat,sampID) %>% plyr::rename(c('XBCDIST_SPP'='XBCDIST_NATSPP'))
+    meanBC_nat <- int.calcXBC(forDist.nat,sampID) 
+    meanBC_nat$XBCDIST_NATSPP <- meanBC_nat$XBCDIST_SPP
+    meanBC_nat$XBCDIST_SPP <- NULL
 
     xbcOut <- merge(xbcOut,meanBC_nat,by=sampID,all.x=T)
   }

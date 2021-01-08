@@ -57,8 +57,8 @@
 #' @examples
 #' head(TreesEx)
 #' 
-#' nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
-#' ,NPLOTS=length(unique(PLOT)))
+#' nplots <- aggregate(x = list(NPLOTS = TreesEx$PLOT), by = TreesEx[c('UID')],
+#' FUN = function(x){length(unique(x))})
 #'
 #' exOut <- calcTreeMets(TreesEx, nPlotIn=nplots, sampID='UID')
 #'

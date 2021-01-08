@@ -197,8 +197,9 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
 #' # Create data frame with number of plots sampled for each UID
 #' nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
 #' # alternative approach to creating this data frame
-#' nplots <- plyr::ddply(Vtype_GrCovEx,c('UID'),dplyr::summarise,
-#' NPLOTS=length(unique(PLOT)))
+#' nplots <- aggregate(x = list(NPLOTS = subVtype_GrCovEx$PLOT), 
+#' by = subVtype_GrCovEx[c('UID')],
+#' FUN = function(x){length(unique(x))})
 #'
 #' stratEx <- calcVascStratMets(Vtype_GrCovEx,nplots)
 #'
@@ -445,8 +446,9 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 #'  # Create data frame with number of plots sampled for each sampID
 #'  nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
 #'  # alternative approach to creating this data frame
-#'  nplots <- plyr::ddply(Vtype_GrCovEx,c('UID'),dplyr::summarise,
-#'  NPLOTS=length(unique(PLOT)))
+#'  nplots <- aggregate(x = list(NPLOTS = subVtype_GrCovEx$PLOT), 
+#'  by = subVtype_GrCovEx[c('UID')],
+#'  FUN = function(x){length(unique(x))})
 #'
 #'  nvEx <- calcNonvascMets(Vtype_GrCovEx,nplots)
 #'
@@ -626,8 +628,9 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
 #' # Create data frame with number of plots sampled for each sampID
 #' nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
 #' # alternative approach to creating this data frame
-#' nplots <- plyr::ddply(Vtype_GrCovEx,c('UID'),dplyr::summarise,
-#' NPLOTS=length(unique(PLOT)))
+#' nplots <- aggregate(x = list(NPLOTS = subVtype_GrCovEx$PLOT), 
+#' by = subVtype_GrCovEx[c('UID')],
+#' FUN = function(x){length(unique(x))})
 #'
 #' wcovEx <- calcWcovMets(Vtype_GrCovEx,nplots)
 #'
@@ -852,8 +855,9 @@ calcWcovMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
 #' # Create data frame with number of plots sampled for each UID
 #' nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
 #' # alternative approach to creating this data frame
-#' nplots <- plyr::ddply(Vtype_GrCovEx,c('UID'),dplyr::summarise,
-#' NPLOTS=length(unique(PLOT)))
+#' nplots <- aggregate(x = list(NPLOTS = subVtype_GrCovEx$PLOT), 
+#' by = subVtype_GrCovEx[c('UID')],
+#' FUN = function(x){length(unique(x))})
 #'
 #' bgEx <- calcBareGround_LitterMets(Vtype_GrCovEx,nplots)
 #'
