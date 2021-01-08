@@ -152,8 +152,6 @@ calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, taxaCC=c
   xtotabcov <- reshape(sppForCalc.in, idvar = sampID, direction = 'long',
                        varying = varNames, times = varNames,
                        timevar = 'PARAMETER', v.names = 'RESULT')
-  # xtotabcov <- reshape2::melt(unique(subset(sppForCalc,select=c(sampID,'XTOTABCOV'))),id.vars='UID'
-  #                             ,variable.name='PARAMETER',value.name='RESULT')
 
   ### COMBINE ALL PLANT METRICS INTO A SINGLE DF
   allOut <- rbind(xtotabcov,richMets,divMets,durMets,grhMets,catMets,wisMets,ccMets,natMets,xbcMets)
@@ -162,9 +160,7 @@ calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, taxaCC=c
                     timevar = 'PARAMETER', v.names = 'RESULT')
   
   names(finOut) <- gsub("RESULT\\.", "", names(finOut))
-  # formula <- paste(paste(sampID,collapse='+'),'~PARAMETER',sep='')
-  # finOut <- reshape2::dcast(allOut,eval(formula),value.var='RESULT')
-  
+
   return(finOut)
 }
 

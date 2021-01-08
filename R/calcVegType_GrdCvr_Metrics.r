@@ -82,8 +82,6 @@ calcVtype_GcovMets <- function(dataIn, nPlotIn, sampID='UID', survyear='2011'){
     return(NULL)
   }
 
-  # nplots <- ddply(subset(dataIn,PARAMETER!='SANDT_CLASS'),sampID,summarise,NPLOTS=length(unique(PLOT)))
-
   sandtOut <- calcSandTMets(dataIn,nPlotIn,sampID)
   vstratOut <- calcVascStratMets(dataIn,nPlotIn,sampID)
   nonvascOut <- calcNonvascMets(dataIn,nPlotIn,sampID)
@@ -97,9 +95,6 @@ calcVtype_GcovMets <- function(dataIn, nPlotIn, sampID='UID', survyear='2011'){
                      timevar = 'PARAMETER', v.names = 'RESULT')
   names(vgOut.1) <- gsub("RESULT\\.", "", names(vgOut.1))
   
-  # formula <- paste(paste(sampID,collapse='+'),'~PARAMETER',sep='')
-  # vgOut.1 <- reshape2::dcast(vgOut,eval(formula),value.var='RESULT')
-
   return(vgOut.1)
 
 }

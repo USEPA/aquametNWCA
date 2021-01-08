@@ -79,13 +79,11 @@ calcTreeMets <- function(treeIn, nPlotIn, sampID='UID'){
 
   ## Merge into a single output file in wide format
   treeMetOut <- rbind(snagsOut,treeCntsOut,treeCvrOut)
-  # formula <- paste(paste(sampID,collapse='+'),'~PARAMETER',sep='')
   
   treeMetOut.1 <- reshape(treeMetOut, idvar = sampID, direction = 'wide',
                           timevar = 'PARAMETER', v.names = 'RESULT')
   names(treeMetOut.1) <- gsub("RESULT\\.", "", names(treeMetOut.1))
-  # treeMetOut.1 <- reshape2::dcast(treeMetOut,eval(formula),value.var='RESULT')
-
+ 
   return(treeMetOut.1)
 }
 

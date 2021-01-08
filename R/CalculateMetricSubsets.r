@@ -254,7 +254,6 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
     vascIn.1 <- vascIn
     
     vascIn.1$GRH_ALT <- with(vascIn.1, gsub('SUBSHRUB', 'SSHRUB', GRH_ALT))
-    # vascIn.1 <- plyr::mutate(vascIn, GRH_ALT=gsub('SUBSHRUB', 'SSHRUB', GRH_ALT))
   }else{
 
     vascIn.1 <- vascIn
@@ -1096,8 +1095,6 @@ calcNative <- function(vascIn,sampID='UID'){
     return(NULL)
   }
 
-  # vascIn <- plyr::mutate(vascIn,ALIEN=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),1,0)
-  #                         ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
   vascIn$ALIEN <- with(vascIn, ifelse(NWCA_NATSTAT %in% c('INTR','ADV'), 1, 0))
   vascIn$AC <- with(vascIn, ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
   
@@ -1137,14 +1134,6 @@ calcNative <- function(vascIn,sampID='UID'){
   
   outdf.1 <- subset(outdf.1, PARAMETER %in% names(empty_base))
   
-  # natstatOut.1 <- reshape2::dcast(natstatOut,stats::formula(paste(paste(sampID,collapse='+'),'~PARAMETER',sep=''))
-  #                                 ,value.var='RESULT') %>%
-  #   merge(empty_base, all=TRUE) %>%
-  #   reshape2::melt(id.vars=c(sampID), variable.name='PARAMETER', value.name='RESULT') %>%
-  #   dplyr::filter(!is.na(eval(as.name(sampID[1])))) %>%
-  #   plyr::mutate(RESULT = ifelse(is.na(RESULT)|is.infinite(RESULT),0,RESULT)
-  #                , PARAMETER=as.character(PARAMETER))
-
   return(outdf.1)
 }
 
@@ -1292,11 +1281,6 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
   outdf$RESULT <- with(outdf, ifelse(is.na(RESULT), 0, RESULT))
   outdf$PARAMETER <- as.character(outdf$PARAMETER)
   
-  # allRichOut <- reshape2::dcast(richOut,stats::formula(paste(paste(sampID,collapse='+'),'~PARAMETER',sep=''))
-  #                               ,value.var='RESULT') %>%
-  #   reshape2::melt(id.vars=sampID,variable.name='PARAMETER',value.name='RESULT') %>%
-  #   plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT),PARAMETER=as.character(PARAMETER))
-
   return(outdf)
 }
 
@@ -1384,9 +1368,6 @@ calcDiversity <- function(vascIn,sampID='UID'){
    vascIn.1$NATSTAT_ALT <- with(vascIn.1, ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT))
    vascIn.1$AC <- with(vascIn.1, ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
    
-   # vascIn.1 <- plyr::mutate(vascIn,NATSTAT_ALT=ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT)
-   #                        ,AC=ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
-
    nsvalues <- c('NAT','ALIEN')
    for(i in 1:length(nsvalues)){
      vascIn.2 <- subset(vascIn.1,NATSTAT_ALT==nsvalues[i])
@@ -1415,11 +1396,6 @@ calcDiversity <- function(vascIn,sampID='UID'){
   outdf$RESULT <- with(outdf, ifelse(is.na(RESULT), 0, RESULT))
   outdf$PARAMETER <- as.character(outdf$PARAMETER)
   
- # dfOut <- reshape2::dcast(divOut,stats::formula(paste(paste(sampID,collapse='+'),'~PARAMETER',sep=''))
- # ,value.var='RESULT') %>%
- #   reshape2::melt(id.vars=sampID,variable.name='PARAMETER',value.name='RESULT') %>%
- #   plyr::mutate(dfOut,RESULT=ifelse(is.na(RESULT),0,RESULT),PARAMETER=as.character(PARAMETER))
-
  return(outdf)
 }
 
@@ -1463,7 +1439,6 @@ calcBCmets <- function(vascIn,sampID='UID'){
   if('SPECIES_NAME_ID' %nin% names(vascIn)){
     uniqNames <- data.frame(TAXON=unique(vascIn$TAXON), stringsAsFactors=F)
     uniqNames$SPECIES_NAME_ID = seq(from=1, to=nrow(uniqNames))
-#    uniqNames <- plyr::mutate(uniqNames,SPECIES_NAME_ID=seq(from=1,to=nrow(uniqNames)))
     vascIn <- merge(vascIn,uniqNames,by='TAXON')
   }
   vascIn$COVER <- as.numeric(vascIn$COVER)
@@ -1471,8 +1446,6 @@ calcBCmets <- function(vascIn,sampID='UID'){
   forDist <- aggregate(x = list(COVER = vascIn$COVER), 
             by = vascIn[,c(sampID,'PLOT','SPECIES_NAME_ID')],
             FUN = sum)
-  # forDist <- plyr::ddply(vascIn,c(sampID,'PLOT','SPECIES_NAME_ID')
-  #                        ,summarise,COVER=sum(as.numeric(COVER)),.progress='tk')
   # This df needs to be in wide format
   forDist <- plyr::mutate(forDist,SPECIES=paste('s',SPECIES_NAME_ID,sep=''))
 
@@ -1488,11 +1461,6 @@ calcBCmets <- function(vascIn,sampID='UID'){
     forDist.nat$SPECIES <- with(forDist.nat, paste('s', SPECIES_NAME_ID, sep=''))
     forDist.nat <- subset(forDist.nat, NWCA_NATSTAT=='NAT')
     
-    # forDist.nat <- plyr::ddply(vascIn,c(sampID,'PLOT','SPECIES_NAME_ID','NWCA_NATSTAT')
-    #                            ,summarise,COVER=sum(as.numeric(COVER)),.progress='tk') %>%
-    #   plyr::mutate(SPECIES=paste('s',SPECIES_NAME_ID,sep='')) %>%
-    #   dplyr::filter(NWCA_NATSTAT=='NAT')
-
     meanBC_nat <- int.calcXBC(forDist.nat,sampID) %>% plyr::rename(c('XBCDIST_SPP'='XBCDIST_NATSPP'))
 
     xbcOut <- merge(xbcOut,meanBC_nat,by=sampID,all.x=T)
@@ -1505,9 +1473,6 @@ calcBCmets <- function(vascIn,sampID='UID'){
   
   xbcOut.1$RESULT <- with(xbcOut.1, ifelse(is.na(RESULT),0,RESULT))
   xbcOut.1$PARAMETER <- as.character(xbcOut.1$PARAMETER)
-  
-  # xbcOut.1 <- reshape2::melt(xbcOut,id.vars=sampID,variable.name='PARAMETER',value.name='RESULT') %>%
-  #   plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT),PARAMETER=as.character(PARAMETER))
 
   return(xbcOut.1)
 }
@@ -1614,33 +1579,22 @@ calcVMMImets <- function(vascIn,sampID='UID'){
             by = vascIn.fqai[c('SAMPID','NUMTAXA')], FUN = sum)
   
   fqaiOut$FQAI_ALL <- with(fqaiOut, round(FQAI_ALL/sqrt(NUMTAXA), 2))
-  # fqaiOut <- plyr::ddply(subset(vascIn,NWCA_CC!='Und'),'SAMPID',summarise,PARAMETER='FQAI_ALL'
-  #                     ,RESULT=round(sum(as.numeric(NWCA_CC))/sqrt(length(unique(TAXON))),2))
 
   # Calculate N_TOL
   vascIn.alt <- vascIn
   vascIn.alt$TOL <- with(vascIn.alt, ifelse(NWCA_CC %in% c('4','3','2','1','0'),1,0))
   
   vascIn.alt <- subset(vascIn.alt, TOL==1)
-    
-    # plyr::mutate(vascIn,TOL=ifelse(NWCA_CC %in% c('4','3','2','1','0'),1,0)) %>%
-    # subset(TOL==1)
 
   if(nrow(vascIn.alt)>0){
     ntol <- aggregate(x = list(N_TOL = vascIn.alt$TAXON), 
                       by = vascIn.alt[c('SAMPID')], FUN = length)
     
-    # ntol <- plyr::ddply(vascIn.alt,'SAMPID',summarise,N_TOL=length(TAXON))
-    
     ntolOut <- merge(UIDs, ntol, by='SAMPID', all.x=TRUE)
     ntolOut$N_TOL <- with(ntolOut, ifelse(is.na(N_TOL), 0, N_TOL))
-    # ntolOut <- merge(UIDs,ntol,by='SAMPID',all.x=T) %>%
-    #   reshape2::melt(id.vars='SAMPID',variable.name='PARAMETER',value.name='RESULT') %>%
-    #   plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT))
 
   }else{
     ntolOut <- data.frame(SAMPID = UIDs$SAMPID, N_TOL = 0, stringsAsFactors = F)
-    # ntolOut <- data.frame(SAMPID=UIDs$SAMPID,PARAMETER='N_TOL',RESULT=0,stringsAsFactors=F)
   }
 
   # Calculate RIMP_NATSPP
@@ -1654,20 +1608,11 @@ calcVMMImets <- function(vascIn,sampID='UID'){
     vascIn.nat.1$RFREQ <- with(vascIn.nat.1, round(RFREQ, 2))
     vascIn.nat.1$RIMP_NATSPP <- with(vascIn.nat.1, round((RFREQ + XRCOV)/2, 2))
     
-    # vascIn.nat.1 <- plyr::ddply(vascIn.nat,'SAMPID',plyr::summarise,XRCOV=round(sum(sXRCOV),2)
-    #                           ,RFREQ=round(sum(sRFREQ),2),RIMP_NATSPP=round((RFREQ+XRCOV)/2,2))
-
     natOut <- merge(UIDs, vascIn.nat.1, by = 'SAMPID', all.x=TRUE)
     natOut$RIMP_NATSPP <- with(natOut, ifelse(is.na(RIMP_NATSPP), 0, RIMP_NATSPP))
     
-    # natOut <- merge(UIDs,vascIn.nat.1,by='SAMPID',all.x=T) %>%
-    #   reshape2::melt(id.vars='SAMPID',measure.vars='RIMP_NATSPP',variable.name='PARAMETER'
-    #                  ,value.name='RESULT') %>%
-    #   plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT))
-
    }else{
     natOut <- data.frame(SAMPID = UIDs$SAMPID, RIMP_NATSPP = 0, stringsAsFactors = F)
-    # natOut <- data.frame(SAMPID=UIDs$SAMPID,PARAMETER='RIMP_NATSPP',RESULT=0,stringsAsFactors=F)
   }
 
   # Calculate XRCOV_MONOCOTS_NAT
@@ -1677,18 +1622,12 @@ calcVMMImets <- function(vascIn,sampID='UID'){
     vascIn.mono.1 <- aggregate(x = list(XRCOV_MONOCOTS_NAT = vascIn.mono$sXRCOV), 
                                by = vascIn.mono[c('SAMPID')], FUN = sum)
     vascIn.mono.1$XRCOV_MONOCOTS_NAT <- with(vascIn.mono.1, round(XRCOV_MONOCOTS_NAT, 2))
-    # vascIn.mono.1 <- plyr::ddply(vascIn.mono,c('SAMPID'),plyr::summarise,XRCOV_MONOCOTS_NAT=round(sum(sXRCOV),2))
 
     monoOut <- merge(UIDs, vascIn.mono.1, by = 'SAMPID', all.x=TRUE)
     monoOut$XRCOV_MONOCOTS_NAT <- with(monoOut, ifelse(is.na(XRCOV_MONOCOTS_NAT), 0, XRCOV_MONOCOTS_NAT))
-    # monoOut <- merge(UIDs,vascIn.mono.1,by='SAMPID',all.x=T) %>%
-    #   reshape2::melt(id.vars=c('SAMPID'),measure.vars='XRCOV_MONOCOTS_NAT',variable.name='PARAMETER'
-    #                 ,value.name='RESULT') %>%
-    #   plyr::mutate(RESULT=ifelse(is.na(RESULT),0,RESULT))
 
   }else{
     monoOut <- data.frame(SAMPID=UIDs$SAMPID, XRCOV_MONOCOTS_NAT = 0, stringsAsFactors=F)
-  #  monoOut <- data.frame(SAMPID=UIDs$SAMPID,PARAMETER='XRCOV_MONOCOTS_NAT',RESULT=0,stringsAsFactors=F)
   }
 
  # Now combine into one data frame
@@ -1698,11 +1637,6 @@ calcVMMImets <- function(vascIn,sampID='UID'){
 
  allOut.1 <- merge(allOut, samples, by = 'SAMPID')
  allOut.1$SAMPID <- NULL
- 
- # allOut <- rbind(fqaiOut,natOut,monoOut,ntolOut)
- # allOut.1 <- reshape2::dcast(allOut,SAMPID~PARAMETER,value.var='RESULT') %>%
- #   merge(samples,by='SAMPID') %>% 
- #   dplyr::select(-SAMPID)
  
  allOut.1 <- allOut.1[,c(sampID,'FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')]
 

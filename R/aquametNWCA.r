@@ -6,10 +6,6 @@
 #' 
 #' @importFrom Hmisc "%nin%"
 #' @importFrom gtools smartbind
-#' @importFrom dplyr filter select "%>%"
-#' @importFrom plyr ddply mutate summarise summarize rename
-#' @importFrom reshape2 dcast melt
-#' @importFrom car recode Recode
 #' @importFrom ecodist distance
 #' @importFrom stats approx median sd
 #' @importFrom rlang .data
