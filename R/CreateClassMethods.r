@@ -276,13 +276,15 @@ nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, i
   dfSPP.byUID.length <- aggregate(x = list(TOTN = dfSPP.byUID.1c$TAXON),
                                   by = dfSPP.byUID.1c[c(sampID)], FUN = length)
   
-  dfSPP.byUID <- merge(dfSPP.byUID.1c, dfSPP.byUID.sum, by = sampID)
-  dfSPP.byUID <- merge(dfSPP.byUID, dfSPP.byUID.length, by = sampID)
+  dfSPP.byUID.1c$TOTFREQ <- NULL
   
-  dfSPP.byUID$TOTFREQ <- with(dfSPP.byUID, TOTFREQ*100)
-  dfSPP.byUID$sXRCOV <- with(dfSPP.byUID, XABCOV/XTOTABCOV*100)
-  dfSPP.byUID$FREQ <- with(dfSPP.byUID, NUM/NPLOTS*100)
-  dfSPP.byUID$sRFREQ <- with(dfSPP.byUID, (FREQ/TOTFREQ)*100)
+  dfSPP.byUID.fin <- merge(dfSPP.byUID.1c, dfSPP.byUID.sum, by = sampID)
+  dfSPP.byUID.fin <- merge(dfSPP.byUID.fin, dfSPP.byUID.length, by = sampID)
+  
+  dfSPP.byUID.fin$TOTFREQ <- with(dfSPP.byUID.fin, TOTFREQ*100)
+  dfSPP.byUID.fin$sXRCOV <- with(dfSPP.byUID.fin, XABCOV/XTOTABCOV*100)
+  dfSPP.byUID.fin$FREQ <- with(dfSPP.byUID.fin, NUM/NPLOTS*100)
+  dfSPP.byUID.fin$sRFREQ <- with(dfSPP.byUID.fin, (FREQ/TOTFREQ)*100)
   
   # dfSPP.byUID.fin <- plyr::ddply(dfSPP.byUID.1c,sampID,mutate,TOTN=length(TAXON)
   #                                ,XTOTABCOV=sum(XABCOV),TOTFREQ=sum(NUM/NPLOTS)*100) %>%

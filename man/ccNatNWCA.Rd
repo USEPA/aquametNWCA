@@ -4,7 +4,8 @@
 \name{ccNatNWCA}
 \alias{ccNatNWCA}
 \title{NWCA 2011 Plant CC and Native Status}
-\format{A data frame with 13203 observations on the following 5 variables:
+\format{
+A data frame with 13203 observations on the following 5 variables:
 \describe{
  \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA 
  taxonomic ID number}
@@ -15,7 +16,8 @@
  \item{NWCA_CC}{State-specific Coefficient of Conservatism value as 
  determined for NWCA 2011}
  \item{NWCA_NATSTAT}{State-specific Native status as determined for NWCA 2011}
-}}
+}
+}
 \usage{
 ccNatNWCA
 }

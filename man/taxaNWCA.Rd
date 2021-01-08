@@ -4,7 +4,8 @@
 \name{taxaNWCA}
 \alias{taxaNWCA}
 \title{NWCA 2011 Vascular Plant Taxa List}
-\format{A data frame with 3814 observations on the following 12 variables.
+\format{
+A data frame with 3814 observations on the following 12 variables.
 \describe{
   \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA taxonomic 
   ID number}
@@ -29,7 +30,8 @@
   head(taxaNWCA)
   str(taxaNWCA)
   
-  @keywords datasets}
+  @keywords datasets
+}
 \usage{
 taxaNWCA
 }

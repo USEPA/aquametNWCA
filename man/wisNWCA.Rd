@@ -4,7 +4,8 @@
 \name{wisNWCA}
 \alias{wisNWCA}
 \title{NWCA 2011 Wetland Indicator Status}
-\format{A data frame with 19818 observations on the following 5 variables.
+\format{
+A data frame with 19818 observations on the following 5 variables.
 \describe{
     \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA taxonomic 
     ID number}
@@ -13,7 +14,8 @@
     \item{GEOG_ID}{Geographic unit to which value applies, which is US Army 
     Corps region in this dataset}
     \item{WIS}{USAC-specific Wetland Indicator Status as used for NWCA 2011}
-}}
+}
+}
 \usage{
 wisNWCA
 }

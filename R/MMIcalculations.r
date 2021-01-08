@@ -127,11 +127,11 @@ calcVMMI_fromMets <- function(metsIn,sampID='UID'){
   ## Calculate scores and add scored version of  metric (METRIC_SC) to data frame. SC = rescaled
   #metric score that is used in MMI calculations
   scored.mets <- vMet[,c(keyVars, 'PARAMETER')]
-  scored.mets$RESULT <- with(scored.mets, mapply(scoreMet,DIRECTION,RESULT,FLOOR,CEILING))
+  scored.mets$RESULT <- with(scored.mets, with(vMet, mapply(scoreMet,DIRECTION,RESULT,FLOOR,CEILING)))
   scored.mets$PARAMETER <- with(scored.mets, paste(as.character(PARAMETER), 'SC', sep='_'))
 
   ## Now that we have scored metrics, we can calculate MMI scores and merge with MMI thresholds to determine condition
-  mmi.1 <- aggregate(x = list(VMMI = scored.mets$RESULT), by = scored.mets[,keyVars],
+  mmi.1 <- aggregate(x = list(VMMI = scored.mets$RESULT), by = scored.mets[keyVars],
                      FUN = sum)
   mmi.1$VMMI <- with(mmi.1, round(VMMI*(10/4), 1))
   
@@ -158,6 +158,7 @@ calcVMMI_fromMets <- function(metsIn,sampID='UID'){
     cond.long <- reshape(cond, idvar = keyVars, direction = 'long',
                          varying = 'VEGCOND', times = 'VEGCOND',
                          timevar = 'PARAMETER', v.names = 'RESULT')
+    cond.long <- subset(cond.long, select = c(keyVars, 'PARAMETER', 'RESULT'))
 
     mmiOut <- rbind(mmiOut,cond.long)
   }

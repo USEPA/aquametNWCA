@@ -4,13 +4,15 @@
 \name{Vtype_GrCovEx}
 \alias{Vtype_GrCovEx}
 \title{Example Vegetation Type and Ground Surface Attributes data}
-\format{A data frame with 1775 observations on the following  variables.
+\format{
+A data frame with 1775 observations on the following  variables.
  \describe{
  \item{UID}{A unique site visit ID}
  \item{PLOT}{Plot number of measurement}
  \item{PARAMETER}{Name of parameter measured}
  \item{RESULT}{Measured value of parameter}
- }}
+ }
+}
 \usage{
 Vtype_GrCovEx
 }

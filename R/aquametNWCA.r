@@ -7,7 +7,7 @@
 #' @importFrom Hmisc "%nin%"
 #' @importFrom gtools smartbind
 #' @importFrom ecodist distance
-#' @importFrom stats approx median sd
+#' @importFrom stats approx median sd aggregate reshape
 #' @importFrom rlang .data
 #' 
 #' @keywords package

@@ -4,7 +4,8 @@
 \name{TreesEx}
 \alias{TreesEx}
 \title{Example Tree data}
-\format{A data frame with 1528 observations on the following 6 variables.
+\format{
+A data frame with 1528 observations on the following 6 variables.
   \describe{
   \item{UID}{A unique site visit ID}
   \item{PLOT}{Plot number of measurement}
@@ -12,7 +13,8 @@
   \item{LINE}{Line number of measurement}
   \item{PARAMETER}{Name of tree parameter measured}
   \item{RESULT}{Measured value of parameter}
-  }}
+  }
+}
 \usage{
 TreesEx
 }

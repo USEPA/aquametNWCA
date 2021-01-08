@@ -4,7 +4,8 @@
 \name{vmmiMetEx}
 \alias{vmmiMetEx}
 \title{Example VMMI metric data}
-\format{A data frame with 10 observations on the following 8 variables.
+\format{
+A data frame with 10 observations on the following 8 variables.
  \describe{
  \item{UID}{A unique site visit ID}
  \item{NWCA_ECO4}{Aggregated ecoregions as used in NWCA 2011}
@@ -15,7 +16,8 @@
  \item{N_TOL}{Number of tolerant species, based on C-Value (NWCA_CC)}
  \item{RIMP_NATSPP}{Relative importance of native species}
  \item{XRCOV_MONOCOTS_NAT}{Relative mean cover of native monocots}
- }}
+ }
+}
 \usage{
 vmmiMetEx
 }

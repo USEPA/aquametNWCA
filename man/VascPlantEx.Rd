@@ -4,7 +4,8 @@
 \name{VascPlantEx}
 \alias{VascPlantEx}
 \title{Example Vascular Plant Cover data}
-\format{A data frame with 1200 observations on the following 6 variables.
+\format{
+A data frame with 1200 observations on the following 6 variables.
   \describe{
   \item{UID}{A unique site visit ID}
   \item{STATE}{Two letter state code of sample site}
@@ -13,7 +14,8 @@
   \item{USDA_NAME}{Taxon name corresponding to input taxa tables}
   \item{COVER}{A numeric vector representing the percent cover of a 
   taxon within a plot}
-  }}
+  }
+}
 \usage{
 VascPlantEx
 }

@@ -4,7 +4,8 @@ library(testthat)
 context("VMMI and condition values correct")
 
 test_that("VMMI and condition using ECO_X_WETGRP correct",
-          {testIn <- merge(testSites,testMets,by='UID') %>%
+          {
+            testIn <- merge(testSites,testMets,by='UID') %>%
             dplyr::select(UID,ECO_X_WETGRP,PARAMETER,RESULT) %>%
             dplyr::filter(PARAMETER %in% c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')) %>%
             reshape2::dcast(UID+ECO_X_WETGRP~PARAMETER,value.var='RESULT')
@@ -23,7 +24,8 @@ test_that("VMMI and condition using ECO_X_WETGRP correct",
 )
 
 test_that("VMMI and condition using NWCA_ECO4 and NWCA_WET_GRP correct",
-          {testIn <- merge(testSites,testMets,by='UID') %>%
+          {
+            testIn <- merge(testSites,testMets,by='UID') %>%
              dplyr::select(UID,NWCA_ECO4,NWCA_WET_GRP,PARAMETER,RESULT) %>%
              dplyr::filter(PARAMETER %in% c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')) %>%
              reshape2::dcast(UID+NWCA_ECO4+NWCA_WET_GRP~PARAMETER,value.var='RESULT')
@@ -41,7 +43,8 @@ test_that("VMMI and condition using NWCA_ECO4 and NWCA_WET_GRP correct",
           })
 
 test_that("VMMI lacking ecoregion and wetland type correct",
-          {testIn <- merge(testSites,testMets,by='UID') %>%
+          {
+            testIn <- merge(testSites,testMets,by='UID') %>%
              dplyr::select(UID,PARAMETER,RESULT) %>%
              dplyr::filter(PARAMETER %in% c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')) %>%
              reshape2::dcast(UID~PARAMETER,value.var='RESULT')
