@@ -267,10 +267,27 @@ nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, i
   }
   
   # Calculate totals and add them to output data frame
-  dfSPP.byUID.fin <- plyr::ddply(dfSPP.byUID.1c,sampID,mutate,TOTN=length(TAXON)
-                                 ,XTOTABCOV=sum(XABCOV),TOTFREQ=sum(NUM/NPLOTS)*100) %>%
-    plyr::mutate(sXRCOV=XABCOV/XTOTABCOV*100, FREQ=(NUM/NPLOTS)*100
-                 ,sRFREQ=(FREQ/TOTFREQ)*100)
+  dfSPP.byUID.1c$TOTFREQ <- with(dfSPP.byUID.1c, NUM/NPLOTS)
+  
+  dfSPP.byUID.sum <- aggregate(x = list(XTOTABCOV = dfSPP.byUID.1c$XABCOV, 
+                                        TOTFREQ = dfSPP.byUID.1c$TOTFREQ),
+                               by = dfSPP.byUID.1c[c(sampID)], FUN = sum)
+  
+  dfSPP.byUID.length <- aggregate(x = list(TOTN = dfSPP.byUID.1c$TAXON),
+                                  by = dfSPP.byUID.1c[c(sampID)], FUN = length)
+  
+  dfSPP.byUID <- merge(dfSPP.byUID.1c, dfSPP.byUID.sum, by = sampID)
+  dfSPP.byUID <- merge(dfSPP.byUID, dfSPP.byUID.length, by = sampID)
+  
+  dfSPP.byUID$TOTFREQ <- with(dfSPP.byUID, TOTFREQ*100)
+  dfSPP.byUID$sXRCOV <- with(dfSPP.byUID, XABCOV/XTOTABCOV*100)
+  dfSPP.byUID$FREQ <- with(dfSPP.byUID, NUM/NPLOTS*100)
+  dfSPP.byUID$sRFREQ <- with(dfSPP.byUID, (FREQ/TOTFREQ)*100)
+  
+  # dfSPP.byUID.fin <- plyr::ddply(dfSPP.byUID.1c,sampID,mutate,TOTN=length(TAXON)
+  #                                ,XTOTABCOV=sum(XABCOV),TOTFREQ=sum(NUM/NPLOTS)*100) %>%
+  #   plyr::mutate(sXRCOV=XABCOV/XTOTABCOV*100, FREQ=(NUM/NPLOTS)*100
+  #                ,sRFREQ=(FREQ/TOTFREQ)*100)
   
   dfSPP[[1]] <- dfSPP.byUID.fin
   
@@ -282,7 +299,8 @@ nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, i
   dfGEN <- nwcaVegInput(sampID,'GENUS',vascIn,inTaxa,cValReg)
   dfFAM <- nwcaVegInput(sampID,'FAMILY',vascIn,inTaxa,cValReg)
   
-  outDF <- list(byUIDspp=dfSPP[[1]],byPlotspp=dfSPP[[2]],byUIDgen=dfGEN[[1]],byPlotgen=dfGEN[[2]],byUIDfam=dfFAM[[1]],byPlotfam=dfFAM[[2]])
+  outDF <- list(byUIDspp=dfSPP[[1]],byPlotspp=dfSPP[[2]],byUIDgen=dfGEN[[1]],
+                byPlotgen=dfGEN[[2]],byUIDfam=dfFAM[[1]],byPlotfam=dfFAM[[2]])
   print("Done preparing datasets")
   
   # class(outDF) <- append(class(outDF),"nwcaVegData")
@@ -352,31 +370,59 @@ nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, i
 #' outEx <- nwcaVegInput(sampID='UID','GENUS',VascPlantEx,taxaNWCA,cValReg='STATE')
 #' head(outEx$byUID)
 #' head(outEx$byPlot)
-nwcaVegInput <- function(sampID='UID',tvar,vascIn,taxa,cValReg='STATE'){
+nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxa, cValReg='STATE'){
   
     # First merge the taxa list with the cover data by USDA_NAME
   vascIn.1 <- merge(vascIn,taxa,by='USDA_NAME')
   vascIn.1$tobj <- vascIn.1[,tvar] # Set tobj as the value of tvar
-  vascIn.1 <- plyr::mutate(vascIn.1,COVER=as.numeric(COVER)) # Make sure COVER is numeric
+  vascIn.1$COVER <- with(vascIn.1, as.numeric(COVER)) # Make sure COVER is numeric
+  # vascIn.1 <- plyr::mutate(vascIn.1,COVER=as.numeric(COVER)) 
+  
   # Set value for TAXON as either specified taxon level above species, or as USDA_NAME
-  byPlot <- plyr::mutate(vascIn.1,TAXON=ifelse(!is.na(tobj) & tobj!='',tobj,USDA_NAME))
+  byPlot <- vascIn.1
+  byPlot$TAXON <- with(vascIn.1, ifelse(!is.na(tobj) & tobj!='',tobj, USDA_NAME))
+  # byPlot <- plyr::mutate(vascIn.1,TAXON=ifelse(!is.na(tobj) & tobj!='',tobj,USDA_NAME))
+
   # Sum COVER by SAMPID, PLOT, and TAXON to ensure there is only one row per species in input data, set DISTINCT as 1 to be
   # taxon counter
   byVars <- unique(c(sampID, cValReg, 'USAC_REGION','TAXON','STATE'))
-    
-  byPlot1 <- plyr::ddply(byPlot,c(byVars,'PLOT'),summarise,COVER=sum(COVER)
-                         ,DISTINCT=ifelse(COVER>0,1,0),.progress='tk')
+  
+  byPlot1.sum <- aggregate(x = list(COVER = byPlot$COVER), by = byPlot[c(byVars, 'PLOT')],
+                       FUN = sum)
+  
+  byPlot1.dist <- aggregate(x = list(DISTINCT = byPlot1.sum$COVER), by = byPlot1.sum[c(byVars, 'PLOT')],
+                            FUN = function(x){ifelse(x >0, 1, 0)})
+  
+  byPlot1 <- merge(byPlot1.sum, byPlot1.dist, by = c(byVars, 'PLOT'))
+  byPlot1 <- subset(byPlot1, select = c(byVars, 'PLOT', 'COVER', 'DISTINCT'))
+  
+  # byPlot1 <- plyr::ddply(byPlot,c(byVars,'PLOT'),summarise,COVER=sum(COVER)
+  #                        ,DISTINCT=ifelse(COVER>0,1,0),.progress='tk')
   byPlot1$COVER[byPlot1$COVER>100] <- 100 # Cap sums at 100 percent
   print("Done with plot summing")
   
   ## Calculate frequency and relative frequency variables by taxon
-  byUID1 <- plyr::ddply(byPlot1,byVars,summarise,NUM=sum(DISTINCT),XABCOV=mean(COVER)
-                        ,NPLOTS=length(unique(PLOT)))
-  byUID2 <- plyr::mutate(byUID1,DISTINCT=1)
+  byUID1.sum <- aggregate(x = list(NUM = byPlot1$DISTINCT), by = byPlot1[c(byVars)],
+                          FUN = sum) 
+  
+  byUID1.mean <- aggregate(x = list(XABCOV = byPlot1$COVER), by = byPlot1[c(byVars)],
+                           FUN = mean)
+  
+  byUID1.length <- aggregate(x = list(NPLOTS = byPlot1$PLOT), by = byPlot1[c(byVars)],
+                             FUN = function(x){length(unique(x))})
+  
+  byUID2 <- merge(byUID1.sum, byUID1.mean, by = byVars)
+  byUID2 <- merge(byUID2, byUID1.length, by = byVars)
+  byUID2$DISTINCT <- 1
+  byUID2 <- subset(byUID2, select = c(byVars, 'NUM', 'XABCOV', 'NPLOTS', 'DISTINCT'))
+  
+  # byUID1 <- plyr::ddply(byPlot1,byVars,summarise,NUM=sum(DISTINCT),XABCOV=mean(COVER)
+  #                       ,NPLOTS=length(unique(PLOT)))
+  # byUID2 <- plyr::mutate(byUID1,DISTINCT=1)
   
   print("Done with sampID summing")
   
-  byDF <- list(byUID=byUID2,byPlot=byPlot1)
+  byDF <- list(byUID=byUID2, byPlot=byPlot1)
   
  # class(byDF) <- append(class(byDF),'nwcaVegInput')
   
