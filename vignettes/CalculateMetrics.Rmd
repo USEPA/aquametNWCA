@@ -80,7 +80,10 @@ To see all of these combined and in wide format:
 allVasc <- rbind(outRich, outCat, outBC)
 
 library(reshape2)
-outVasc <- dcast(allVasc,UID~PARAMETER,value.var='RESULT')
+outVasc <- reshape(allVasc, idvar = 'UID', direction = 'wide',
+                   timevar = 'PARAMETER', v.names = 'RESULT')
+names(outVasc) <- gsub("RESULT\\.", "", names(outVasc))
+
 head(outVasc)
 ```
 ******
@@ -91,8 +94,9 @@ As with the vascular plant metrics, there is a wrapper function that calculates 
 ```{r allTree.1}
 head(TreesEx)
 # Calculate nplots from tree example data
-nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
- ,NPLOTS=length(unique(PLOT)))
+nplots <- aggregate(x = list(NPLOTS = TreesEx$PLOT),
+                    by = TreesEx[c('UID')], 
+                    FUN = function(x){length(unique(x))})
 
 outTree <- calcTreeMets(TreesEx, nPlotIn=nplots, sampID='UID')
 head(outTree)
@@ -114,8 +118,9 @@ head(Vtype_GrCovEx)
 
 subVtype <- subset(Vtype_GrCovEx, PARAMETER!='SANDT_CLASS')
 
-nplots <- plyr::ddply(subVtype, c('UID'),dplyr::summarise
- ,NPLOTS=length(unique(PLOT)))
+nplots <- aggregate(x = list(NPLOTS = subVtype$PLOT), 
+                    by = subVtype[c('UID')],
+                    FUN = function(x){length(unique(x))})
 
 outVG <- calcVtype_GcovMets(Vtype_GrCovEx, nPlotIn=nplots, sampID='UID')
 
@@ -136,7 +141,11 @@ unique(outVstrat$PARAMETER)
 
 # Now we can combine these two outputs and cast them into wide format
 outAllVG <- rbind(outST,outVstrat)
-outAllVG.wide <- dcast(outAllVG,UID~PARAMETER,value.var='RESULT')
+
+outAllVG.wide <- reshape(outAllVG, idvar = 'UID', direction = 'wide',
+                         timevar = 'PARAMETER', v.names = 'RESULT')
+names(outAllVG.wide) <- gsub("RESULT\\.", "", names(outAllVG.wide))
+
 head(outAllVG.wide)
 ```
 ************************

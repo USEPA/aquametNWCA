@@ -4,14 +4,11 @@ Title: NWCA 2011 Metrics and Indices
 Version: 2.3.5
 Depends: R (>= 3.6)
 Imports:
-    dplyr,
-    plyr,
-    reshape2,
     ecodist,
     Hmisc,
     gtools,
-    car,
-    rlang
+    rlang,
+    stats
 Author: Karen Blocksom
 Maintainer: Karen Blocksom <blocksom.karen@epa.gov>
 Description: This package calculates vegetation 
@@ -28,4 +25,4 @@ Suggests:
     rmarkdown,
     testthat
 VignetteBuilder: knitr
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
