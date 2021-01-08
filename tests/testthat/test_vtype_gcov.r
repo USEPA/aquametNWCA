@@ -3,7 +3,8 @@ library(testthat)
 
 context("Vegetation types and ground cover metric functions")
 
-nplots <- ddply(subset(testVCGC,PARAMETER!='SANDT_CLASS'),c('UID'),summarise,NPLOTS=length(unique(PLOT)))
+nplots <- plyr::ddply(subset(testVCGC,PARAMETER!='SANDT_CLASS'),c('UID'),
+                      dplyr::summarise,NPLOTS=length(unique(PLOT)))
 
 test_that("S & T metric values correct",
 {
@@ -61,3 +62,19 @@ test_that("Bare ground and litter metric values correct",
  expect_equal(as.numeric(compOut.num$RESULT.x),as.numeric(compOut.num$RESULT.y),tolerance=0.001)            
 })
 
+test_that("Veg strata and ground cover metric values correct",
+          {
+                  vcgcOut <- calcVtype_GcovMets(testVCGC, nplots, sampID='UID', survyear='2011')
+                  vcgcOut.long <- reshape2::melt(vcgcOut,id.vars=c('UID'),
+                                                 variable.name='PARAMETER',value.name='RESULT')
+                  compOut <- merge(testMets,vcgcOut.long,by=c('UID','PARAMETER'))
+                  expect_true(nrow(vcgcOut.long)==1080)
+                  expect_true(nrow(compOut)==nrow(vcgcOut.long))
+                  compOut.char <- subset(compOut,PARAMETER %in% c('DOM_SANDT','LITTER_TYPE'))
+                  expect_equal(compOut.char$RESULT.x,compOut.char$RESULT.y)
+                  compOut.num <- subset(compOut,!PARAMETER %in% c('DOM_SANDT','LITTER_TYPE'))
+                  compOut.num <- dplyr::mutate(compOut.num,RESULT.x=as.numeric(RESULT.x),
+                                               RESULT.y=as.numeric(RESULT.y))
+                  expect_equal(as.numeric(compOut.num$RESULT.x),as.numeric(compOut.num$RESULT.y),
+                               tolerance=0.001)            
+          })

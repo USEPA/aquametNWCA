@@ -373,7 +373,7 @@ nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, i
 nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxa, cValReg='STATE'){
   
     # First merge the taxa list with the cover data by USDA_NAME
-  vascIn.1 <- merge(vascIn,taxa,by='USDA_NAME')
+  vascIn.1 <- merge(vascIn, taxa, by='USDA_NAME')
   vascIn.1$tobj <- vascIn.1[,tvar] # Set tobj as the value of tvar
   vascIn.1$COVER <- with(vascIn.1, as.numeric(COVER)) # Make sure COVER is numeric
   # vascIn.1 <- plyr::mutate(vascIn.1,COVER=as.numeric(COVER)) 

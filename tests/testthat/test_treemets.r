@@ -21,7 +21,7 @@ test_that("Tree count metric values correct",
            tcntOut <- calcTreeCntMets(testTree,nplots,sampID='UID')
            compOut <- merge(testMets,tcntOut,by=c('UID','PARAMETER'))
            compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
-           expect_true(nrow(tcntOut)==160)
+           expect_true(nrow(tcntOut)==220)
            expect_true(nrow(compOut)==nrow(tcntOut))
            expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)                      
           })
@@ -43,7 +43,7 @@ test_that("All tree metric values correct",
             treeOut.long <- reshape2::melt(treeOut,id.vars=c('UID'),variable.name='PARAMETER',value.name='RESULT')
             compOut <- merge(testMets,treeOut.long,by=c('UID','PARAMETER'))
             compOut <- dplyr::mutate(compOut,RESULT.x=as.numeric(RESULT.x))
-            expect_true(nrow(treeOut.long)==700)
+            expect_true(nrow(treeOut.long)==760)
             expect_true(nrow(compOut)==nrow(treeOut.long))
             expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)                      
             
