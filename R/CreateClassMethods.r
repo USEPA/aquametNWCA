@@ -378,12 +378,10 @@ nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxa, cValReg='STATE'){
   vascIn.1 <- merge(vascIn, taxa, by='USDA_NAME')
   vascIn.1$tobj <- vascIn.1[,tvar] # Set tobj as the value of tvar
   vascIn.1$COVER <- with(vascIn.1, as.numeric(COVER)) # Make sure COVER is numeric
-  # vascIn.1 <- plyr::mutate(vascIn.1,COVER=as.numeric(COVER)) 
-  
+
   # Set value for TAXON as either specified taxon level above species, or as USDA_NAME
   byPlot <- vascIn.1
   byPlot$TAXON <- with(vascIn.1, ifelse(!is.na(tobj) & tobj!='',tobj, USDA_NAME))
-  # byPlot <- plyr::mutate(vascIn.1,TAXON=ifelse(!is.na(tobj) & tobj!='',tobj,USDA_NAME))
 
   # Sum COVER by SAMPID, PLOT, and TAXON to ensure there is only one row per species in input data, set DISTINCT as 1 to be
   # taxon counter
@@ -398,8 +396,6 @@ nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxa, cValReg='STATE'){
   byPlot1 <- merge(byPlot1.sum, byPlot1.dist, by = c(byVars, 'PLOT'))
   byPlot1 <- subset(byPlot1, select = c(byVars, 'PLOT', 'COVER', 'DISTINCT'))
   
-  # byPlot1 <- plyr::ddply(byPlot,c(byVars,'PLOT'),summarise,COVER=sum(COVER)
-  #                        ,DISTINCT=ifelse(COVER>0,1,0),.progress='tk')
   byPlot1$COVER[byPlot1$COVER>100] <- 100 # Cap sums at 100 percent
   print("Done with plot summing")
   
@@ -417,10 +413,6 @@ nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxa, cValReg='STATE'){
   byUID2 <- merge(byUID2, byUID1.length, by = byVars)
   byUID2$DISTINCT <- 1
   byUID2 <- subset(byUID2, select = c(byVars, 'NUM', 'XABCOV', 'NPLOTS', 'DISTINCT'))
-  
-  # byUID1 <- plyr::ddply(byPlot1,byVars,summarise,NUM=sum(DISTINCT),XABCOV=mean(COVER)
-  #                       ,NPLOTS=length(unique(PLOT)))
-  # byUID2 <- plyr::mutate(byUID1,DISTINCT=1)
   
   print("Done with sampID summing")
   

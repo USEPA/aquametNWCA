@@ -71,8 +71,9 @@ head(Vtype_GrCovEx)
 
 subVtype_GrCovEx <- subset(Vtype_GrCovEx, PARAMETER!='SANDT_CLASS') 
 
-nplots <- plyr::ddply(subVtype_GrCovEx,c('UID'),dplyr::summarise
-,NPLOTS=length(unique(PLOT)))
+nplots <- aggregate(x = list(NPLOTS = subVtype_GrCovEx$PLOT), 
+by = subVtype_GrCovEx[c('UID')],
+FUN = function(x){length(unique(x))})
 
 exOut <- calcVtype_GcovMets(Vtype_GrCovEx, nPlotIn=nplots, sampID='UID')
 

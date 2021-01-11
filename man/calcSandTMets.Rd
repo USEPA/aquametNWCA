@@ -56,8 +56,6 @@ head(Vtype_GrCovEx)
 # Create data frame with number of plots sampled for each sampID
 nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
 # alternative approach to creating this data frame
-nplots <- plyr::ddply(Vtype_GrCovEx,c('UID'),dplyr::summarise
-,NPLOTS=length(unique(PLOT)))
 
 sandtEx <- calcSandTMets(Vtype_GrCovEx,nplots)
 

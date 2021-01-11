@@ -1448,7 +1448,6 @@ calcBCmets <- function(vascIn,sampID='UID'){
             FUN = sum)
   # This df needs to be in wide format
   forDist$SPECIES <- with(forDist, paste('s',SPECIES_NAME_ID,sep=''))
-  # forDist <- plyr::mutate(forDist,SPECIES=paste('s',SPECIES_NAME_ID,sep=''))
 
   meanBC <- int.calcXBC(forDist, sampID)
 

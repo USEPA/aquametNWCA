@@ -51,8 +51,8 @@ calculated due to missing parameters are set to 0.
 }
 \examples{
 head(TreesEx)
-nplots <- plyr::ddply(TreesEx,c('UID'),dplyr::summarise
-,NPLOTS=length(unique(PLOT)))
+nplots <- aggregate(x = list(NPLOTS = TreesEx$PLOT), by = TreesEx[c('UID')],
+FUN = function(x){length(unique(x))})
 
 tcntEx <- calcTreeCntMets(TreesEx, nPlot=nplots, sampID='UID')
 

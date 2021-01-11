@@ -3,8 +3,9 @@ library(testthat)
 
 context("Tree metric functions")
 
-nplots <- plyr::ddply(testTree,c('UID'),dplyr::summarise
-                                ,NPLOTS=length(unique(PLOT)))
+nplots <- aggregate(x = list(NPLOTS = testTree$PLOT), 
+                    by = testTree[c("UID")],
+                    FUN = function(x){length(unique(x))})
 
 test_that("Snag metric values correct",
           {

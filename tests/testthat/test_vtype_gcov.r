@@ -3,8 +3,11 @@ library(testthat)
 
 context("Vegetation types and ground cover metric functions")
 
-nplots <- plyr::ddply(subset(testVCGC,PARAMETER!='SANDT_CLASS'),c('UID'),
-                      dplyr::summarise,NPLOTS=length(unique(PLOT)))
+testVCGC.sub <- subset(testVCGC, PARAMETER != 'SANDT_CLASS')
+nplots <- aggregate(x = list(NPLOTS = testVCGC.sub$PLOT), 
+                    by = testVCGC.sub[c("UID")],
+                    FUN = function(x){length(unique(x))})
+
 
 test_that("S & T metric values correct",
         {

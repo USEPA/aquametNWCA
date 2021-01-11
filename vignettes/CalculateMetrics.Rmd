@@ -58,8 +58,9 @@ str(sumdf)
 
 Now we can run functions for subsets, starting with `calcRichness()`:
 ```{r subVasc.2}
-outRich <- calcRichness(sumdf$byUIDspp,sumdf$byPlotspp,sumdf$byUIDgen,sumdf$byPlotgen,sumdf$byUIDfam,sumdf$byPlotfam
-                        ,sampID='UID')
+outRich <- calcRichness(sumdf$byUIDspp,sumdf$byPlotspp,sumdf$byUIDgen,sumdf$byPlotgen,
+                        sumdf$byUIDfam,sumdf$byPlotfam, 
+                        sampID='UID')
 head(outRich)
 unique(outRich$PARAMETER)
 ```
@@ -79,7 +80,6 @@ To see all of these combined and in wide format:
 ```{r subVasc.5}
 allVasc <- rbind(outRich, outCat, outBC)
 
-library(reshape2)
 outVasc <- reshape(allVasc, idvar = 'UID', direction = 'wide',
                    timevar = 'PARAMETER', v.names = 'RESULT')
 names(outVasc) <- gsub("RESULT\\.", "", names(outVasc))
@@ -129,7 +129,6 @@ head(outVG)
 ## 4.2 Subsets of metrics
 If we only want to calculate a subset of metrics, say S & T metrics and vascular strata metrics, for example, we need to supply the number of plots sampled at each site along with the data from form V-4. 
 ```{r subVG}
-library(plyr)
 
 outST <- calcSandTMets(Vtype_GrCovEx, nplots, sampID='UID')
 head(outST)
