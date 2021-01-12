@@ -200,11 +200,11 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
   
   for(i in 1:length(sampID)){
     if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
-    else treeIn$SAMPID <- paste(treeIn$SAMPID,treeIn[,sampID[i]],sep='.')
+    else treeIn$SAMPID <- paste(treeIn$SAMPID, treeIn[,sampID[i]], sep='.')
   }
-  samples <- unique(subset(treeIn,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(treeIn, select=c(sampID, 'SAMPID')))
   
-  allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID),stringsAsFactors=F)
+  allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID), stringsAsFactors=F)
   
   tcnts <- subset(treeIn,PARAMETER %in% c('XXTHIN_TREE','XTHIN_TREE','THIN_TREE','JR_TREE','THICK_TREE','XTHICK_TREE','XXTHICK_TREE'))
   
@@ -237,12 +237,12 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
                             timevar = 'METRIC', v.names = 'RESULT')
     names(allTreesOut1) <- gsub("RESULT\\.", "", names(allTreesOut1))
 
-    empty_trees <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
+    empty_trees <- data.frame(t(rep(NA,16)), stringsAsFactors=F)
     names(empty_trees) <- c("TOTN_TREES","XN_TREES","TOTN_JR_TREE","TOTN_THICK_TREE","TOTN_THIN_TREE","TOTN_XTHICK_TREE","TOTN_XTHIN_TREE"
                             ,"TOTN_XXTHICK_TREE","TOTN_XXTHIN_TREE","XN_JR_TREE","XN_THICK_TREE","XN_THIN_TREE","XN_XTHICK_TREE","XN_XTHIN_TREE"
                             ,"XN_XXTHICK_TREE","XN_XXTHIN_TREE")
 
-    allTreesOut2 <- subset(merge(allTreesOut1, empty_trees, all=TRUE),!is.na(SAMPID))
+    allTreesOut2 <- subset(merge(allTreesOut1, empty_trees, all=TRUE), !is.na(SAMPID))
 
     allTreesOut3 <- merge(allUIDs, allTreesOut2, by='SAMPID', all.x=T)
 
@@ -276,9 +276,10 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
                             ,"XN_XXTHICK_TREE","XN_XXTHIN_TREE","TOTN_SMALL","TOTN_MID","TOTN_LARGE",
                             "XN_SMALL","XN_MID","XN_LARGE")
 
-    allTreesOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F), empty_trees, all=TRUE)
+    allTreesOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)), stringsAsFactors=F), 
+                         empty_trees, all=TRUE)
 
-    allTreesOut1 <- subset(allTreesOut,!is.na(SAMPID))
+    allTreesOut1 <- subset(allTreesOut, !is.na(SAMPID))
 
     varNames <- names(allTreesOut1)[!names(allTreesOut1) %in% c('SAMPID')]
     allTreesOut2 <- reshape(allTreesOut2, idvar = 'SAMPID', direction = 'long',
@@ -359,15 +360,15 @@ calcTreeCntMets <- function(treeIn, nPlot, sampID='UID'){
 #' head(tcvrEx)
 #' unique(tcvrEx$PARAMETER)
 calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
-  treeIn <- merge(treeIn,nPlot,by=sampID, all.y=TRUE)
+  treeIn <- merge(treeIn, nPlot, by=sampID, all.y=TRUE)
   
   for(i in 1:length(sampID)){
     if(i==1) treeIn$SAMPID <- treeIn[,sampID[i]]
     else treeIn$SAMPID <- paste(treeIn$SAMPID,treeIn[,sampID[i]],sep='.')
   }
-  samples <- unique(subset(treeIn,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(treeIn,select=c(sampID, 'SAMPID')))
   
-  allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID),stringsAsFactors=F)
+  allUIDs <- data.frame(SAMPID=unique(treeIn$SAMPID), stringsAsFactors=F)
   
   ##### TREE SPECIES METRICS ####################################################################################
   tcvr <- subset(treeIn,PARAMETER %in% c('VSMALL_TREE','SMALL_TREE','LMED_TREE','HMED_TREE','TALL_TREE','VTALL_TREE'))
@@ -379,7 +380,7 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
                     timevar = 'PARAMETER', v.names = 'RESULT')
     names(tspp) <- gsub('RESULT\\.', '', names(tspp)) 
  
-    tcvr1 <- merge(tspp,tcvr,by=c('SAMPID','PLOT','PAGE','LINE'),all=TRUE)
+    tcvr1 <- merge(tspp,tcvr,by=c('SAMPID','PLOT','PAGE','LINE'), all=TRUE)
     tcvr1$PARAM_ALT <- NA
     tcvr1$PARAM_ALT[tcvr1$PARAMETER %in% c('VSMALL_TREE','SMALL_TREE')] <- 'TREE_GROUND'
     tcvr1$PARAM_ALT[tcvr1$PARAMETER %in% c('LMED_TREE','HMED_TREE')] <- 'TREE_MID'
@@ -434,9 +435,9 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
                            "N_TREE_MID","N_TREE_GROUND","PCTN_TREE_UPPER","PCTN_TREE_MID",
                            "PCTN_TREE_GROUND")
 
-    tsppOut2 <- subset(merge(tsppOut1, empty_tspp, all=TRUE),!is.na(SAMPID))
+    tsppOut2 <- subset(merge(tsppOut1, empty_tspp, all=TRUE), !is.na(SAMPID))
 
-    tsppOut3 <- merge(allUIDs,tsppOut2,by='SAMPID',all.x=T)
+    tsppOut3 <- merge(allUIDs, tsppOut2, by='SAMPID', all.x=T)
 
     varNames <- names(tsppOut3)[!names(tsppOut3) %in% c('SAMPID')]
     tsppOut4 <- reshape(tsppOut3, idvar = 'SAMPID', direction = 'long',
@@ -445,12 +446,12 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
     tsppOut4$METRIC <- with(tsppOut4, as.character(METRIC))
     tsppOut4$RESULT <- with(tsppOut4, ifelse(is.na(RESULT),0,RESULT))
   }else{
-    empty_tspp <- data.frame(t(rep(NA,13)),stringsAsFactors=F)
+    empty_tspp <- data.frame(t(rep(NA,13)), stringsAsFactors=F)
     names(empty_tspp) <- c("N_TREESPP","N_TALL_TREE","N_HMED_TREE","N_LMED_TREE","N_SMALL_TREE","N_VSMALL_TREE","N_VTALL_TREE","N_TREE_UPPER"
                            ,"N_TREE_MID","N_TREE_GROUND","PCTN_TREE_UPPER","PCTN_TREE_MID","PCTN_TREE_GROUND")
 
-    tsppOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F), empty_tspp, all=TRUE)
-    tsppOut1 <- subset(tsppOut,!is.na(SAMPID))
+    tsppOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)), stringsAsFactors=F), empty_tspp, all=TRUE)
+    tsppOut1 <- subset(tsppOut, !is.na(SAMPID))
     
     varNames <- names(tsppOut1)[!names(tsppOut1) %in% c('SAMPID')]
     tsppOut2 <- reshape(tsppOut1, idvar = 'SAMPID', direction = 'long',
@@ -468,14 +469,14 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
     tcvr2a <- aggregate(x = list(COV = tcvr1$RESULT), 
                         by = tcvr1[c('SAMPID','PLOT','NPLOTS','PARAMETER','TREE_SPECIES')],
                         FUN = function(x){sum(as.numeric(x))})
-    tcvr2a$COV <- ifelse(tcvr2a$COV>100,100,tcvr2a$COV)
+    tcvr2a$COV <- ifelse(tcvr2a$COV>100, 100, tcvr2a$COV)
     tcvr2a <- subset(tcvr2a, COV!=0)
     
     tcvr2b <- aggregate(x = list(COV = tcvr1$RESULT), 
                         by = tcvr1[c('SAMPID','PLOT','NPLOTS','PARAM_ALT','TREE_SPECIES')],
                         FUN = function(x){sum(as.numeric(x))})
     
-    tcvr2b$COV <- ifelse(tcvr2b$COV>100,100,tcvr2b$COV)
+    tcvr2b$COV <- ifelse(tcvr2b$COV>100, 100, tcvr2b$COV)
     tcvr2b <- subset(tcvr2b, COV!=0)
 
     tcvr3a.uniq <- aggregate(x = list(uniqN = tcvr2a$NPLOTS),
@@ -531,7 +532,7 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
                         timevar = 'METRIC', v.names = 'RESULT')
     names(tcvrOut1) <- gsub("RESULT\\.", '', names(tcvrOut1))
 
-    empty_tcvr <- data.frame(t(rep(NA,27)),stringsAsFactors=F)
+    empty_tcvr <- data.frame(t(rep(NA,27)), stringsAsFactors=F)
     names(empty_tcvr) <- c("FREQ_TALL_TREE","FREQ_HMED_TREE","FREQ_LMED_TREE","FREQ_SMALL_TREE",
                            "FREQ_VSMALL_TREE","FREQ_VTALL_TREE","XCOV_TALL_TREE",
                            "XCOV_HMED_TREE","XCOV_LMED_TREE","XCOV_SMALL_TREE","XCOV_VSMALL_TREE",
@@ -541,9 +542,9 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
                            "XCOV_TREE_UPPER","XCOV_TREE_MID","XCOV_TREE_GROUND",
                            "IMP_TREE_UPPER","IMP_TREE_MID","IMP_TREE_GROUND")
 
-    tcvrOut2 <- subset(merge(tcvrOut1, empty_tcvr, all=TRUE),!is.na(SAMPID))
+    tcvrOut2 <- subset(merge(tcvrOut1, empty_tcvr, all=TRUE), !is.na(SAMPID))
 
-    tcvrOut3 <- merge(allUIDs,tcvrOut2,by='SAMPID',all.x=T)
+    tcvrOut3 <- merge(allUIDs, tcvrOut2, by='SAMPID', all.x=T)
 
     varNames <- names(tcvrOut3)[!names(tcvrOut3) %in% c('SAMPID')]
     tcvrOut4 <- reshape(tcvrOut3, idvar = 'SAMPID', direction = 'long',
@@ -551,7 +552,7 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
                         timevar = 'METRIC', v.names = 'RESULT')
     
     tcvrOut4$METRIC <- with(tcvrOut4, as.character(METRIC))
-    tcvrOut4$RESULT <- with(tcvrOut4, ifelse(is.na(RESULT),0,RESULT))
+    tcvrOut4$RESULT <- with(tcvrOut4, ifelse(is.na(RESULT), 0, RESULT))
 
   }else{
     empty_tcvr <- data.frame(t(rep(NA,27)),stringsAsFactors=F)
@@ -564,8 +565,9 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
                            "XCOV_TREE_UPPER","XCOV_TREE_MID","XCOV_TREE_GROUND",
                            "IMP_TREE_UPPER","IMP_TREE_MID","IMP_TREE_GROUND")
 
-    tcvrOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)),stringsAsFactors=F), empty_tcvr, all=TRUE)
-    tcvrOut1 <- subset(tcvrOut,!is.na(SAMPID))
+    tcvrOut <- merge(data.frame(SAMPID=rep(unique(treeIn$SAMPID)), stringsAsFactors=F), 
+                     empty_tcvr, all=TRUE)
+    tcvrOut1 <- subset(tcvrOut, !is.na(SAMPID))
     
     varNames <- names(tcvrOut1)[!names(tcvrOut1) %in% c('SAMPID')]
     tcvrOut2 <- reshape(tcvrOut1, idvar = 'SAMPID', direction = 'long',
@@ -573,17 +575,17 @@ calcTreeCoverMets <- function(treeIn, nPlot, sampID='UID'){
                         timevar = 'METRIC', v.names = 'RESULT')
     
     tcvrOut2$METRIC <- with(tcvrOut2, as.character(METRIC))
-    tcvrOut2$RESULT <- with(tcvrOut2, ifelse(is.na(RESULT),0,RESULT))
+    tcvrOut2$RESULT <- with(tcvrOut2, ifelse(is.na(RESULT), 0, RESULT))
     
     tcvrOut4 <- tcvrOut2
   }
   print("Done with tree cover metrics")
   ## Now fill in zeroes in each set of metrics and then combine
-  treeOut <- rbind(tsppOut4,tcvrOut4) 
+  treeOut <- rbind(tsppOut4, tcvrOut4) 
   treeOut$PARAMETER <- treeOut$METRIC
   treeOut$METRIC <- NULL
   
-  treeOut.1 <- merge(samples,treeOut,by='SAMPID') 
+  treeOut.1 <- merge(samples, treeOut, by='SAMPID') 
   treeOut.1 <- subset(treeOut.1, select = -SAMPID)
   
   return(treeOut.1)

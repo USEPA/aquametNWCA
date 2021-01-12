@@ -73,12 +73,12 @@
 #'                           ,'N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')))
 
 
-calcVMMI_fromMets <- function(metsIn,sampID='UID'){
+calcVMMI_fromMets <- function(metsIn, sampID='UID'){
   # Look for UID, metrics in input data frame
   necVars <- c(sampID,'FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')
   if(sum(necVars %in% names(metsIn))<5){
     msgVars <- necVars[necVars %nin% names(metsIn)]
-    print(paste(paste(msgVars,collapse=', '),"not found in input data frame. Cannot calculate VMMI without them.",sep=' '))
+    print(paste(paste(msgVars, collapse=', '),"not found in input data frame. Cannot calculate VMMI without them.",sep=' '))
   }
 
   # Look for NWCA_WETGRP - cannot assign condition without it
@@ -88,20 +88,21 @@ calcVMMI_fromMets <- function(metsIn,sampID='UID'){
 
   # Create ECO_X_WETGRP if not present but NWCA_ECO4 and NWCA_WETGRP are both provided
   if('ECO_X_WETGRP' %nin% names(metsIn) & sum(c('NWCA_ECO4','NWCA_WET_GRP') %in% names(metsIn))==2){
-    metsIn$ECO_X_WETGRP <- with(metsIn, ifelse(NWCA_WET_GRP %in% c('EH','EW'),paste('ALL',NWCA_WET_GRP,sep='-')
-                                               ,paste(NWCA_ECO4,NWCA_WET_GRP,sep='-')))
+    metsIn$ECO_X_WETGRP <- with(metsIn, ifelse(NWCA_WET_GRP %in% c('EH','EW'), 
+                                               paste('ALL', NWCA_WET_GRP, sep='-')
+                                               ,paste(NWCA_ECO4, NWCA_WET_GRP, sep='-')))
   }
 
   # Identify key variables in input dataset
   if('ECO_X_WETGRP' %in% names(metsIn)){
-    keyVars <- c(sampID,'ECO_X_WETGRP')
+    keyVars <- c(sampID, 'ECO_X_WETGRP')
   }else{
     keyVars <- sampID
   }
 
   # Make sure all metrics are in numeric format for scoring
   necMets <- c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT')
-  metsIn[,necMets] <- lapply(metsIn[,necMets],as.numeric)
+  metsIn[,necMets] <- lapply(metsIn[,necMets], as.numeric)
 
   metsIn.long <- reshape(metsIn, idvar = keyVars, direction = 'long',
                          varying= c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'),
@@ -109,17 +110,20 @@ calcVMMI_fromMets <- function(metsIn,sampID='UID'){
                          times = c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'))
   
   # Set metric scoring thresholds
-  metTholds <- data.frame(PARAMETER=c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'),CEILING=c(38.59,40,100,100)
-                          ,FLOOR=c(6.94,0,44.34,0.06),DIRECTION=c('POS','NEG','POS','POS'),stringsAsFactors=FALSE)
+  metTholds <- data.frame(PARAMETER=c('FQAI_ALL','N_TOL','RIMP_NATSPP','XRCOV_MONOCOTS_NAT'), 
+                          CEILING=c(38.59,40,100,100),
+                          FLOOR=c(6.94,0,44.34,0.06), 
+                          DIRECTION=c('POS','NEG','POS','POS'), 
+                          stringsAsFactors=FALSE)
 
-  vMet <- merge(metsIn.long,metTholds,by='PARAMETER')
+  vMet <- merge(metsIn.long, metTholds, by='PARAMETER')
 
   ## Now apply the function that calculates metric scores by interpolating values
-  scoreMet<-function(dir,x,floor,ceiling){
+  scoreMet<-function(dir, x, floor, ceiling){
     if(dir=='POS'){
-      zz<-round(approx(x=c(floor,ceiling),y=c(0,10),xout=x,method='linear',yleft=0,yright=10)$y,2)
+      zz<-round(approx(x=c(floor, ceiling), y=c(0,10), xout=x, method='linear', yleft=0, yright=10)$y, 2)
     } else {
-      zz<-round(approx(x=c(floor,ceiling),y=c(10,0),xout=x,method='linear',yleft=10,yright=0)$y,2)
+      zz<-round(approx(x=c(floor, ceiling), y=c(10,0), xout=x, method='linear', yleft=10, yright=0)$y, 2)
     }
 
   }
@@ -127,7 +131,7 @@ calcVMMI_fromMets <- function(metsIn,sampID='UID'){
   ## Calculate scores and add scored version of  metric (METRIC_SC) to data frame. SC = rescaled
   #metric score that is used in MMI calculations
   scored.mets <- vMet[,c(keyVars, 'PARAMETER')]
-  scored.mets$RESULT <- with(scored.mets, with(vMet, mapply(scoreMet,DIRECTION,RESULT,FLOOR,CEILING)))
+  scored.mets$RESULT <- with(scored.mets, with(vMet, mapply(scoreMet, DIRECTION, RESULT, FLOOR, CEILING)))
   scored.mets$PARAMETER <- with(scored.mets, paste(as.character(PARAMETER), 'SC', sep='_'))
 
   ## Now that we have scored metrics, we can calculate MMI scores and merge with MMI thresholds to determine condition
@@ -139,28 +143,28 @@ calcVMMI_fromMets <- function(metsIn,sampID='UID'){
                  varying = 'VMMI', timevar = 'PARAMETER', v.names='RESULT',
                  times = 'VMMI')
 
-  mmiOut <- rbind(scored.mets,mmi)
+  mmiOut <- rbind(scored.mets, mmi)
 
   # Set VMMI condition class thresholds
   mmiTholds <- data.frame(ECO_X_WETGRP=c('CPL-PRLH','CPL-PRLW','ALL-EH','ALL-EW','EMU-PRLH','EMU-PRLW'
-                                         ,'IPL-PRLH','IPL-PRLW','W-PRLH','W-PRLW')
-                          ,p05=c(57.3,52.8,65.0,56.0,41.6,55.8,25.3,40.3,30.0,47.9)
-                          ,p25=c(62.5,58.6,74.1,62.9,63.0,60.5,36.2,49.4,57.4,54.4)
-                          ,stringsAsFactors=FALSE)
+                                         ,'IPL-PRLH','IPL-PRLW','W-PRLH','W-PRLW'),
+                          p05=c(57.3,52.8,65.0,56.0,41.6,55.8,25.3,40.3,30.0,47.9),
+                          p25=c(62.5,58.6,74.1,62.9,63.0,60.5,36.2,49.4,57.4,54.4),
+                          stringsAsFactors=FALSE)
 
   # If ECO_X_WETGRP exists in mmi data frame, assign condition
   if('ECO_X_WETGRP' %in% names(mmi)){
-    mmi.1 <- merge(mmi,mmiTholds,by='ECO_X_WETGRP')
+    mmi.1 <- merge(mmi, mmiTholds, by='ECO_X_WETGRP')
 
     cond <- mmi.1
-    cond$VEGCOND <- with(mmi.1, ifelse(RESULT>=p25,'GOOD',ifelse(RESULT>=p05,'FAIR','POOR')))
+    cond$VEGCOND <- with(mmi.1, ifelse(RESULT>=p25, 'GOOD', ifelse(RESULT>=p05, 'FAIR', 'POOR')))
 
     cond.long <- reshape(cond, idvar = keyVars, direction = 'long',
                          varying = 'VEGCOND', times = 'VEGCOND',
                          timevar = 'PARAMETER', v.names = 'RESULT')
     cond.long <- subset(cond.long, select = c(keyVars, 'PARAMETER', 'RESULT'))
 
-    mmiOut <- rbind(mmiOut,cond.long)
+    mmiOut <- rbind(mmiOut, cond.long)
   }
 
   mmiOut.wide <- reshape(mmiOut, idvar = c(keyVars), direction = 'wide',

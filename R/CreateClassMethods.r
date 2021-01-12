@@ -175,13 +175,14 @@
 #' prepEx <- nwcaVegData(vascIn=VascPlantEx, cValReg='STATE')
 #' 
 #' str(prepEx)
-nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, inCVal=ccNatNWCA, inWIS=wisNWCA, cValReg="STATE"){
+nwcaVegData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, 
+                        inCVal=ccNatNWCA, inWIS=wisNWCA, cValReg="STATE"){
   # Read in various input datasets, and create output dataset based on available
   # types of data - must have cover data and taxonomic data at the very least
   # If
-  datNames <- c(sampID,'PLOT','USDA_NAME','COVER','STATE',cValReg,'USAC_REGION') 
+  datNames <- c(sampID, 'PLOT', 'USDA_NAME', 'COVER', 'STATE', cValReg, 'USAC_REGION') 
   if(any(unique(datNames) %nin% names(vascIn))){
-    print(paste("Missing key variables! Should be ", unique(datNames), ".",sep=''))
+    print(paste("Missing key variables! Should be ", unique(datNames), ".", sep=''))
     return(NULL)
   }
   # Input taxa list with taxonomy and life history traits
@@ -193,7 +194,7 @@ nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, i
   }
   if(any(altNames %nin% names(inTaxa))){
     msgNames <- altNames[altNames %nin% names(inTaxa)]
-    print(paste("Will not be able to calculate metrics that use ",paste(msgNames,collapse=','),
+    print(paste("Will not be able to calculate metrics that use ",paste(msgNames, collapse=','),
                 " without these parameters in inTaxa",sep=''))
   }
   
@@ -210,12 +211,14 @@ nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, i
   }
   if(any(ccVars %nin% names(inCVal))){
     msgNames <- ccVars[ccVars %nin% names(inCVal)]
-    print(paste("Warning: Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
+    print(paste("Warning: Will not be able to calculate metrics using ", 
+                paste(msgNames, collapse=','),
                 " without these parameter in inCVal."))
   }
   if(any(natVars %nin% names(inNat))){
     msgNames <- natVars[natVars %nin% names(inNat)]
-    print(paste("Warning: Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
+    print(paste("Warning: Will not be able to calculate metrics using ", 
+                paste(msgNames, collapse=','),
                 " without these parameter in inCVal."))
   }
   
@@ -233,35 +236,38 @@ nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, i
   
   ## Create dfs for species level, genus, family, and order
   # First construct list object with by plot and by sampID summarizations
-  dfSPP <- nwcaVegInput(sampID,'USDA_NAME',vascIn,inTaxa,cValReg)
+  dfSPP <- nwcaVegInput(sampID, 'USDA_NAME', vascIn, inTaxa, cValReg)
   # For species-level data, run additional checks and add additional information
   # Merge cover data with taxalist
-  dfSPP.byUID.1a <- merge(dfSPP[[1]],inTaxa,by.x='TAXON',by.y='USDA_NAME')
+  dfSPP.byUID.1a <- merge(dfSPP[[1]], inTaxa, by.x='TAXON', by.y='USDA_NAME')
   
   # If any taxa in the cover data do not match up with the taxalist, return
   # missing names and end function
   if(nrow(dfSPP.byUID.1a)!=nrow(dfSPP[[1]])){
     print("Not all taxa in dfIn match up with names in taxaIn!")
-    check1 <- merge(dfSPP.byUID.1a,dfSPP[[1]],by=c(sampID,'TAXON'),all.y=T)
-    checkout <- unique(subset(check1,is.na(SPECIES_NAME_ID),select=c('TAXON')))
+    check1 <- merge(dfSPP.byUID.1a, dfSPP[[1]], by=c(sampID,'TAXON'), all.y=T)
+    checkout <- unique(subset(check1, is.na(SPECIES_NAME_ID), select=c('TAXON')))
     print(checkout)
     return(NULL)
   }
   
   # If all taxa match taxalist, merge now with CC/native status by C of C region
   if(!is.null(inNat)){
-    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inNat,by.x=c('TAXON','STATE'),by.y=c('USDA_NAME','GEOG_ID'))
+    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a, inNat, by.x=c('TAXON','STATE'),
+                            by.y=c('USDA_NAME','GEOG_ID'))
   }else{
     dfSPP.byUID.1b <- dfSPP.byUID.1a
   }
   if(!is.null(inCVal)){
-    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inCVal,by.x=c('TAXON',cValReg),by.y=c('USDA_NAME','GEOG_ID'))
+    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a, inCVal, by.x=c('TAXON',cValReg),
+                            by.y=c('USDA_NAME','GEOG_ID'))
   }else{
     dfSPP.byUID.1b <- dfSPP.byUID.1a
   }
   # Merge with WIS values by USAC_REGION
   if(!is.null(inWIS)){
-    dfSPP.byUID.1c <- merge(dfSPP.byUID.1b,inWIS,by.x=c('TAXON','USAC_REGION'),by.y=c('USDA_NAME','GEOG_ID'),all.x=T)
+    dfSPP.byUID.1c <- merge(dfSPP.byUID.1b, inWIS, by.x=c('TAXON','USAC_REGION'), 
+                            by.y=c('USDA_NAME','GEOG_ID'),all.x=T)
   }else{
     dfSPP.byUID.1c <- dfSPP.byUID.1b
   }
@@ -294,15 +300,15 @@ nwcaVegData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, i
   dfSPP[[1]] <- dfSPP.byUID.fin
   
   ## Also want to add NWCA_NATSTAT to dfSPP[[2]], byPlot
-  dfSPP.byPlot <- merge(dfSPP[[2]],inCVal,by.x=c(cValReg,'TAXON'),by.y=c('GEOG_ID','USDA_NAME'))
+  dfSPP.byPlot <- merge(dfSPP[[2]], inCVal, by.x=c(cValReg, 'TAXON'), by.y=c('GEOG_ID', 'USDA_NAME'))
   dfSPP[[2]] <- dfSPP.byPlot
   
   # Create datasets for genus and family levels which will only be used for richness metrics
-  dfGEN <- nwcaVegInput(sampID,'GENUS',vascIn,inTaxa,cValReg)
-  dfFAM <- nwcaVegInput(sampID,'FAMILY',vascIn,inTaxa,cValReg)
+  dfGEN <- nwcaVegInput(sampID, 'GENUS', vascIn, inTaxa, cValReg)
+  dfFAM <- nwcaVegInput(sampID, 'FAMILY', vascIn, inTaxa, cValReg)
   
-  outDF <- list(byUIDspp=dfSPP[[1]],byPlotspp=dfSPP[[2]],byUIDgen=dfGEN[[1]],
-                byPlotgen=dfGEN[[2]],byUIDfam=dfFAM[[1]],byPlotfam=dfFAM[[2]])
+  outDF <- list(byUIDspp=dfSPP[[1]], byPlotspp=dfSPP[[2]], byUIDgen=dfGEN[[1]],
+                byPlotgen=dfGEN[[2]], byUIDfam=dfFAM[[1]], byPlotfam=dfFAM[[2]])
   print("Done preparing datasets")
   
   # class(outDF) <- append(class(outDF),"nwcaVegData")

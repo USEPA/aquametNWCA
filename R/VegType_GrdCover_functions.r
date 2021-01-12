@@ -203,20 +203,20 @@ calcSandTMets <- function(dataIn,nPlot,sampID='UID'){
 #'
 #' head(stratEx)
 #' unique(stratEx$METRIC)
-calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
+calcVascStratMets <- function(dataIn, nPlot, sampID='UID'){
 
-  dataIn1 <- merge(dataIn,nPlot,by=sampID)
+  dataIn1 <- merge(dataIn, nPlot, by=sampID)
 
   # Create vector of all samples in dataset
   for(i in 1:length(sampID)){
     if(i==1) dataIn1$SAMPID <- dataIn1[,sampID[i]]
-    else dataIn1$SAMPID <- paste(dataIn1$SAMPID,dataIn1[,sampID[i]],sep='.')
+    else dataIn1$SAMPID <- paste(dataIn1$SAMPID, dataIn1[,sampID[i]],sep='.')
   }
-  samples <- unique(subset(dataIn1,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(dataIn1, select=c(sampID, 'SAMPID')))
   
-  allUIDs <- data.frame(SAMPID=unique(dataIn1$SAMPID),stringsAsFactors=F)
+  allUIDs <- data.frame(SAMPID=unique(dataIn1$SAMPID), stringsAsFactors=F)
 
-  vstrat <- subset(dataIn1,PARAMETER %in% c('SUBMERGED_AQ','FLOATING_AQ','LIANAS','VTALL_VEG',
+  vstrat <- subset(dataIn1, PARAMETER %in% c('SUBMERGED_AQ','FLOATING_AQ','LIANAS','VTALL_VEG',
                                             'TALL_VEG','HMED_VEG','MED_VEG',
                                             'SMALL_VEG','VSMALL_VEG') & !is.na(RESULT) & RESULT!='0')
   
@@ -268,12 +268,12 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
   vstrat1$PLOTSAMP <- NULL
   vstrat1$NPLOTS <- NULL
   
-  empty_vstrat <- data.frame(t(rep(NA,4)),stringsAsFactors=FALSE)
+  empty_vstrat <- data.frame(t(rep(NA,4)), stringsAsFactors=FALSE)
   names(empty_vstrat) <- c('N_VASC_STRATA','XTOTCOV_VASC_STRATA','XN_VASC_STRATA','RG_VASC_STRATA')
 
-  vstrat2 <- subset(merge(vstrat1, empty_vstrat, all=TRUE),!is.na(SAMPID))
+  vstrat2 <- subset(merge(vstrat1, empty_vstrat, all=TRUE), !is.na(SAMPID))
 
-  vstrat3 <- merge(allUIDs,vstrat2,by='SAMPID',all.x=T)
+  vstrat3 <- merge(allUIDs, vstrat2, by='SAMPID', all.x=T)
 
   varNames <- names(vstrat3)[!names(vstrat3) %in% c('SAMPID')]
   vstratMet <- reshape(vstrat3, idvar = 'SAMPID', direction = 'long',
@@ -284,7 +284,7 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
   vstratMet$RESULT <- with(vstratMet, ifelse(is.na(RESULT),0,RESULT))
 
   ## Calculate frequency, mean cover, relative mean cover, and relative importance by vascular stratum
-  vstrat.pos <- subset(vstrat,RESULT!=0)
+  vstrat.pos <- subset(vstrat, RESULT!=0)
   
   indf1.length <- aggregate(x = list(FREQ = vstrat.pos$PLOT), 
                             by = vstrat.pos[c('SAMPID','PARAMETER','NPLOTS','XTOTCOV_VASC_STRATA')],
@@ -345,7 +345,7 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 
   outdf2 <- rbind(outdf1, div1.long)
 
-  empty_vtype <- data.frame(t(rep(NA,39)),stringsAsFactors=FALSE)
+  empty_vtype <- data.frame(t(rep(NA,39)), stringsAsFactors=FALSE)
   names(empty_vtype) <- c("FREQ_FLOATING_AQ","FREQ_HMED_VEG","FREQ_LIANAS","FREQ_MED_VEG",
                           "FREQ_SMALL_VEG","FREQ_SUBMERGED_AQ",
                           "FREQ_TALL_VEG","FREQ_VSMALL_VEG","FREQ_VTALL_VEG",
@@ -365,25 +365,25 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
   
   names(outdf3) <- gsub("RESULT\\.", "", names(outdf3))
 
-  outdf4 <- subset(merge(outdf3, empty_vtype, all=TRUE),!is.na(SAMPID))
+  outdf4 <- subset(merge(outdf3, empty_vtype, all=TRUE), !is.na(SAMPID))
 
-  outdf5 <- merge(allUIDs,outdf4,by='SAMPID',all.x=T)
+  outdf5 <- merge(allUIDs, outdf4, by='SAMPID', all.x=T)
 
   varNames <- names(outdf5)[!names(outdf5) %in% c('SAMPID')]
   outdf6 <- reshape(outdf5, idvar = 'SAMPID', direction = 'long',
                     varying = varNames, times = varNames,
                     timevar = 'METRIC', v.names = 'RESULT')
   outdf6$METRIC <- with(outdf6, as.character(METRIC))
-  outdf6$RESULT <- with(outdf6, ifelse(METRIC %nin% c('D_VASC_STRATA','H_VASC_STRATA') & is.na(RESULT),0,RESULT))
+  outdf6$RESULT <- with(outdf6, ifelse(METRIC %nin% c('D_VASC_STRATA','H_VASC_STRATA') & is.na(RESULT), 0, RESULT))
 
   print("Done with vascular strata metrics")
 
   # Now combine vtypeMet and vhet8 into a single data frame and widen it
-  vtOut <- rbind(outdf6,vstratMet) 
+  vtOut <- rbind(outdf6, vstratMet) 
   vtOut$PARAMETER <- vtOut$METRIC
   vtOut$METRIC <- NULL
   
-  vtOut.1 <- merge(samples,vtOut,by='SAMPID') 
+  vtOut.1 <- merge(samples, vtOut, by='SAMPID') 
   vtOut.1 <- vtOut.1[, c(sampID, 'PARAMETER', 'RESULT')]
     
   return(vtOut.1)
@@ -452,20 +452,20 @@ calcVascStratMets <- function(dataIn,nPlot,sampID='UID'){
 #'
 #'  head(nvEx)
 #'  unique(nvEx$PARAMETER)
-calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
+calcNonvascMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
   ## Now merge back with input df
   dataIn1 <- merge(dataIn, nPlot, by=sampID)
 
   # Create vector of all samples in dataset
   for(i in 1:length(sampID)){
     if(i==1) dataIn1$SAMPID <- dataIn1[,sampID[i]]
-    else dataIn1$SAMPID <- paste(dataIn1$SAMPID,dataIn1[,sampID[i]],sep='.')
+    else dataIn1$SAMPID <- paste(dataIn1$SAMPID, dataIn1[,sampID[i]], sep='.')
   }
-  samples <- unique(subset(dataIn1,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(dataIn1, select=c(sampID, 'SAMPID')))
   
-  allUIDs <- data.frame(SAMPID=unique(dataIn1$SAMPID),stringsAsFactors=F)
+  allUIDs <- data.frame(SAMPID=unique(dataIn1$SAMPID), stringsAsFactors=F)
   
-  nvstrat <- subset(dataIn1,PARAMETER %in% c('PEAT_MOSS','BRYOPHYTES','LICHENS','ARBOREAL','ALGAE','MACROALGAE') &
+  nvstrat <- subset(dataIn1, PARAMETER %in% c('PEAT_MOSS','BRYOPHYTES','LICHENS','ARBOREAL','ALGAE','MACROALGAE') &
                       !is.na(RESULT) & RESULT!='0')
   nvstrat$PARAMETER <- with(nvstrat, gsub('_ABUNDANCE', '', PARAMETER)) # This accounts for change in ARBOREAL to ARBOREAL_ABUNDANCE
 
@@ -531,7 +531,7 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
                        times = c('N_PEAT_MOSS_DOM','FREQ_PEAT_MOSS_DOM'),
                        timevar = 'METRIC', v.names = 'RESULT')
 
-    outdf3 <- rbind(outdf1,outdf2a)
+    outdf3 <- rbind(outdf1, outdf2a)
   }else{
     outdf3 <- outdf1
   }
@@ -540,7 +540,7 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
                     timevar = 'METRIC', v.names = 'RESULT')
   names(outdf4) <- gsub("RESULT\\.", "", names(outdf4))
 
-  empty_nv <- data.frame(t(rep(NA,17)),stringsAsFactors=F)
+  empty_nv <- data.frame(t(rep(NA,17)), stringsAsFactors=F)
   if(survyear=='2011'){
     names(empty_nv) <- c("FREQ_ALGAE", "FREQ_ARBOREAL","FREQ_BRYOPHYTES","FREQ_LICHENS","FREQ_MACROALGAE","IMP_ALGAE"
                          ,"IMP_ARBOREAL","IMP_BRYOPHYTES","IMP_LICHENS","IMP_MACROALGAE","XCOV_ALGAE","XCOV_ARBOREAL","XCOV_BRYOPHYTES"
@@ -550,7 +550,7 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
                          ,"IMP_BRYOPHYTES","IMP_LICHENS","IMP_MACROALGAE","XCOV_ALGAE","XCOV_BRYOPHYTES"
                          ,"XCOV_LICHENS","XCOV_MACROALGAE","N_PEAT_MOSS_DOM","FREQ_PEAT_MOSS_DOM")
   }
-  outdf5 <- subset(merge(outdf4, empty_nv, all=TRUE),!is.na(SAMPID))
+  outdf5 <- subset(merge(outdf4, empty_nv, all=TRUE), !is.na(SAMPID))
 
   outdf6 <- merge(allUIDs,outdf5,by='SAMPID',all.x=T)
 
@@ -562,7 +562,7 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
   outdf7$RESULT <- with(outdf7, ifelse(is.na(RESULT),0,RESULT))
   print("Done with non-vascular strata metrics")
 
-  nvOut <- merge(samples,outdf7,by='SAMPID') 
+  nvOut <- merge(samples, outdf7, by='SAMPID') 
   nvOut$PARAMETER <- nvOut$METRIC
   nvOut <- nvOut[, c(sampID, 'PARAMETER', 'RESULT')]
   
@@ -639,19 +639,19 @@ calcNonvascMets <- function(dataIn,nPlot,sampID='UID', survyear='2011'){
 #' unique(wcovEx$METRIC)
 calcWcovMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
   ## Now merge back with input df
-  dataIn1 <- merge(dataIn,nPlot,by=sampID)
+  dataIn1 <- merge(dataIn, nPlot, by=sampID)
 
   # Create vector of all samples in dataset
   for(i in 1:length(sampID)){
     if(i==1) dataIn1$SAMPID <- dataIn1[,sampID[i]]
-    else dataIn1$SAMPID <- paste(dataIn1$SAMPID,dataIn1[,sampID[i]],sep='.')
+    else dataIn1$SAMPID <- paste(dataIn1$SAMPID, dataIn1[,sampID[i]], sep='.')
   }
-  samples <- unique(subset(dataIn1,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(dataIn1, select=c(sampID, 'SAMPID')))
   
-  allUIDs <- data.frame(SAMPID=unique(dataIn1$SAMPID),stringsAsFactors=F)
+  allUIDs <- data.frame(SAMPID=unique(dataIn1$SAMPID), stringsAsFactors=F)
   
   ####### WATER COVER AND DEPTH
-  wdep <- subset(dataIn1,PARAMETER %in% c('TIME','MINIMUM_DEPTH','MAXIMUM_DEPTH','PREDOMINANT_DEPTH','TOTAL_WATER'
+  wdep <- subset(dataIn1, PARAMETER %in% c('TIME','MINIMUM_DEPTH','MAXIMUM_DEPTH','PREDOMINANT_DEPTH','TOTAL_WATER'
                                           ,'WATER_NOVEG','WATER_AQVEG','WATER_EMERGVEG'))
   wdep$RESULT <- with(wdep, as.numeric(RESULT))
   wdep <- subset(wdep, select = c('SAMPID', 'PLOT', 'NPLOTS', 'PARAMETER', 'RESULT'))
@@ -670,34 +670,34 @@ calcWcovMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
   wdep2a <- reshape(wdep2a.wide, idvar = c('SAMPID','PLOT','NPLOTS'), direction = 'long',
                     times = varNames, varying = varNames,
                     timevar = 'PARAMETER', v.names = 'RESULT')
-  wdep2a$RESULT <- with(wdep2a, ifelse(is.na(RESULT),0,as.numeric(RESULT)))
+  wdep2a$RESULT <- with(wdep2a, ifelse(is.na(RESULT), 0, as.numeric(RESULT)))
 
   if(survyear=='2011'){
     wat1.min <- aggregate(x = list(MIN_H2O_DEPTH = wdep1$MINIMUM_DEPTH, MIN_COV_H2O = wdep1$TOTAL_WATER),
                           by = wdep1[c('SAMPID','NPLOTS')],
-                          FUN = function(x){ifelse(any(!is.na(x)),min(x,na.rm=TRUE),NA)})
+                          FUN = function(x){ifelse(any(!is.na(x)), min(x, na.rm=TRUE), NA)})
     
     wat1.max <- aggregate(x = list(MAX_H2O_DEPTH = wdep1$MAXIMUM_DEPTH, MAX_COV_H2O = wdep1$TOTAL_WATER),
                           by = wdep1[c('SAMPID','NPLOTS')],
-                          FUN = function(x){ifelse(any(!is.na(x)),max(x,na.rm=TRUE),NA)})
+                          FUN = function(x){ifelse(any(!is.na(x)), max(x, na.rm=TRUE), NA)})
     
     wat1.sum <- aggregate(x = list(XH2O_DEPTH_AA = wdep1$PREDOMINANT_DEPTH),
                            by = wdep1[c('SAMPID','NPLOTS')],
                            FUN = function(x){ifelse(any(!is.na(x))
-                                                    ,sum(x,na.rm=TRUE),NA)})
+                                                    ,sum(x, na.rm=TRUE), NA)})
     wat1.sum$XH2O_DEPTH_AA <- with(wat1.sum, round(XH2O_DEPTH_AA/NPLOTS, 2))
     
     
-    wat1 <- merge(wat1.min, wat1.max, by = c('SAMPID','NPLOTS'))
-    wat1 <- merge(wat1, wat1.sum, by = c('SAMPID','NPLOTS'))
+    wat1 <- merge(wat1.min, wat1.max, by = c('SAMPID', 'NPLOTS'))
+    wat1 <- merge(wat1, wat1.sum, by = c('SAMPID', 'NPLOTS'))
   }else{
     wat1.min <- aggregate(x = list(MIN_COV_H2O = wdep1$TOTAL_WATER),
                           by = wdep1[c('SAMPID','NPLOTS')],
-                          FUN = function(x){ifelse(any(!is.na(x)),min(x,na.rm=TRUE),NA)})
+                          FUN = function(x){ifelse(any(!is.na(x)), min(x,na.rm=TRUE), NA)})
     
     wat1.max <- aggregate(x = list(MAX_COV_H2O = wdep1$TOTAL_WATER),
                           by = wdep1[c('SAMPID','NPLOTS')],
-                          FUN = function(x){ifelse(any(!is.na(x)),max(x,na.rm=TRUE),NA)})
+                          FUN = function(x){ifelse(any(!is.na(x)), max(x,na.rm=TRUE), NA)})
     
     wat1.sum <- aggregate(x = list(XH2O_DEPTH_AA = wdep1$PREDOMINANT_DEPTH),
                           by = wdep1[c('SAMPID','NPLOTS')],
@@ -717,7 +717,8 @@ calcWcovMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
                    timevar = 'METRIC', v.names = 'RESULT')
 
   ## Fix Inf values to 0s
-  wat1a$RESULT <- with(wat1a, ifelse(RESULT %in% c('Inf','-Inf'),0,ifelse(RESULT=='Inf_-Inf','',RESULT)))
+  wat1a$RESULT <- with(wat1a, ifelse(RESULT %in% c('Inf','-Inf'), 0, 
+                                     ifelse(RESULT=='Inf_-Inf', '', RESULT)))
   wat1a$METRIC <- with(wat1a, as.character(METRIC))
   wat1a$NPLOTS <- NULL
 
@@ -743,7 +744,7 @@ calcWcovMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
                    varying = c('FREQ_H2O','XCOV_H2O','IMP_H2O'),
                    timevar = 'METRIC', v.names = 'RESULT')
   wat2a$METRIC <- with(wat2a, ifelse(PARAMETER=='TOTAL_WATER', as.character(METRIC), 
-                                     as.character(paste(METRIC,substring(PARAMETER,7),sep='_'))))
+                                     as.character(paste(METRIC, substring(PARAMETER, 7), sep='_'))))
   
   wat2a$PARAMETER <- NULL
 
@@ -762,20 +763,20 @@ calcWcovMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
   names(watMet1) <- gsub("RESULT\\.", "", names(watMet1)) 
 
   if(survyear=='2011'){
-    empty_wat <- data.frame(t(rep(NA,18)),stringsAsFactors=F)
+    empty_wat <- data.frame(t(rep(NA,18)), stringsAsFactors=F)
     names(empty_wat) <- c("MIN_H2O_DEPTH","MAX_H2O_DEPTH","XH2O_DEPTH_AA","MIN_COV_H2O",
                           "MAX_COV_H2O","FREQ_H2O","FREQ_H2O_AQVEG","FREQ_H2O_EMERGVEG",
                           "FREQ_H2O_NOVEG","XCOV_H2O","XCOV_H2O_AQVEG","XCOV_H2O_EMERGVEG",
                           "XCOV_H2O_NOVEG","IMP_H2O","IMP_H2O_AQVEG","IMP_H2O_EMERGVEG",
                           "IMP_H2O_NOVEG","XH2O_DEPTH")
   }else{
-    empty_wat <- data.frame(t(rep(NA,7)),stringsAsFactors=F)
+    empty_wat <- data.frame(t(rep(NA,7)), stringsAsFactors=F)
     names(empty_wat) <- c("XH2O_DEPTH_AA","MIN_COV_H2O","MAX_COV_H2O","FREQ_H2O",
                           "XCOV_H2O","IMP_H2O","XH2O_DEPTH")
   }
-  watMet2 <- subset(merge(watMet1, empty_wat, all=TRUE),!is.na(SAMPID))
+  watMet2 <- subset(merge(watMet1, empty_wat, all=TRUE), !is.na(SAMPID))
 
-  watMet3 <- merge(allUIDs,watMet2,by='SAMPID',all.x=T)
+  watMet3 <- merge(allUIDs,watMet2, by='SAMPID',all.x=T)
 
   varNames <- names(watMet3)[!names(watMet3) %in% c('SAMPID','NPLOTS')]
   watMet4 <- reshape(watMet3, idvar = 'SAMPID', direction = 'long',
@@ -783,10 +784,10 @@ calcWcovMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
                      timevar = 'METRIC', v.names = 'RESULT')
   
   watMet4$METRIC <- with(watMet4, as.character(METRIC))
-  watMet4$RESULT <- with(watMet4, ifelse(is.na(RESULT),'0',RESULT))
+  watMet4$RESULT <- with(watMet4, ifelse(is.na(RESULT), '0', RESULT))
 
   print("Done with water depth metrics")
-  watMetOut <- merge(samples,watMet4,by='SAMPID') 
+  watMetOut <- merge(samples, watMet4, by='SAMPID') 
   watMetOut$PARAMETER <- watMetOut$METRIC
   watMetOut <- watMetOut[, c(sampID, 'PARAMETER', 'RESULT')]
 
@@ -865,18 +866,18 @@ calcWcovMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
 #' head(bgEx)
 #' unique(bgEx$PARAMETER)
 
-calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011'){
+calcBareGround_LitterMets <- function(dataIn, nPlot, sampID='UID', survyear='2011'){
   ## Now merge back with input df
   dataIn1 <- merge(dataIn, nPlot, by=sampID)
 
   # Create vector of all samples in dataset
   for(i in 1:length(sampID)){
     if(i==1) dataIn1$SAMPID <- dataIn1[,sampID[i]]
-    else dataIn1$SAMPID <- paste(dataIn1$SAMPID,dataIn1[,sampID[i]],sep='.')
+    else dataIn1$SAMPID <- paste(dataIn1$SAMPID, dataIn1[, sampID[i]], sep='.')
   }
-  samples <- unique(subset(dataIn1,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(dataIn1, select=c(sampID, 'SAMPID')))
   
-  allUIDs <- data.frame(SAMPID=unique(dataIn1$SAMPID),stringsAsFactors=F)
+  allUIDs <- data.frame(SAMPID=unique(dataIn1$SAMPID), stringsAsFactors=F)
   
   ####### LITTER TYPES
   # Need to calculate the number of quadrats sampled using the NE and SW parameters
@@ -912,8 +913,8 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011')
     rr4 <- subset(rr3, MAXN==NUM)
     rr5 <- aggregate(x = list(LITTER_TYPE = rr4$PARAMETER), 
                      by = rr4[c('SAMPID','N_LITTER_TYPE')],
-                     FUN = function(x){paste(x,collapse='_')})
-    rr5$LITTER_TYPE <- with(rr5, gsub('LITTER_','',LITTER_TYPE))
+                     FUN = function(x){paste(x, collapse='_')})
+    rr5$LITTER_TYPE <- with(rr5, gsub('LITTER_', '', LITTER_TYPE))
   }else{
     littype <- subset(litter2, PARAMETER=='PREDOMINANT_LITTER' & !is.na(RESULT)) 
     
@@ -929,7 +930,7 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011')
     rr4 <- subset(rr3, MAXN==NUM)
     rr5 <- aggregate(x = list(LITTER_TYPE = rr4$RESULT), 
                      by = rr4[c('SAMPID','N_LITTER_TYPE')],
-                     FUN = function(x){paste(x,collapse='_')})
+                     FUN = function(x){paste(x, collapse='_')})
 
   }
   ## to determine median depth, we must account for any quadrats without depth recorded
@@ -978,10 +979,10 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011')
                      timevar = 'METRIC', v.names = 'RESULT')
   names(loutdf1) <- gsub("RESULT\\.", "", names(loutdf1))
 
-  empty_lit <- data.frame(t(rep(NA,4)),stringsAsFactors=FALSE)
+  empty_lit <- data.frame(t(rep(NA,4)), stringsAsFactors=FALSE)
   names(empty_lit) <- c('N_LITTER_TYPE','LITTER_TYPE','XDEPTH_LITTER','MEDDEPTH_LITTER')
 
-  loutdf2 <- subset(merge(loutdf1, empty_lit, all=TRUE),!is.na(SAMPID))
+  loutdf2 <- subset(merge(loutdf1, empty_lit, all=TRUE), !is.na(SAMPID))
 
   loutdf3 <- merge(allUIDs,loutdf2,by='SAMPID',all.x=T)
 
@@ -1017,7 +1018,7 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011')
   bgrdIn1 <- reshape(bgrdIn1.wide, idvar = c('SAMPID','PLOT','NPLOTS'), direction = 'long',
                      times = varNames, varying = varNames,
                      timevar = 'PARAMETER', v.names = 'RESULT')
-  bgrdIn1$RESULT <- with(bgrdIn1, ifelse(is.na(RESULT),0,as.numeric(RESULT)))
+  bgrdIn1$RESULT <- with(bgrdIn1, ifelse(is.na(RESULT), 0, as.numeric(RESULT)))
 
   bgrdIn1.sub <- subset(bgrdIn1,RESULT!=0)
   bgindf1.freq <- aggregate(x = list(FREQ = bgrdIn1.sub$RESULT),
@@ -1039,7 +1040,8 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011')
                      timevar = 'variable', v.names = 'RESULT')
   
   bgoutdf$PARAMETER <- with(bgoutdf, ifelse(PARAMETER=='TOTAL_LITTER',
-                                      paste(variable,'LITTER',sep='_'),paste(variable,PARAMETER,sep='_')))
+                                      paste(variable,'LITTER', sep='_'), 
+                                      paste(variable, PARAMETER, sep='_')))
   bgoutdf <- bgoutdf[,c('SAMPID','PARAMETER','RESULT')]
   
   bgoutdf1.wide <- reshape(bgoutdf, idvar = 'SAMPID', direction = 'wide',
@@ -1066,16 +1068,16 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011')
                        "XCOV_EXPOSED_GRAVEL","XCOV_EXPOSED_ROCK","XCOV_EXPOSED_SOIL",
                        "XCOV_LITTER","XCOV_WD_COARSE","XCOV_WD_FINE")
 
-  bgoutdf3 <- subset(merge(bgoutdf2, empty_bg, all=TRUE),!is.na(SAMPID))
+  bgoutdf3 <- subset(merge(bgoutdf2, empty_bg, all=TRUE), !is.na(SAMPID))
 
-  bgoutdf4 <- merge(allUIDs,bgoutdf3,by='SAMPID',all.x=T)
+  bgoutdf4 <- merge(allUIDs, bgoutdf3, by='SAMPID', all.x=T)
 
   varNames <- names(bgoutdf4)[!names(bgoutdf4) %in% c('SAMPID')]
   bgoutdf5 <- reshape(bgoutdf4, idvar = 'SAMPID', direction = 'long',
                       times = varNames, varying = varNames,
                       timevar = 'METRIC', v.names = 'RESULT')
   bgoutdf5$METRIC <- with(bgoutdf5, as.character(METRIC))
-  bgoutdf5$RESULT <- with(bgoutdf5, ifelse(is.na(RESULT),0,RESULT))
+  bgoutdf5$RESULT <- with(bgoutdf5, ifelse(is.na(RESULT), 0, RESULT))
 
   print("Done with bare ground metrics")
   bgrdOut <- reshape(bgoutdf5, idvar = 'SAMPID', direction = 'wide',
@@ -1083,7 +1085,7 @@ calcBareGround_LitterMets <- function(dataIn,nPlot,sampID='UID',survyear='2011')
   names(bgrdOut) <- gsub("RESULT\\.", "", names(bgrdOut))
 
   # Now combine bare ground and litter metrics to perform a final check
-  combOut <- merge(litterOut,bgrdOut,by='SAMPID',all=T)
+  combOut <- merge(litterOut, bgrdOut, by='SAMPID', all=T)
   
   varNames <- names(combOut)[!names(combOut) %in% c('SAMPID')]
   combOut.1 <- reshape(combOut, idvar = 'SAMPID', direction = 'long',

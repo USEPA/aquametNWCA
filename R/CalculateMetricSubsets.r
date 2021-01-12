@@ -71,12 +71,12 @@
 #'  head(durEx)
 #'  unique(durEx$PARAMETER)
 
-calcDuration <- function(vascIn,sampID='UID'){
+calcDuration <- function(vascIn, sampID='UID'){
  # First check for necessary variables
-  necNames <- c(sampID,'TAXON','DURATION','XABCOV','TOTN','sXRCOV')
+  necNames <- c(sampID, 'TAXON', 'DURATION', 'XABCOV', 'TOTN', 'sXRCOV')
   msgNames <- necNames[necNames %nin% names(vascIn)]
   if(length(msgNames)>0){
-    print(paste("Missing key variables for metric calculation: ",paste(msgNames,collapse=','),
+    print(paste("Missing key variables for metric calculation: ", paste(msgNames,collapse=','),
                 ". Try prepareData() function to create necessary input variables.",sep=''))
   return(NULL)
   }
@@ -95,15 +95,15 @@ calcDuration <- function(vascIn,sampID='UID'){
     vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('PERENNIAL, ANNUAL, BIENNIAL','PERENNIAL, AN','PERENNIAL, BIENNIAL','PERENNIAL, BIENNIAL, ANNUAL','PERENNIAL, BIENNIAL, AN')] <- 'PERENNIAL'
 
   }
-  durOut <- int.calcTraits_MultCat(vascIn.1,'DUR_ALT',sampID)
+  durOut <- int.calcTraits_MultCat(vascIn.1, 'DUR_ALT', sampID)
   
-  empty_base <- data.frame(t(rep(NA,16)),stringsAsFactors=F)
+  empty_base <- data.frame(t(rep(NA,16)), stringsAsFactors=F)
   names(empty_base) <- c("N_ANN_BIEN","N_ANN_PEREN","N_ANNUAL","N_PERENNIAL", "PCTN_ANN_BIEN","PCTN_ANNUAL"
                          ,"PCTN_ANN_PEREN","PCTN_PERENNIAL","XABCOV_ANN_BIEN","XABCOV_ANN_PEREN"
                          ,"XABCOV_ANNUAL","XABCOV_PERENNIAL","XRCOV_ANN_BIEN","XRCOV_ANN_PEREN"
                          ,"XRCOV_ANNUAL","XRCOV_PERENNIAL")
   
-  empty_base.nat <- data.frame(t(rep(NA,32)),stringsAsFactors=F)
+  empty_base.nat <- data.frame(t(rep(NA,32)), stringsAsFactors=F)
   names(empty_base.nat) <- c("N_ANN_BIEN_AC","N_ANN_BIEN_NAT","N_ANN_PEREN_AC","N_ANN_PEREN_NAT"
                              ,"N_ANNUAL_AC","N_ANNUAL_NAT","N_PERENNIAL_AC","N_PERENNIAL_NAT"
                              ,"PCTN_ANN_BIEN_AC","PCTN_ANN_BIEN_NAT","PCTN_ANN_PEREN_AC"
@@ -133,7 +133,7 @@ calcDuration <- function(vascIn,sampID='UID'){
 
 
     multTraits <- int.combTraits(vascIn.2, c('ANNUAL_NAT','ANNUAL_AC','ANN_BIEN_NAT','ANN_BIEN_AC','ANN_PEREN_NAT'
-                                            ,'ANN_PEREN_AC','PERENNIAL_NAT','PERENNIAL_AC'),sampID)
+                                            ,'ANN_PEREN_AC','PERENNIAL_NAT','PERENNIAL_AC'), sampID)
     
     durOut <- rbind(durOut, multTraits)
 
@@ -237,17 +237,17 @@ calcDuration <- function(vascIn,sampID='UID'){
 #' head(ghEx)
 #' unique(ghEx$PARAMETER)
 
-calcGrowthHabit <- function(vascIn,sampID='UID'){
+calcGrowthHabit <- function(vascIn, sampID='UID'){
   # First check for necessary variables
-  necNames <- c(sampID,'TAXON','GROWTH_HABIT','XABCOV','TOTN','sXRCOV')
+  necNames <- c(sampID, 'TAXON', 'GROWTH_HABIT', 'XABCOV', 'TOTN', 'sXRCOV')
   msgNames <- necNames[necNames %nin% names(vascIn)]
   if(length(msgNames)>0){
-    print(paste("Missing key variables for metric calculation: ",paste(msgNames,collapse=','),
-                ". Try prepareData() function to create necessary input variables.",sep=''))
+    print(paste("Missing key variables for metric calculation: ", paste(msgNames, collapse=','),
+                ". Try prepareData() function to create necessary input variables.", sep=''))
     return(NULL)
   }
   
-  vascIn <- subset(vascIn,!is.na(GROWTH_HABIT) & toupper(GROWTH_HABIT)!='UND' & GROWTH_HABIT!='')
+  vascIn <- subset(vascIn, !is.na(GROWTH_HABIT) & toupper(GROWTH_HABIT)!='UND' & GROWTH_HABIT!='')
   
   # Check for GRH_ALT variable
   if('GRH_ALT' %in% names(vascIn)){
@@ -456,20 +456,20 @@ calcGrowthHabit <- function(vascIn,sampID='UID'){
 #' head(catEx)
 #' unique(catEx$PARAMETER)
 
-calcCategory <- function(vascIn,sampID='UID'){
+calcCategory <- function(vascIn, sampID='UID'){
   # First check for necessary variables
-  necNames <- c(sampID,'TAXON','CATEGORY','XABCOV','TOTN','sXRCOV')
+  necNames <- c(sampID, 'TAXON', 'CATEGORY', 'XABCOV', 'TOTN', 'sXRCOV')
   msgNames <- necNames[necNames %nin% names(vascIn)]
   if(length(msgNames)>0){
-    print(paste("Missing key variables for metric calculation: ",paste(msgNames,collapse=','),
-                ". Try prepareData() function to create necessary input variables.",sep=''))
+    print(paste("Missing key variables for metric calculation: ", paste(msgNames, collapse=','),
+                ". Try prepareData() function to create necessary input variables.", sep=''))
     return(NULL)
   }
 
-  vascIn.1 <- subset(vascIn,!is.na(CATEGORY) & toupper(CATEGORY)!='UND' & CATEGORY!='')
-  catOut <- int.calcTraits_MultCat(vascIn.1,'CATEGORY',sampID)
+  vascIn.1 <- subset(vascIn, !is.na(CATEGORY) & toupper(CATEGORY)!='UND' & CATEGORY!='')
+  catOut <- int.calcTraits_MultCat(vascIn.1, 'CATEGORY', sampID)
   
-  empty_base <- data.frame(t(rep(NA,32)),stringsAsFactors=F)
+  empty_base <- data.frame(t(rep(NA,32)), stringsAsFactors=F)
   names(empty_base) <- c("N_DICOT","N_FERN","N_GYMNOSPERM","N_MONOCOT","N_LYCOPOD","N_HORSETAIL"
                          ,"N_QUILLWORT","N_LIVERWORT","PCTN_DICOT"
                          ,"PCTN_FERN","PCTN_GYMNOSPERM","PCTN_MONOCOT","PCTN_LYCOPOD","PCTN_HORSETAIL"
@@ -480,7 +480,7 @@ calcCategory <- function(vascIn,sampID='UID'){
                          ,"XRCOV_LYCOPOD","XRCOV_HORSETAIL"
                          ,"XRCOV_QUILLWORT","XRCOV_LIVERWORT")
   
-  empty_base.nat <- data.frame(t(rep(NA,40)),stringsAsFactors=F)
+  empty_base.nat <- data.frame(t(rep(NA,40)), stringsAsFactors=F)
   names(empty_base.nat) <- c("N_DICOTS_NAT","PCTN_DICOTS_NAT","XABCOV_DICOTS_NAT","XRCOV_DICOTS_NAT"     
                              ,"N_DICOTS_ALIEN","PCTN_DICOTS_ALIEN","XABCOV_DICOTS_ALIEN"
                              ,"XRCOV_DICOTS_ALIEN","N_DICOTS_CRYP","PCTN_DICOTS_CRYP"
@@ -513,8 +513,8 @@ calcCategory <- function(vascIn,sampID='UID'){
     vascIn.2$MONOCOTS_AC <- with(vascIn.2, ifelse(CATEGORY=='MONOCOT' & AC==1, 1, 0))
   
     multTraits <- int.combTraits(vascIn.2,c('DICOTS_NAT','DICOTS_ALIEN','DICOTS_CRYP','DICOTS_AC','FERNS_NAT','FERNS_INTR','MONOCOTS_NAT','MONOCOTS_ALIEN'
-                                    ,'MONOCOTS_CRYP','MONOCOTS_AC'),sampID)
-    catOut <- rbind(catOut,multTraits)
+                                    ,'MONOCOTS_CRYP','MONOCOTS_AC'), sampID)
+    catOut <- rbind(catOut, multTraits)
   
     empty_base <- cbind(empty_base, empty_base.nat)
 
@@ -636,13 +636,13 @@ calcCategory <- function(vascIn,sampID='UID'){
 #' head(wisEx)
 #' unique(wisEx$PARAMETER)
 
-calcWIS <- function(vascIn,sampID='UID'){
+calcWIS <- function(vascIn, sampID='UID'){
   # First check for necessary variables
-  necNames <- c(sampID,'TAXON','WIS','FREQ','XABCOV','TOTN','sXRCOV')
+  necNames <- c(sampID, 'TAXON', 'WIS', 'FREQ', 'XABCOV', 'TOTN', 'sXRCOV')
   msgNames <- necNames[necNames %nin% names(vascIn)]
   if(length(msgNames)>0){
-    print(paste("Missing key variables for metric calculation: ",paste(msgNames,collapse=','),
-                ". Try prepareData() function to create necessary input variables.",sep=''))
+    print(paste("Missing key variables for metric calculation: ", paste(msgNames, collapse=','),
+                ". Try prepareData() function to create necessary input variables.", sep=''))
     return(NULL)
   }
 
@@ -675,14 +675,14 @@ calcWIS <- function(vascIn,sampID='UID'){
   vascIn.1$OBL_FACW_FAC <- ifelse(vascIn.1$WIS %in% c('OBL','FACW','FAC'), 1, 0)
   vascIn.1$FAC_FACU <- ifelse(vascIn.1$WIS %in% c('FACU','FAC'), 1, 0)
 
-  sppWIS <- int.calcTraits_MultCat(vascIn.1,'WIS',sampID)
+  sppWIS <- int.calcTraits_MultCat(vascIn.1, 'WIS', sampID)
   
-  multTraits <- int.combTraits(vascIn.1,c('OBL_FACW','OBL_FACW_FAC','FAC_FACU'),sampID)
+  multTraits <- int.combTraits(vascIn.1, c('OBL_FACW','OBL_FACW_FAC','FAC_FACU'), sampID)
 
   ## Calculate Wetland indicator status metrics and melt into long format
-  vascIn.2a <- subset(vascIn.1,!is.na(ECOIND1))
+  vascIn.2a <- subset(vascIn.1, !is.na(ECOIND1))
   
-  vascIn.2a[,c('ECOIND1','ECOIND2')] <- lapply(vascIn.2a[,c('ECOIND1','ECOIND2')], as.numeric)
+  vascIn.2a[,c('ECOIND1', 'ECOIND2')] <- lapply(vascIn.2a[,c('ECOIND1', 'ECOIND2')], as.numeric)
   
   vascIn.2b <- aggregate(x = list(coveco1 = vascIn.2a$XABCOV*vascIn.2a$ECOIND1, 
                                   freqeco1 = vascIn.2a$FREQ*vascIn.2a$ECOIND1,
@@ -761,12 +761,12 @@ calcWIS <- function(vascIn,sampID='UID'){
     vascIn.obl <- vascIn.nat
     vascIn.obl$OBLFACW_AC <- with(vascIn.obl, ifelse(WIS %in% c('OBL','FACW') & NATSTAT_ALT %in% c('ALIEN','CRYP'),1,0))
     
-    ofOut <- int.calcTraits_Indicator(vascIn.obl,'OBLFACW_AC',sampID) 
+    ofOut <- int.calcTraits_Indicator(vascIn.obl,'OBLFACW_AC', sampID) 
     ofOut$PARAMETER <- as.character(ofOut$PARAMETER)
     
     ofOut <- subset(ofOut, PARAMETER %nin% c('PCTN_OBLFACW_AC'))
 
-    wisOut <- rbind(wisOut,wisOut.nat.2,ofOut)
+    wisOut <- rbind(wisOut,wisOut.nat.2, ofOut)
     
     empty_base <- cbind(empty_base, empty_base.nat)
     
@@ -859,7 +859,7 @@ calcWIS <- function(vascIn,sampID='UID'){
 #'
 #' head(ccEx)
 #' unique(ccEx$PARAMETER)
-calcCC <- function(vascIn,sampID='UID'){
+calcCC <- function(vascIn, sampID='UID'){
   if('NWCA_CC' %nin% names(vascIn)){
     print("Missing NWCA_CC from input data frame - cannot calculate metrics!")
     return(NULL)
@@ -1088,7 +1088,7 @@ calcCC <- function(vascIn,sampID='UID'){
 #' head(natEx)
 #' unique(natEx$PARAMETER)
 
-calcNative <- function(vascIn,sampID='UID'){
+calcNative <- function(vascIn, sampID='UID'){
   if('NWCA_NATSTAT' %nin% names(vascIn)){
     print("Missing NWCA_NATSTAT from input data frame - cannot calculate metrics! If NWCA_NATSTAT exists,
           run prepareData() function to create input data frame.")
@@ -1096,18 +1096,18 @@ calcNative <- function(vascIn,sampID='UID'){
   }
 
   vascIn$ALIEN <- with(vascIn, ifelse(NWCA_NATSTAT %in% c('INTR','ADV'), 1, 0))
-  vascIn$AC <- with(vascIn, ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
+  vascIn$AC <- with(vascIn, ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'), 1, 0))
   
-  sppNATSTAT <- int.calcTraits_MultCat.alt(vascIn,'NWCA_NATSTAT',sampID)
+  sppNATSTAT <- int.calcTraits_MultCat.alt(vascIn, 'NWCA_NATSTAT', sampID)
 
-  alienTrait <- int.calcTraits_Indicator.alt(vascIn,'ALIEN',sampID) 
-  alienTrait$PARAMETER <- with(alienTrait, paste(PARAMETER,'SPP',sep=''))
+  alienTrait <- int.calcTraits_Indicator.alt(vascIn, 'ALIEN', sampID) 
+  alienTrait$PARAMETER <- with(alienTrait, paste(PARAMETER, 'SPP', sep=''))
   
-  acTrait <- int.calcTraits_Indicator.alt(vascIn,'AC',sampID)
+  acTrait <- int.calcTraits_Indicator.alt(vascIn, 'AC', sampID)
 
-  natstatOut <- rbind(sppNATSTAT,alienTrait,acTrait)
+  natstatOut <- rbind(sppNATSTAT, alienTrait, acTrait)
   
-  empty_base <- data.frame(t(rep(NA,30)),stringsAsFactors=F)
+  empty_base <- data.frame(t(rep(NA,30)), stringsAsFactors=F)
   names(empty_base)<-c("PCTN_ADVSPP","PCTN_CRYPSPP","PCTN_INTRSPP","PCTN_NATSPP","XABCOV_ADVSPP"
                      ,"XABCOV_CRYPSPP","XABCOV_INTRSPP","XABCOV_NATSPP","XRCOV_ADVSPP"
                      ,"XRCOV_CRYPSPP","XRCOV_INTRSPP","XRCOV_NATSPP","RFREQ_ADVSPP","RFREQ_CRYPSPP"
@@ -1246,26 +1246,27 @@ calcNative <- function(vascIn,sampID='UID'){
 #'   head(richEx)
 #'   unique(richEx$PARAMETER)
 
-calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfam,sampID='UID'){
+calcRichness <- function(byUIDspp, byPlotspp, byUIDgen, byPlotgen, 
+                         byUIDfam, byPlotfam, sampID='UID'){
 
-  sppRich <- int.calcRich(byUIDspp,byPlotspp,'SPP',sampID)
-  genRich <- int.calcRich(byUIDgen,byPlotgen,'GEN',sampID)
-  famRich <- int.calcRich(byUIDfam,byPlotfam,'FAM',sampID)
+  sppRich <- int.calcRich(byUIDspp, byPlotspp, 'SPP', sampID)
+  genRich <- int.calcRich(byUIDgen, byPlotgen, 'GEN', sampID)
+  famRich <- int.calcRich(byUIDfam, byPlotfam, 'FAM', sampID)
 
   richOut <- rbind(sppRich,genRich,famRich)
 
   if('NWCA_NATSTAT' %in% names(byUIDspp)){
-    natRich <- int.calcRichNS(byUIDspp,byPlotspp,c('NAT'),'NATSPP',sampID)
-    advRich <- int.calcRichNS(byUIDspp,byPlotspp,c('ADV'),'ADVSPP',sampID)
-    crypRich <- int.calcRichNS(byUIDspp,byPlotspp,c('CRYP'),'CRYPSPP',sampID)
-    intrRich <- int.calcRichNS(byUIDspp,byPlotspp,c('INTR'),'INTRSPP',sampID)
-    alienRich <- int.calcRichNS(byUIDspp,byPlotspp,c('ADV','INTR'),'ALIENSPP',sampID)
-    acRich <- int.calcRichNS(byUIDspp,byPlotspp,c('INTR','ADV','CRYP'),'AC',sampID)
+    natRich <- int.calcRichNS(byUIDspp, byPlotspp, c('NAT'), 'NATSPP', sampID)
+    advRich <- int.calcRichNS(byUIDspp, byPlotspp, c('ADV'), 'ADVSPP', sampID)
+    crypRich <- int.calcRichNS(byUIDspp, byPlotspp, c('CRYP'), 'CRYPSPP', sampID)
+    intrRich <- int.calcRichNS(byUIDspp, byPlotspp, c('INTR'), 'INTRSPP', sampID)
+    alienRich <- int.calcRichNS(byUIDspp, byPlotspp, c('ADV','INTR'), 'ALIENSPP', sampID)
+    acRich <- int.calcRichNS(byUIDspp, byPlotspp, c('INTR','ADV','CRYP'), 'AC', sampID)
 
     # Combine all into a single df
-    allNSrich <- rbind(natRich,advRich,crypRich,intrRich,alienRich,acRich)
+    allNSrich <- rbind(natRich, advRich, crypRich, intrRich, alienRich, acRich)
 
-    richOut <- rbind(richOut,allNSrich)
+    richOut <- rbind(richOut, allNSrich)
   }
     # Must fill in missing categories for all sites with zeros
   
@@ -1359,28 +1360,28 @@ calcRichness <- function(byUIDspp,byPlotspp,byUIDgen,byPlotgen,byUIDfam,byPlotfa
 #' head(divEx)
 #' unique(divEx$PARAMETER)
 
-calcDiversity <- function(vascIn,sampID='UID'){
-  divOut <- int.calcIndices(vascIn,'ALL',sampID)
+calcDiversity <- function(vascIn, sampID='UID'){
+  divOut <- int.calcIndices(vascIn, 'ALL', sampID)
 
  if('NWCA_NATSTAT' %in% names(vascIn)){
 
    vascIn.1 <- vascIn
-   vascIn.1$NATSTAT_ALT <- with(vascIn.1, ifelse(NWCA_NATSTAT %in% c('INTR','ADV'),'ALIEN',NWCA_NATSTAT))
-   vascIn.1$AC <- with(vascIn.1, ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'),1,0))
+   vascIn.1$NATSTAT_ALT <- with(vascIn.1, ifelse(NWCA_NATSTAT %in% c('INTR','ADV'), 'ALIEN', NWCA_NATSTAT))
+   vascIn.1$AC <- with(vascIn.1, ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'), 1, 0))
    
    nsvalues <- c('NAT','ALIEN')
    for(i in 1:length(nsvalues)){
-     vascIn.2 <- subset(vascIn.1,NATSTAT_ALT==nsvalues[i])
+     vascIn.2 <- subset(vascIn.1, NATSTAT_ALT==nsvalues[i])
 
-     nsOut <- int.calcIndices(vascIn.2,nsvalues[i],sampID)
-     divOut <- rbind(divOut,nsOut)
+     nsOut <- int.calcIndices(vascIn.2, nsvalues[i], sampID)
+     divOut <- rbind(divOut, nsOut)
    }
 
    # AC metrics
-   vascIn.ac <- subset(vascIn.1,AC=='1')
-   acOut <- int.calcIndices(vascIn.ac,'AC',sampID)
+   vascIn.ac <- subset(vascIn.1, AC=='1')
+   acOut <- int.calcIndices(vascIn.ac, 'AC', sampID)
 
-   divOut <- rbind(divOut,acOut)
+   divOut <- rbind(divOut, acOut)
 
  }
   
@@ -1433,13 +1434,13 @@ calcDiversity <- function(vascIn,sampID='UID'){
 #' based only on native species.
 #' }
 
-calcBCmets <- function(vascIn,sampID='UID'){
+calcBCmets <- function(vascIn, sampID='UID'){
   # Need to account for cases where there is no SPECIES_NAME_ID by creating one just for this
   # calculation
   if('SPECIES_NAME_ID' %nin% names(vascIn)){
     uniqNames <- data.frame(TAXON=unique(vascIn$TAXON), stringsAsFactors=F)
     uniqNames$SPECIES_NAME_ID = seq(from=1, to=nrow(uniqNames))
-    vascIn <- merge(vascIn,uniqNames,by='TAXON')
+    vascIn <- merge(vascIn, uniqNames, by='TAXON')
   }
   vascIn$COVER <- as.numeric(vascIn$COVER)
 
@@ -1465,7 +1466,7 @@ calcBCmets <- function(vascIn,sampID='UID'){
     meanBC_nat$XBCDIST_NATSPP <- meanBC_nat$XBCDIST_SPP
     meanBC_nat$XBCDIST_SPP <- NULL
 
-    xbcOut <- merge(xbcOut,meanBC_nat,by=sampID,all.x=T)
+    xbcOut <- merge(xbcOut, meanBC_nat, by=sampID, all.x=T)
   }
 
   xbcOut.1 <- reshape(xbcOut, idvar = sampID, direction = 'long',
@@ -1473,7 +1474,7 @@ calcBCmets <- function(vascIn,sampID='UID'){
                       timevar = 'PARAMETER', v.names = 'RESULT',
                       times = names(xbcOut)[!names(xbcOut) %in% c(sampID)])
   
-  xbcOut.1$RESULT <- with(xbcOut.1, ifelse(is.na(RESULT),0,RESULT))
+  xbcOut.1$RESULT <- with(xbcOut.1, ifelse(is.na(RESULT), 0, RESULT))
   xbcOut.1$PARAMETER <- as.character(xbcOut.1$PARAMETER)
 
   return(xbcOut.1)
@@ -1545,16 +1546,16 @@ calcBCmets <- function(vascIn,sampID='UID'){
 #' head(vmmiEx)
 #' unique(vmmiEx$PARAMETER)
 
-calcVMMImets <- function(vascIn,sampID='UID'){
+calcVMMImets <- function(vascIn, sampID='UID'){
   # Calculate only the 4 metrics used in the VMMI: FQAI_ALL,N_TOL,RIMP_NATSPP,XRCOV_MONOCOTS_NAT
   # First obtain all of the UIDs in input data frame
   for(i in 1:length(sampID)){
     if(i==1) vascIn$SAMPID <- vascIn[,sampID[i]]
-    else vascIn$SAMPID <- paste(vascIn$SAMPID,vascIn[,sampID[i]],sep='.')
+    else vascIn$SAMPID <- paste(vascIn$SAMPID, vascIn[,sampID[i]], sep='.')
   }
-  samples <- unique(subset(vascIn,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(vascIn, select=c(sampID, 'SAMPID')))
     
-  UIDs <- data.frame(SAMPID=unique(subset(vascIn,select='SAMPID')),stringsAsFactors=FALSE)
+  UIDs <- data.frame(SAMPID=unique(subset(vascIn, select='SAMPID')), stringsAsFactors=FALSE)
 
   # Look at vascIn for necessary variables
   if(sum(c('NWCA_CC','NWCA_NATSTAT','CATEGORY') %in% names(vascIn))<3){
@@ -1584,7 +1585,7 @@ calcVMMImets <- function(vascIn,sampID='UID'){
 
   # Calculate N_TOL
   vascIn.alt <- vascIn
-  vascIn.alt$TOL <- with(vascIn.alt, ifelse(NWCA_CC %in% c('4','3','2','1','0'),1,0))
+  vascIn.alt$TOL <- with(vascIn.alt, ifelse(NWCA_CC %in% c('4','3','2','1','0'), 1, 0))
   
   vascIn.alt <- subset(vascIn.alt, TOL==1)
 

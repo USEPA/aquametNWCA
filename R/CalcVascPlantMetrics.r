@@ -102,16 +102,17 @@
 #'
 #' str(exOut)
 #' head(exOut)
-calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, taxaCC=ccNatNWCA,
-                              taxaWIS=wisNWCA,sampID='UID',cValReg='NWC_CREG'){
+calcVascPlantMets <- function(vascIn, taxaIn=taxaNWCA, taxaNat=ccNatNWCA, taxaCC=ccNatNWCA,
+                              taxaWIS=wisNWCA, sampID='UID', cValReg='NWC_CREG'){
   print(cValReg)
-  prepDat <- prepareData(vascIn,sampID,inTaxa = taxaIn, inNat = taxaNat, inCVal = taxaCC,
-                         inWIS = taxaWIS, cValReg=cValReg)
+  prepDat <- prepareData(vascIn, sampID, inTaxa = taxaIn, inNat = taxaNat, 
+                         inCVal = taxaCC, inWIS = taxaWIS, cValReg=cValReg)
 
   print("Initial datasets prepared for metric calculation.")
 
-  richMets <- calcRichness(prepDat$byUIDspp,prepDat$byPlotspp,prepDat$byUIDgen,prepDat$byPlotgen
-                           ,prepDat$byUIDfam,prepDat$byPlotfam,sampID='UID')
+  richMets <- calcRichness(prepDat$byUIDspp, prepDat$byPlotspp, prepDat$byUIDgen, 
+                           prepDat$byPlotgen, prepDat$byUIDfam,
+                           prepDat$byPlotfam,sampID='UID')
 
   print("Done calculating richness metrics.")
 
@@ -121,28 +122,28 @@ calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, taxaCC=c
   print("Ready to start calculating trait metrics.")
 
   # Calculate diversity indices
-  divMets <- calcDiversity(sppForCalc,sampID)
+  divMets <- calcDiversity(sppForCalc, sampID)
   print("Done with diversity indices.")
 
-  durMets <- calcDuration(sppForCalc,sampID)
+  durMets <- calcDuration(sppForCalc, sampID)
   print("Done with duration metrics.")
 
-  grhMets <- calcGrowthHabit(sppForCalc,sampID)
+  grhMets <- calcGrowthHabit(sppForCalc, sampID)
   print("Done with growth habit metrics.")
 
-  catMets <- calcCategory(sppForCalc,sampID)
+  catMets <- calcCategory(sppForCalc, sampID)
   print("Done with category metrics.")
 
-  wisMets <- calcWIS(sppForCalc,sampID)
+  wisMets <- calcWIS(sppForCalc, sampID)
   print("Done with WIS metrics.")
 
-  ccMets <- calcCC(sppForCalc,sampID)
+  ccMets <- calcCC(sppForCalc, sampID)
   print("Done with CC metrics.")
 
-  natMets <- calcNative(sppForCalc,sampID)
+  natMets <- calcNative(sppForCalc, sampID)
   print("Done with native status metrics.")
 
-  xbcMets <- calcBCmets(prepDat$byPlotspp,sampID)
+  xbcMets <- calcBCmets(prepDat$byPlotspp, sampID)
   print("Done with Bray-Curtis distance.")
 
   # Now create df with just XTOTABCOV by UID
@@ -154,7 +155,8 @@ calcVascPlantMets <- function(vascIn,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, taxaCC=c
                        timevar = 'PARAMETER', v.names = 'RESULT')
 
   ### COMBINE ALL PLANT METRICS INTO A SINGLE DF
-  allOut <- rbind(xtotabcov,richMets,divMets,durMets,grhMets,catMets,wisMets,ccMets,natMets,xbcMets)
+  allOut <- rbind(xtotabcov, richMets, divMets, durMets, grhMets, catMets,
+                  wisMets, ccMets, natMets, xbcMets)
   
   finOut <- reshape(allOut, idvar = c(sampID), direction = 'wide',
                     timevar = 'PARAMETER', v.names = 'RESULT')

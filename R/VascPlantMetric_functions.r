@@ -60,7 +60,7 @@
 #' outEx <- createDFs(sampID='UID','GENUS',VascPlantEx,taxaNWCA,cValReg='STATE')
 #' head(outEx$byUID)
 #' head(outEx$byPlot)
-createDFs <- function(sampID='UID',tvar,vascIn,taxa, cValReg='NWC_CREG'){
+createDFs <- function(sampID='UID', tvar, vascIn, taxa, cValReg='NWC_CREG'){
   
   # Drop SPECIES_NAME_ID if present here
   if('SPECIES_NAME_ID' %in% names(taxa)){
@@ -68,7 +68,7 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa, cValReg='NWC_CREG'){
   }
   
   # First merge the taxa list with the cover data by USDA_NAME
-  vascIn.1 <- merge(vascIn,taxa,by='USDA_NAME')
+  vascIn.1 <- merge(vascIn, taxa, by='USDA_NAME')
   vascIn.1$tobj <- vascIn.1[,tvar] # Set tobj as the value of tvar
   vascIn.1$COVER <- with(vascIn.1, as.numeric(COVER)) # Make sure COVER is numeric
   
@@ -82,13 +82,13 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa, cValReg='NWC_CREG'){
     byPlot1 <- aggregate(x = list(COVER = byPlot$COVER), 
                          by = byPlot[,c(sampID, 'STATE', 'USAC_REGION', 'PLOT', 'TAXON')],
                          FUN = sum)
-    byPlot1$DISTINCT <- with(byPlot1, ifelse(COVER>0,1,0))
+    byPlot1$DISTINCT <- with(byPlot1, ifelse(COVER>0, 1, 0))
     
   }else{
     byPlot1 <- aggregate(x = list(COVER = byPlot$COVER),
                          by = byPlot[,c(sampID, 'STATE', 'USAC_REGION', cValReg, 'PLOT', 'TAXON')],
                          FUN = sum)
-    byPlot1$DISTINCT <- with(byPlot1, ifelse(COVER>0,1,0))
+    byPlot1$DISTINCT <- with(byPlot1, ifelse(COVER>0, 1, 0))
     
   }
   
@@ -114,19 +114,19 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa, cValReg='NWC_CREG'){
     
    }else{
     byUID.sum <- aggregate(x = list(NUM = byPlot1$DISTINCT),
-                           by = byPlot1[,c(sampID,'STATE','USAC_REGION',cValReg,'TAXON')],
+                           by = byPlot1[,c(sampID,'STATE','USAC_REGION', cValReg, 'TAXON')],
                            FUN = sum)
     
     byUID.mean <- aggregate(x = list(XABCOV = byPlot1$COVER),
-                            by = byPlot1[,c(sampID,'STATE','USAC_REGION',cValReg,'TAXON')],
+                            by = byPlot1[,c(sampID,'STATE','USAC_REGION', cValReg, 'TAXON')],
                             FUN = mean)
     
     byUID.length <- aggregate(x = list(NPLOTS = byPlot1$PLOT),
-                              by = byPlot1[,c(sampID,'STATE','USAC_REGION',cValReg,'TAXON')],
+                              by = byPlot1[,c(sampID,'STATE','USAC_REGION', cValReg, 'TAXON')],
                               FUN = function(x){length(unique(x))})
     
-    byUID1a <- merge(byUID.sum, byUID.mean, by = c(sampID,'STATE','USAC_REGION',cValReg,'TAXON'))
-    byUID1 <- merge(byUID1a, byUID.length, by = c(sampID,'STATE','USAC_REGION',cValReg,'TAXON'))
+    byUID1a <- merge(byUID.sum, byUID.mean, by = c(sampID,'STATE','USAC_REGION', cValReg, 'TAXON'))
+    byUID1 <- merge(byUID1a, byUID.length, by = c(sampID,'STATE','USAC_REGION', cValReg, 'TAXON'))
     
   }
   byUID1$DISTINCT <- 1
@@ -318,17 +318,17 @@ createDFs <- function(sampID='UID',tvar,vascIn,taxa, cValReg='NWC_CREG'){
 #' prepEx <- prepareData(VascPlantEx, cValReg='STATE')
 #' 
 #' str(prepEx)
-prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, 
+prepareData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, 
                         inCVal=ccNatNWCA, inWIS=wisNWCA, cValReg='NWC_CREG'){
   # Read in various input datasets, and create output dataset based on available
   # types of data - must have cover data and taxonomic data at the very least
   # If
-  datNames <- c(sampID,'PLOT','USDA_NAME','COVER','STATE','USAC_REGION',cValReg)
+  datNames <- c(sampID, 'PLOT','USDA_NAME','COVER','STATE','USAC_REGION', cValReg)
   if(any(datNames %nin% names(vascIn))){
-    print(paste("Missing key variables! Should be ",sampID," PLOT, USDA_NAME, COVER, STATE, USAC_REGION, and ", cValReg, ".",sep=''))
+    print(paste("Missing key variables! Should be ", sampID, " PLOT, USDA_NAME, COVER, STATE, USAC_REGION, and ", cValReg, ".",sep=''))
     return(NULL)
   }
-  vascIn <- subset(vascIn, select=names(vascIn) %in% c(sampID, 'PLOT','USDA_NAME','COVER','STATE','USAC_REGION',cValReg))
+  vascIn <- subset(vascIn, select=names(vascIn) %in% c(sampID, 'PLOT','USDA_NAME','COVER','STATE','USAC_REGION', cValReg))
   
   # Input taxa list with taxonomy and life history traits
   if(!is.null(inTaxa)){
@@ -340,10 +340,10 @@ prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
     }
     if(any(altNames %nin% names(inTaxa))){
       msgNames <- altNames[altNames %nin% names(inTaxa)]
-      print(paste("Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
+      print(paste("Will not be able to calculate metrics using ", paste(msgNames, collapse=','),
                   " without these parameters in inTaxa",sep=''))
     }
-    inTaxa <- subset(inTaxa, select=names(inTaxa) %in% c('USDA_NAME', taxNames, altNames,'SPECIES_NAME_ID'))
+    inTaxa <- subset(inTaxa, select=names(inTaxa) %in% c('USDA_NAME', taxNames, altNames, 'SPECIES_NAME_ID'))
   }
   
   # Coefficients of conservatism and native status values
@@ -359,7 +359,7 @@ prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
     }
     if(any(natVars %nin% names(inNat))){
       msgNames <- natVars[natVars %nin% names(inNat)]
-      print(paste("Warning: Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
+      print(paste("Warning: Will not be able to calculate metrics using ", paste(msgNames, collapse=','),
                   " without these parameter in inNat."))
     }
     inNat <- subset(inNat, select=names(inNat) %in% c('USDA_NAME','GEOG_ID','NWCA_NATSTAT'))
@@ -377,7 +377,7 @@ prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
     }
     if(any(ccVars %nin% names(inCVal))){
       msgNames <- ccVars[ccVars %nin% names(inCVal)]
-      print(paste("Warning: Will not be able to calculate metrics using ",paste(msgNames,collapse=','),
+      print(paste("Warning: Will not be able to calculate metrics using ", paste(msgNames, collapse=','),
                   " without these parameters in inCVal."))
     }
     inCVal <- subset(inCVal, select=names(inCVal) %in% c('USDA_NAME','GEOG_ID','NWCA_CC'))
@@ -397,38 +397,41 @@ prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
 
   ## Create dfs for species level, genus, family, and order
   # First construct list object with by plot and by sampID summarizations
-  dfSPP <- createDFs(sampID,'USDA_NAME',vascIn,inTaxa,cValReg)
+  dfSPP <- createDFs(sampID, 'USDA_NAME', vascIn, inTaxa, cValReg)
   print(names(dfSPP))
   # For species-level data, run additional checks and add additional information
   # Merge cover data with taxalist
-  dfSPP.byUID.1a <- merge(dfSPP[[1]],inTaxa,by.x='TAXON',by.y='USDA_NAME')
+  dfSPP.byUID.1a <- merge(dfSPP[[1]], inTaxa,by.x='TAXON', by.y='USDA_NAME')
 
   # If any taxa in the cover data do not match up with the taxalist, return
   # missing names and end function
   if(nrow(dfSPP.byUID.1a)!=nrow(dfSPP[[1]])){
     print("Not all taxa in dfIn match up with names in taxaIn!")
-    check1 <- merge(dfSPP.byUID.1a,dfSPP[[1]],by=c(sampID,'TAXON'),all.y=T)
-    checkout <- unique(subset(check1,is.na(SPECIES_NAME_ID),select=c('TAXON')))
+    check1 <- merge(dfSPP.byUID.1a, dfSPP[[1]], by=c(sampID,'TAXON'),all.y=T)
+    checkout <- unique(subset(check1, is.na(SPECIES_NAME_ID), select=c('TAXON')))
     print(checkout)
     return(NULL)
   }
 
   # If all taxa match taxalist, merge now with CC/native status by cValReg
   if(!is.null(inCVal)){
-    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a,inCVal,by.x=c('TAXON',cValReg),by.y=c('USDA_NAME','GEOG_ID'), all.x=TRUE)
+    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a, inCVal, by.x=c('TAXON', cValReg), 
+                            by.y=c('USDA_NAME','GEOG_ID'), all.x=TRUE)
     print(names(dfSPP.byUID.1b))
   }else{
     dfSPP.byUID.1b <- dfSPP.byUID.1a
   }
   # merge with native status by STATE
   if(!is.null(inNat)){
-    dfSPP.byUID.1c <- merge(dfSPP.byUID.1b,inNat,by.x=c('TAXON','STATE'),by.y=c('USDA_NAME','GEOG_ID'), all.x=TRUE)
+    dfSPP.byUID.1c <- merge(dfSPP.byUID.1b, inNat, by.x=c('TAXON','STATE'), 
+                            by.y=c('USDA_NAME','GEOG_ID'), all.x=TRUE)
   }else{
     dfSPP.byUID.1c <- dfSPP.byUID.1b
   }
   # Merge with WIS values by USAC_REGION
   if(!is.null(inWIS)){
-    dfSPP.byUID.1d <- merge(dfSPP.byUID.1c,inWIS,by.x=c('TAXON','USAC_REGION'),by.y=c('USDA_NAME','GEOG_ID'),all.x=T)
+    dfSPP.byUID.1d <- merge(dfSPP.byUID.1c, inWIS, by.x=c('TAXON','USAC_REGION'), 
+                            by.y=c('USDA_NAME','GEOG_ID'), all.x=T)
   }else{
     dfSPP.byUID.1d <- dfSPP.byUID.1c
   }
@@ -440,7 +443,8 @@ prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
                                  FUN = length)
  
  dfSPP.byUID.1d$TOTFREQ <- with(dfSPP.byUID.1d, NUM/NPLOTS)
- dfSPP.byUID.sum <- aggregate(x = list(TOTFREQ = dfSPP.byUID.1d$TOTFREQ, XTOTABCOV = dfSPP.byUID.1d$XABCOV),
+ dfSPP.byUID.sum <- aggregate(x = list(TOTFREQ = dfSPP.byUID.1d$TOTFREQ, 
+                                       XTOTABCOV = dfSPP.byUID.1d$XABCOV),
                               by = dfSPP.byUID.1d[c(sampID)], 
                               FUN = sum)
  dfSPP.byUID.sum$TOTFREQ <- dfSPP.byUID.sum$TOTFREQ*100
@@ -457,14 +461,15 @@ prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
   dfSPP[[1]] <- dfSPP.byUID.fin
 
   ## Also want to add NWCA_NATSTAT to dfSPP[[2]], byPlot
-  dfSPP.byPlot <- merge(dfSPP[[2]],inNat,by.x=c('STATE','TAXON'),by.y=c('GEOG_ID','USDA_NAME'))
+  dfSPP.byPlot <- merge(dfSPP[[2]], inNat, by.x=c('STATE','TAXON'), by.y=c('GEOG_ID','USDA_NAME'))
   dfSPP[[2]] <- dfSPP.byPlot
 
   # Create datasets for genus and family levels which will only be used for richness metrics
-  dfGEN <- createDFs(sampID,'GENUS',vascIn,inTaxa,cValReg)
-  dfFAM <- createDFs(sampID,'FAMILY',vascIn,inTaxa,cValReg)
+  dfGEN <- createDFs(sampID, 'GENUS', vascIn, inTaxa, cValReg)
+  dfFAM <- createDFs(sampID, 'FAMILY', vascIn, inTaxa, cValReg)
 
-  outDF <- list(byUIDspp=dfSPP[[1]],byPlotspp=dfSPP[[2]],byUIDgen=dfGEN[[1]],byPlotgen=dfGEN[[2]],byUIDfam=dfFAM[[1]],byPlotfam=dfFAM[[2]])
+  outDF <- list(byUIDspp=dfSPP[[1]], byPlotspp=dfSPP[[2]], byUIDgen=dfGEN[[1]], 
+                byPlotgen=dfGEN[[2]], byUIDfam=dfFAM[[1]], byPlotfam=dfFAM[[2]])
   print("Done preparing datasets")
   return(outDF)
 }
@@ -506,10 +511,10 @@ prepareData <- function(vascIn,sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
 #' @author Karen Blocksom
 #'   
 #'   
-int.calcRich <- function(x,y,tlevel,sampID) {
+int.calcRich <- function(x, y, tlevel, sampID) {
   xx1 <- aggregate(x = list(TOTN_TAXA = x$DISTINCT), by = x[c(sampID)], FUN = sum)
   ## Now calculate richness by plot to obtain average richness per plot
-  yy1 <- merge(subset(y,select=c(sampID,'PLOT','DISTINCT')),xx1,by=sampID)
+  yy1 <- merge(subset(y, select=c(sampID, 'PLOT', 'DISTINCT')), xx1, by=sampID)
   yy2 <- aggregate(x = list(N_TAXA = yy1$DISTINCT), by = yy1[c(sampID, 'PLOT', 'TOTN_TAXA')], FUN = sum)
   yy3 <- aggregate(x = list(XN_TAXA = yy2$N_TAXA), by = yy2[c(sampID, 'TOTN_TAXA')], 
                    FUN = function(z){round(mean(z),2)})
@@ -562,7 +567,7 @@ int.calcRich <- function(x,y,tlevel,sampID) {
 #'   
 #'   XRCOV_TRAITVAL: Sum of sXRCOV values across taxa with trait value
 #' @author Karen Blocksom
-int.calcTraits_MultCat <- function(vascIn,trait,sampID){
+int.calcTraits_MultCat <- function(vascIn, trait, sampID){
   vascIn1 <- subset(vascIn,!is.na(eval(as.name(trait))) & eval(as.name(trait))!='')
 
   vascIn.length <- aggregate(x = list(N = vascIn1$TAXON), by = vascIn1[c(sampID, trait)],
@@ -648,7 +653,7 @@ int.calcTraits_MultCat <- function(vascIn,trait,sampID){
 #' 
 #' @author Karen Blocksom
 
-int.calcTraits_MultCat.alt <- function(vascIn,trait,sampID){
+int.calcTraits_MultCat.alt <- function(vascIn, trait, sampID){
   vascIn1 <- subset(vascIn,!is.na(eval(as.name(trait))) & eval(as.name(trait))!='')
 
   vascIn1.ntax <- aggregate(x = list(NTAX = vascIn1$TAXON), by = vascIn1[c(sampID, trait)],
@@ -726,7 +731,7 @@ int.calcTraits_MultCat.alt <- function(vascIn,trait,sampID){
 #'
 #' XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 #' @author Karen Blocksom
-int.calcTraits_Indicator <- function(vascIn,trait,sampID){
+int.calcTraits_Indicator <- function(vascIn, trait, sampID){
   
   for(i in 1:length(sampID)){
     if(i==1) vascIn$SAMPID <- vascIn[,sampID[i]]
@@ -734,8 +739,8 @@ int.calcTraits_Indicator <- function(vascIn,trait,sampID){
   }
   samples <- unique(subset(vascIn,select=c(sampID,'SAMPID')))
     
-  UIDs <- data.frame(SAMPID=unique(subset(vascIn,select='SAMPID')),stringsAsFactors=FALSE)
-  vascIn1 <- subset(vascIn,eval(as.name(trait))==1)
+  UIDs <- data.frame(SAMPID=unique(subset(vascIn, select='SAMPID')), stringsAsFactors=FALSE)
+  vascIn1 <- subset(vascIn, eval(as.name(trait))==1)
   
   if(nrow(vascIn1)>0){
     vascIn.length <- aggregate(x = list(N = vascIn1$TAXON), by = vascIn1[c('SAMPID')],
@@ -777,7 +782,7 @@ int.calcTraits_Indicator <- function(vascIn,trait,sampID){
     
   }else{
     numUIDs <- length(unique(vascIn$SAMPID))
-    outdf1 <- data.frame(SAMPID=rep(unique(vascIn$SAMPID),4), 
+    outdf1 <- data.frame(SAMPID=rep(unique(vascIn$SAMPID), 4), 
                          PARAMETER=c(rep('N',numUIDs),rep('PCTN', numUIDs), rep('XABCOV',numUIDs)
                                 , rep('XRCOV',numUIDs)), RESULT=0, stringsAsFactors=F)
       outdf1$PARAMETER <- paste(outdf1$PARAMETER,trait,sep='_')
@@ -820,13 +825,13 @@ int.calcTraits_Indicator <- function(vascIn,trait,sampID){
 #'   XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 #'   
 #' @author Karen Blocksom
-int.combTraits <- function(vascIn,traits,sampID){
+int.combTraits <- function(vascIn, traits, sampID){
   for(i in 1:length(traits)){
-    tmpOut <- int.calcTraits_Indicator(vascIn,traits[i],sampID)
+    tmpOut <- int.calcTraits_Indicator(vascIn, traits[i], sampID)
     if(i==1){
       outdf <- tmpOut
     }else{
-      outdf <- rbind(outdf,tmpOut)
+      outdf <- rbind(outdf, tmpOut)
     }
   }
   return(outdf)
@@ -872,15 +877,15 @@ int.combTraits <- function(vascIn,traits,sampID){
 #' of taxa with trait value
 #' 
 #' @author Karen Blocksom
-int.calcTraits_Indicator.alt <- function(vascIn,trait,sampID){
+int.calcTraits_Indicator.alt <- function(vascIn, trait, sampID){
   
   for(i in 1:length(sampID)){
-    if(i==1) vascIn$SAMPID <- vascIn[,sampID[i]]
-    else vascIn$SAMPID <- paste(vascIn$SAMPID,vascIn[,sampID[i]],sep='.')
+    if(i==1) vascIn$SAMPID <- vascIn[, sampID[i]]
+    else vascIn$SAMPID <- paste(vascIn$SAMPID, vascIn[, sampID[i]], sep='.')
   }
-  samples <- unique(subset(vascIn,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(vascIn, select=c(sampID,'SAMPID')))
   
-  UIDs <- data.frame(SAMPID=unique(subset(vascIn,select='SAMPID')),stringsAsFactors=FALSE)
+  UIDs <- data.frame(SAMPID=unique(subset(vascIn, select='SAMPID')), stringsAsFactors=FALSE)
   vascIn1 <- subset(vascIn, eval(as.name(trait))==1)
   
   vascIn1.ntax <- aggregate(x = list(NTAX = vascIn1$TAXON), by = vascIn1[c('SAMPID')],
@@ -920,7 +925,7 @@ int.calcTraits_Indicator.alt <- function(vascIn,trait,sampID){
                     timevar = 'PARAMETER', v.names = 'RESULT',
                     times = names(outdf.wide)[!names(outdf.wide) %in% c('SAMPID')])
   
-  outdf1 <- subset(outdf1, substring(PARAMETER,nchar(PARAMETER)-3,nchar(PARAMETER))!='_UND')
+  outdf1 <- subset(outdf1, substring(PARAMETER, nchar(PARAMETER)-3, nchar(PARAMETER))!='_UND')
   outdf1$RESULT <- with(outdf1, ifelse(is.na(RESULT), 0, RESULT))
 
   outdf2 <- merge(samples, outdf1, by='SAMPID')
@@ -966,7 +971,7 @@ int.calcTraits_Indicator.alt <- function(vascIn,trait,sampID){
 #' 
 #' @author Karen Blocksom
 
-int.calcIndices <- function(vascIn,subgrp=NULL,sampID){
+int.calcIndices <- function(vascIn, subgrp=NULL, sampID){
   
   ## Calculate mean CC and FQAI indices
   vascIn.sum <- aggregate(x = list(SUBXTOTABCOV = vascIn$XABCOV),
@@ -991,15 +996,15 @@ int.calcIndices <- function(vascIn,subgrp=NULL,sampID){
   vascIn.2$J <- with(vascIn.2, round(H/log(jcalc), 4))
   vascIn.2$D <- with(vascIn.2, round(1 - Dsub, 4))
   
-  vascIn.3 <- subset(vascIn.2, select=c(sampID, 'H','J','D'))
+  vascIn.3 <- subset(vascIn.2, select=c(sampID, 'H', 'J', 'D'))
   
   outdf <- reshape(vascIn.3, idvar = sampID, direction = 'long',
           varying = c('H','J','D'),
           timevar = 'PARAMETER', v.names = 'RESULT',
           times = c('H','J','D'))
   
-  outdf$PARAMETER <- with(outdf, paste(as.character(PARAMETER),subgrp,sep='_'))
-  outdf$RESULT <- with(outdf, ifelse(is.na(RESULT)|is.infinite(RESULT),0,RESULT))
+  outdf$PARAMETER <- with(outdf, paste(as.character(PARAMETER), subgrp,sep='_'))
+  outdf$RESULT <- with(outdf, ifelse(is.na(RESULT)|is.infinite(RESULT), 0, RESULT))
 
   return(outdf)
 }
@@ -1039,14 +1044,14 @@ int.calcIndices <- function(vascIn,subgrp=NULL,sampID){
 #' SDN_GRP: Standard deviation of number of taxa per plot
 #' 
 #' @author Karen Blocksom
-int.calcRichNS <- function(x,y,natstat,grpname,sampID) {
+int.calcRichNS <- function(x, y, natstat, grpname, sampID) {
   xin <- subset(x, NWCA_NATSTAT %in% natstat)
   xx1 <- aggregate(x = list(TOTN_TAXA = xin$DISTINCT), by = xin[c(sampID)],
                    FUN = sum)
   
   ## Now calculate richness by plot to obtain average richness per plot
   yy1 <- merge(subset(y,NWCA_NATSTAT %in% natstat,
-                      select=c(sampID,'PLOT','DISTINCT')),xx1,by=sampID)
+                      select=c(sampID,'PLOT','DISTINCT')), xx1, by=sampID)
   yy2 <- aggregate(x = list(N_TAXA = yy1$DISTINCT), 
                    by = yy1[c(sampID, 'PLOT','TOTN_TAXA')],
                    FUN = sum)
@@ -1098,12 +1103,12 @@ int.calcRichNS <- function(x,y,natstat,grpname,sampID) {
 #'   Within AA dissimilarity based on species composition = Mean of between plot
 #'   Bray-Curtis Distance (Dissimilarity)
 #' @author Karen Blocksom
-int.calcXBC <- function(x,sampID){
+int.calcXBC <- function(x, sampID){
   for(i in 1:length(sampID)){
-    if(i==1) x$SAMPID <- x[,sampID[i]]
-    else x$SAMPID <- paste(x$SAMPID,x[,sampID[i]],sep='.')
+    if(i==1) x$SAMPID <- x[, sampID[i]]
+    else x$SAMPID <- paste(x$SAMPID, x[,sampID[i]], sep='.')
   }
-  samples <- unique(subset(x,select=c(sampID,'SAMPID')))
+  samples <- unique(subset(x, select=c(sampID,'SAMPID')))
   
   
   uidlist <- data.frame(SAMPID=unique(x$SAMPID), stringsAsFactors=FALSE)
@@ -1117,8 +1122,8 @@ int.calcXBC <- function(x,sampID){
     names(x2) <- gsub("COVER\\.", "", names(x2))
     x2[is.na(x2)] <- 0
     x3 <- ecodist::distance(x2[,2:length(x2)],'bray-curtis')
-    outx <- data.frame(SAMPID=uidlist[i,],XBCDIST_SPP=round(mean(x3),4),stringsAsFactors=FALSE)
-    outdf <- rbind(outdf,outx)
+    outx <- data.frame(SAMPID=uidlist[i,], XBCDIST_SPP=round(mean(x3),4), stringsAsFactors=FALSE)
+    outdf <- rbind(outdf, outx)
   }
   
   outdf.1 <- merge(samples, outdf, by='SAMPID') 

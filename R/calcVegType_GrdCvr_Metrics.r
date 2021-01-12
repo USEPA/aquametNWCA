@@ -79,18 +79,19 @@ calcVtype_GcovMets <- function(dataIn, nPlotIn, sampID='UID', survyear='2011'){
 
   datNames <- c('UID','PLOT','PARAMETER','RESULT')
   if(any(datNames %nin% names(dataIn))){
-    print(paste("Missing key variables! Should be ",paste(sampID,collapse=', '),"PLOT, PARAMETER, and RESULT.",sep=''))
+    print(paste("Missing key variables! Should be ", paste(sampID,collapse=', '),
+                "PLOT, PARAMETER, and RESULT.", sep=''))
     return(NULL)
   }
 
-  sandtOut <- calcSandTMets(dataIn,nPlotIn,sampID)
-  vstratOut <- calcVascStratMets(dataIn,nPlotIn,sampID)
-  nonvascOut <- calcNonvascMets(dataIn,nPlotIn,sampID)
-  wcovOut <- calcWcovMets(dataIn,nPlotIn,sampID,survyear)
-  bgLittOut <- calcBareGround_LitterMets(dataIn,nPlotIn,sampID,survyear)
+  sandtOut <- calcSandTMets(dataIn, nPlotIn, sampID)
+  vstratOut <- calcVascStratMets(dataIn, nPlotIn, sampID)
+  nonvascOut <- calcNonvascMets(dataIn, nPlotIn, sampID)
+  wcovOut <- calcWcovMets(dataIn, nPlotIn, sampID, survyear)
+  bgLittOut <- calcBareGround_LitterMets(dataIn, nPlotIn, sampID, survyear)
 
 
-  vgOut <- rbind(sandtOut,vstratOut,nonvascOut,wcovOut,bgLittOut)
+  vgOut <- rbind(sandtOut, vstratOut, nonvascOut, wcovOut, bgLittOut)
   
   vgOut.1 <- reshape(vgOut, idvar = sampID, direction = 'wide',
                      timevar = 'PARAMETER', v.names = 'RESULT')
