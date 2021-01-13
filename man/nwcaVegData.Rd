@@ -7,6 +7,7 @@
 nwcaVegData(
   vascIn,
   sampID = "UID",
+  taxon_name,
   inTaxa = taxaNWCA,
   inNat = ccNatNWCA,
   inCVal = ccNatNWCA,
@@ -25,9 +26,10 @@ nwcaVegData(
   
   \item PLOT: Plot number of data
   
-  \item USDA_NAME: Taxon name, based on USDA PLANTS names, supplemented with
+  \item variable name provided in \emph{taxon_name}: Taxon name, based on 
+  USDA PLANTS names, supplemented with
   NWCA names, if not in USDA PLANTS
-  
+     
   \item COVER: Percent cover of taxon in plot, including zeros for plots in
   which a taxon does not occur. 
   
@@ -44,10 +46,14 @@ native status to taxa in native status taxalist (inNat)
 \item{sampID}{A character vector containing the name(s) of variable(s)
 necessary to identify unique samples, 'UID' by default}
 
-\item{inTaxa}{Data frame with all taxa in vascIn, with variables: \itemize{ 
-\item USDA_NAME: Taxon name, based on USDA PLANTS names, supplemented with
-NWCA names, if necessary.
+\item{taxon_name}{String containing the name of variable for taxon name in 
+\emph{vascIn} and in taxalists.}
 
+\item{inTaxa}{Data frame with all taxa in vascIn, with variables: \itemize{ 
+\item variable name provided in \emph{taxon_name}: Taxon name, based on 
+USDA PLANTS names, supplemented with
+NWCA names, if not in USDA PLANTS
+   
 \item FAMILY: Family name of taxon
 
 \item GENUS: Genus name of taxon
@@ -66,7 +72,10 @@ in Bray-Curtis distance metrics if available. }}
 
 \item{inNat}{Data frame with native status:
 
-\itemize{ \item USDA_NAME: Taxon name
+\itemize{ 
+\item variable name provided in \emph{taxon_name}: Taxon name, based on 
+USDA PLANTS names, supplemented with
+NWCA names, if not in USDA PLANTS
 
 \item GEOG_ID: Postal abbreviation for STATE of taxon
 
@@ -84,7 +93,10 @@ NWCA, necessary to calculate metrics based on C-values.
 }}
 
 \item{inWIS}{Data frame with Wetland Indicator Status, from U.S. Army Corps
-of Engineers (USAC): \itemize{ \item USDA_NAME: Taxon name
+of Engineers (USAC): \itemize{ 
+\item variable name provided in \emph{taxon_name}: Taxon name, based on 
+USDA PLANTS names, supplemented with
+NWCA names, if not in USDA PLANTS
 
 \item GEOG_ID: USAC region, abbreviated to match those used in input data
 frame
@@ -204,7 +216,7 @@ This function calls the createDFs() function, which sums cover by
 }
 \examples{
 head(VascPlantEx)
-prepEx <- nwcaVegData(vascIn=VascPlantEx, cValReg='STATE')
+prepEx <- nwcaVegData(vascIn=VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 
 str(prepEx)
 }

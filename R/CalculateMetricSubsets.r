@@ -65,7 +65,7 @@
 #' 
 #' @examples
 #'  head(VascPlantEx)
-#'  exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+#'  exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 #'
 #'  durEx <- calcDuration(exPlant$byUIDspp)
 #'  head(durEx)
@@ -231,7 +231,7 @@ calcDuration <- function(vascIn, sampID='UID'){
 #' Environmental Protection Agency, Washington, DC.
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+#' exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 #'
 #' ghEx <- calcGrowthHabit(exPlant$byUIDspp)
 #'
@@ -451,7 +451,7 @@ calcGrowthHabit <- function(vascIn, sampID='UID'){
 #' 
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+#' exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 #'
 #' catEx <- calcCategory(exPlant$byUIDspp)
 #'
@@ -632,7 +632,7 @@ calcCategory <- function(vascIn, sampID='UID'){
 #' 
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+#' exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 #'
 #' wisEx <- calcWIS(exPlant$byUIDspp)
 #'
@@ -857,7 +857,8 @@ calcWIS <- function(vascIn, sampID='UID'){
 #'   
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+#' exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', state = 'STATE', 
+#' coeReg = 'USAC_REGION', cValReg='STATE')
 #'
 #' ccEx <- calcCC(exPlant$byUIDspp)
 #'
@@ -1086,7 +1087,7 @@ calcCC <- function(vascIn, sampID='UID'){
 #' 
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+#' exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 #'
 #' natEx <- calcNative(exPlant$byUIDspp)
 #'
@@ -1236,7 +1237,7 @@ calcNative <- function(vascIn, sampID='UID'){
 #' 
 #' @examples
 #'   head(VascPlantEx)
-#'   exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+#'   exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 #'
 #'   richEx <- calcRichness(exPlant$byUIDspp,exPlant$byPlotspp,
 #'          exPlant$byUIDgen,exPlant$byPlotgen,exPlant$byUIDfam,exPlant$byPlotfam)
@@ -1351,7 +1352,7 @@ calcRichness <- function(byUIDspp, byPlotspp, byUIDgen, byPlotgen,
 #' 
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+#' exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 #'
 #' divEx <- calcDiversity(exPlant$byUIDspp)
 #'
@@ -1412,7 +1413,7 @@ calcDiversity <- function(vascIn, sampID='UID'){
 #' @param vascIn Data frame containing cover data summarized by 
 #' \emph{sampID} variables, PLOT, and
 #' DISTINCT at the species level. Must also contain at least one of the
-#' following: USDA_NAME (taxon name) or SPECIES_NAME_ID (numeric code
+#' following: TAXON (taxon name) or SPECIES_NAME_ID (numeric code
 #' for taxon). If NWCA_NATSTAT is included, a native species version is
 #' also calculated.
 #' @param sampID A character vector containing the name(s) of
@@ -1539,7 +1540,7 @@ calcBCmets <- function(vascIn, sampID='UID'){
 #' 
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+#' exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 #'
 #' vmmiEx <- calcVMMImets(exPlant$byUIDspp)
 #'

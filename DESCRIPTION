@@ -1,6 +1,6 @@
 Package: aquametNWCA
 Type: Package
-Title: NWCA 2011 Metrics and Indices
+Title: NWCA Metrics and Indices
 Version: 2.3.5
 Depends: R (>= 3.6)
 Imports:
@@ -12,7 +12,7 @@ Imports:
 Author: Karen Blocksom
 Maintainer: Karen Blocksom <blocksom.karen@epa.gov>
 Description: This package calculates vegetation 
-    metrics and indices associated with NWCA 2011
+    metrics and indices associated with NWCA
     using field data and trait information. 
     Functions for vegetation are broken
     into vascular plants, trees, and vegetation types

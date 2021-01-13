@@ -8,6 +8,7 @@ createDFs(
   sampID = "UID",
   tvar,
   vascIn,
+  taxon_name,
   taxa,
   state = "STATE",
   coeReg = "USAC_REGION",
@@ -19,7 +20,7 @@ createDFs(
 variable(s) necessary to identify unique samples, 'UID' by default}
 
 \item{tvar}{String with the level of taxonomy
-('USDA_NAME','GENUS','FAMILY')}
+(taxon_name,'GENUS','FAMILY')}
 
 \item{vascIn}{Data frame with vegetation cover data, having
 the following variables:
@@ -38,10 +39,13 @@ native status to taxa in native status taxalist (inNat)
 \item Variable named in \emph{cValReg}: NWCA C-value region abbreviation for sample, to correspond
 those in C-value taxalist
 
-\item USDA_NAME: Taxon name, must match with taxa data frame
+\item Variable named in \emph{taxon_name}: Taxon name, must match with taxa data frame
 
 \item COVER: Percentage estimated vegetation cover by TAXON in PLOT
 }}
+
+\item{taxon_name}{String containing the name of variable for taxon name in 
+\emph{vascIn} and in taxalists.}
 
 \item{taxa}{Data frame containing USDA_NAME, GENUS, CATEGORY,
 GROWTH_HABIT, and DURATION variables. Dataset taxaNWCA is the
@@ -81,7 +85,8 @@ level specified. Not intended for use on its own.
 head(VascPlantEx)
 data(taxaNWCA)
 
-outEx <- createDFs(sampID='UID','GENUS',VascPlantEx,taxaNWCA,cValReg='STATE')
+outEx <- createDFs(sampID='UID','GENUS',VascPlantEx,taxon_name = 'USDA_NAME',
+taxaNWCA,cValReg='STATE')
 head(outEx$byUID)
 head(outEx$byPlot)
 }

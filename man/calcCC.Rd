@@ -60,7 +60,8 @@ if NWCA_NATSTAT is present in the input data frame.
 }
 \examples{
 head(VascPlantEx)
-exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', state = 'STATE', 
+coeReg = 'USAC_REGION', cValReg='STATE')
 
 ccEx <- calcCC(exPlant$byUIDspp)
 

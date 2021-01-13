@@ -8,6 +8,7 @@ nwcaVegInput(
   sampID = "UID",
   tvar,
   vascIn,
+  taxon_name,
   taxa,
   state = "STATE",
   coeReg = "USAC_REGION",
@@ -38,10 +39,15 @@ the following variables:
 \item \emph{cValReg} (as specified in function arguments): Site region associated with Coefficient of 
 Conservatism value (will match name specified in function arguments)
 
-\item USDA_NAME: Taxon name, must match with taxa data frame
-
+\item variable name provided in \emph{taxon_name}: Taxon name, based on 
+  USDA PLANTS names, supplemented with
+  NWCA names, if not in USDA PLANTS
+  
 \item COVER: Percentage estimated vegetation cover by TAXON in PLOT
 }}
+
+\item{taxon_name}{String containing the name of variable for taxon name in 
+\emph{vascIn} and in taxalists.}
 
 \item{taxa}{Data frame containing USDA_NAME, GENUS, CATEGORY,
 GROWTH_HABIT, and DURATION variables. Dataset taxaNWCA is the
@@ -81,7 +87,8 @@ level specified. Not intended for use on its own.
 head(VascPlantEx)
 data(taxaNWCA)
 
-outEx <- nwcaVegInput(sampID='UID','GENUS',VascPlantEx,taxaNWCA,cValReg='STATE')
+outEx <- nwcaVegInput(sampID='UID','GENUS',VascPlantEx,
+taxon_name = 'USDA_NAME', taxaNWCA,cValReg='STATE')
 head(outEx$byUID)
 head(outEx$byPlot)
 }

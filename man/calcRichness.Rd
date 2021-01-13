@@ -107,7 +107,7 @@ by UID and one by sampID variables and PLOT.
 }
 \examples{
   head(VascPlantEx)
-  exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+  exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 
   richEx <- calcRichness(exPlant$byUIDspp,exPlant$byPlotspp,
          exPlant$byUIDgen,exPlant$byPlotgen,exPlant$byUIDfam,exPlant$byPlotfam)

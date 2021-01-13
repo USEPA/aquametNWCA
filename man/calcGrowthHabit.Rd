@@ -77,7 +77,7 @@ categories. Taxa with 'UND' as native status are excluded.
 }
 \examples{
 head(VascPlantEx)
-exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 
 ghEx <- calcGrowthHabit(exPlant$byUIDspp)
 

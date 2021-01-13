@@ -6,6 +6,7 @@
 \usage{
 calcVascPlantMets(
   vascIn,
+  taxon_name,
   taxaIn = taxaNWCA,
   taxaNat = ccNatNWCA,
   taxaCC = ccNatNWCA,
@@ -31,10 +32,12 @@ native status to taxa in native status taxalist (inNat)
   
   \item Variable named in \emph{cValReg}: NWCA C-value regions: values must match GEOG_ID
   in C-value taxalist (inCVal)
-  \item USDA_NAME: USDA accepted name of taxon in sample
+ \item Variable named in \emph{taxon_name}: Taxon name, must match with taxa data frame
   
   \item COVER: value from 0 to 100 indicating relative cover of taxon within
   plot). Data should already be summed by UID, PLOT, and USDA_NAME. }}
+
+\item{taxon_name}{String containing the name of variable for taxon name in}
 
 \item{taxaIn}{A data frame containing taxonomy of all taxa found in vascIn, 
   with the following variables at a minimum: 
@@ -125,7 +128,8 @@ This function calculates the NWCA 2011 vascular plant metrics.
 \examples{
 head(VascPlantEx)
 
-exOut <- calcVascPlantMets(VascPlantEx,taxaIn = taxaNWCA, taxaNat = ccNatNWCA,
+exOut <- calcVascPlantMets(VascPlantEx, taxon_name = 'USDA_NAME',
+taxaIn = taxaNWCA, taxaNat = ccNatNWCA,
  taxaCC = ccNatNWCA, taxaWIS = wisNWCA, cValReg ='STATE')
 
 str(exOut)

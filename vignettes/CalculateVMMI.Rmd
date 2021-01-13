@@ -29,7 +29,8 @@ Using the vascular plant example dataset, `VascPlantEx` and the taxa lists inclu
 library(aquametNWCA)
 
 head(VascPlantEx)
-exPlant <- nwcaVegData(VascPlantEx, sampID='UID', state = 'STATE', coeReg = 'USAC_REGION', cValReg='STATE')
+exPlant <- nwcaVegData(VascPlantEx, sampID='UID', taxon_name = 'USDA_NAME',
+                       state = 'STATE', coeReg = 'USAC_REGION', cValReg='STATE')
 ```
 
 Now we can use the `byUIDspp` data frame from the output above to calculate the VMMI. Then we need to cast the data frame into wide format.

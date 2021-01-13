@@ -7,6 +7,7 @@
 prepareData(
   vascIn,
   sampID = "UID",
+  taxon_name,
   inTaxa = taxaNWCA,
   inNat = ccNatNWCA,
   inCVal = ccNatNWCA,
@@ -25,7 +26,8 @@ prepareData(
   
   \item PLOT: Plot number of data
   
-  \item USDA_NAME: Taxon name, based on USDA PLANTS names, supplemented with
+  \item variable name provided in \emph{taxon_name}: Taxon name, based on 
+  USDA PLANTS names, supplemented with
   NWCA names, if not in USDA PLANTS
   
   \item COVER: Percent cover of taxon in plot, including zeros for plots in
@@ -44,9 +46,12 @@ native status to taxa in native status taxalist (inNat)
 \item{sampID}{A character vector containing the name(s) of variable(s)
 necessary to identify unique samples, 'UID' by default}
 
+\item{taxon_name}{String containing the name of variable for taxon name in 
+\emph{vascIn} and in taxalists.}
+
 \item{inTaxa}{Data frame with all taxa in vascIn, with variables: \itemize{ 
-\item USDA_NAME: Taxon name, based on USDA PLANTS names, supplemented with
-NWCA names, if necessary.
+\item variable name provided in \emph{taxon_name}: Taxon name, consistent
+with name in vascIn data frame.
 
 \item FAMILY: Family name of taxon
 
@@ -64,9 +69,9 @@ to calculate growth habit metrics
 \item SPECIES_NAME_ID (optional): Taxonomic ID number, which will be used
 in Bray-Curtis distance metrics if available. }}
 
-\item{inNat}{Data frame with native status:
-
-\itemize{ \item USDA_NAME: Taxon name
+\item{inNat}{Data frame with native status:\itemize{
+\item variable name provided in \emph{taxon_name}: Taxon name, consistent
+with name in vascIn data frame.
 
 \item GEOG_ID: Postal abbreviation for STATE of taxon
 
@@ -74,7 +79,9 @@ in Bray-Curtis distance metrics if available. }}
 necessary to calculate native status metrics. }}
 
 \item{inCVal}{Data frame with coefficient of conservatism values:
-\itemize{ \item USDA_NAME: Taxon name
+\itemize{ 
+\item variable name provided in \emph{taxon_name}: Taxon name, consistent
+ with name in vascIn data frame.
 
 \item GEOG_ID: Code indicating C region for site, as supplied with cover 
 data.
@@ -84,7 +91,9 @@ NWCA, necessary to calculate metrics based on C-values.
 }}
 
 \item{inWIS}{Data frame with Wetland Indicator Status, from U.S. Army Corps
-of Engineers (USAC): \itemize{ \item USDA_NAME: Taxon name
+of Engineers (USAC): \itemize{ 
+\item variable name provided in \emph{taxon_name}: Taxon name, consistent
+with name in vascIn data frame.
 
 \item GEOG_ID: USAC region, abbreviated to match USAC_REGION used in 
 input data frame
@@ -154,7 +163,8 @@ native status to taxa in native status taxalist (inNat)
   
   \item \emph{cValReg}: C-value region code
   
-  \item TAXON: Taxon name
+  \item variable name provided in \emph{taxon_name}: Taxon name, consistent
+  with name in vascIn data frame.
   
   \item COVER: Sum of cover by TAXON within plot
   
@@ -202,7 +212,8 @@ This function calls the createDFs() function, which sums cover by
 }
 \examples{
 head(VascPlantEx)
-prepEx <- prepareData(VascPlantEx, cValReg='STATE')
+prepEx <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', state = 'STATE',
+coeReg = 'USAC_REGION', cValReg='STATE')
 
 str(prepEx)
 }

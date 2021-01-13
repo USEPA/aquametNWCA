@@ -21,10 +21,11 @@
 #'   
 #'   \item Variable named in \emph{cValReg}: NWCA C-value regions: values must match GEOG_ID
 #'   in C-value taxalist (inCVal)
-#'   \item USDA_NAME: USDA accepted name of taxon in sample
+#'  \item Variable named in \emph{taxon_name}: Taxon name, must match with taxa data frame
 #'   
 #'   \item COVER: value from 0 to 100 indicating relative cover of taxon within
 #'   plot). Data should already be summed by UID, PLOT, and USDA_NAME. }
+#' @param taxon_name String containing the name of variable for taxon name in 
 #' @param taxaIn A data frame containing taxonomy of all taxa found in vascIn, 
 #'   with the following variables at a minimum: 
 #'   \itemize{ \item USDA_NAME: USDA
@@ -107,16 +108,17 @@
 #' @examples
 #' head(VascPlantEx)
 #'
-#' exOut <- calcVascPlantMets(VascPlantEx,taxaIn = taxaNWCA, taxaNat = ccNatNWCA,
+#' exOut <- calcVascPlantMets(VascPlantEx, taxon_name = 'USDA_NAME',
+#' taxaIn = taxaNWCA, taxaNat = ccNatNWCA,
 #'  taxaCC = ccNatNWCA, taxaWIS = wisNWCA, cValReg ='STATE')
 #'
 #' str(exOut)
 #' head(exOut)
-calcVascPlantMets <- function(vascIn, taxaIn=taxaNWCA, taxaNat=ccNatNWCA, taxaCC=ccNatNWCA,
+calcVascPlantMets <- function(vascIn, taxon_name, taxaIn=taxaNWCA, taxaNat=ccNatNWCA, taxaCC=ccNatNWCA,
                               taxaWIS=wisNWCA, sampID='UID', state = 'STATE', 
                               coeReg = 'USAC_REGION', cValReg='NWC_CREG'){
   print(cValReg)
-  prepDat <- prepareData(vascIn, sampID, inTaxa = taxaIn, inNat = taxaNat, 
+  prepDat <- prepareData(vascIn, sampID, taxon_name= taxon_name, inTaxa = taxaIn, inNat = taxaNat, 
                          inCVal = taxaCC, inWIS = taxaWIS, state = state, 
                          coeReg = coeReg, cValReg = cValReg)
 

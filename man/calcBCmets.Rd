@@ -10,7 +10,7 @@ calcBCmets(vascIn, sampID = "UID")
 \item{vascIn}{Data frame containing cover data summarized by 
 \emph{sampID} variables, PLOT, and
 DISTINCT at the species level. Must also contain at least one of the
-following: USDA_NAME (taxon name) or SPECIES_NAME_ID (numeric code
+following: TAXON (taxon name) or SPECIES_NAME_ID (numeric code
 for taxon). If NWCA_NATSTAT is included, a native species version is
 also calculated.}
 

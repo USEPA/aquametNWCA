@@ -7,7 +7,8 @@ context("Vascular plant metric functions")
 
 test_that("Data frames created with correct structure",
          {
-          testDFs <- nwcaVegInput(sampID='UID',tvar='USDA_NAME',testVasc,taxaNWCA,cValReg='STATE')
+          testDFs <- nwcaVegInput(sampID='UID', tvar='USDA_NAME',testVasc,taxon_name = 'USDA_NAME',
+                                  taxaNWCA, state = 'STATE', coeReg = 'USAC_REGION', cValReg='STATE')
           expect_true(length(testDFs)==2)
           expect_true(class(testDFs)=='list')
           expect_equal(names(testDFs),c('byUID','byPlot'))
@@ -16,7 +17,8 @@ test_that("Data frames created with correct structure",
 })
 
 
-dfTest <- prepareData(testVasc,sampID='UID',cValReg='STATE')
+dfTest <- prepareData(testVasc, sampID='UID', taxon_name = 'USDA_NAME', state = 'STATE', 
+                      coeReg = 'USAC_REGION', cValReg='STATE')
 
 test_that("Richness metric values are correct",
           {
@@ -129,8 +131,10 @@ test_that("VMMI metric calculations",
 
 test_that("All vascular plant metrics correct",
           {
-            metOut <- calcVascPlantMets(testVasc,taxaIn=taxaNWCA,taxaNat=ccNatNWCA, 
-                                        taxaCC=ccNatNWCA,taxaWIS=wisNWCA,sampID='UID', cValReg='STATE')
+            metOut <- calcVascPlantMets(testVasc, taxon_name = 'USDA_NAME', taxaIn=taxaNWCA,
+                                        taxaNat=ccNatNWCA, taxaCC=ccNatNWCA, taxaWIS=wisNWCA, 
+                                        sampID='UID', 
+                                        state = 'STATE', coeReg = 'USAC_REGION', cValReg='STATE')
             varNames <- names(metOut)[names(metOut)!='UID']
             metOut.long <- reshape(metOut, idvar = 'UID', direction = 'long',
                                    times = varNames, varying = varNames,

@@ -59,7 +59,7 @@ taxa lists must be used to create the input data frame.
 }
 \examples{
 head(VascPlantEx)
-exPlant <- prepareData(VascPlantEx, cValReg='STATE')
+exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
 
 vmmiEx <- calcVMMImets(exPlant$byUIDspp)
 

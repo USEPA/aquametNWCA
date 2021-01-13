@@ -6,7 +6,7 @@
 \title{aquametNWCA}
 \description{
 aquametNWCA: A package to calculate vegetation metrics and the 
-vegetation multimetric index (VMMI) used in NWCA 2011
+vegetation multimetric index (VMMI) used in NWCA
 }
 \section{Vascular plant functions}{
 
