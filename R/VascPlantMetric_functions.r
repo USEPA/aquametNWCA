@@ -18,11 +18,11 @@
 #'
 #' \item PLOT:  Plot number of data (1 to 5 possible)
 #'
-#' \item STATE: Two-letter state postal code of site, used to link
-#' native status to taxa in native status taxalist
+#' \item Variable named in \emph{state}: Two-letter state postal code of site, used to link
+#' native status to taxa in native status taxalist (inNat)
 #'
-#' \item USAC_REGION: U.S. Army Corps of Engineers Region abbreviation for
-#'   sample, to correspond to those in Wetland Indicator Status taxalist
+#' \item Variable named in \emph{coeReg}: U.S. Army Corps of Engineers region abbreviation for
+#'   sample, to correspond to GEOG_ID in Wetland Indicator Status taxalist (inWIS)
 #' 
 #' \item Variable named in \emph{cValReg}: NWCA C-value region abbreviation for sample, to correspond
 #' those in C-value taxalist
@@ -35,6 +35,14 @@
 #' GROWTH_HABIT, and DURATION variables. Dataset taxaNWCA is the
 #' default if not specified. These variables are assumed to be
 #' populated with abbreviations as found in USDA PLANTS database.
+#' 
+#' @param state String containing the name of the state in \emph{vascIn}, 
+#' with default value of 'STATE'  
+#' 
+#' @param coeReg String containing the name of the U.S. Army Corps of Engineers
+#' region in \emph{vascIn} associated with Wetland Indicator Status, 
+#' with default value of 'USAC_REGION'  
+#' 
 #' @param cValReg String containing the name of the variable in \emph{vascIn}
 #'  which specifies the C-value region. 
 #' 
@@ -60,7 +68,8 @@
 #' outEx <- createDFs(sampID='UID','GENUS',VascPlantEx,taxaNWCA,cValReg='STATE')
 #' head(outEx$byUID)
 #' head(outEx$byPlot)
-createDFs <- function(sampID='UID', tvar, vascIn, taxa, cValReg='NWC_CREG'){
+createDFs <- function(sampID='UID', tvar, vascIn, taxa, state='STATE', 
+                      coeReg = 'USAC_REGION', cValReg='NWC_CREG'){
   
   # Drop SPECIES_NAME_ID if present here
   if('SPECIES_NAME_ID' %in% names(taxa)){
@@ -78,15 +87,15 @@ createDFs <- function(sampID='UID', tvar, vascIn, taxa, cValReg='NWC_CREG'){
   
   # Sum COVER by SAMPID, PLOT, and TAXON to ensure there is only one row per species in input data, set DISTINCT as 1 to be
   # taxon counter
-  if(cValReg=='STATE'){
+  if(cValReg==state){
     byPlot1 <- aggregate(x = list(COVER = byPlot$COVER), 
-                         by = byPlot[,c(sampID, 'STATE', 'USAC_REGION', 'PLOT', 'TAXON')],
+                         by = byPlot[,c(sampID, state, coeReg, 'PLOT', 'TAXON')],
                          FUN = sum)
     byPlot1$DISTINCT <- with(byPlot1, ifelse(COVER>0, 1, 0))
     
   }else{
     byPlot1 <- aggregate(x = list(COVER = byPlot$COVER),
-                         by = byPlot[,c(sampID, 'STATE', 'USAC_REGION', cValReg, 'PLOT', 'TAXON')],
+                         by = byPlot[,c(sampID, state, coeReg, cValReg, 'PLOT', 'TAXON')],
                          FUN = sum)
     byPlot1$DISTINCT <- with(byPlot1, ifelse(COVER>0, 1, 0))
     
@@ -96,37 +105,37 @@ createDFs <- function(sampID='UID', tvar, vascIn, taxa, cValReg='NWC_CREG'){
   print("Done with plot summing")
 
   ## Calculate frequency and relative frequency variables by taxon
-  if(cValReg=='STATE'){
+  if(cValReg==state){
     byUID.sum <- aggregate(x = list(NUM = byPlot1$DISTINCT),
-                           by = byPlot1[c(sampID,'STATE','USAC_REGION','TAXON')],
+                           by = byPlot1[c(sampID, state, coeReg, 'TAXON')],
                            FUN = sum)
     
     byUID.mean <- aggregate(x = list(XABCOV = byPlot1$COVER),
-                            byPlot1[,c(sampID,'STATE','USAC_REGION','TAXON')],
+                            byPlot1[,c(sampID, state, coeReg, 'TAXON')],
                             FUN = mean)
     
     byUID.length <- aggregate(x = list(NPLOTS = byPlot1$PLOT),
-                              byPlot1[,c(sampID,'STATE','USAC_REGION','TAXON')],
+                              byPlot1[,c(sampID, state, coeReg, 'TAXON')],
                               FUN = function(x){length(unique(x))})
     
-    byUID1a <- merge(byUID.sum, byUID.mean, by = c(sampID,'STATE','USAC_REGION','TAXON'))
-    byUID1 <- merge(byUID1a, byUID.length, by = c(sampID,'STATE','USAC_REGION','TAXON'))
+    byUID1a <- merge(byUID.sum, byUID.mean, by = c(sampID, state, coeReg, 'TAXON'))
+    byUID1 <- merge(byUID1a, byUID.length, by = c(sampID, state, coeReg, 'TAXON'))
     
    }else{
     byUID.sum <- aggregate(x = list(NUM = byPlot1$DISTINCT),
-                           by = byPlot1[,c(sampID,'STATE','USAC_REGION', cValReg, 'TAXON')],
+                           by = byPlot1[,c(sampID, state, coeReg, cValReg, 'TAXON')],
                            FUN = sum)
     
     byUID.mean <- aggregate(x = list(XABCOV = byPlot1$COVER),
-                            by = byPlot1[,c(sampID,'STATE','USAC_REGION', cValReg, 'TAXON')],
+                            by = byPlot1[,c(sampID, state, coeReg, cValReg, 'TAXON')],
                             FUN = mean)
     
     byUID.length <- aggregate(x = list(NPLOTS = byPlot1$PLOT),
-                              by = byPlot1[,c(sampID,'STATE','USAC_REGION', cValReg, 'TAXON')],
+                              by = byPlot1[,c(sampID, state, coeReg, cValReg, 'TAXON')],
                               FUN = function(x){length(unique(x))})
     
-    byUID1a <- merge(byUID.sum, byUID.mean, by = c(sampID,'STATE','USAC_REGION', cValReg, 'TAXON'))
-    byUID1 <- merge(byUID1a, byUID.length, by = c(sampID,'STATE','USAC_REGION', cValReg, 'TAXON'))
+    byUID1a <- merge(byUID.sum, byUID.mean, by = c(sampID, state, coeReg, cValReg, 'TAXON'))
+    byUID1 <- merge(byUID1a, byUID.length, by = c(sampID, state, coeReg, cValReg, 'TAXON'))
     
   }
   byUID1$DISTINCT <- 1
@@ -161,10 +170,10 @@ createDFs <- function(sampID='UID', tvar, vascIn, taxa, cValReg='NWC_CREG'){
 #'   \item COVER: Percent cover of taxon in plot, including zeros for plots in
 #'   which a taxon does not occur. 
 #'   
-#'   \item STATE: Two-letter state postal code of site, used to link
+#'   \item Variable named in \emph{state}: Two-letter state postal code of site, used to link
 #' native status to taxa in native status taxalist (inNat)
 #'
-#'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation for
+#'   \item Variable named in \emph{coeReg}: U.S. Army Corps of Engineers region abbreviation for
 #'   sample, to correspond to GEOG_ID in Wetland Indicator Status taxalist (inWIS)
 #'   
 #'   \item Variable named in \emph{cValReg}: NWCA C-value regions: values must match GEOG_ID
@@ -216,6 +225,14 @@ createDFs <- function(sampID='UID', tvar, vascIn, taxa, cValReg='NWC_CREG'){
 #'   input data frame
 #'   
 #'   \item WIS: Wetland Indicator Status as provided by USAC or added for NWCA }
+#'   
+#' @param state String containing the name of the state in \emph{vascIn}, 
+#' with default value of 'STATE'  
+#' 
+#' @param coeReg String containing the name of the U.S. Army Corps of Engineers
+#' region in \emph{vascIn} associated with Wetland Indicator Status, 
+#' with default value of 'USAC_REGION'  
+#' 
 #' @param cValReg String containing the name of the variable in \emph{vascIn}
 #'  which specifies the C-value region. 
 #'   
@@ -228,48 +245,50 @@ createDFs <- function(sampID='UID', tvar, vascIn, taxa, cValReg='NWC_CREG'){
 #'   species level and contains: \itemize{ \item sampID: Variable(s) identified
 #'   in \emph{sampID} argument
 #'   
-#'   \item STATE: State abbreviation of site location, necessary for merging 
-#'   with inNat
+#' \item Variable named in \emph{state}: Two-letter state postal code of site, used to link
+#' native status to taxa in native status taxalist (inNat)
+#'
+#' \item Variable named in \emph{coeReg}: U.S. Army Corps of Engineers region abbreviation for
+#'   sample, to correspond to GEOG_ID in Wetland Indicator Status taxalist (inWIS)
 #'   
-#'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation 
-#'   necessary for merging with inWIS.
+#' \item Variable named in \emph{cValReg}: NWCA C-value regions: values must match GEOG_ID
+#'   in C-value taxalist (inCVal)
+#' \item TAXON: Taxon name
 #'   
-#'   \item TAXON: Taxon name
+#' \item NUM: Number of occurrences of taxon across plots
 #'   
-#'   \item NUM: Number of occurrences of taxon across plots
+#' \item XABCOV: Mean percent absolute cover of taxon across plots
 #'   
-#'   \item XABCOV: Mean percent absolute cover of taxon across plots
-#'   
-#'   \item DISTINCT: Distinctness value for each taxon, 1 if the taxon has
+#' \item DISTINCT: Distinctness value for each taxon, 1 if the taxon has
 #'   COVER>0 and 0 if not.
 #'   
-#'   \item NPLOTS: Number of plots in sample (1-5)
+#' \item NPLOTS: Number of plots in sample (1-5)
 #'   
-#'   \item TOTN: Total number of taxa in sample
+#' \item TOTN: Total number of taxa in sample
 #'   
-#'   \item XTOTABCOV: Sum of \emph{XABCOV} across all taxa in sample
+#' \item XTOTABCOV: Sum of \emph{XABCOV} across all taxa in sample
 #'   
-#'   \item sXRCOV: taxon mean relative cover (XABCOV/XTOTABCOV)*100
+#' \item sXRCOV: taxon mean relative cover (XABCOV/XTOTABCOV)*100
 #'   
-#'   \item FREQ: Relative number of plots in which taxon occurs (NUM/NPLOTS)*100
+#' \item FREQ: Relative number of plots in which taxon occurs (NUM/NPLOTS)*100
 #'   
-#'   \item TOTFREQ: Sum of \emph{FREQ} across all taxa in sample
+#' \item TOTFREQ: Sum of \emph{FREQ} across all taxa in sample
 #'   
-#'   \item SRFREQ: Relative frequency of taxon relative to total frequency
+#' \item SRFREQ: Relative frequency of taxon relative to total frequency
 #'   (FREQ/TOTFREQ)*100 } This data frame is also merged with the input taxa
 #'   data frames and contains, in addition, GENUS and FAMILY, but also contains
 #'   (depending on the input taxa lists): CATEGORY, DURATION, GROWTH_HABIT,
 #'   NWCA_CC, NWCA_NATSTAT, WIS.
 #'   
-#'   \item byPlotspp: Data frame with data summarized by \emph{sampID}
+#' \item byPlotspp: Data frame with data summarized by \emph{sampID}
 #'   variables, PLOT, and TAXON at the species level. Each data frame contains: 
 #'   \itemize{ \item sampID Variables identified in \emph{sampID} argument
 #'   
 #'   \item PLOT: Plot number
 #'   
-#'   \item STATE: State of sample location
+#'   \item \emph{state}: State of sample location
 #'   
-#'   \item USAC_REGION: USAC region code
+#'   \item \emph{coeReg}: USAC region code
 #'   
 #'   \item \emph{cValReg}: C-value region code
 #'   
@@ -280,30 +299,30 @@ createDFs <- function(sampID='UID', tvar, vascIn, taxa, cValReg='NWC_CREG'){
 #'   \item DISTINCT: Distinctness of taxon, value of 1 assigned to each row }
 #'   
 #'   \item byUIDgen: Data frame with data summarized by sampID variables and
-#'   TAXON at the genus level and contains \emph{sampID}, STATE, USAC_REGION,
-#'   NWC_CREG,
+#'   TAXON at the genus level and contains \emph{sampID}, \emph{state}, 
+#'   \emph{coeReg}, \emph{cValReg},
 #'   TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of plots in which taxon
 #'   occurs, and XABCOV is the mean absolute COVER across plots. DISTINCT is the
 #'   value 1 assigned to each row.
 #'   
 #'   \item byPlotgen: Data frame with data summarized by sampID variables, PLOT,
 #'   and TAXON at the genus level. Each data frame contains \emph{sampID}, PLOT,
-#'   STATE, USAC_REGION, NWC_CREG, TAXON, COVER, and DISTINCT. DISTINCT assigns 
-#'   the value
+#'   \emph{state}, \emph{coeReg}, \emph{cValReg}, TAXON, COVER, and DISTINCT. 
+#'   DISTINCT assigns the value
 #'   for each taxon as 1 if the taxon has COVER>0 or 0 if not. COVER is the sum
 #'   of the COVER variable.
 #'   
 #'   \item byUIDfam: Data frame with data summarized by sampID variables and
-#'   TAXON at the family level and contains \emph{sampID}, STATE, USAC_REGION,
-#'   NWC_CREG, 
+#'   TAXON at the family level and contains \emph{sampID}, \emph{state}, 
+#'   \emph{coeReg}, \emph{cValReg}, 
 #'   TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of plots in which taxon
 #'   occurs, and XABCOV is the mean absolute COVER across plots. DISTINCT is the
 #'   value 1 assigned to each row.
 #'   
 #'   \item byPlotfam: Data frame with data summarized by \emph{sampID} , PLOT,
 #'   and TAXON at the family level. Each data frame contains \emph{sampID},
-#'   PLOT, STATE, USAC_REGION, NWC_CREG, TAXON, COVER, and DISTINCT. DISTINCT 
-#'   assigns the
+#'   PLOT, \emph{state}, \emph{coeReg}, \emph{cValReg}, TAXON, COVER, 
+#'   and DISTINCT. DISTINCT assigns the
 #'   value for each taxon as 1 if the taxon has COVER>0 or 0 if not. COVER is
 #'   the sum of the COVER variable. }
 #'   
@@ -319,16 +338,19 @@ createDFs <- function(sampID='UID', tvar, vascIn, taxa, cValReg='NWC_CREG'){
 #' 
 #' str(prepEx)
 prepareData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, 
-                        inCVal=ccNatNWCA, inWIS=wisNWCA, cValReg='NWC_CREG'){
+                        inCVal=ccNatNWCA, inWIS=wisNWCA, state = 'STATE',
+                        coeReg = 'USAC_REGION', cValReg='NWC_CREG'){
   # Read in various input datasets, and create output dataset based on available
   # types of data - must have cover data and taxonomic data at the very least
   # If
-  datNames <- c(sampID, 'PLOT','USDA_NAME','COVER','STATE','USAC_REGION', cValReg)
+  datNames <- c(sampID, 'PLOT', 'USDA_NAME', 'COVER', state, coeReg, cValReg)
   if(any(datNames %nin% names(vascIn))){
-    print(paste("Missing key variables! Should be ", sampID, " PLOT, USDA_NAME, COVER, STATE, USAC_REGION, and ", cValReg, ".",sep=''))
+    print(paste("Missing key variables! Should be ", sampID, " PLOT, USDA_NAME, COVER,", 
+    state, coeReg, " and ", cValReg, ".",sep=''))
     return(NULL)
   }
-  vascIn <- subset(vascIn, select=names(vascIn) %in% c(sampID, 'PLOT','USDA_NAME','COVER','STATE','USAC_REGION', cValReg))
+  vascIn <- subset(vascIn, select=names(vascIn) %in% c(sampID, 'PLOT', 'USDA_NAME', 'COVER', 
+                                                       state, coeReg, cValReg))
   
   # Input taxa list with taxonomy and life history traits
   if(!is.null(inTaxa)){
@@ -397,8 +419,9 @@ prepareData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
 
   ## Create dfs for species level, genus, family, and order
   # First construct list object with by plot and by sampID summarizations
-  dfSPP <- createDFs(sampID, 'USDA_NAME', vascIn, inTaxa, cValReg)
+  dfSPP <- createDFs(sampID, 'USDA_NAME', vascIn, inTaxa, state, coeReg, cValReg)
   print(names(dfSPP))
+  
   # For species-level data, run additional checks and add additional information
   # Merge cover data with taxalist
   dfSPP.byUID.1a <- merge(dfSPP[[1]], inTaxa,by.x='TAXON', by.y='USDA_NAME')
@@ -423,14 +446,14 @@ prepareData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
   }
   # merge with native status by STATE
   if(!is.null(inNat)){
-    dfSPP.byUID.1c <- merge(dfSPP.byUID.1b, inNat, by.x=c('TAXON','STATE'), 
+    dfSPP.byUID.1c <- merge(dfSPP.byUID.1b, inNat, by.x=c('TAXON', state), 
                             by.y=c('USDA_NAME','GEOG_ID'), all.x=TRUE)
   }else{
     dfSPP.byUID.1c <- dfSPP.byUID.1b
   }
   # Merge with WIS values by USAC_REGION
   if(!is.null(inWIS)){
-    dfSPP.byUID.1d <- merge(dfSPP.byUID.1c, inWIS, by.x=c('TAXON','USAC_REGION'), 
+    dfSPP.byUID.1d <- merge(dfSPP.byUID.1c, inWIS, by.x=c('TAXON', coeReg), 
                             by.y=c('USDA_NAME','GEOG_ID'), all.x=T)
   }else{
     dfSPP.byUID.1d <- dfSPP.byUID.1c
@@ -461,12 +484,12 @@ prepareData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
   dfSPP[[1]] <- dfSPP.byUID.fin
 
   ## Also want to add NWCA_NATSTAT to dfSPP[[2]], byPlot
-  dfSPP.byPlot <- merge(dfSPP[[2]], inNat, by.x=c('STATE','TAXON'), by.y=c('GEOG_ID','USDA_NAME'))
+  dfSPP.byPlot <- merge(dfSPP[[2]], inNat, by.x=c(state, 'TAXON'), by.y=c('GEOG_ID', 'USDA_NAME'))
   dfSPP[[2]] <- dfSPP.byPlot
 
   # Create datasets for genus and family levels which will only be used for richness metrics
-  dfGEN <- createDFs(sampID, 'GENUS', vascIn, inTaxa, cValReg)
-  dfFAM <- createDFs(sampID, 'FAMILY', vascIn, inTaxa, cValReg)
+  dfGEN <- createDFs(sampID, 'GENUS', vascIn, inTaxa, state, coeReg, cValReg)
+  dfFAM <- createDFs(sampID, 'FAMILY', vascIn, inTaxa, state, coeReg, cValReg)
 
   outDF <- list(byUIDspp=dfSPP[[1]], byPlotspp=dfSPP[[2]], byUIDgen=dfGEN[[1]], 
                 byPlotgen=dfGEN[[2]], byUIDfam=dfFAM[[1]], byPlotfam=dfFAM[[2]])

@@ -13,11 +13,14 @@
 #'   
 #'   \item PLOT: plot number
 #'   
-#'   \item STATE: state where sample collected
+#'   \item Variable named in \emph{state}: Two-letter state postal code of site, used to link
+#' native status to taxa in native status taxalist (inNat)
+#'
+#'   \item Variable named in \emph{coeReg}: U.S. Army Corps of Engineers region abbreviation for
+#'   sample, to correspond to GEOG_ID in Wetland Indicator Status taxalist (inWIS)
 #'   
-#'   \item USAC_REGION: U.S. Army Corps of Engineers region of site where sample
-#'   collected
-#'   
+#'   \item Variable named in \emph{cValReg}: NWCA C-value regions: values must match GEOG_ID
+#'   in C-value taxalist (inCVal)
 #'   \item USDA_NAME: USDA accepted name of taxon in sample
 #'   
 #'   \item COVER: value from 0 to 100 indicating relative cover of taxon within
@@ -77,6 +80,13 @@
 #' package is used.
 #' @param sampID A character vector containing the name(s) of
 #' variable(s) necessary to identify unique samples, 'UID' by default
+#' @param state String containing the name of the state in \emph{vascIn}, 
+#' with default value of 'STATE'  
+#' 
+#' @param coeReg String containing the name of the U.S. Army Corps of Engineers
+#' region in \emph{vascIn} associated with Wetland Indicator Status, 
+#' with default value of 'USAC_REGION'  
+#' 
 #' @param cValReg String containing the name of the variable in \emph{taxaCC}
 #'  which specifies the C-value region.
 #' @return Either a character string containing an error message when metric
@@ -103,10 +113,12 @@
 #' str(exOut)
 #' head(exOut)
 calcVascPlantMets <- function(vascIn, taxaIn=taxaNWCA, taxaNat=ccNatNWCA, taxaCC=ccNatNWCA,
-                              taxaWIS=wisNWCA, sampID='UID', cValReg='NWC_CREG'){
+                              taxaWIS=wisNWCA, sampID='UID', state = 'STATE', 
+                              coeReg = 'USAC_REGION', cValReg='NWC_CREG'){
   print(cValReg)
   prepDat <- prepareData(vascIn, sampID, inTaxa = taxaIn, inNat = taxaNat, 
-                         inCVal = taxaCC, inWIS = taxaWIS, cValReg=cValReg)
+                         inCVal = taxaCC, inWIS = taxaWIS, state = state, 
+                         coeReg = coeReg, cValReg = cValReg)
 
   print("Initial datasets prepared for metric calculation.")
 

@@ -4,7 +4,15 @@
 \alias{createDFs}
 \title{Create data frames for function input}
 \usage{
-createDFs(sampID = "UID", tvar, vascIn, taxa, cValReg = "NWC_CREG")
+createDFs(
+  sampID = "UID",
+  tvar,
+  vascIn,
+  taxa,
+  state = "STATE",
+  coeReg = "USAC_REGION",
+  cValReg = "NWC_CREG"
+)
 }
 \arguments{
 \item{sampID}{A character vector containing the name(s) of
@@ -21,11 +29,11 @@ the following variables:
 
 \item PLOT:  Plot number of data (1 to 5 possible)
 
-\item STATE: Two-letter state postal code of site, used to link
-native status to taxa in native status taxalist
+\item Variable named in \emph{state}: Two-letter state postal code of site, used to link
+native status to taxa in native status taxalist (inNat)
 
-\item USAC_REGION: U.S. Army Corps of Engineers Region abbreviation for
-  sample, to correspond to those in Wetland Indicator Status taxalist
+\item Variable named in \emph{coeReg}: U.S. Army Corps of Engineers region abbreviation for
+  sample, to correspond to GEOG_ID in Wetland Indicator Status taxalist (inWIS)
 
 \item Variable named in \emph{cValReg}: NWCA C-value region abbreviation for sample, to correspond
 those in C-value taxalist
@@ -39,6 +47,13 @@ those in C-value taxalist
 GROWTH_HABIT, and DURATION variables. Dataset taxaNWCA is the
 default if not specified. These variables are assumed to be
 populated with abbreviations as found in USDA PLANTS database.}
+
+\item{state}{String containing the name of the state in \emph{vascIn}, 
+with default value of 'STATE'}
+
+\item{coeReg}{String containing the name of the U.S. Army Corps of Engineers
+region in \emph{vascIn} associated with Wetland Indicator Status, 
+with default value of 'USAC_REGION'}
 
 \item{cValReg}{String containing the name of the variable in \emph{vascIn}
 which specifies the C-value region.}

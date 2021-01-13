@@ -4,7 +4,15 @@
 \alias{nwcaVegInput}
 \title{Create data frames for function input - alternative version}
 \usage{
-nwcaVegInput(sampID = "UID", tvar, vascIn, taxa, cValReg = "STATE")
+nwcaVegInput(
+  sampID = "UID",
+  tvar,
+  vascIn,
+  taxa,
+  state = "STATE",
+  coeReg = "USAC_REGION",
+  cValReg = "STATE"
+)
 }
 \arguments{
 \item{sampID}{A character vector containing the name(s) of
@@ -21,10 +29,14 @@ the following variables:
 
 \item PLOT:  Plot number of data (1 to 5 possible)
 
+\item \emph{state}: Two-letter state code value associated with native status
+  (will match name specified in function arguments)
+
+\item \emph{coeReg}: U.S. Army Corps of Engineers region code value 
+  (will match name specified in function arguments)
+
 \item \emph{cValReg} (as specified in function arguments): Site region associated with Coefficient of 
 Conservatism value (will match name specified in function arguments)
-
-\item USAC_REGION: U.S. Army Corps of Engineers Region Name
 
 \item USDA_NAME: Taxon name, must match with taxa data frame
 
@@ -36,19 +48,26 @@ GROWTH_HABIT, and DURATION variables. Dataset taxaNWCA is the
 default if not specified. These variables are assumed to be
 populated with abbreviations as found in USDA PLANTS database.}
 
+\item{state}{String containing the name of the state in \emph{vascIn}, 
+with default value of 'STATE'}
+
+\item{coeReg}{String containing the name of the U.S. Army Corps of Engineers
+region in \emph{vascIn} associated with Wetland Indicator Status, 
+with default value of 'USAC_REGION'}
+
 \item{cValReg}{Character string with name of variable containing 
 region associated with Coefficients of Conservatism.}
 }
 \value{
 A list containing two data frames. The first data frame summarizes
   data by \emph{sampID} variables and TAXON and contains sampID variables,
-  \emph{cValReg} variable, USAC_REGION, TAXON, NUM, XABCOV, DISTINCT, and NPLOTS. NUM is the
+  \emph{cValReg} variable, \emph{coeReg}, TAXON, NUM, XABCOV, DISTINCT, and NPLOTS. NUM is the
   number of plots in which taxon occurs, and XABCOV is the mean absolute
   COVER across plots. DISTINCT is the value 1 assigned to each row. NPLOTS is
   the number of plots sampled.
   
   The second summarizes by \emph{sampID} variables, PLOT, and TAXON. Each
-  data frame contains sampID variables, PLOT, \emph{cValReg} variable, USAC_REGION, TAXON,
+  data frame contains sampID variables, PLOT, \emph{cValReg} variable, \emph{coeReg}, TAXON,
   COVER, and DISTINCT. DISTINCT assigns the value for each taxon as 1 if the 
   taxon has COVER>0 or 0 if not. COVER is the sum of the COVER variable by
   sampID variables, PLOT, and TAXON.

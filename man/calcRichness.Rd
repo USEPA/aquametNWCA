@@ -20,10 +20,6 @@ and TAXON level, with the following variables:
 \itemize{
  \item sampID: Variables identified by \emph{sampID} argument
 
-\item STATE: State two-letter abbreviation for site
-
-\item USAC_REGION: U.S. Army Corps of Engineers region name for site
-
 \item TAXON: Taxon name
 
 \item COVER: Total percent cover for taxon
@@ -39,10 +35,6 @@ to the UID, PLOT, and TAXON level, with the following variables:
  \item sampID: Variables identified in sampID argument
 
 \item PLOT: Plot from which data were collected
-
-\item STATE: State two-letter abbreviation for site
-
-\item USAC_REGION: U.S. Army Corps of Engineers region name for site
 
 \item TAXON: Taxon name
 

@@ -11,33 +11,35 @@ nwcaVegData(
   inNat = ccNatNWCA,
   inCVal = ccNatNWCA,
   inWIS = wisNWCA,
+  state = "STATE",
+  coeReg = "USAC_REGION",
   cValReg = "STATE"
 )
 }
 \arguments{
 \item{vascIn}{Data frame containing cover data summarized by
-\emph{sampID} variables, PLOT, and taxon value, with the following variable
-names: \itemize{ 
-\item sampID A character vector containing the name(s) of 
-variable(s) necessary to identify unique samples, 'UID' by default
+  \emph{sampID} variables, PLOT, and taxon value, with the following variable
+  names: \itemize{ 
+  \item sampID A character vector containing the name(s) of 
+  variable(s) necessary to identify unique samples, 'UID' by default
+  
+  \item PLOT: Plot number of data
+  
+  \item USDA_NAME: Taxon name, based on USDA PLANTS names, supplemented with
+  NWCA names, if not in USDA PLANTS
+  
+  \item COVER: Percent cover of taxon in plot, including zeros for plots in
+  which a taxon does not occur. 
+  
+  \item Variable named in \emph{state}: Two-letter state postal code of site, used to link
+native status to taxa in native status taxalist (inNat)
 
-\item PLOT: Plot number of data
-
-\item USDA_NAME: Taxon name, based on USDA PLANTS names, supplemented with
-NWCA names, if not in USDA PLANTS
-
-\item COVER: Percent cover of taxon in plot, including zeros for plots in
-which a taxon does not occur. 
-
-\item \emph{cValReg} (as specified in function arguments): Region 
-associated with Coefficients of Conservatism for site 
-(name may be specified in function arguments) 
-
-\item STATE: Two-character postal code to correspond to native 
-status taxalist.
-
-\item USAC_REGION: U.S. Army Corps of Engineers region abbreviation for
-sample, to correspond to those in inWIS data frame.}}
+  \item Variable named in \emph{coeReg}: U.S. Army Corps of Engineers region abbreviation for
+  sample, to correspond to GEOG_ID in Wetland Indicator Status taxalist (inWIS)
+  
+  \item Variable named in \emph{cValReg}: NWCA C-value regions: values must match GEOG_ID
+  in C-value taxalist (inCVal)
+  }}
 
 \item{sampID}{A character vector containing the name(s) of variable(s)
 necessary to identify unique samples, 'UID' by default}
@@ -89,6 +91,13 @@ frame
 
 \item WIS: Wetland Indicator Status as provided by USAC or added for NWCA }}
 
+\item{state}{String containing the name of the state in \emph{vascIn}, 
+with default value of 'STATE'}
+
+\item{coeReg}{String containing the name of the U.S. Army Corps of Engineers
+region in \emph{vascIn} associated with Wetland Indicator Status, 
+with default value of 'USAC_REGION'}
+
 \item{cValReg}{String containing the name of the Coefficient of 
 Conservatism region in \emph{vascIn}, with default value of 'STATE'}
 }
@@ -102,8 +111,11 @@ A list containing six data frames: \itemize{ \item byUIDspp: Data
   Conservatism region associated with site, necessary for merging with 
   inCVal, with default of 'STATE'
   
-  \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation 
-  necessary for merging with inWIS.
+  \item \emph{state}: Two-letter state code value
+  (will match name specified in function arguments)
+
+  \item \emph{coeReg}: U.S. Army Corps of Engineers region code value 
+  (will match name specified in function arguments)
   
   \item TAXON: Taxon name
   
@@ -138,10 +150,14 @@ A list containing six data frames: \itemize{ \item byUIDspp: Data
   
   \item PLOT: Plot number
   
+  \item \emph{state}: Two-letter state code value associated with native status
+  (will match name specified in function arguments)
+
+  \item \emph{coeReg}: U.S. Army Corps of Engineers region code value 
+  (will match name specified in function arguments)
+  
   \item \emph{cValReg}: Site region associated with Coefficient of Conservatism 
   value (will match name specified in function arguments)
-  
-  \item USAC_REGION: USAC region code
   
   \item TAXON: Taxon name
   
@@ -150,26 +166,27 @@ A list containing six data frames: \itemize{ \item byUIDspp: Data
   \item DISTINCT: Distinctness of taxon, value of 1 assigned to each row }
   
   \item byUIDgen: Data frame with data summarized by sampID variables and
-  TAXON at the genus level and contains \emph{sampID}, \emph{cValReg} variable, USAC_REGION, 
+  TAXON at the genus level and contains \emph{sampID}, \emph{cValReg} variable, 
+ \emph{coeReg},  
   TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of plots in which taxon
   occurs, and XABCOV is the mean absolute COVER across plots. DISTINCT is the
   value 1 assigned to each row.
   
   \item byPlotgen: Data frame with data summarized by sampID variables, PLOT,
   and TAXON at the genus level. Each data frame contains \emph{sampID}, PLOT,
-  \emph{cValReg} variable, USAC_REGION, TAXON, COVER, and DISTINCT. DISTINCT 
+  \emph{cValReg} variable, \emph{coeReg}, TAXON, COVER, and DISTINCT. DISTINCT 
   assigns the value for each taxon as 1 if the taxon has COVER>0 or 0 if not. 
   COVER is the sum of the COVER variable.
   
   \item byUIDfam: Data frame with data summarized by sampID variables and
   TAXON at the family level and contains \emph{sampID}, \emph{cValReg} 
-  variable, USAC_REGION, TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of 
+  variable, \emph{coeReg}, TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of 
   plots in which taxon occurs, and XABCOV is the mean absolute COVER across plots. 
   DISTINCT is the value 1 assigned to each row.
   
   \item byPlotfam: Data frame with data summarized by \emph{sampID} , PLOT,
   and TAXON at the family level. Each data frame contains \emph{sampID},
-  PLOT, \emph{cValReg} variable, USAC_REGION, TAXON, COVER, and DISTINCT. 
+  PLOT, \emph{cValReg} variable, \emph{coeReg}, TAXON, COVER, and DISTINCT. 
   DISTINCT assigns the value for each taxon as 1 if the taxon has COVER>0 or 
   0 if not. COVER is the sum of the COVER variable. }
 }

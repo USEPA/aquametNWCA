@@ -72,6 +72,7 @@
 #'  unique(durEx$PARAMETER)
 
 calcDuration <- function(vascIn, sampID='UID'){
+  vascIn <- as.data.frame(vascIn) # Do this in case read in as a tibble or data.table, which might cause problems
  # First check for necessary variables
   necNames <- c(sampID, 'TAXON', 'DURATION', 'XABCOV', 'TOTN', 'sXRCOV')
   msgNames <- necNames[necNames %nin% names(vascIn)]
@@ -89,8 +90,8 @@ calcDuration <- function(vascIn, sampID='UID'){
     vascIn.1 <- vascIn
     vascIn.1$DUR_ALT <- vascIn.1$DURATION
     vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('ANNUAL, BIENNIAL','BIENNIAL','BIENNIAL, AN')] <- 'ANN_BIEN'
-    vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('ANNUAL, BIENNIAL, PERENNIAL','ANNUAL, PERENNIAL','PERENNIAL, ANNUAL', 
-                                      'BIENNIAL, PERENNIAL',
+    vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('ANNUAL, BIENNIAL, PERENNIAL','ANNUAL, PERENNIAL',
+                                              'PERENNIAL, ANNUAL', 'BIENNIAL, PERENNIAL',
                                       'ANNUAL, PERENNIAL, BIENNIAL', 'BIENNIAL, PERENNIAL, AN')] <- 'ANN_PEREN'
     vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('PERENNIAL, ANNUAL, BIENNIAL','PERENNIAL, AN','PERENNIAL, BIENNIAL','PERENNIAL, BIENNIAL, ANNUAL','PERENNIAL, BIENNIAL, AN')] <- 'PERENNIAL'
 
@@ -238,6 +239,7 @@ calcDuration <- function(vascIn, sampID='UID'){
 #' unique(ghEx$PARAMETER)
 
 calcGrowthHabit <- function(vascIn, sampID='UID'){
+  vascIn <- as.data.frame(vascIn) # Do this in case read in as a tibble or data.table, which might cause problems
   # First check for necessary variables
   necNames <- c(sampID, 'TAXON', 'GROWTH_HABIT', 'XABCOV', 'TOTN', 'sXRCOV')
   msgNames <- necNames[necNames %nin% names(vascIn)]
@@ -457,6 +459,7 @@ calcGrowthHabit <- function(vascIn, sampID='UID'){
 #' unique(catEx$PARAMETER)
 
 calcCategory <- function(vascIn, sampID='UID'){
+  vascIn <- as.data.frame(vascIn) # Do this in case read in as a tibble or data.table, which might cause problems
   # First check for necessary variables
   necNames <- c(sampID, 'TAXON', 'CATEGORY', 'XABCOV', 'TOTN', 'sXRCOV')
   msgNames <- necNames[necNames %nin% names(vascIn)]
@@ -637,6 +640,7 @@ calcCategory <- function(vascIn, sampID='UID'){
 #' unique(wisEx$PARAMETER)
 
 calcWIS <- function(vascIn, sampID='UID'){
+  vascIn <- as.data.frame(vascIn) # Do this in case read in as a tibble or data.table, which might cause problems
   # First check for necessary variables
   necNames <- c(sampID, 'TAXON', 'WIS', 'FREQ', 'XABCOV', 'TOTN', 'sXRCOV')
   msgNames <- necNames[necNames %nin% names(vascIn)]
@@ -860,6 +864,7 @@ calcWIS <- function(vascIn, sampID='UID'){
 #' head(ccEx)
 #' unique(ccEx$PARAMETER)
 calcCC <- function(vascIn, sampID='UID'){
+  vascIn <- as.data.frame(vascIn) # Do this in case read in as a tibble or data.table, which might cause problems
   if('NWCA_CC' %nin% names(vascIn)){
     print("Missing NWCA_CC from input data frame - cannot calculate metrics!")
     return(NULL)
@@ -1089,6 +1094,7 @@ calcCC <- function(vascIn, sampID='UID'){
 #' unique(natEx$PARAMETER)
 
 calcNative <- function(vascIn, sampID='UID'){
+  vascIn <- as.data.frame(vascIn) # Do this in case read in as a tibble or data.table, which might cause problems
   if('NWCA_NATSTAT' %nin% names(vascIn)){
     print("Missing NWCA_NATSTAT from input data frame - cannot calculate metrics! If NWCA_NATSTAT exists,
           run prepareData() function to create input data frame.")
@@ -1150,10 +1156,6 @@ calcNative <- function(vascIn, sampID='UID'){
 #' \itemize{
 #'  \item sampID: Variables identified by \emph{sampID} argument
 #'
-#' \item STATE: State two-letter abbreviation for site
-#'
-#' \item USAC_REGION: U.S. Army Corps of Engineers region name for site
-#'
 #' \item TAXON: Taxon name
 #'
 #' \item COVER: Total percent cover for taxon
@@ -1168,10 +1170,6 @@ calcNative <- function(vascIn, sampID='UID'){
 #'  \item sampID: Variables identified in sampID argument
 #'
 #' \item PLOT: Plot from which data were collected
-#'
-#' \item STATE: State two-letter abbreviation for site
-#'
-#' \item USAC_REGION: U.S. Army Corps of Engineers region name for site
 #'
 #' \item TAXON: Taxon name
 #'
@@ -1361,6 +1359,7 @@ calcRichness <- function(byUIDspp, byPlotspp, byUIDgen, byPlotgen,
 #' unique(divEx$PARAMETER)
 
 calcDiversity <- function(vascIn, sampID='UID'){
+  vascIn <- as.data.frame(vascIn) # Do this in case read in as a tibble or data.table, which might cause problems
   divOut <- int.calcIndices(vascIn, 'ALL', sampID)
 
  if('NWCA_NATSTAT' %in% names(vascIn)){
@@ -1435,6 +1434,7 @@ calcDiversity <- function(vascIn, sampID='UID'){
 #' }
 
 calcBCmets <- function(vascIn, sampID='UID'){
+  vascIn <- as.data.frame(vascIn) # Do this in case read in as a tibble or data.table, which might cause problems
   # Need to account for cases where there is no SPECIES_NAME_ID by creating one just for this
   # calculation
   if('SPECIES_NAME_ID' %nin% names(vascIn)){
@@ -1547,6 +1547,7 @@ calcBCmets <- function(vascIn, sampID='UID'){
 #' unique(vmmiEx$PARAMETER)
 
 calcVMMImets <- function(vascIn, sampID='UID'){
+  vascIn <- as.data.frame(vascIn) # Do this in case read in as a tibble or data.table, which might cause problems
   # Calculate only the 4 metrics used in the VMMI: FQAI_ALL,N_TOL,RIMP_NATSPP,XRCOV_MONOCOTS_NAT
   # First obtain all of the UIDs in input data frame
   for(i in 1:length(sampID)){

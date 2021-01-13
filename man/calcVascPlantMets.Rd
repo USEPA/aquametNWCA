@@ -11,25 +11,30 @@ calcVascPlantMets(
   taxaCC = ccNatNWCA,
   taxaWIS = wisNWCA,
   sampID = "UID",
+  state = "STATE",
+  coeReg = "USAC_REGION",
   cValReg = "NWC_CREG"
 )
 }
 \arguments{
 \item{vascIn}{A data frame with the following variables (at a minimum): 
-\itemize{ \item sampID: Variable(s) identified in \emph{sampID} argument,
-'UID' by default
+  \itemize{ \item sampID: Variable(s) identified in \emph{sampID} argument,
+  'UID' by default
+  
+  \item PLOT: plot number
+  
+  \item Variable named in \emph{state}: Two-letter state postal code of site, used to link
+native status to taxa in native status taxalist (inNat)
 
-\item PLOT: plot number
-
-\item STATE: state where sample collected
-
-\item USAC_REGION: U.S. Army Corps of Engineers region of site where sample
-collected
-
-\item USDA_NAME: USDA accepted name of taxon in sample
-
-\item COVER: value from 0 to 100 indicating relative cover of taxon within
-plot). Data should already be summed by UID, PLOT, and USDA_NAME. }}
+  \item Variable named in \emph{coeReg}: U.S. Army Corps of Engineers region abbreviation for
+  sample, to correspond to GEOG_ID in Wetland Indicator Status taxalist (inWIS)
+  
+  \item Variable named in \emph{cValReg}: NWCA C-value regions: values must match GEOG_ID
+  in C-value taxalist (inCVal)
+  \item USDA_NAME: USDA accepted name of taxon in sample
+  
+  \item COVER: value from 0 to 100 indicating relative cover of taxon within
+  plot). Data should already be summed by UID, PLOT, and USDA_NAME. }}
 
 \item{taxaIn}{A data frame containing taxonomy of all taxa found in vascIn, 
   with the following variables at a minimum: 
@@ -90,6 +95,13 @@ package is used.}
 
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples, 'UID' by default}
+
+\item{state}{String containing the name of the state in \emph{vascIn}, 
+with default value of 'STATE'}
+
+\item{coeReg}{String containing the name of the U.S. Army Corps of Engineers
+region in \emph{vascIn} associated with Wetland Indicator Status, 
+with default value of 'USAC_REGION'}
 
 \item{cValReg}{String containing the name of the variable in \emph{taxaCC}
 which specifies the C-value region.}

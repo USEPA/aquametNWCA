@@ -22,15 +22,15 @@
 #'   \item COVER: Percent cover of taxon in plot, including zeros for plots in
 #'   which a taxon does not occur. 
 #'   
-#'   \item \emph{cValReg} (as specified in function arguments): Region 
-#'   associated with Coefficients of Conservatism for site 
-#'   (name may be specified in function arguments) 
+#'   \item Variable named in \emph{state}: Two-letter state postal code of site, used to link
+#' native status to taxa in native status taxalist (inNat)
+#'
+#'   \item Variable named in \emph{coeReg}: U.S. Army Corps of Engineers region abbreviation for
+#'   sample, to correspond to GEOG_ID in Wetland Indicator Status taxalist (inWIS)
 #'   
-#'   \item STATE: Two-character postal code to correspond to native 
-#'   status taxalist.
-#'   
-#'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation for
-#'   sample, to correspond to those in inWIS data frame.}
+#'   \item Variable named in \emph{cValReg}: NWCA C-value regions: values must match GEOG_ID
+#'   in C-value taxalist (inCVal)
+#'   }   
 #' @param sampID A character vector containing the name(s) of variable(s)
 #'   necessary to identify unique samples, 'UID' by default
 #' @param inTaxa Data frame with all taxa in vascIn, with variables: \itemize{ 
@@ -76,7 +76,14 @@
 #'   frame
 #'   
 #'   \item WIS: Wetland Indicator Status as provided by USAC or added for NWCA }
-#'   
+#' 
+#' @param state String containing the name of the state in \emph{vascIn}, 
+#' with default value of 'STATE'  
+#' 
+#' @param coeReg String containing the name of the U.S. Army Corps of Engineers
+#' region in \emph{vascIn} associated with Wetland Indicator Status, 
+#' with default value of 'USAC_REGION'  
+#' 
 #' @param cValReg String containing the name of the Coefficient of 
 #' Conservatism region in \emph{vascIn}, with default value of 'STATE'
 #'   
@@ -93,8 +100,11 @@
 #'   Conservatism region associated with site, necessary for merging with 
 #'   inCVal, with default of 'STATE'
 #'   
-#'   \item USAC_REGION: U.S. Army Corps of Engineers region abbreviation 
-#'   necessary for merging with inWIS.
+#'   \item \emph{state}: Two-letter state code value
+#'   (will match name specified in function arguments)
+#' 
+#'   \item \emph{coeReg}: U.S. Army Corps of Engineers region code value 
+#'   (will match name specified in function arguments)
 #'   
 #'   \item TAXON: Taxon name
 #'   
@@ -129,10 +139,14 @@
 #'   
 #'   \item PLOT: Plot number
 #'   
+#'   \item \emph{state}: Two-letter state code value associated with native status
+#'   (will match name specified in function arguments)
+#' 
+#'   \item \emph{coeReg}: U.S. Army Corps of Engineers region code value 
+#'   (will match name specified in function arguments)
+#'   
 #'   \item \emph{cValReg}: Site region associated with Coefficient of Conservatism 
 #'   value (will match name specified in function arguments)
-#'   
-#'   \item USAC_REGION: USAC region code
 #'   
 #'   \item TAXON: Taxon name
 #'   
@@ -141,26 +155,27 @@
 #'   \item DISTINCT: Distinctness of taxon, value of 1 assigned to each row }
 #'   
 #'   \item byUIDgen: Data frame with data summarized by sampID variables and
-#'   TAXON at the genus level and contains \emph{sampID}, \emph{cValReg} variable, USAC_REGION, 
+#'   TAXON at the genus level and contains \emph{sampID}, \emph{cValReg} variable, 
+#'  \emph{coeReg},  
 #'   TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of plots in which taxon
 #'   occurs, and XABCOV is the mean absolute COVER across plots. DISTINCT is the
 #'   value 1 assigned to each row.
 #'   
 #'   \item byPlotgen: Data frame with data summarized by sampID variables, PLOT,
 #'   and TAXON at the genus level. Each data frame contains \emph{sampID}, PLOT,
-#'   \emph{cValReg} variable, USAC_REGION, TAXON, COVER, and DISTINCT. DISTINCT 
+#'   \emph{cValReg} variable, \emph{coeReg}, TAXON, COVER, and DISTINCT. DISTINCT 
 #'   assigns the value for each taxon as 1 if the taxon has COVER>0 or 0 if not. 
 #'   COVER is the sum of the COVER variable.
 #'   
 #'   \item byUIDfam: Data frame with data summarized by sampID variables and
 #'   TAXON at the family level and contains \emph{sampID}, \emph{cValReg} 
-#'   variable, USAC_REGION, TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of 
+#'   variable, \emph{coeReg}, TAXON, NUM, XABCOV, and DISTINCT. NUM is the number of 
 #'   plots in which taxon occurs, and XABCOV is the mean absolute COVER across plots. 
 #'   DISTINCT is the value 1 assigned to each row.
 #'   
 #'   \item byPlotfam: Data frame with data summarized by \emph{sampID} , PLOT,
 #'   and TAXON at the family level. Each data frame contains \emph{sampID},
-#'   PLOT, \emph{cValReg} variable, USAC_REGION, TAXON, COVER, and DISTINCT. 
+#'   PLOT, \emph{cValReg} variable, \emph{coeReg}, TAXON, COVER, and DISTINCT. 
 #'   DISTINCT assigns the value for each taxon as 1 if the taxon has COVER>0 or 
 #'   0 if not. COVER is the sum of the COVER variable. }
 #'   
@@ -176,11 +191,12 @@
 #' 
 #' str(prepEx)
 nwcaVegData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA, 
-                        inCVal=ccNatNWCA, inWIS=wisNWCA, cValReg="STATE"){
+                        inCVal=ccNatNWCA, inWIS=wisNWCA, state = 'STATE',
+                        coeReg = 'USAC_REGION', cValReg = "STATE"){
   # Read in various input datasets, and create output dataset based on available
   # types of data - must have cover data and taxonomic data at the very least
   # If
-  datNames <- c(sampID, 'PLOT', 'USDA_NAME', 'COVER', 'STATE', cValReg, 'USAC_REGION') 
+  datNames <- c(sampID, 'PLOT', 'USDA_NAME', 'COVER', state, cValReg, coeReg) 
   if(any(unique(datNames) %nin% names(vascIn))){
     print(paste("Missing key variables! Should be ", unique(datNames), ".", sep=''))
     return(NULL)
@@ -236,7 +252,7 @@ nwcaVegData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
   
   ## Create dfs for species level, genus, family, and order
   # First construct list object with by plot and by sampID summarizations
-  dfSPP <- nwcaVegInput(sampID, 'USDA_NAME', vascIn, inTaxa, cValReg)
+  dfSPP <- nwcaVegInput(sampID, 'USDA_NAME', vascIn, inTaxa, state, coeReg, cValReg)
   # For species-level data, run additional checks and add additional information
   # Merge cover data with taxalist
   dfSPP.byUID.1a <- merge(dfSPP[[1]], inTaxa, by.x='TAXON', by.y='USDA_NAME')
@@ -253,20 +269,20 @@ nwcaVegData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
   
   # If all taxa match taxalist, merge now with CC/native status by C of C region
   if(!is.null(inNat)){
-    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a, inNat, by.x=c('TAXON','STATE'),
+    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a, inNat, by.x=c('TAXON', state),
                             by.y=c('USDA_NAME','GEOG_ID'))
   }else{
     dfSPP.byUID.1b <- dfSPP.byUID.1a
   }
   if(!is.null(inCVal)){
-    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a, inCVal, by.x=c('TAXON',cValReg),
+    dfSPP.byUID.1b <- merge(dfSPP.byUID.1a, inCVal, by.x=c('TAXON', cValReg),
                             by.y=c('USDA_NAME','GEOG_ID'))
   }else{
     dfSPP.byUID.1b <- dfSPP.byUID.1a
   }
   # Merge with WIS values by USAC_REGION
   if(!is.null(inWIS)){
-    dfSPP.byUID.1c <- merge(dfSPP.byUID.1b, inWIS, by.x=c('TAXON','USAC_REGION'), 
+    dfSPP.byUID.1c <- merge(dfSPP.byUID.1b, inWIS, by.x=c('TAXON', coeReg), 
                             by.y=c('USDA_NAME','GEOG_ID'),all.x=T)
   }else{
     dfSPP.byUID.1c <- dfSPP.byUID.1b
@@ -291,11 +307,6 @@ nwcaVegData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
   dfSPP.byUID.fin$sXRCOV <- with(dfSPP.byUID.fin, XABCOV/XTOTABCOV*100)
   dfSPP.byUID.fin$FREQ <- with(dfSPP.byUID.fin, NUM/NPLOTS*100)
   dfSPP.byUID.fin$sRFREQ <- with(dfSPP.byUID.fin, (FREQ/TOTFREQ)*100)
-  
-  # dfSPP.byUID.fin <- plyr::ddply(dfSPP.byUID.1c,sampID,mutate,TOTN=length(TAXON)
-  #                                ,XTOTABCOV=sum(XABCOV),TOTFREQ=sum(NUM/NPLOTS)*100) %>%
-  #   plyr::mutate(sXRCOV=XABCOV/XTOTABCOV*100, FREQ=(NUM/NPLOTS)*100
-  #                ,sRFREQ=(FREQ/TOTFREQ)*100)
   
   dfSPP[[1]] <- dfSPP.byUID.fin
   
@@ -338,11 +349,15 @@ nwcaVegData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
 #' \item sampID: Variable(s) found in the argument \emph{sampID}
 #'
 #' \item PLOT:  Plot number of data (1 to 5 possible)
-#'
+#' 
+#' \item \emph{state}: Two-letter state code value associated with native status
+#'   (will match name specified in function arguments)
+#' 
+#' \item \emph{coeReg}: U.S. Army Corps of Engineers region code value 
+#'   (will match name specified in function arguments)
+#' 
 #' \item \emph{cValReg} (as specified in function arguments): Site region associated with Coefficient of 
 #' Conservatism value (will match name specified in function arguments)
-#'
-#' \item USAC_REGION: U.S. Army Corps of Engineers Region Name
 #'
 #' \item USDA_NAME: Taxon name, must match with taxa data frame
 #'
@@ -353,18 +368,25 @@ nwcaVegData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
 #' default if not specified. These variables are assumed to be
 #' populated with abbreviations as found in USDA PLANTS database.
 #' 
+#' @param state String containing the name of the state in \emph{vascIn}, 
+#' with default value of 'STATE'  
+#' 
+#' @param coeReg String containing the name of the U.S. Army Corps of Engineers
+#' region in \emph{vascIn} associated with Wetland Indicator Status, 
+#' with default value of 'USAC_REGION'  
+#' 
 #' @param cValReg Character string with name of variable containing 
 #' region associated with Coefficients of Conservatism.
 #' 
 #' @return A list containing two data frames. The first data frame summarizes
 #'   data by \emph{sampID} variables and TAXON and contains sampID variables,
-#'   \emph{cValReg} variable, USAC_REGION, TAXON, NUM, XABCOV, DISTINCT, and NPLOTS. NUM is the
+#'   \emph{cValReg} variable, \emph{coeReg}, TAXON, NUM, XABCOV, DISTINCT, and NPLOTS. NUM is the
 #'   number of plots in which taxon occurs, and XABCOV is the mean absolute
 #'   COVER across plots. DISTINCT is the value 1 assigned to each row. NPLOTS is
 #'   the number of plots sampled.
 #'   
 #'   The second summarizes by \emph{sampID} variables, PLOT, and TAXON. Each
-#'   data frame contains sampID variables, PLOT, \emph{cValReg} variable, USAC_REGION, TAXON,
+#'   data frame contains sampID variables, PLOT, \emph{cValReg} variable, \emph{coeReg}, TAXON,
 #'   COVER, and DISTINCT. DISTINCT assigns the value for each taxon as 1 if the 
 #'   taxon has COVER>0 or 0 if not. COVER is the sum of the COVER variable by
 #'   sampID variables, PLOT, and TAXON.
@@ -378,7 +400,8 @@ nwcaVegData <- function(vascIn, sampID='UID', inTaxa=taxaNWCA, inNat=ccNatNWCA,
 #' outEx <- nwcaVegInput(sampID='UID','GENUS',VascPlantEx,taxaNWCA,cValReg='STATE')
 #' head(outEx$byUID)
 #' head(outEx$byPlot)
-nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxa, cValReg='STATE'){
+nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxa, state = 'STATE', 
+                         coeReg = 'USAC_REGION', cValReg='STATE'){
   
     # First merge the taxa list with the cover data by USDA_NAME
   vascIn.1 <- merge(vascIn, taxa, by='USDA_NAME')
@@ -391,7 +414,7 @@ nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxa, cValReg='STATE'){
 
   # Sum COVER by SAMPID, PLOT, and TAXON to ensure there is only one row per species in input data, set DISTINCT as 1 to be
   # taxon counter
-  byVars <- unique(c(sampID, cValReg, 'USAC_REGION','TAXON','STATE'))
+  byVars <- unique(c(sampID, cValReg, coeReg,'TAXON', state))
   
   byPlot1.sum <- aggregate(x = list(COVER = byPlot$COVER), by = byPlot[c(byVars, 'PLOT')],
                        FUN = sum)
@@ -423,8 +446,6 @@ nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxa, cValReg='STATE'){
   print("Done with sampID summing")
   
   byDF <- list(byUID=byUID2, byPlot=byPlot1)
-  
- # class(byDF) <- append(class(byDF),'nwcaVegInput')
   
   return(byDF)
 }

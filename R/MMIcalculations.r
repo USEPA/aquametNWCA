@@ -18,7 +18,8 @@
 #'   \item RIMP_NATSPP: Relative importance of native species
 #'   
 #'   \item XRCOV_MONOCOTS_NAT: Mean relative cover of native monocots } 
-#'   Optional: \itemize{ \item NWCA_ECO4: Aggregated ecoregion abbreviations as
+#'   Optional: \itemize{ 
+#'   \item NWCA_ECO4: Aggregated ecoregion abbreviations as
 #'   used in NWCA 2011. Valid values include: CPL (Coastal Plains), EMU (Eastern
 #'   Mountains and Uplands), IPL (Interior Plains), and W (West).
 #'   
