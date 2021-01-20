@@ -118,19 +118,22 @@ calcVascPlantMets <- function(vascIn, taxon_name, taxaIn=taxaNWCA, taxaNat=ccNat
                               taxaWIS=wisNWCA, sampID='UID', state = 'STATE', 
                               coeReg = 'USAC_REGION', cValReg='NWC_CREG'){
   print(cValReg)
+  # Organize the vascular plant data in such a way that it is readily useable in the metric 
+  # calculation functions
   prepDat <- prepareData(vascIn, sampID, taxon_name= taxon_name, inTaxa = taxaIn, inNat = taxaNat, 
                          inCVal = taxaCC, inWIS = taxaWIS, state = state, 
                          coeReg = coeReg, cValReg = cValReg)
 
   print("Initial datasets prepared for metric calculation.")
 
+  # Calculate richness metrics - requires all of the various outputs from prepareData() above
   richMets <- calcRichness(prepDat$byUIDspp, prepDat$byPlotspp, prepDat$byUIDgen, 
                            prepDat$byPlotgen, prepDat$byUIDfam,
                            prepDat$byPlotfam,sampID='UID')
 
   print("Done calculating richness metrics.")
 
-
+  # Set side the input that works with all other vascular metric functions
   sppForCalc <- prepDat$byUIDspp
 
   print("Ready to start calculating trait metrics.")
@@ -139,42 +142,50 @@ calcVascPlantMets <- function(vascIn, taxon_name, taxaIn=taxaNWCA, taxaNat=ccNat
   divMets <- calcDiversity(sppForCalc, sampID)
   print("Done with diversity indices.")
 
+  # Calculate duration metrics
   durMets <- calcDuration(sppForCalc, sampID)
   print("Done with duration metrics.")
 
+  # Calculate growth habit metrics
   grhMets <- calcGrowthHabit(sppForCalc, sampID)
   print("Done with growth habit metrics.")
 
+  # Calculate category metrics
   catMets <- calcCategory(sppForCalc, sampID)
   print("Done with category metrics.")
 
+  # Calculate Wetland Indicator Status metrics
   wisMets <- calcWIS(sppForCalc, sampID)
   print("Done with WIS metrics.")
 
+  # Calculate C-value metrics
   ccMets <- calcCC(sppForCalc, sampID)
   print("Done with CC metrics.")
 
+  # Calculate native metrics
   natMets <- calcNative(sppForCalc, sampID)
   print("Done with native status metrics.")
 
+  # Calculate mean Bray-Curtis metrics
   xbcMets <- calcBCmets(prepDat$byPlotspp, sampID)
   print("Done with Bray-Curtis distance.")
 
   # Now create df with just XTOTABCOV by UID
   sppForCalc.in <- unique(subset(sppForCalc, select = c(sampID, 'XTOTABCOV')))
   
+  # Melt this data frame in order to add it to other metric data
   varNames <- names(sppForCalc.in)[!names(sppForCalc.in) %in% c(sampID)]
   xtotabcov <- reshape(sppForCalc.in, idvar = sampID, direction = 'long',
                        varying = varNames, times = varNames,
                        timevar = 'PARAMETER', v.names = 'RESULT')
 
-  ### COMBINE ALL PLANT METRICS INTO A SINGLE DF
+  # COMBINE ALL PLANT METRICS INTO A SINGLE DF
   allOut <- rbind(xtotabcov, richMets, divMets, durMets, grhMets, catMets,
                   wisMets, ccMets, natMets, xbcMets)
-  
+  # Cast long data frame into wide format
   finOut <- reshape(allOut, idvar = c(sampID), direction = 'wide',
                     timevar = 'PARAMETER', v.names = 'RESULT')
-  
+  # Must remove prefix added to names in reshape()
   names(finOut) <- gsub("RESULT\\.", "", names(finOut))
 
   return(finOut)

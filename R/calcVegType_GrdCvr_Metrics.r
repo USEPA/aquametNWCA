@@ -76,7 +76,7 @@
 #' head(exOut)
 
 calcVtype_GcovMets <- function(dataIn, nPlotIn, sampID='UID', survyear='2011'){
-
+  # Evaluates whether treeIn contains expected variables, returns error if any are missing
   datNames <- c('UID','PLOT','PARAMETER','RESULT')
   if(any(datNames %nin% names(dataIn))){
     print(paste("Missing key variables! Should be ", paste(sampID,collapse=', '),
@@ -84,17 +84,23 @@ calcVtype_GcovMets <- function(dataIn, nPlotIn, sampID='UID', survyear='2011'){
     return(NULL)
   }
 
+  # Calculate metrics based on S & T class
   sandtOut <- calcSandTMets(dataIn, nPlotIn, sampID)
+  # Calculate vascular strata metrics
   vstratOut <- calcVascStratMets(dataIn, nPlotIn, sampID)
+  # Calculate non-vascular metrics
   nonvascOut <- calcNonvascMets(dataIn, nPlotIn, sampID)
+  # Calculate water cover metrics
   wcovOut <- calcWcovMets(dataIn, nPlotIn, sampID, survyear)
+  # Calculate bare ground and litter metrics
   bgLittOut <- calcBareGround_LitterMets(dataIn, nPlotIn, sampID, survyear)
 
-
+  # Combine all metrics into single data frame
   vgOut <- rbind(sandtOut, vstratOut, nonvascOut, wcovOut, bgLittOut)
-  
+  # Cast data frame into wide format
   vgOut.1 <- reshape(vgOut, idvar = sampID, direction = 'wide',
                      timevar = 'PARAMETER', v.names = 'RESULT')
+  # Remove prefix added by reshape() from variable names
   names(vgOut.1) <- gsub("RESULT\\.", "", names(vgOut.1))
   
   return(vgOut.1)

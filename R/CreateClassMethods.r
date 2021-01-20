@@ -205,7 +205,7 @@ nwcaVegData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA, inNat
                         coeReg = 'USAC_REGION', cValReg = "STATE"){
   # Read in various input datasets, and create output dataset based on available
   # types of data - must have cover data and taxonomic data at the very least
-  # If
+  # If any variables are missing, return an error
   datNames <- c(sampID, 'PLOT', taxon_name, 'COVER', state, cValReg, coeReg) 
   if(any(unique(datNames) %nin% names(vascIn))){
     print(paste("Missing key variables! Should be ", unique(datNames), ".", sep=''))
@@ -214,10 +214,12 @@ nwcaVegData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA, inNat
   # Input taxa list with taxonomy and life history traits
   taxNames <- c(taxon_name,'FAMILY','GENUS')
   altNames <- c('CATEGORY','GROWTH_HABIT','DURATION')
+  # Check for presence of required and optional traits, if key variables are missing, return error
   if(any(taxNames %nin% names(inTaxa))){
     print("Missing key variables! Need at least USDA_NAME, FAMILY, GENUS to calculate metrics.")
     return(NULL)
   }
+  # Alert user if some optional variables are missing
   if(any(altNames %nin% names(inTaxa))){
     msgNames <- altNames[altNames %nin% names(inTaxa)]
     print(paste("Will not be able to calculate metrics that use ",paste(msgNames, collapse=','),
@@ -226,6 +228,7 @@ nwcaVegData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA, inNat
   
   # Coefficients of conservatism and native status values
   ccNatNames <- c(taxon_name,'GEOG_ID')
+  # Assumed variable names for C values and native status
   ccVars <- c('NWCA_CC')
   natVars <- c('NWCA_NATSTAT')
   # This only applies if someone specifies a taxalist not included in the package
@@ -235,12 +238,14 @@ nwcaVegData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA, inNat
           or use default taxa list by not specifying the inNat argument.")
     return(NULL)
   }
+  # Alerts user if NWCA_CC metric is missing that those metrics cannot be calculated
   if(any(ccVars %nin% names(inCVal))){
     msgNames <- ccVars[ccVars %nin% names(inCVal)]
     print(paste("Warning: Will not be able to calculate metrics using ", 
                 paste(msgNames, collapse=','),
                 " without these parameter in inCVal."))
   }
+  # Alert user if native status is missing that those metrics cannot be calculated
   if(any(natVars %nin% names(inNat))){
     msgNames <- natVars[natVars %nin% names(inNat)]
     print(paste("Warning: Will not be able to calculate metrics using ", 
@@ -252,6 +257,7 @@ nwcaVegData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA, inNat
   # Wetland Indicator Status values
   if(!is.null(inWIS)){
     wisNames <- c(taxon_name,'GEOG_ID','WIS')
+    # Alert user is wetland indicator status is missing that those metrics cannot be calculated
     if(any(wisNames %nin% names(inWIS))){
       print("Missing key variables! Need USDA_NAME, GEOG_ID, WIS to match up with cover data.
             This taxa list cannot be used in calculations. Either revise file or use default
@@ -262,6 +268,7 @@ nwcaVegData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA, inNat
   
   ## Create dfs for species level, genus, family, and order
   # First construct list object with by plot and by sampID summarizations
+  # using nwcaVegInput function
   dfSPP <- nwcaVegInput(sampID, taxon_name, vascIn, taxon_name, inTaxa, state, coeReg, cValReg)
   # For species-level data, run additional checks and add additional information
   # Merge cover data with taxalist
@@ -277,20 +284,22 @@ nwcaVegData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA, inNat
     return(NULL)
   }
   
-  # If all taxa match taxalist, merge now with CC/native status by C of C region
+  # If all taxa match taxalist, merge now with native status by variable specified in 
+  # state argument
   if(!is.null(inNat)){
     dfSPP.byUID.1b <- merge(dfSPP.byUID.1a, inNat, by.x=c('TAXON', state),
                             by.y=c(taxon_name,'GEOG_ID'))
   }else{
     dfSPP.byUID.1b <- dfSPP.byUID.1a
   }
+  # Merge with C-values using region specified by cValReg argument
   if(!is.null(inCVal)){
     dfSPP.byUID.1b <- merge(dfSPP.byUID.1a, inCVal, by.x=c('TAXON', cValReg),
                             by.y=c(taxon_name,'GEOG_ID'))
   }else{
     dfSPP.byUID.1b <- dfSPP.byUID.1a
   }
-  # Merge with WIS values by USAC_REGION
+  # Merge with WIS values by coeReg argument
   if(!is.null(inWIS)){
     dfSPP.byUID.1c <- merge(dfSPP.byUID.1b, inWIS, by.x=c('TAXON', coeReg), 
                             by.y=c(taxon_name,'GEOG_ID'),all.x=T)
@@ -299,25 +308,26 @@ nwcaVegData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA, inNat
   }
   
   # Calculate totals and add them to output data frame
+  # Calculate TOTFREQ first as input into summing in next step
   dfSPP.byUID.1c$TOTFREQ <- with(dfSPP.byUID.1c, NUM/NPLOTS)
-  
+  # Calculate summed variables from the above data frame
   dfSPP.byUID.sum <- aggregate(x = list(XTOTABCOV = dfSPP.byUID.1c$XABCOV, 
                                         TOTFREQ = dfSPP.byUID.1c$TOTFREQ),
                                by = dfSPP.byUID.1c[c(sampID)], FUN = sum)
-  
+  # Calculate total number of taxa
   dfSPP.byUID.length <- aggregate(x = list(TOTN = dfSPP.byUID.1c$TAXON),
                                   by = dfSPP.byUID.1c[c(sampID)], FUN = length)
-  
+  # Now drop TOTFREQ from the initial input data frame
   dfSPP.byUID.1c$TOTFREQ <- NULL
-  
+  # merge original input dataset with sums and total number of taxa 
   dfSPP.byUID.fin <- merge(dfSPP.byUID.1c, dfSPP.byUID.sum, by = sampID)
   dfSPP.byUID.fin <- merge(dfSPP.byUID.fin, dfSPP.byUID.length, by = sampID)
-  
+  # Now use these preliminary calculations to calculate final values
   dfSPP.byUID.fin$TOTFREQ <- with(dfSPP.byUID.fin, TOTFREQ*100)
   dfSPP.byUID.fin$sXRCOV <- with(dfSPP.byUID.fin, XABCOV/XTOTABCOV*100)
   dfSPP.byUID.fin$FREQ <- with(dfSPP.byUID.fin, NUM/NPLOTS*100)
   dfSPP.byUID.fin$sRFREQ <- with(dfSPP.byUID.fin, (FREQ/TOTFREQ)*100)
-  
+  # Set first value in list for species level data to the above data frame
   dfSPP[[1]] <- dfSPP.byUID.fin
   
   ## Also want to add NWCA_NATSTAT to dfSPP[[2]], byPlot
@@ -327,7 +337,7 @@ nwcaVegData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA, inNat
   # Create datasets for genus and family levels which will only be used for richness metrics
   dfGEN <- nwcaVegInput(sampID, 'GENUS', vascIn, taxon_name, inTaxa, cValReg)
   dfFAM <- nwcaVegInput(sampID, 'FAMILY', vascIn, taxon_name, inTaxa, cValReg)
-  
+  # Create full list of 6 data frames as output
   outDF <- list(byUIDspp=dfSPP[[1]], byPlotspp=dfSPP[[2]], byUIDgen=dfGEN[[1]],
                 byPlotgen=dfGEN[[2]], byUIDfam=dfFAM[[1]], byPlotfam=dfFAM[[2]])
   print("Done preparing datasets")
@@ -418,7 +428,7 @@ nwcaVegData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA, inNat
 nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxon_name, taxa, state = 'STATE', 
                          coeReg = 'USAC_REGION', cValReg='STATE'){
   
-    # First merge the taxa list with the cover data by USDA_NAME
+  # First merge the taxa list with the cover data by USDA_NAME
   vascIn.1 <- merge(vascIn, taxa, by=taxon_name)
   vascIn.1$tobj <- vascIn.1[,tvar] # Set tobj as the value of tvar
   vascIn.1$COVER <- with(vascIn.1, as.numeric(COVER)) # Make sure COVER is numeric
@@ -427,39 +437,41 @@ nwcaVegInput <- function(sampID='UID', tvar, vascIn, taxon_name, taxa, state = '
   byPlot <- vascIn.1
   byPlot$TAXON <- with(vascIn.1, ifelse(!is.na(tobj) & tobj!='',tobj, eval(as.name(taxon_name))))
 
-  # Sum COVER by SAMPID, PLOT, and TAXON to ensure there is only one row per species in input data, set DISTINCT as 1 to be
-  # taxon counter
+  # Sum COVER by SAMPID, PLOT, and TAXON to ensure there is only one row per species in input data, 
+  # set DISTINCT as 1 to be taxon counter
   byVars <- unique(c(sampID, cValReg, coeReg,'TAXON', state))
-  
+  # Sum cover for each plot and TAXON
   byPlot1.sum <- aggregate(x = list(COVER = byPlot$COVER), by = byPlot[c(byVars, 'PLOT')],
                        FUN = sum)
-  
+  # Set DISTINCT as 1 if cover is >0
   byPlot1.dist <- aggregate(x = list(DISTINCT = byPlot1.sum$COVER), by = byPlot1.sum[c(byVars, 'PLOT')],
                             FUN = function(x){ifelse(x >0, 1, 0)})
-  
+  # Combine these two summaries and subset to select only relevant variables
   byPlot1 <- merge(byPlot1.sum, byPlot1.dist, by = c(byVars, 'PLOT'))
   byPlot1 <- subset(byPlot1, select = c(byVars, 'PLOT', 'COVER', 'DISTINCT'))
-  
-  byPlot1$COVER[byPlot1$COVER>100] <- 100 # Cap sums at 100 percent
+  # Cap sums at 100 percent
+  byPlot1$COVER[byPlot1$COVER>100] <- 100 
   print("Done with plot summing")
   
   ## Calculate frequency and relative frequency variables by taxon
+  # Calculate number of taxa 
   byUID1.sum <- aggregate(x = list(NUM = byPlot1$DISTINCT), by = byPlot1[c(byVars)],
                           FUN = sum) 
-  
+  # Calculate mean cover
   byUID1.mean <- aggregate(x = list(XABCOV = byPlot1$COVER), by = byPlot1[c(byVars)],
                            FUN = mean)
-  
+  # Calculate number of plots sampled
   byUID1.length <- aggregate(x = list(NPLOTS = byPlot1$PLOT), by = byPlot1[c(byVars)],
                              FUN = function(x){length(unique(x))})
-  
+  # Merge these three outputs together, set DISTINCT to 1 for all taxa
   byUID2 <- merge(byUID1.sum, byUID1.mean, by = byVars)
   byUID2 <- merge(byUID2, byUID1.length, by = byVars)
   byUID2$DISTINCT <- 1
+  # Subset to select only relevant variables
   byUID2 <- subset(byUID2, select = c(byVars, 'NUM', 'XABCOV', 'NPLOTS', 'DISTINCT'))
   
   print("Done with sampID summing")
-  
+  # Create list output with results by UID and by Plot within UID
   byDF <- list(byUID=byUID2, byPlot=byPlot1)
   
   return(byDF)

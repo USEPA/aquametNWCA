@@ -67,21 +67,27 @@
 
 calcTreeMets <- function(treeIn, nPlotIn, sampID='UID'){
 
+  # Evaluates whether treeIn contains expected variables, returns error if any are missing
   datNames <- c(sampID,'PAGE','LINE','PLOT','PARAMETER','RESULT')
   if(any(datNames %nin% names(treeIn))){
     print("Missing key variables! Should be UID, PAGE, LINE, PLOT, PARAMETER, and RESULT.")
     return(NULL)
   }
 
+  # Calculate snag metrics
   snagsOut <- calcSnagMets(treeIn, nPlot=nPlotIn, sampID)
+  # Calculate tree count metrics
   treeCntsOut <- calcTreeCntMets(treeIn, nPlot=nPlotIn, sampID)
+  # Calculate tree cover metrics
   treeCvrOut <- calcTreeCoverMets(treeIn, nPlot=nPlotIn, sampID)
 
-  ## Merge into a single output file in wide format
+  # Merge into a single output file in wide format
   treeMetOut <- rbind(snagsOut,treeCntsOut,treeCvrOut)
   
+  # Cast output data frame into wide format
   treeMetOut.1 <- reshape(treeMetOut, idvar = sampID, direction = 'wide',
                           timevar = 'PARAMETER', v.names = 'RESULT')
+  # Remove prefix from variable names added by reshape()
   names(treeMetOut.1) <- gsub("RESULT\\.", "", names(treeMetOut.1))
  
   return(treeMetOut.1)
