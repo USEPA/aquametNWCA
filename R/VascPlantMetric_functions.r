@@ -620,38 +620,41 @@ int.calcRich <- function(x, y, tlevel, sampID) {
 #'   XRCOV_TRAITVAL: Sum of sXRCOV values across taxa with trait value
 #' @author Karen Blocksom
 int.calcTraits_MultCat <- function(vascIn, trait, sampID){
+  # Subset input data to only non-missing and non-blank values of trait
   vascIn1 <- subset(vascIn,!is.na(eval(as.name(trait))) & eval(as.name(trait))!='')
-
+  # Calculate number of taxa with trait
   vascIn.length <- aggregate(x = list(N = vascIn1$TAXON), by = vascIn1[c(sampID, trait)],
                              FUN = length)
-  
+  # Merge back to input data frame
   vascIn1a <- merge(vascIn1, vascIn.length, by = c(sampID, trait))
-  
+  # Way to obtain total number of taxa in sample 
   vascIn1.pctn <- aggregate(x = list(uniqN = vascIn1a$TOTN), by = vascIn1a[c(sampID, trait, 'N')],
                              FUN = unique)
-  
+  # Calculate PCTN from this information
   vascIn1.pctn$PCTN <- with(vascIn1.pctn, round(N/uniqN*100, 2))
+  # Drop uniqN variable
   vascIn1.pctn$uniqN <- NULL
-  
+  # Calculate mean absolute and relative cover by trait
   vascIn.sum <- aggregate(x = list(XABCOV = vascIn1$XABCOV, XRCOV = vascIn1$sXRCOV),
                           by = vascIn1[c(sampID, trait)], 
                           FUN = function(x){round(sum(x), 2)})
-  
+  # Merge metric output data frames 
   vascIn2 <- merge(vascIn1.pctn, vascIn.sum, by = c(sampID, trait))
-  
+  # Melt data frame
   outdf <- reshape(vascIn2, idvar = c(sampID, trait), direction = 'long',
                    varying= names(vascIn2)[!names(vascIn2) %in% c(sampID, trait)],
                    timevar = 'variable', v.names = 'value',
                    times = names(vascIn2)[!names(vascIn2) %in% c(sampID, trait)])
-  
+  # Update metric name by combining variable and trait value
   outdf$variable <- paste(outdf$variable, outdf[,trait], sep='_')
+  # Drop trait variable
   outdf[,trait] <- NULL
-  
+  # Cast data frame wide again, dropping prefix added by reshape() from variable names
   outdf.wide <- reshape(outdf, idvar = c(sampID), direction = 'wide',
                         timevar = 'variable', v.names='value')
 
   names(outdf.wide) <- gsub("value\\.", "", names(outdf.wide))
-  
+  # Melt data frame and replace missing values with 0
   outdf1 <- reshape(outdf.wide, idvar = sampID, direction = 'long',
                     varying = names(outdf.wide)[!names(outdf.wide) %in% c(sampID)],
                     timevar = 'PARAMETER', v.names = 'RESULT',
@@ -706,47 +709,51 @@ int.calcTraits_MultCat <- function(vascIn, trait, sampID){
 #' @author Karen Blocksom
 
 int.calcTraits_MultCat.alt <- function(vascIn, trait, sampID){
+  # Subset input data to keep only non-missing and non-blank traits
   vascIn1 <- subset(vascIn,!is.na(eval(as.name(trait))) & eval(as.name(trait))!='')
-
+  # calculate number of taxa with trait
   vascIn1.ntax <- aggregate(x = list(NTAX = vascIn1$TAXON), by = vascIn1[c(sampID, trait)],
                             FUN = length)
-  
+  # Merge back to input data
   vascIn1a <- merge(vascIn1, vascIn1.ntax, by = c(sampID, trait))
-  
+  # Obtain TOTN (total number of taxa) from input
   vascIn1.pctn <- aggregate(x = list(uniqN = vascIn1a$TOTN), by = vascIn1a[c(sampID, trait,'NTAX')],
                             FUN = unique)
-  
+  # calculate percent taxa for trait from above output
   vascIn1.pctn$PCTN <- with(vascIn1.pctn, round(NTAX/uniqN*100, 2))
+  # Drop unnecessary variables
   vascIn1.pctn$uniqN <- NULL
   vascIn1.pctn$NTAX <- NULL
-  
+  # Calculate mean relative and absolute cover for trait, then relative importance
   vascIn1.sum <- aggregate(x = list(XABCOV = vascIn1$XABCOV, XRCOV = vascIn1$sXRCOV,
                            RFREQ = vascIn1$sRFREQ), by = vascIn1[c(sampID, trait)],
                            FUN = function(z){round(sum(z),2)})
   vascIn1.sum$RIMP <- with(vascIn1.sum, round((RFREQ+XRCOV)/2, 2))
-  
+  # Merge metric outputs 
   vascIn2 <- merge(vascIn1.pctn, vascIn1.sum, by = c(sampID, trait))
-  
+  # Melt data frame 
   outdf <- reshape(vascIn2, idvar = c(sampID, trait), direction = 'long',
                    varying= names(vascIn2)[!names(vascIn2) %in% c(sampID, trait)],
                    timevar = 'variable', v.names = 'value',
                    times = names(vascIn2)[!names(vascIn2) %in% c(sampID, trait)])
-  
+  # Update metric name by combining variable and trait name, drop trait variable
   outdf$variable <- paste(outdf$variable, outdf[,trait], sep='_')
   outdf[, trait] <- NULL
-  
+  # Cast data frame wide and drop prefix added by reshape() from variable names
   outdf.wide <- reshape(outdf, idvar = c(sampID), direction = 'wide',
                         timevar = 'variable', v.names='value')
   
   names(outdf.wide) <- gsub("value\\.", "", names(outdf.wide))
-  
+  # Melt data frame
   outdf1 <- reshape(outdf.wide, idvar = sampID, direction = 'long',
                     varying = names(outdf.wide)[!names(outdf.wide) %in% c(sampID)],
                     timevar = 'PARAMETER', v.names = 'RESULT',
                     times = names(outdf.wide)[!names(outdf.wide) %in% c(sampID)])
-  
+  # Drop metrics for undetermined trait values
   outdf1 <- subset(outdf1, substring(PARAMETER,nchar(PARAMETER)-3,nchar(PARAMETER))!='_UND')
+  # Set missing result values to 0
   outdf1$RESULT <- with(outdf1, ifelse(is.na(RESULT), 0, RESULT))
+  # Add _SPP to metric names
   outdf1$PARAMETER <- with(outdf1, paste(as.character(PARAMETER), 'SPP', sep=''))
   
   return(outdf1)
@@ -784,46 +791,50 @@ int.calcTraits_MultCat.alt <- function(vascIn, trait, sampID){
 #' XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 #' @author Karen Blocksom
 int.calcTraits_Indicator <- function(vascIn, trait, sampID){
-  
+  # Create SAMPID based on variables in sampID
   for(i in 1:length(sampID)){
     if(i==1) vascIn$SAMPID <- vascIn[,sampID[i]]
     else vascIn$SAMPID <- paste(vascIn$SAMPID,vascIn[,sampID[i]],sep='.')
   }
+  # Create list of unique samples 
   samples <- unique(subset(vascIn,select=c(sampID,'SAMPID')))
-    
+  # Create list of unique SAMPID values  
   UIDs <- data.frame(SAMPID=unique(subset(vascIn, select='SAMPID')), stringsAsFactors=FALSE)
+  # Subset input data frame to only keep rows where trait = 1
   vascIn1 <- subset(vascIn, eval(as.name(trait))==1)
-  
+  # If there are any rows in this data frame, perform first part
   if(nrow(vascIn1)>0){
+    # calculate number of taxa with trait
     vascIn.length <- aggregate(x = list(N = vascIn1$TAXON), by = vascIn1[c('SAMPID')],
                                FUN = length)
-    
+    # Merge back to input data
     vascIn1a <- merge(vascIn1, vascIn.length, by = c('SAMPID'))
-    
+    # Obtain total number of taxa from input
     vascIn1.pctn <- aggregate(x = list(uniqN = vascIn1a$TOTN), by = vascIn1a[c('SAMPID','N')],
                               FUN = unique)
-
+    # Calculate Percent taxa with trait
     vascIn1.pctn$PCTN <- with(vascIn1.pctn, round(N/uniqN*100, 2))
+    # Drop uniqN variable
     vascIn1.pctn$uniqN <- NULL
-    
+    # calculate mean absolute and relative cover by trait
     vascIn.sum <- aggregate(x = list(XABCOV = vascIn1$XABCOV, XRCOV = vascIn1$sXRCOV),
                             by = vascIn1[c('SAMPID')], 
                             FUN = function(x){round(sum(x), 2)})
-    
+    # Merge metric data frames
     vascIn2 <- merge(vascIn1.pctn, vascIn.sum, by = c('SAMPID'))
-    
+    # Melt data
     outdf <- reshape(vascIn2, idvar = c('SAMPID'), direction = 'long',
             varying= names(vascIn2)[!names(vascIn2) %in% c('SAMPID')],
             timevar = 'variable', v.names = 'value',
             times = names(vascIn2)[!names(vascIn2) %in% c('SAMPID')])
-    
+    # Rename metric by adding trait name to variable
     outdf$variable <- paste(outdf$variable, trait, sep='_')
-    
+    # Cast wide again, remove prefix added by reshape() to variable names
     outdf.wide <- reshape(outdf, idvar = c('SAMPID'), direction = 'wide',
                           timevar = 'variable', v.names='value')
     
     names(outdf.wide) <- gsub("value\\.", "", names(outdf.wide))
-    
+    # Melt data frame and replace missing RESULT with 0
     outdf1 <- reshape(outdf.wide, idvar = 'SAMPID', direction = 'long',
                       varying = names(outdf.wide)[!names(outdf.wide) %in% c('SAMPID')],
                       timevar = 'PARAMETER', v.names = 'RESULT',
@@ -832,14 +843,16 @@ int.calcTraits_Indicator <- function(vascIn, trait, sampID){
     outdf1$RESULT <- with(outdf1, ifelse(is.na(RESULT), 0, RESULT))
     outdf1$PARAMETER <- with(outdf1, as.character(PARAMETER))
     
-  }else{
+  }else{ # If not rows with trait
+    # Calculate number of unique samples
     numUIDs <- length(unique(vascIn$SAMPID))
+    # Create data frame with appropriate metrics and 0 values for RESULT
     outdf1 <- data.frame(SAMPID=rep(unique(vascIn$SAMPID), 4), 
                          PARAMETER=c(rep('N',numUIDs),rep('PCTN', numUIDs), rep('XABCOV',numUIDs)
                                 , rep('XRCOV',numUIDs)), RESULT=0, stringsAsFactors=F)
       outdf1$PARAMETER <- paste(outdf1$PARAMETER,trait,sep='_')
   }
-  
+  # Merge samples with output data frame to get back sampID variables, drop SAMPID
   outdf2 <- merge(samples, outdf1, by='SAMPID') 
   outdf2$SAMPID <- NULL
   
@@ -878,6 +891,8 @@ int.calcTraits_Indicator <- function(vascIn, trait, sampID){
 #'   
 #' @author Karen Blocksom
 int.combTraits <- function(vascIn, traits, sampID){
+  # For each value in traits variable, run int.calcTraits_Indicator function
+  # then combine all trait value outputs together
   for(i in 1:length(traits)){
     tmpOut <- int.calcTraits_Indicator(vascIn, traits[i], sampID)
     if(i==1){
@@ -930,56 +945,59 @@ int.combTraits <- function(vascIn, traits, sampID){
 #' 
 #' @author Karen Blocksom
 int.calcTraits_Indicator.alt <- function(vascIn, trait, sampID){
-  
+  # Create SAMPID variable by combining values of variables in sampID argument
   for(i in 1:length(sampID)){
     if(i==1) vascIn$SAMPID <- vascIn[, sampID[i]]
     else vascIn$SAMPID <- paste(vascIn$SAMPID, vascIn[, sampID[i]], sep='.')
   }
+  # Create list of samples by sampID variables and SAMPID
   samples <- unique(subset(vascIn, select=c(sampID,'SAMPID')))
-  
+  # Create list of unique SAMPID values
   UIDs <- data.frame(SAMPID=unique(subset(vascIn, select='SAMPID')), stringsAsFactors=FALSE)
+  # Subset input data to only keep trait values of 1
   vascIn1 <- subset(vascIn, eval(as.name(trait))==1)
-  
+  # Calculate number of taxa with trait
   vascIn1.ntax <- aggregate(x = list(NTAX = vascIn1$TAXON), by = vascIn1[c('SAMPID')],
                             FUN = length)
-  
+  # Merge back to subsetted input data
   vascIn1a <- merge(vascIn1, vascIn1.ntax, by = c('SAMPID'))
-  
+  # Obtain total number of taxa from input data
   vascIn1.pctn <- aggregate(x = list(uniqN = vascIn1a$TOTN), by = vascIn1a[c('SAMPID','NTAX')],
                             FUN = unique)
-  
+  # Use that value to calculate % taxa with trait, then drop unnecessary variables
   vascIn1.pctn$PCTN <- with(vascIn1.pctn, round(NTAX/uniqN*100, 2))
   vascIn1.pctn$uniqN <- NULL
   vascIn1.pctn$NTAX <- NULL
-  
+  # Calculate mean absolute and relative cover by trait
   vascIn1.sum <- aggregate(x = list(XABCOV = vascIn1$XABCOV, XRCOV = vascIn1$sXRCOV,
                                     RFREQ = vascIn1$sRFREQ), by = vascIn1[c('SAMPID')],
                            FUN = function(z){round(sum(z),2)})
-  
+  # Calculate relative importance from above metrics
   vascIn1.sum$RIMP <- with(vascIn1.sum, round((RFREQ+XRCOV)/2, 2))
-  
+  # Merge metric results
   vascIn2 <- merge(vascIn1.pctn, vascIn1.sum, by = c('SAMPID'))
-  
+  # Melt data frame and create metric name from trait name and variable 
   outdf <- reshape(vascIn2, idvar = c('SAMPID'), direction = 'long',
                    varying= names(vascIn2)[!names(vascIn2) %in% c('SAMPID')],
                    timevar = 'variable', v.names = 'value',
                    times = names(vascIn2)[!names(vascIn2) %in% c('SAMPID')])
   
   outdf$variable <- paste(outdf$variable, trait, sep='_')
-  
+  # Cast data frame wide and drop prefix added by reshape() to variable names
   outdf.wide <- reshape(outdf, idvar = c('SAMPID'), direction = 'wide',
                         timevar = 'variable', v.names='value')
   
   names(outdf.wide) <- gsub("value\\.", "", names(outdf.wide))
-  
+  # Melt data frame and remove rows with metrics based on UND (undetermined) trait values 
   outdf1 <- reshape(outdf.wide, idvar = 'SAMPID', direction = 'long',
                     varying = names(outdf.wide)[!names(outdf.wide) %in% c('SAMPID')],
                     timevar = 'PARAMETER', v.names = 'RESULT',
                     times = names(outdf.wide)[!names(outdf.wide) %in% c('SAMPID')])
   
   outdf1 <- subset(outdf1, substring(PARAMETER, nchar(PARAMETER)-3, nchar(PARAMETER))!='_UND')
+  # set RESULT to 0 where missing
   outdf1$RESULT <- with(outdf1, ifelse(is.na(RESULT), 0, RESULT))
-
+  # Merge samples to get sampID variables back, then drop SAMPID
   outdf2 <- merge(samples, outdf1, by='SAMPID')
   outdf2$SAMPID <- NULL
   
@@ -1025,37 +1043,41 @@ int.calcTraits_Indicator.alt <- function(vascIn, trait, sampID){
 
 int.calcIndices <- function(vascIn, subgrp=NULL, sampID){
   
-  ## Calculate mean CC and FQAI indices
+  ## Calculate mean C and FQAI indices
+  # First calculate total absolute cover for input data frame (by sampID variables)
   vascIn.sum <- aggregate(x = list(SUBXTOTABCOV = vascIn$XABCOV),
                         by = vascIn[c(sampID)], FUN = sum)
-  
+  # Merge input dataset with totals calculated above
   vascIn.1 <- merge(vascIn, vascIn.sum, by = c(sampID))
-  ## Calculate diversity indices
+  # Calculate diversity indices
+  # Use above calculations to do further calculations needed for indices 
   vascIn.1$xrcov <- with(vascIn.1, (XABCOV/SUBXTOTABCOV))
   vascIn.1$hcalc <- with(vascIn.1, xrcov*log(xrcov))
   vascIn.1$dcalc <- with(vascIn.1, xrcov^2)
-
+  # Use the above calculations to further calculate subparts of H and D indices
   vascIn.1.sum <- aggregate(x = list(Hsub = vascIn.1$hcalc, Dsub = vascIn.1$dcalc),
                             by = vascIn.1[c(sampID)], 
                             FUN = sum)
-  
+  # Count number of taxa
   vascIn.1.jcalc <- aggregate(x = list(jcalc = vascIn.1$TAXON), 
                               by = vascIn.1[c(sampID)],
                               FUN = length)
-  
+  # Merge metrics together
   vascIn.2 <- merge(vascIn.1.sum, vascIn.1.jcalc, by = sampID)
+  # Finalize calculations of H, J, and D indices
   vascIn.2$H <- with(vascIn.2, round(-1*Hsub, 4))
   vascIn.2$J <- with(vascIn.2, round(H/log(jcalc), 4))
   vascIn.2$D <- with(vascIn.2, round(1 - Dsub, 4))
-  
+  # Subset data to select appropriate variables
   vascIn.3 <- subset(vascIn.2, select=c(sampID, 'H', 'J', 'D'))
-  
+  # Melt data frame
   outdf <- reshape(vascIn.3, idvar = sampID, direction = 'long',
           varying = c('H','J','D'),
           timevar = 'PARAMETER', v.names = 'RESULT',
           times = c('H','J','D'))
-  
+  # Update value of PARAMETER with subgrp added to end of name
   outdf$PARAMETER <- with(outdf, paste(as.character(PARAMETER), subgrp,sep='_'))
+  # Fill in missing or infinite RESULT values with 0
   outdf$RESULT <- with(outdf, ifelse(is.na(RESULT)|is.infinite(RESULT), 0, RESULT))
 
   return(outdf)
@@ -1097,25 +1119,35 @@ int.calcIndices <- function(vascIn, subgrp=NULL, sampID){
 #' 
 #' @author Karen Blocksom
 int.calcRichNS <- function(x, y, natstat, grpname, sampID) {
+  # Subset first input data frame, keeping only values of NWCA_NATSTAT included in
+  # natstat argument - sample-level data
   xin <- subset(x, NWCA_NATSTAT %in% natstat)
+  # Sum DISTINCT to get total taxa 
   xx1 <- aggregate(x = list(TOTN_TAXA = xin$DISTINCT), by = xin[c(sampID)],
                    FUN = sum)
   
   ## Now calculate richness by plot to obtain average richness per plot
+  # Again, subset 2nd input data frame to keep only NWCA_NATSTAT values in natstat
+  # Plot-level data
+  # Then merge with xx1 by sampID
   yy1 <- merge(subset(y,NWCA_NATSTAT %in% natstat,
                       select=c(sampID,'PLOT','DISTINCT')), xx1, by=sampID)
+  # Calculate number of taxa by plot
   yy2 <- aggregate(x = list(N_TAXA = yy1$DISTINCT), 
                    by = yy1[c(sampID, 'PLOT','TOTN_TAXA')],
                    FUN = sum)
+  # Calculate mean number of taxa per plot
   yy3 <- aggregate(x = list(XN_TAXA = yy2$N_TAXA), by = yy2[c(sampID, 'TOTN_TAXA')], 
                    FUN = function(z){round(mean(z),2)})
+  # Calculate median number of taxa per plot
   yy4 <- aggregate(x = list(MEDN_TAXA = yy2$N_TAXA), by = yy2[c(sampID, 'TOTN_TAXA')], FUN = median)
+  # Calculate standard deviation in number of taxa per plot
   yy5 <- aggregate(x = list(SDN_TAXA = yy2$N_TAXA), by = yy2[c(sampID, 'TOTN_TAXA')], 
                    FUN = function(z){round(sd(z),2)})
-  
+  # Merge datasets together
   zz1 <- merge(yy3, yy4, by = c(sampID, 'TOTN_TAXA')) 
   zz2 <- merge(zz1, yy5, by = c(sampID, 'TOTN_TAXA'))
-  
+  # Melt data and update PARAMETER name with grpname (taxonomic level- SPP, GEN, FAM)
   outdf <- reshape(zz2, idvar = sampID, direction = 'long',
                    varying= names(zz2)[!names(zz2) %in% c(sampID)],
                    timevar = 'PARAMETER', v.names = 'RESULT',
@@ -1156,28 +1188,35 @@ int.calcRichNS <- function(x, y, natstat, grpname, sampID) {
 #'   Bray-Curtis Distance (Dissimilarity)
 #' @author Karen Blocksom
 int.calcXBC <- function(x, sampID){
+  # Create SAMPID based on combining variables in sampID argumetn
   for(i in 1:length(sampID)){
     if(i==1) x$SAMPID <- x[, sampID[i]]
     else x$SAMPID <- paste(x$SAMPID, x[,sampID[i]], sep='.')
   }
+  # List of unique samples in dataset
   samples <- unique(subset(x, select=c(sampID,'SAMPID')))
-  
-  
+  # Create list of unique SAMPID values
   uidlist <- data.frame(SAMPID=unique(x$SAMPID), stringsAsFactors=FALSE)
+  # Create empty output data frame
   outdf <- data.frame(SAMPID=numeric(0), XBCDIST=numeric(0), stringsAsFactors=FALSE)
-
+  # For each sample in data set, subset to just that sample, then cast wide
+  # Then, remove prefix added by reshape() to variable names
   for(i in 1:nrow(uidlist)){
     x1 <- subset(x,SAMPID==uidlist[i,], select = c('PLOT','SPECIES','COVER'))
     x2 <- reshape(x1, idvar = c('PLOT'), direction = 'wide',
                   timevar = 'SPECIES', v.names='COVER')
     
     names(x2) <- gsub("COVER\\.", "", names(x2))
+    # Fill in missing values in matrix with 0
     x2[is.na(x2)] <- 0
+    # Calculate Bray-Curtis distance among plots sampled 
     x3 <- ecodist::distance(x2[,2:length(x2)],'bray-curtis')
+    # From this, calculate mean B-C distance
     outx <- data.frame(SAMPID=uidlist[i,], XBCDIST_SPP=round(mean(x3),4), stringsAsFactors=FALSE)
+    # Combine this with output data frame, adding a row at a time
     outdf <- rbind(outdf, outx)
   }
-  
+  # Merge back with samples to get sampID variables back, then drop SAMPID
   outdf.1 <- merge(samples, outdf, by='SAMPID') 
   outdf.1$SAMPID <- NULL
 
