@@ -2,52 +2,59 @@
 #' 
 #' @title Calculate Vegetation MMI and assign condition class
 #' 
-#' @description This function calculates the NWCA 2011 Vegetation
-#' Multimetric Index (VMMI) from metric inputs. If the appropriate
-#' variable(s) describing site ecoregion and wetland group type
-#' according to NWCA 2011 are included in the input data frame,
+#' @description This function calculates the NWCA 2016 Vegetation
+#' Multimetric Index (VMMI) from metric and wetland class group 
+#' inputs. If the appropriate
+#' variable describing NWCA 2016 reporting units (RPT_UNIT)
+#' is included in the input data frame,
 #' condition class (Good/Fair/Poor) will also be assigned.
 #' 
-#' @param metsIn Data frame containing, at a minimum: \itemize{ \item sampID:
-#'   Variables identified in \emph{sampID} argument
+#' @param metsIn Data frame containing, at a minimum: 
+#' \itemize{ 
+#'   \item sampID: Variables identified in \emph{sampID} argument
 #'   
-#'   \item FQAI_ALL: Floristic Quality Assessment Index based on all species
+#'   \item wetcls_grp: Variable identified in \emph{wetcls_grp} argument, 
+#'   valid values of this variable are: EH, EW, PRLH, PRLW
 #'   
-#'   \item N_TOL: Number of tolerant species
-#'   
-#'   \item RIMP_NATSPP: Relative importance of native species
-#'   
-#'   \item XRCOV_MONOCOTS_NAT: Mean relative cover of native monocots 
-#'   
-#'   \item wetcls_grp: Variable identified in \emph{wetcls_grp} argument}
+#'   \item Metrics required, depending on wetland class 
+#'   groups in data: 
+#'    \itemize{
+#'     \item EH: N_ANNUAL, PCTN_NATSPP, XRCOV_FORB, XRCOV_HTOL,
+#'     XRCOV_MONOCOTS_NAT, XRCOV_SEN
+#'  
+#'     \item EW: PCTN_ISEN, PCTN_MONOCOT, PCTN_NATSPP, RIMP_NATSPP,
+#'     XCOV_WD_FINE, XRCOV_GRAMINOID
+#'     
+#'     \item PRLH: FQAI_ALL, N_TOL, PCTN_OBL_FACW, XRCOV_NATSPP
+#'     
+#'     \item RFREQ_NATSPP, XC_ALL, XRCOV_MONOCOTS_NAT, XRCOV_NATSPP
+#'     
+#'    }
+#'   \item RPT_UNIT (optional): NWCA 2016 reporting units with the following 
+#'   valid values: ARW, ATL, GFC, GPL, ICP, NCE, PAC, SAP, TPL, WVM. 
+#'   Required to assign condition class based on VMMI_2016.
+#'   }
 #'    
 #' @param wetcls_grp String containing name of variable containing wetland 
 #' class group, with valid values of EH (estuarine herbaceous),
 #' EW (estuarine woody), PRLH (inland herbaceous), and 
 #' PRLW (inland woody).
-#'   
-#' Optional: \itemize{ 
-#'   \item RPT_UNIT: NWCA 2016 reporting units with the following 
-#'   valid values: ARW, ATL, GFC, GPL, ICP, NCE, PAC, SAP, TPL, WVM
-.
-#'   
+#'      
 #' @param sampID A character vector containing the name(s) of variable(s)
 #'   necessary to identify unique samples, 'UID' by default
 #'   
-#' @return  Data frame containing: \itemize{ \item \emph{sampID} Variable(s)
+#' @return  Data frame containing: \itemize{ 
+#' \item \emph{sampID} Variable(s)
 #'   found in the argument sampID
 #'   
-#'   \item FQAI_ALL_SC: Scored FQAI_ALL, on 0-10 scale
+#'   \item All metrics used in wetland class-specific MMIs, with 
+#'   _SC16 on the end of the metric
 #'   
-#'   \item N_TOL_SC: Scored N_TOL, on 0-10 scale
-#'   
-#'   \item RIMP_NATSPP_SC: Scored RIMP_NATSPP, on 0-10 scale
-#'   
-#'   \item XRCOV_MONOCOTS_NAT_SC: Scored XRCOV_MONOCOTS_NAT, on 0-10 scale
-#'   
-#'   \item VMMI: NWCA 2016 Vegetation Multimetric Index on 100-point scale } If
+#'   \item VMMI_2016: NWCA 2016 Vegetation Multimetric Index on 
+#'   100-point scale } If
 #'   RPT_UNIT is provided, the following is also provided as output: 
-#'   \itemize{ \item VEGCOND: Vegetation condition class, based on VMMI score
+#'   \itemize{ 
+#'   \item VEGCOND_2016: Vegetation condition class, based on VMMI score
 #'   and site location, as assigned for NWCA 2016. Valid values are Good, Fair,
 #'   and Poor. }
 #'   
