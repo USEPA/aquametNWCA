@@ -1,6 +1,6 @@
 #' @export
 #' 
-#' @title Calculate Vegetation MMI and assign condition class
+#' @title Calculate 2011 Vegetation MMI and assign condition class
 #' 
 #' @description This function calculates the NWCA 2011 Vegetation
 #' Multimetric Index (VMMI) from metric inputs. If the appropriate

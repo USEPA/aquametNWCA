@@ -181,5 +181,139 @@
 "Vtype_GrCovEx"
 
 
+#' NWCA 2016 Coefficient of Conservation Values (C-values)
+#' 
+#' A data frame containing NWCA 2016 state- or region-specific  
+#' Coefficient of Conservatism values for vascular plant taxa
+#' 
+#' @name cvalNWCA_2016
+#' @format A data frame containing 24206 observations on the 
+#' following variables
+#' \describe{
+#'  \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA 
+#'  taxonomic ID number}
+#'  \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name 
+#'  where not available}
+#'  \item{GEOG_TYPE}{Type of Geographic Unit}
+#'  \item{GEOG_ID}{Geographic unit to which value applies, which is NWC_CREG16 
+#'  in this dataset}
+#'  \item{NWCA_CVAL}{C-value region-specific Coefficient of 
+#'  Conservatism value as used in NWCA 2016}
+#' }
+#' @note This dataset is the list of C-values used for site-specific and 
+#' taxon-specific assignments for NWCA 2016.
+#' @keywords datasets
+#' @examples 
+#' head(cvalNWCA_2016)
+#' str(cvalNWCA_2016)
+#' 
+"cvalNWCA_2016"
 
+#' NWCA 2016 Native Status Values
+#' 
+#' A data frame containing NWCA 2016 state-specific  
+#' native status values for vascular plant taxa
+#' 
+#' @name nativeNWCA_2016
+#' @format A data frame containing 21356 observations on the 
+#' following variables
+#' \describe{
+#'  \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA 
+#'  taxonomic ID number}
+#'  \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name 
+#'  where not available}
+#'  \item{GEOG_ID}{Geographic unit to which value applies, which is 
+#'  the two-letter state abbreviation in this dataset}
+#'  \item{NWCA_NATSTAT}{Native status of taxon. Valid values: 
+#'  ADV (Adventive), CRYP (Cryptogenic), INTR (introduced),
+#'  NAT (native), UND (Undetermined).}
+#'  \item{NATSTAT_ALT}{Combined native status values as used in calculations.
+#'  Valid values: ALIEN (INTR + ADV), CRYP, NAT, UND}
+#'  \item{ALIEN}{Indicator value (1/0) for whether taxon is considered alien.}
+#'  \item{AC}{Indicator value (1/0) for whether taxon is considered alien or
+#'  cryptogenic}
+#' }
+#' @note This dataset is the list of native status values used 
+#' for site-specific and #' taxon-specific assignments for 
+#' NWCA 2016.
+#' @keywords datasets
+#' @examples 
+#' head(nativeNWCA_2016)
+#' str(nativeNWCA_2016)
+#' 
+"nativeNWCA_2016"
 
+#' NWCA 2016 Vascular Plant Taxa List
+#' 
+#' A dataset containing taxonomy and basic characteristics for vascular plant 
+#' taxa as used in NWCA 2016.
+#' 
+#' @name taxaNWCA_2016
+#' 
+#' @format A data frame with 5044 observations on the following 28 variables.
+#' \describe{
+#'   \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA taxonomic 
+#'   ID number}
+#'   \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name 
+#'     where not available}
+#'   \item{ACCEPTED_SYMBOL}{Accepted symbol for taxon from USDA
+#'   PLANTS or NWCA 2016 if not in USDA PLANTS}
+#'   \item{TAXON_LEVEL}{Taxonomic level of name: CL (class), F (Family),
+#'   G (Genus), GH (Growth habit), H (), NV (Nonvascular), 
+#'   SC (), SF (), 
+#'   SSP (Subspecies), SP (Species), T (), U (), 
+#'   VAR (Variety)}
+#'   \item{DIVISION}{Division level of taxonomy} 
+#'   \item{CLASS}{Class level of taxonomy} 
+#'   \item{SUBCLASS}{Subclass level of taxonomy}
+#'   \item{ORDER}{Order level of taxonomy}  
+#'   \item{FAMILY}{Family level of taxonomy}
+#'   \item{GENUS}{Genus level of taxonomy}  
+#'   \item{CATEGORY}{Plant category of taxon, including MONOCOT, GYMNOSPERM, 
+#'   DICOT, FERN, LICHEN, HORSETAIL, MOSS, LYCOPOD, and LIVERWORT}
+#'   \item{GROWTH_HABIT}{Growth habit of taxon as provided by USDA PLANTS}
+#'   \item{DURATION}{Lifecycle duration of taxon as provided by USDA PLANTS}
+#'   \item{VINE_ALL}{Indicator value for all vine types (1/0)}
+#'   \item{HERB}{Indicator value for herbaceous vascular plant (1/0)}
+#'   \item{SHRUB_COMB}{Indicator value for all types of shrubs (1/0)}
+#'   \item{TREE_COMB}{Indicator value for all types of trees (1/0)}
+#'   }
+#'   @note This dataset is the taxa list used for state-specific CC and 
+#'   native status values used in NWCA 2016.
+#'   
+#'   @examples 
+#'   head(taxaNWCA_2016)
+#'   str(taxaNWCA_2016)
+#'   
+#'   @keywords datasets
+"taxaNWCA_2016"
+
+#' NWCA 2016 Wetland Indicator Status 
+#' 
+#' A dataset containing NWCA 2016 USAC-specific Wetland Indicator Status 
+#' values for vascular plant taxa
+#' 
+#' @name wisNWCA
+#' @format A data frame with 9584 observations on the following 5 variables.
+#' \describe{
+#'     \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA taxonomic 
+#'     ID number}
+#'     \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name 
+#'     where not available}
+#'     \item{GEOG_ID}{Geographic unit to which value applies, which is US Army 
+#'     Corps region in this dataset}
+#'     \item{WIS}{USAC-specific Wetland Indicator Status as used for NWCA 2016}
+#'     \item{ECOIND1}{Wetland indicator status converted to numeric value, with 
+#'     lower numbers more characteristic of wetlands}
+#'     \item{ECOIND2}{Wetland indicator status converted to numeric value, with 
+#'     higher numbers more characteristic of wetlands}
+#' }
+#' @note This dataset is the taxa list used for USAC-specific Wetland Indicator 
+#' Status values used in NWCA 2016.
+#' 
+#' @examples
+#' head(wisNWCA_2016)
+#' str(wisNWCA_2016)
+#' 
+#' @keywords datasets
+"wisNWCA_2016"
