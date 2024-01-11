@@ -1,8 +1,8 @@
 Package: aquametNWCA
 Type: Package
 Title: NWCA Metrics and Indices
-Version: 2.3.5
-Depends: R (>= 3.6)
+Version: 2.4.0
+Depends: R (>= 4.1)
 Imports:
     ecodist,
     Hmisc,

@@ -1,6 +1,15 @@
 \name{NEWS}
 \title{aquametNWCA News}
 
+\section{CHANGES IN aquametNWCA VERSION 2.4.0 (Release 2023-07-05)}{
+  \subsection{UPDATES}{
+    \itemize{
+      \item Added 2016 versions of taxalists
+      \item Added code to calculate the 2016 VMMI from metrics
+    }
+  }
+}
+
 \section{CHANGES IN aquametNWCA VERSION 2.3.5 (Release 2020-12-29)}{
   \subsection{UPDATES}{
     \itemize{
