@@ -52,3 +52,4 @@ test_that("All tree metric values correct",
             expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)                      
             
           })
+

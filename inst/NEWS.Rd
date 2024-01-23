@@ -1,6 +1,15 @@
 \name{NEWS}
 \title{aquametNWCA News}
 
+\section{CHANGES IN aquametNWCA VERSION 2.4.1 (Release 2024-01-18)}{
+  \subsection{UPDATES}{
+    \itemize{
+      \item Corrected code to assign GROWTH_HABIT to GRH_ALT, added additional
+      GROWTH_HABIT values
+    }
+  }
+}
+
 \section{CHANGES IN aquametNWCA VERSION 2.4.0 (Release 2023-07-05)}{
   \subsection{UPDATES}{
     \itemize{

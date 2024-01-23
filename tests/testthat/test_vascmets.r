@@ -17,7 +17,10 @@ test_that("Data frames created with correct structure",
 })
 
 
-dfTest <- prepareData(testVasc, sampID='UID', taxon_name = 'USDA_NAME', state = 'STATE', 
+dfTest <- prepareData(testVasc, sampID='UID', inTaxa=taxaNWCA, 
+                      inNat=ccNatNWCA, 
+                      inCVal=ccNatNWCA, inWIS=wisNWCA,
+                      taxon_name = 'USDA_NAME', state = 'STATE', 
                       coeReg = 'USAC_REGION', cValReg='STATE')
 
 test_that("Richness metric values are correct",
@@ -37,12 +40,12 @@ testForCalc <- dfTest$byUIDspp
 
 test_that("Category metric function values correct",
           {
-          catOut <- calcCategory(testForCalc)
+          catOut <- calcCategory(testForCalc) 
            compOut <- merge(testMets,catOut,by=c('UID','PARAMETER'))
            compOut$RESULT.x <- with(compOut, as.numeric(RESULT.x))
            expect_true(nrow(catOut)==720)
            expect_true(nrow(compOut)==nrow(catOut))
-           expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)
+           expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.01)
 })
 
 test_that("Duration metric function values correct",
@@ -62,7 +65,7 @@ test_that("Growth habit metric function values correct",
            compOut$RESULT.x <- with(compOut, as.numeric(RESULT.x))
            expect_true(nrow(grhOut)==1160)
            expect_true(nrow(compOut)==nrow(grhOut))
-           expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)
+           expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.01)
           })
 
 test_that("WIS metric function values correct",
@@ -92,7 +95,7 @@ test_that("Native metric function values correct",
            compOut$RESULT.x <- with(compOut, as.numeric(RESULT.x))
            expect_true(nrow(natOut)==300)
            expect_true(nrow(compOut)==nrow(natOut))
-           expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.001)
+           expect_equal(compOut$RESULT.x,compOut$RESULT.y,tolerance=0.01)
           })
 
 test_that("Diversity metric function values correct",

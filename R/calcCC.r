@@ -59,8 +59,9 @@
 #'   
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', state = 'STATE', 
-#' coeReg = 'USAC_REGION', cValReg='STATE')
+#'  exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
+#'  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
+#'  inWIS = wisNWCA, cValReg='STATE')
 #'
 #' ccEx <- calcCC(exPlant$byUIDspp)
 #'

@@ -33,6 +33,5 @@ taxon-specific assignments for NWCA 2016.
 \examples{
 head(cvalNWCA_2016)
 str(cvalNWCA_2016)
-
 }
 \keyword{datasets}

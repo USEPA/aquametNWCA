@@ -252,6 +252,9 @@ prepareData <- function(vascIn, sampID='UID', taxon_name, inTaxa=taxaNWCA_2016,
   
   # Check for names in C-values taxalist, both necessary
   if(!is.null(inCVal)){
+    if('NWCA_CC' %nin% names(inCVal) & 'NWCA_CVAL' %in% names(inCVal)){
+      inCVal$NWCA_CC <- inCVal$NWCA_CVAL
+    }
     ccNames <- c(taxon_name,'GEOG_ID','NWCA_CC')
     # This only applies if someone specifies a taxalist not included in the package
     if(any(ccNames %nin% names(inCVal))){

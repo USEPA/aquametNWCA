@@ -90,7 +90,9 @@
 #' 
 #' @examples
 #'   head(VascPlantEx)
-#'   exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
+#'  exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
+#'  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
+#'  inWIS = wisNWCA, cValReg='STATE')
 #'
 #'   richEx <- calcRichness(exPlant$byUIDspp,exPlant$byPlotspp,
 #'          exPlant$byUIDgen,exPlant$byPlotgen,exPlant$byUIDfam,exPlant$byPlotfam)

@@ -92,6 +92,17 @@
 #' 
 #' \item vmmiMetsEx - Example dataset containing metrics necessary to calculate 
 #' the VMMI 
+#' 
+#' \item cvalNWCA_2016 - NWCA 2016 list of coefficient of conservatism values 
+#' by NWC_CREG16 regions
+#' 
+#' \item nativeNWCA_2016 - NWCA 2016 list of native status values by state
+#' 
+#' \item taxaNWCA_2016 - NWCA 2016 plant taxa list, including category, 
+#' duration, growth habit, and taxonomy
+#' 
+#' \item wisNWCA_2016 - NWCA 2016 plant list of Wetland Indicator Status by
+#' U.S. Army Corps of Engineers region
 #' }
 #' 
 if(getRversion() >= "3.0") utils::globalVariables(c('COVER'
@@ -112,5 +123,6 @@ if(getRversion() >= "3.0") utils::globalVariables(c('COVER'
  ,'XCOV_LITTER','XDEPTH_LITTER','XN','XRCOV','XTOTABCOV'
  ,'XTOTCOV_VASC_STRATA'
  ,'ccNatNWCA','p05','p25','sRFREQ','sXRCOV','taxaNWCA'
- ,'tobj','value','variable','wisNWCA'))
+ ,'tobj','value','variable','wisNWCA', 'taxaNWCA_2016'
+ ,'wisNWCA_2016', 'cvalNWCA_2016', 'nativeNWCA_2016'))
  

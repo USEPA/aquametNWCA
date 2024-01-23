@@ -98,6 +98,17 @@ U.S. Army Corps of Engineers region
 
 \item vmmiMetsEx - Example dataset containing metrics necessary to calculate 
 the VMMI 
+
+\item cvalNWCA_2016 - NWCA 2016 list of coefficient of conservatism values 
+by NWC_CREG16 regions
+
+\item nativeNWCA_2016 - NWCA 2016 list of native status values by state
+
+\item taxaNWCA_2016 - NWCA 2016 plant taxa list, including category, 
+duration, growth habit, and taxonomy
+
+\item wisNWCA_2016 - NWCA 2016 plant list of Wetland Indicator Status by
+U.S. Army Corps of Engineers region
 }
 }
 

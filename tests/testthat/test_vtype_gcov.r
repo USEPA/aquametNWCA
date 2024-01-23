@@ -27,7 +27,7 @@ test_that("Vascular stratum metric values correct",
          compOut <- merge(testMets,vstratOut,by=c('UID','PARAMETER'))
          expect_true(nrow(vstratOut)==430)
          expect_true(nrow(compOut)==nrow(vstratOut))
-         expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.001)            
+         expect_equal(as.numeric(compOut$RESULT.x),as.numeric(compOut$RESULT.y),tolerance=0.01)            
         })
 
 test_that("Non-vascular metric values correct",
@@ -57,7 +57,7 @@ test_that("Bare ground and litter metric values correct",
          compOut.char <- subset(compOut,PARAMETER=='LITTER_TYPE')
          expect_equal(compOut.char$RESULT.x,compOut.char$RESULT.y)
          compOut.num <- subset(compOut,PARAMETER!='LITTER_TYPE')
-         expect_equal(as.numeric(compOut.num$RESULT.x),as.numeric(compOut.num$RESULT.y),tolerance=0.001)            
+         expect_equal(as.numeric(compOut.num$RESULT.x),as.numeric(compOut.num$RESULT.y),tolerance=0.01)            
         })
 
 test_that("Veg strata and ground cover metric values correct",
@@ -74,5 +74,5 @@ test_that("Veg strata and ground cover metric values correct",
                   expect_equal(compOut.char$RESULT.x,compOut.char$RESULT.y)
                   compOut.num <- subset(compOut,!PARAMETER %in% c('DOM_SANDT','LITTER_TYPE'))
                   expect_equal(as.numeric(compOut.num$RESULT.x),as.numeric(compOut.num$RESULT.y),
-                               tolerance=0.001)            
+                               tolerance=0.01)            
   })

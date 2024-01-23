@@ -89,7 +89,9 @@ if NWCA_NATSTAT is present in the input data frame.
 }
 \examples{
 head(VascPlantEx)
-exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
+ exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
+ inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
+ inWIS = wisNWCA, cValReg='STATE')
 
 wisEx <- calcWIS(exPlant$byUIDspp)
 

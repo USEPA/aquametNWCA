@@ -67,7 +67,9 @@
 #' Environmental Protection Agency, Washington, DC.
 #' @examples
 #' head(VascPlantEx)
-#' exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
+#'  exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
+#'  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
+#'  inWIS = wisNWCA, cValReg='STATE')
 #'
 #' ghEx <- calcGrowthHabit(exPlant$byUIDspp)
 #'
@@ -96,27 +98,57 @@ calcGrowthHabit <- function(vascIn, sampID='UID'){
     
     vascIn.1 <- vascIn
     vascIn.1$GRH_ALT <- vascIn.1$GROWTH_HABIT
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('FORB/HERB','FORB/HERB, SHRUB','FORB/HERB, SHRUB, SUBSHRUB',
-                                             'FORB/HERB, SUBSHRUB','FORB/HERB, SUBSHRUB, SHRUB')] <- 'FORB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('SUBSHRUB, FORB/HERB','SUBSHRUB, SHRUB, FORB/HERB',
-                                             'SUBSHRUB, FORB/HERB, SHRUB')] <- 'SSHRUB_FORB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('SUBSHRUB','SUBSHRUB, SHRUB','SHRUB, SUBSHRUB',
-                                             'SUBSHRUB, SHRUB, TREE','SHRUB, FORB/HERB, SUBSHRUB')] <- 'SSHRUB_SHRUB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('SHRUB','SHRUB, TREE','TREE, SUBSHRUB, SHRUB',
-                                             'SHRUB, SUBSHRUB, TREE','SUBSHRUB, FORB/HERB, SHRUB, TREE',
+    vascIn.1$GRH_ALT[vascIn.1$GROWTH_HABIT %in% c('FORB/HERB',
+                                             'FORB/HERB, SHRUB',
+                                             'FORB/HERB, SHRUB, SUBSHRUB',
+                                             'FORB/HERB, SUBSHRUB',
+                                             'FORB/HERB, SUBSHRUB, SHRUB',
+                                             'FORB/HERB, SUBSHRUB, TREE')] <- 'FORB'
+    vascIn.1$GRH_ALT[vascIn.1$GROWTH_HABIT %in% c('SUBSHRUB, FORB/HERB',
+                                             'SUBSHRUB, SHRUB, FORB/HERB',
+                                             'SUBSHRUB, FORB/HERB, SHRUB',
+                                             'SHRUB, SUBSHRUB, FORB/HERB')] <- 'SSHRUB_FORB'
+    vascIn.1$GRH_ALT[vascIn.1$GROWTH_HABIT %in% c('SUBSHRUB',
+                                             'SUBSHRUB, SHRUB',
+                                             'SHRUB, SUBSHRUB',
+                                             'SUBSHRUB, SHRUB, TREE',
+                                             'SHRUB, FORB/HERB, SUBSHRUB')] <- 'SSHRUB_SHRUB'
+    vascIn.1$GRH_ALT[vascIn.1$GROWTH_HABIT %in% c('SHRUB',
+                                             'SHRUB, TREE',
+                                             'TREE, SUBSHRUB, SHRUB',
+                                             'SHRUB, SUBSHRUB, TREE',
+                                             'SUBSHRUB, FORB/HERB, SHRUB, TREE',
+                                             'FORB/HERB, SHRUB, SUBSHRUB, TREE',
                                              'SHRUB,')] <- 'SHRUB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('TREE, SHRUB','TREE, SHRUB, VINE','TREE, SHRUB, SUBSHRUB')] <- 'TREE_SHRUB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('VINE, FORB/HERB','SUBSHRUB, FORB/HERB, VINE',
-                                             'FORB/HERB, VINE','FORB/HERB, VINE, SUBSHRUB',
-                                             'VINE, FORB/HERB, SUBSHRUB','VINE, HERBACEOUS')] <- 'VINE'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('VINE, SHRUB','VINE, SUBSHRUB','SUBSHRUB, VINE','SHRUB, VINE',
+    vascIn.1$GRH_ALT[vascIn.1$GROWTH_HABIT %in% c('TREE, SHRUB',
+                                             'TREE, SHRUB, VINE',
+                                             'TREE, SHRUB, SUBSHRUB')] <- 'TREE_SHRUB'
+    vascIn.1$GRH_ALT[vascIn.1$GROWTH_HABIT %in% c('VINE, FORB/HERB',
+                                             'SUBSHRUB, FORB/HERB, VINE',
+                                             'FORB/HERB, VINE',
+                                             'FORB/HERB, VINE, SUBSHRUB',
+                                             'VINE, FORB/HERB, SUBSHRUB',
+                                             'VINE, HERBACEOUS')] <- 'VINE'
+    vascIn.1$GRH_ALT[vascIn.1$GROWTH_HABIT %in% c('VINE, SHRUB',
+                                             'VINE, SUBSHRUB',
+                                             'SUBSHRUB, VINE',
+                                             'SHRUB, VINE',
                                              'SHRUB, FORB/HERB, SUBSHRUB, VINE',
-                                             'SHRUB, SUBSHRUB, VINE','VINE, TREE, SHRUB',
-                                             'SHRUB, VINE, FORB/HERB','SUBSHRUB, VINE, SHRUB',
-                                             'SUBSHRUB, VINE, FORB/HERB','SHRUB, VINE, SUBSHRUB',
-                                             'SHRUB, FORB/HERB, VINE','VINE, WOODY')] <- 'VINE_SHRUB'
-    vascIn.1$GRH_ALT[vascIn.1$GRH_ALT %in% c('GRAMINOID','SUBSHRUB, SHRUB, GRAMINOID',
-                                             'GRAMINOID, SHRUB, SUBSHRUB','GRAMINOID, SHRUB, VINE',
+                                             'SHRUB, SUBSHRUB, VINE',
+                                             'VINE, TREE, SHRUB',
+                                             'SHRUB, VINE, FORB/HERB',
+                                             'SUBSHRUB, VINE, SHRUB',
+                                             'SUBSHRUB, VINE, FORB/HERB',
+                                             'SHRUB, VINE, SUBSHRUB',
+                                             'SHRUB, FORB/HERB, VINE',
+                                             'VINE, WOODY',
+                                             'FORB/HERB, SHRUB, SUBSHRUB, TREE, VINE',
+                                             'SHRUB, SUBSHRUB, TREE, VINE',
+                                             'FORB/HERB, SHRUB, SUBSHRUB, VINE')] <- 'VINE_SHRUB'
+    vascIn.1$GRH_ALT[vascIn.1$GROWTH_HABIT %in% c('GRAMINOID',
+                                             'SUBSHRUB, SHRUB, GRAMINOID',
+                                             'GRAMINOID, SHRUB, SUBSHRUB',
+                                             'GRAMINOID, SHRUB, VINE',
                                              'SUBSHRUB, GRAMINOID, SHRUB')] <- 'GRAMINOID'
     
     

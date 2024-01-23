@@ -55,7 +55,9 @@ only on native status.
 }
 \examples{
 head(VascPlantEx)
-exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
+ exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
+ inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
+ inWIS = wisNWCA, cValReg='STATE')
 
 natEx <- calcNative(exPlant$byUIDspp)
 

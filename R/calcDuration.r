@@ -63,7 +63,9 @@
 #' 
 #' @examples
 #'  head(VascPlantEx)
-#'  exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', cValReg='STATE')
+#'  exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
+#'  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
+#'  inWIS = wisNWCA, cValReg='STATE')
 #'
 #'  durEx <- calcDuration(exPlant$byUIDspp)
 #'  head(durEx)
@@ -87,11 +89,20 @@ calcDuration <- function(vascIn, sampID='UID'){
   }else{
     vascIn.1 <- vascIn
     vascIn.1$DUR_ALT <- vascIn.1$DURATION
-    vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('ANNUAL, BIENNIAL','BIENNIAL','BIENNIAL, AN')] <- 'ANN_BIEN'
-    vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('ANNUAL, BIENNIAL, PERENNIAL','ANNUAL, PERENNIAL',
-                                              'PERENNIAL, ANNUAL', 'BIENNIAL, PERENNIAL',
-                                              'ANNUAL, PERENNIAL, BIENNIAL', 'BIENNIAL, PERENNIAL, AN')] <- 'ANN_PEREN'
-    vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('PERENNIAL, ANNUAL, BIENNIAL','PERENNIAL, AN','PERENNIAL, BIENNIAL','PERENNIAL, BIENNIAL, ANNUAL','PERENNIAL, BIENNIAL, AN')] <- 'PERENNIAL'
+    vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('ANNUAL, BIENNIAL',
+                                              'BIENNIAL',
+                                              'BIENNIAL, AN')] <- 'ANN_BIEN'
+    vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('ANNUAL, BIENNIAL, PERENNIAL',
+                                              'ANNUAL, PERENNIAL',
+                                              'PERENNIAL, ANNUAL', 
+                                              'BIENNIAL, PERENNIAL',
+                                              'ANNUAL, PERENNIAL, BIENNIAL', 
+                                              'BIENNIAL, PERENNIAL, AN')] <- 'ANN_PEREN'
+    vascIn.1$DUR_ALT[vascIn.1$DURATION %in% c('PERENNIAL, ANNUAL, BIENNIAL',
+                                              'PERENNIAL, AN',
+                                              'PERENNIAL, BIENNIAL',
+                                              'PERENNIAL, BIENNIAL, ANNUAL',
+                                              'PERENNIAL, BIENNIAL, AN')] <- 'PERENNIAL'
     
   }
   durOut <- int.calcTraits_MultCat(vascIn.1, 'DUR_ALT', sampID)

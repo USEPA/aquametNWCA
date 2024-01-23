@@ -39,6 +39,5 @@ NWCA 2016.
 \examples{
 head(nativeNWCA_2016)
 str(nativeNWCA_2016)
-
 }
 \keyword{datasets}

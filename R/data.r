@@ -206,7 +206,7 @@
 #' @examples 
 #' head(cvalNWCA_2016)
 #' str(cvalNWCA_2016)
-#' 
+#' @keywords datasets
 "cvalNWCA_2016"
 
 #' NWCA 2016 Native Status Values
@@ -240,7 +240,7 @@
 #' @examples 
 #' head(nativeNWCA_2016)
 #' str(nativeNWCA_2016)
-#' 
+#' @keywords datasets
 "nativeNWCA_2016"
 
 #' NWCA 2016 Vascular Plant Taxa List
@@ -293,7 +293,7 @@
 #' A dataset containing NWCA 2016 USAC-specific Wetland Indicator Status 
 #' values for vascular plant taxa
 #' 
-#' @name wisNWCA
+#' @name wisNWCA_2016
 #' @format A data frame with 9584 observations on the following 5 variables.
 #' \describe{
 #'     \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA taxonomic 
