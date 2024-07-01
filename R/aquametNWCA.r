@@ -5,7 +5,6 @@
 #' @name aquametNWCA
 #' 
 #' @importFrom Hmisc "%nin%"
-#' @importFrom gtools smartbind
 #' @importFrom ecodist distance
 #' @importFrom stats approx median sd aggregate reshape
 #' @importFrom rlang .data
