@@ -1,11 +1,11 @@
 # Metrics using only native status
 #' @export
-#' 
+#'
 #' @title Calculate metrics based only on native status
-#' 
+#'
 #' @description This function calculates all metrics based
 #' only on native status.
-#' 
+#'
 #' @param vascIn Data frame containing cover data summarized by
 #' UID and TAXON, with the following fields:
 #' \itemize{
@@ -45,70 +45,77 @@
 #'   \item RIMP_TRAITNM: Relative importance ((RFREQ_TRAITVAL + XRCOV_TRAITVAL)/2)
 #'   of taxa with trait value
 #'   }
-#' 
+#'
 #' @author Karen Blocksom \email{Blocksom.karen@epa.gov}
-#' 
+#'
 #' @references US Environmental Protection Agency. 2016. National Wetland
 #' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 #' Environmental Protection Agency, Washington, DC.
-#' 
+#'
 #' @examples
 #' head(VascPlantEx)
-#'  exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
-#'  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
-#'  inWIS = wisNWCA, cValReg='STATE')
+#' exPlant <- prepareData(VascPlantEx,
+#'   taxon_name = "USDA_NAME",
+#'   inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA,
+#'   inWIS = wisNWCA, cValReg = "STATE"
+#' )
 #'
 #' natEx <- calcNative(exPlant$byUIDspp)
 #'
 #' head(natEx)
 #' unique(natEx$PARAMETER)
-
-calcNative <- function(vascIn, sampID='UID'){
+calcNative <- function(vascIn, sampID = "UID") {
   vascIn <- as.data.frame(vascIn) # Do this in case read in as a tibble or data.table, which might cause problems
-  if('NWCA_NATSTAT' %nin% names(vascIn)){
+  if ("NWCA_NATSTAT" %nin% names(vascIn)) {
     print("Missing NWCA_NATSTAT from input data frame - cannot calculate metrics! If NWCA_NATSTAT exists,
           run prepareData() function to create input data frame.")
     return(NULL)
   }
-  
-  vascIn$ALIEN <- with(vascIn, ifelse(NWCA_NATSTAT %in% c('INTR','ADV'), 1, 0))
-  vascIn$AC <- with(vascIn, ifelse(NWCA_NATSTAT %in% c('INTR','ADV','CRYP'), 1, 0))
-  
-  sppNATSTAT <- int.calcTraits_MultCat.alt(vascIn, 'NWCA_NATSTAT', sampID)
-  
-  alienTrait <- int.calcTraits_Indicator.alt(vascIn, 'ALIEN', sampID) 
-  alienTrait$PARAMETER <- with(alienTrait, paste(PARAMETER, 'SPP', sep=''))
-  
-  acTrait <- int.calcTraits_Indicator.alt(vascIn, 'AC', sampID)
-  
+
+  vascIn$ALIEN <- with(vascIn, ifelse(NWCA_NATSTAT %in% c("INTR", "ADV"), 1, 0))
+  vascIn$AC <- with(vascIn, ifelse(NWCA_NATSTAT %in% c("INTR", "ADV", "CRYP"), 1, 0))
+
+  sppNATSTAT <- int.calcTraits_MultCat.alt(vascIn, "NWCA_NATSTAT", sampID)
+
+  alienTrait <- int.calcTraits_Indicator.alt(vascIn, "ALIEN", sampID)
+  alienTrait$PARAMETER <- with(alienTrait, paste(PARAMETER, "SPP", sep = ""))
+
+  acTrait <- int.calcTraits_Indicator.alt(vascIn, "AC", sampID)
+
   natstatOut <- rbind(sppNATSTAT, alienTrait, acTrait)
-  
-  empty_base <- data.frame(t(rep(NA,30)), stringsAsFactors=F)
-  names(empty_base)<-c("PCTN_ADVSPP","PCTN_CRYPSPP","PCTN_INTRSPP","PCTN_NATSPP","XABCOV_ADVSPP"
-                       ,"XABCOV_CRYPSPP","XABCOV_INTRSPP","XABCOV_NATSPP","XRCOV_ADVSPP"
-                       ,"XRCOV_CRYPSPP","XRCOV_INTRSPP","XRCOV_NATSPP","RFREQ_ADVSPP","RFREQ_CRYPSPP"
-                       ,"RFREQ_INTRSPP","RFREQ_NATSPP","RIMP_ADVSPP","RIMP_CRYPSPP","RIMP_INTRSPP"
-                       ,"RIMP_NATSPP","PCTN_ALIENSPP","XRCOV_ALIENSPP","RFREQ_ALIENSPP"
-                       ,"RIMP_ALIENSPP","XABCOV_ALIENSPP","PCTN_AC","XRCOV_AC","RFREQ_AC"
-                       ,"RIMP_AC","XABCOV_AC")
-  
-  
-  outdf <- reshape(natstatOut, idvar = c(sampID), direction = 'wide',
-                   timevar = 'PARAMETER', v.names = 'RESULT')
+
+  empty_base <- data.frame(t(rep(NA, 30)), stringsAsFactors = F)
+  names(empty_base) <- c(
+    "PCTN_ADVSPP", "PCTN_CRYPSPP", "PCTN_INTRSPP", "PCTN_NATSPP", "XABCOV_ADVSPP",
+    "XABCOV_CRYPSPP", "XABCOV_INTRSPP", "XABCOV_NATSPP", "XRCOV_ADVSPP",
+    "XRCOV_CRYPSPP", "XRCOV_INTRSPP", "XRCOV_NATSPP", "RFREQ_ADVSPP", "RFREQ_CRYPSPP",
+    "RFREQ_INTRSPP", "RFREQ_NATSPP", "RIMP_ADVSPP", "RIMP_CRYPSPP", "RIMP_INTRSPP",
+    "RIMP_NATSPP", "PCTN_ALIENSPP", "XRCOV_ALIENSPP", "RFREQ_ALIENSPP",
+    "RIMP_ALIENSPP", "XABCOV_ALIENSPP", "PCTN_AC", "XRCOV_AC", "RFREQ_AC",
+    "RIMP_AC", "XABCOV_AC"
+  )
+
+
+  outdf <- reshape(natstatOut,
+    idvar = c(sampID), direction = "wide",
+    timevar = "PARAMETER", v.names = "RESULT"
+  )
   names(outdf) <- gsub("RESULT\\.", "", names(outdf))
-  
-  outdf <- merge(outdf, empty_base, all=TRUE)
-  
-  outdf.1 <- reshape(outdf, idvar = sampID, direction = 'long',
-                     varying= names(outdf)[!names(outdf) %in% c(sampID)],
-                     timevar = 'PARAMETER', v.names = 'RESULT',
-                     times = names(outdf)[!names(outdf) %in% c(sampID)])
-  
+
+  outdf <- merge(outdf, empty_base, all = TRUE)
+
+  outdf.1 <- reshape(outdf,
+    idvar = sampID, direction = "long",
+    varying = names(outdf)[!names(outdf) %in% c(sampID)],
+    timevar = "PARAMETER", v.names = "RESULT",
+    times = names(outdf)[!names(outdf) %in% c(sampID)]
+  )
+
   outdf.1 <- subset(outdf.1, !is.na(eval(as.name(sampID[1]))))
-  outdf.1$RESULT <- with(outdf.1, ifelse(is.na(RESULT)|is.infinite(RESULT), 0, RESULT))
+  outdf.1$RESULT <- with(outdf.1, ifelse(is.na(RESULT) | is.infinite(RESULT), 0, RESULT))
   outdf.1$PARAMETER <- with(outdf.1, as.character(PARAMETER))
-  
+
   outdf.1 <- subset(outdf.1, PARAMETER %in% names(empty_base))
-  
+
   return(outdf.1)
 }

@@ -29,36 +29,39 @@ Using the vascular plant example dataset, `VascPlantEx` and the taxa lists inclu
 library(aquametNWCA)
 
 head(VascPlantEx)
-exPlant <- nwcaVegData(VascPlantEx, sampID='UID', taxon_name = 'USDA_NAME',
-                       state = 'STATE', coeReg = 'USAC_REGION', cValReg='STATE')
+exPlant <- nwcaVegData(VascPlantEx,
+  sampID = "UID", taxon_name = "USDA_NAME",
+  state = "STATE", coeReg = "USAC_REGION", cValReg = "STATE"
+)
 ```
 
 Now we can use the `byUIDspp` data frame from the output above to calculate the VMMI. Then we need to cast the data frame into wide format.
 ```{r mets.2}
-mets <- calcVMMImets(exPlant$byUIDspp, sampID='UID')
+mets <- calcVMMImets(exPlant$byUIDspp, sampID = "UID")
 
 head(mets) # Already in wide format
-
-
 ```
 ## 3 Calculating the VMMI
 Now we are ready to calculate the VMMI and assign a condition class. We need to merge a data frame with the necessary site-related variables. For the purposes of illustration, we will create that data frame here, but ideally it would be available in a separate data set or included in the input data frame above.
 ```{r mmi.1}
-sites <- data.frame(UID=seq(1,10), NWCA_ECO4=c('CPL','CPL','IPL','CPL','CPL','IPL','CPL','CPL','CPL','CPL')
-    ,NWCA_WET_GRP=c('PRLW','PRLW','PRLH','PRLW','PRLH','PRLW','EH','EH','PRLH','PRLH')
-    ,ECO_X_WETGRP=c('CPL-PRLW','CPL-PRLW','IPL-PRLH','CPL-PRLW','CPL-PRLH','IPL-PRLW','ALL-EH'
-                  ,'ALL-EH','CPL-PRLH','CPL-PRLH'),stringsAsFactors=F)
+sites <- data.frame(
+  UID = seq(1, 10), NWCA_ECO4 = c("CPL", "CPL", "IPL", "CPL", "CPL", "IPL", "CPL", "CPL", "CPL", "CPL"),
+  NWCA_WET_GRP = c("PRLW", "PRLW", "PRLH", "PRLW", "PRLH", "PRLW", "EH", "EH", "PRLH", "PRLH"),
+  ECO_X_WETGRP = c(
+    "CPL-PRLW", "CPL-PRLW", "IPL-PRLH", "CPL-PRLW", "CPL-PRLH", "IPL-PRLW", "ALL-EH",
+    "ALL-EH", "CPL-PRLH", "CPL-PRLH"
+  ), stringsAsFactors = F
+)
 
-mets.1 <- merge(sites, mets, by='UID')
+mets.1 <- merge(sites, mets, by = "UID")
 
-vmmi <- calcVMMI_fromMets(mets.1, sampID='UID')
+vmmi <- calcVMMI_fromMets(mets.1, sampID = "UID")
 head(vmmi)
-
 ```
 If we lack the ecoregion or wetland type information in the input data frame, the function still calculates the VMMI but generates 
 a warning.
 ```{r mmi.2}
-vmmi.alt <- calcVMMI_fromMets(mets, sampID='UID')
+vmmi.alt <- calcVMMI_fromMets(mets, sampID = "UID")
 
 head(vmmi.alt)
 ```

@@ -32,10 +32,12 @@ head(VascPlantEx)
 ```
 This is the expected input format for vegetation data from form V-2. To run `calcVascPlantMets`, the taxalists `taxaNWCA`, `ccNatNWCA`, and `wisNWCA` will be called by default by the function if not specified. In this example, we explicitly include the arguments that specify these taxalists in the function call. However, the user may either leave them blank or call their own versions of these taxalists, so long as the field names are as expected.
 ```{r allVasc.2}
-outdf <- calcVascPlantMets(vascIn=VascPlantEx, taxon_name = 'USDA_NAME', 
-                           taxaIn=taxaNWCA, taxaNat=ccNatNWCA, taxaCC=ccNatNWCA,
-                           taxaWIS=wisNWCA, sampID='UID', state='STATE', 
-                           coeReg = 'USAC_REGION', cValReg='STATE')
+outdf <- calcVascPlantMets(
+  vascIn = VascPlantEx, taxon_name = "USDA_NAME",
+  taxaIn = taxaNWCA, taxaNat = ccNatNWCA, taxaCC = ccNatNWCA,
+  taxaWIS = wisNWCA, sampID = "UID", state = "STATE",
+  coeReg = "USAC_REGION", cValReg = "STATE"
+)
 
 names(outdf)
 ```
@@ -53,9 +55,11 @@ Data are expected to be in a specific format with specific summary variables, an
 
 First, run `prepareData()` to create a list containing 6 data frames that can be used in all other functions:
 ```{r subVasc.1}
-sumdf <- nwcaVegData(vascIn=VascPlantEx, sampID='UID', taxon_name = 'USDA_NAME',
-                     inTaxa=taxaNWCA, inNat=ccNatNWCA, inCVal=ccNatNWCA, inWIS=wisNWCA, 
-                     state = 'STATE', coeReg = 'USAC_REGION', cValReg='STATE')
+sumdf <- nwcaVegData(
+  vascIn = VascPlantEx, sampID = "UID", taxon_name = "USDA_NAME",
+  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, inWIS = wisNWCA,
+  state = "STATE", coeReg = "USAC_REGION", cValReg = "STATE"
+)
 str(sumdf)
 ```
 
@@ -63,21 +67,22 @@ str(sumdf)
 
 Now we can run functions for subsets, starting with `calcRichness()`:
 ```{r subVasc.2}
-outRich <- calcRichness(sumdf$byUIDspp,sumdf$byPlotspp,sumdf$byUIDgen,sumdf$byPlotgen,
-                        sumdf$byUIDfam,sumdf$byPlotfam, 
-                        sampID='UID')
+outRich <- calcRichness(sumdf$byUIDspp, sumdf$byPlotspp, sumdf$byUIDgen, sumdf$byPlotgen,
+  sumdf$byUIDfam, sumdf$byPlotfam,
+  sampID = "UID"
+)
 head(outRich)
 unique(outRich$PARAMETER)
 ```
 Now category metrics, which are called very similarly to all remaining metrics except Bray-Curtis:
 ```{r subVasc.3}
-outCat <- calcCategory(sumdf$byUIDspp, sampID='UID')
+outCat <- calcCategory(sumdf$byUIDspp, sampID = "UID")
 head(outCat)
-unique(outCat$PARAMETER) 
+unique(outCat$PARAMETER)
 ```
 Finally, calculate Bray-Curtis metrics using species-level plot data:
 ```{r subVasc.4}
-outBC <- calcBCmets(sumdf$byPlotspp, sampID='UID')
+outBC <- calcBCmets(sumdf$byPlotspp, sampID = "UID")
 head(outBC)
 unique(outBC$PARAMETER)
 ```
@@ -85,8 +90,10 @@ To see all of these combined and in wide format:
 ```{r subVasc.5}
 allVasc <- rbind(outRich, outCat, outBC)
 
-outVasc <- reshape(allVasc, idvar = 'UID', direction = 'wide',
-                   timevar = 'PARAMETER', v.names = 'RESULT')
+outVasc <- reshape(allVasc,
+  idvar = "UID", direction = "wide",
+  timevar = "PARAMETER", v.names = "RESULT"
+)
 names(outVasc) <- gsub("RESULT\\.", "", names(outVasc))
 
 head(outVasc)
@@ -99,17 +106,21 @@ As with the vascular plant metrics, there is a wrapper function that calculates 
 ```{r allTree.1}
 head(TreesEx)
 # Calculate nplots from tree example data
-nplots <- aggregate(x = list(NPLOTS = TreesEx$PLOT),
-                    by = TreesEx[c('UID')], 
-                    FUN = function(x){length(unique(x))})
+nplots <- aggregate(
+  x = list(NPLOTS = TreesEx$PLOT),
+  by = TreesEx[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
-outTree <- calcTreeMets(TreesEx, nPlotIn=nplots, sampID='UID')
+outTree <- calcTreeMets(TreesEx, nPlotIn = nplots, sampID = "UID")
 head(outTree)
 ```
 ## 3.2 Subsets of metrics
 To calculate only snag metrics, the same dataset can be used directly with the subset functions. In this example, we only want to calculate snag metrics. 
 ```{r subTree.1}
-outSnag <- calcSnagMets(TreesEx, nPlot=nplots, sampID='UID')
+outSnag <- calcSnagMets(TreesEx, nPlot = nplots, sampID = "UID")
 head(outSnag)
 unique(outSnag$PARAMETER)
 ```
@@ -121,33 +132,38 @@ Both vegetation type and ground cover data are collected on the same form (V-4) 
 ```{r allVG}
 head(Vtype_GrCovEx)
 
-subVtype <- subset(Vtype_GrCovEx, PARAMETER!='SANDT_CLASS')
+subVtype <- subset(Vtype_GrCovEx, PARAMETER != "SANDT_CLASS")
 
-nplots <- aggregate(x = list(NPLOTS = subVtype$PLOT), 
-                    by = subVtype[c('UID')],
-                    FUN = function(x){length(unique(x))})
+nplots <- aggregate(
+  x = list(NPLOTS = subVtype$PLOT),
+  by = subVtype[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
-outVG <- calcVtype_GcovMets(Vtype_GrCovEx, nPlotIn=nplots, sampID='UID')
+outVG <- calcVtype_GcovMets(Vtype_GrCovEx, nPlotIn = nplots, sampID = "UID")
 
 head(outVG)
 ```
 ## 4.2 Subsets of metrics
 If we only want to calculate a subset of metrics, say S & T metrics and vascular strata metrics, for example, we need to supply the number of plots sampled at each site along with the data from form V-4. 
 ```{r subVG}
-
-outST <- calcSandTMets(Vtype_GrCovEx, nplots, sampID='UID')
+outST <- calcSandTMets(Vtype_GrCovEx, nplots, sampID = "UID")
 head(outST)
 unique(outST$PARAMETER)
 
-outVstrat <- calcVascStratMets(Vtype_GrCovEx, nplots, sampID='UID')
+outVstrat <- calcVascStratMets(Vtype_GrCovEx, nplots, sampID = "UID")
 head(outVstrat)
 unique(outVstrat$PARAMETER)
 
 # Now we can combine these two outputs and cast them into wide format
-outAllVG <- rbind(outST,outVstrat)
+outAllVG <- rbind(outST, outVstrat)
 
-outAllVG.wide <- reshape(outAllVG, idvar = 'UID', direction = 'wide',
-                         timevar = 'PARAMETER', v.names = 'RESULT')
+outAllVG.wide <- reshape(outAllVG,
+  idvar = "UID", direction = "wide",
+  timevar = "PARAMETER", v.names = "RESULT"
+)
 names(outAllVG.wide) <- gsub("RESULT\\.", "", names(outAllVG.wide))
 
 head(outAllVG.wide)
