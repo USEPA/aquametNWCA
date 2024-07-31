@@ -16,12 +16,12 @@ calcNonvascMets(dataIn, nPlot, sampID = "UID", survyear = "2011")
  \item RESULT: measured value
  }
  The following parameters are used in
- calculating non-vascular metrics: 'PEAT_MOSS', 'BRYOPHYTES', 'LICHENS', 
- 'ARBOREAL', 'ALGAE', 'MACROALGAE'. 
+ calculating non-vascular metrics: 'PEAT_MOSS', 'BRYOPHYTES', 'LICHENS',
+ 'ARBOREAL', 'ALGAE', 'MACROALGAE'.
  Additional parameters or variables are ignored. PEAT_MOSS has values of
  'Y/N' for 2011 but only Y or missing for 2016.}
 
-\item{nPlot}{A data frame with the 
+\item{nPlot}{A data frame with the
 number of plots sampled associated with each sample
  with sampID variables and NPLOTS.}
 
@@ -30,18 +30,18 @@ variable(s) necessary to identify unique samples, 'UID'
 by default.}
 
 \item{survyear}{A string with the survey year. The default is '2011'.
-Starting in 2016, ARBOREAL began being measured as a categorical 
+Starting in 2016, ARBOREAL began being measured as a categorical
 variable, ARBOREAL_ABUNDANCE.}
 }
 \value{
 Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
   where values of PARAMETER consist of the metric name concatenated with
-  trait value, with valid values of: FREQ_ALGAE,  FREQ_ARBOREAL, 
+  trait value, with valid values of: FREQ_ALGAE,  FREQ_ARBOREAL,
   FREQ_BRYOPHYTES, FREQ_LICHENS, FREQ_MACROALGAE, IMP_ALGAE, IMP_ARBOREAL,
   IMP_BRYOPHYTES, IMP_LICHENS, IMP_MACROALGAE, XCOV_ALGAE, XCOV_ARBOREAL,
   XCOV_BRYOPHYTES, XCOV_LICHENS, XCOV_MACROALGAE, N_PEAT_MOSS_DOM,
   FREQ_PEAT_MOSS_DOM. A list of metric descriptions is provided in the
-  document named VegTypes_GrdCover_Metric_Descriptions.pdf included in the 
+  document named VegTypes_GrdCover_Metric_Descriptions.pdf included in the
   help directory for the package.
 }
 \description{
@@ -56,18 +56,22 @@ If any of the parameters are missing, they are assumed to
  standardized value.
 }
 \examples{
- head(Vtype_GrCovEx)
- # Create data frame with number of plots sampled for each sampID
- nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
- # alternative approach to creating this data frame
- nplots <- aggregate(x = list(NPLOTS = Vtype_GrCovEx$PLOT), 
- by = Vtype_GrCovEx[c('UID')],
- FUN = function(x){length(unique(x))})
+head(Vtype_GrCovEx)
+# Create data frame with number of plots sampled for each sampID
+nplots <- data.frame(UID = seq(1:10), NPLOTS = rep(5, 10), stringsAsFactors = F)
+# alternative approach to creating this data frame
+nplots <- aggregate(
+  x = list(NPLOTS = Vtype_GrCovEx$PLOT),
+  by = Vtype_GrCovEx[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
- nvEx <- calcNonvascMets(Vtype_GrCovEx,nplots)
+nvEx <- calcNonvascMets(Vtype_GrCovEx, nplots)
 
- head(nvEx)
- unique(nvEx$PARAMETER)
+head(nvEx)
+unique(nvEx$PARAMETER)
 }
 \author{
 Karen Blocksom \email{blocksom.karen@epa.gov}

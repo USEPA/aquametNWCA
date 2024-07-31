@@ -7,31 +7,31 @@
 int.combTraits(vascIn, traits, sampID)
 }
 \arguments{
-\item{vascIn}{Input data frame containing \emph{sampID} variables, TAXON, 
+\item{vascIn}{Input data frame containing \emph{sampID} variables, TAXON,
 TOTN, XABCOV, sXRCOV, and variables with all names matching those in traits
 argument.}
 
 \item{traits}{Character vector containing one or more traits variable names.}
 
-\item{sampID}{A character vector containing the name(s) of variable(s) 
+\item{sampID}{A character vector containing the name(s) of variable(s)
 necessary to identify unique samples}
 }
 \value{
-Data frame containing \emph{sampID} variables, PARAMETER, RESULT, 
+Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
   where values of PARAMETER consist of the metric name concatenated with each
   trait name (represented as TRAITNM below):
-  
+
   N_TRAITNM: Number of taxa with trait
-  
+
   PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
-  
+
   XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
-  
+
   XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 }
 \description{
 This internal function calls calcTraits_Indicator()
-repeatedly a set of traits provided in a character vector. Used in 
+repeatedly a set of traits provided in a character vector. Used in
 \code{calcDuration()}, \code{calcGrowthHabit()}, \code{calcCategory()},
 \code{calcCC()} functions.
 }

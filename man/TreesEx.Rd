@@ -22,11 +22,11 @@ TreesEx
 A dataset containing tree data for use in treeMets() example.
 }
 \note{
-This dataset is a small subset of actual NWCA 2011 data, with UIDs 
+This dataset is a small subset of actual NWCA 2011 data, with UIDs
 recoded.
 }
 \examples{
-  data(TreesEx)
-  str(TreesEx)
+data(TreesEx)
+str(TreesEx)
 }
 \keyword{datasets}

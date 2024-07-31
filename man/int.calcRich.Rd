@@ -7,10 +7,10 @@
 int.calcRich(x, y, tlevel, sampID)
 }
 \arguments{
-\item{x}{Data frame containing cover data summarized by \emph{sampID} 
+\item{x}{Data frame containing cover data summarized by \emph{sampID}
 variables, TAXON, DISTINCT at the specified taxonomic level (tlevel)}
 
-\item{y}{Data frame containing cover data summarized by \emph{sampID} 
+\item{y}{Data frame containing cover data summarized by \emph{sampID}
 variables, PLOT, TAXON, and DISTINCT at the specified taxonomic level.}
 
 \item{tlevel}{Taxonomic level of input dataset, abbreviated to serve as
@@ -21,23 +21,23 @@ necessary to identify unique samples}
 }
 \value{
 Data frame containing \emph{sampID} variables, PARAMETER, and RESULT,
-  with one row of results per parameter and sample. The values for PARAMETER 
-  consist of the metric name concatenated with taxonomic level (represented 
+  with one row of results per parameter and sample. The values for PARAMETER
+  consist of the metric name concatenated with taxonomic level (represented
   as TAXLEVEL below):
-  
+
   TOTN_TAXLEVEL: Number of unique taxa in sample
-  
+
   XN_TAXLEVEL: Mean number of taxa per plot
-  
+
   MEDN_TAXLEVEL: Median number of taxa per plot
-  
+
   SDN_TAXLEVEL: Standard deviation of number of taxa per plot
-  
+
   N_PLOTS: Number of plots sampled for sampID
 }
 \description{
 This internal function calculates taxa richness of sample at a
-  specified level of taxonomy, based on output from CreateDFs(). This 
+  specified level of taxonomy, based on output from CreateDFs(). This
   function used in \code{calcRichness()} function.
 }
 \section{Warning}{

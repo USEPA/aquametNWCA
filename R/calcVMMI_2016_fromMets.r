@@ -27,7 +27,7 @@
 #'
 #'     \item PRLH: FQAI_ALL, N_TOL, PCTN_OBL_FACW, XRCOV_NATSPP
 #'
-#'     \item RFREQ_NATSPP, XC_ALL, XRCOV_MONOCOTS_NAT, XRCOV_NATSPP
+#'     \item PRLW: RFREQ_NATSPP, XC_ALL, XRCOV_MONOCOTS_NAT, XRCOV_NATSPP
 #'
 #'    }
 #'   \item RPT_UNIT (optional): NWCA 2016 reporting units with the following

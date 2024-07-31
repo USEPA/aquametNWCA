@@ -19,14 +19,14 @@ were collected
 \item RESULT: measured value
 }
 The following parameters are used in
-calculating water cover metrics: 'TIME', 'MINIMUM_DEPTH', 
-'MAXIMUM_DEPTH', 'PREDOMINANT_DEPTH', 'TOTAL_WATER', 
+calculating water cover metrics: 'TIME', 'MINIMUM_DEPTH',
+'MAXIMUM_DEPTH', 'PREDOMINANT_DEPTH', 'TOTAL_WATER',
 'WATER_NOVEG', 'WATER_AQVEG', 'WATER_EMERGVEG'.
 Additional parameters or variables are ignored.
-WATER_NOVEG, WATER_AQVEG, MINIMUM_DEPTH, and 
+WATER_NOVEG, WATER_AQVEG, MINIMUM_DEPTH, and
 MAXIMUM_DEPTH not measured in 2016.}
 
-\item{nPlot}{A data frame with the 
+\item{nPlot}{A data frame with the
 number of plots sampled associated with each
 sample with \emph{sampID} variables and NPLOTS}
 
@@ -35,16 +35,16 @@ variable(s) necessary to identify unique samples,
 'UID' by default.}
 
 \item{survyear}{A string with the survey year. The default is '2011'.
-Starting in 2016, only TIME, TOTAL_WATER, and PREDOMINANT_DEPTH is 
+Starting in 2016, only TIME, TOTAL_WATER, and PREDOMINANT_DEPTH is
 measured.}
 }
 \value{
 Either a character string containing an error message when metric
   calculation is not successful, or a data frame. Data frame contains
-  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER
   consist of the metric name concatenated with trait value, with valid values
   of: MIN_H2O_DEPTH, MAX_H2O_DEPTH, XH2O_DEPTH_AA, MIN_COV_H2O, MAX_COV_H2O,
-  FREQ_H2O, FREQ_H2O_AQVEG, FREQ_H2O_EMERGVEG, FREQ_H2O_NOVEG, XCOV_H2O, 
+  FREQ_H2O, FREQ_H2O_AQVEG, FREQ_H2O_EMERGVEG, FREQ_H2O_NOVEG, XCOV_H2O,
   XCOV_H2O_AQVEG, XCOV_H2O_EMERGVEG, XCOV_H2O_NOVEG, IMP_H2O, IMP_H2O_AQVEG,
   IMP_H2O_EMERGVEG, IMP_H2O_NOVEG, XH2O_DEPTH. A list of metric descriptions
   is provided in the document named VegTypes_GrdCover_Metric_Descriptions.pdf
@@ -64,13 +64,17 @@ to a standardized value.
 \examples{
 head(Vtype_GrCovEx)
 # Create data frame with number of plots sampled for each sampID
-nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
+nplots <- data.frame(UID = seq(1:10), NPLOTS = rep(5, 10), stringsAsFactors = F)
 # alternative approach to creating this data frame
-nplots <- aggregate(x = list(NPLOTS = Vtype_GrCovEx$PLOT), 
-by = Vtype_GrCovEx[c('UID')],
-FUN = function(x){length(unique(x))})
+nplots <- aggregate(
+  x = list(NPLOTS = Vtype_GrCovEx$PLOT),
+  by = Vtype_GrCovEx[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
-wcovEx <- calcWcovMets(Vtype_GrCovEx,nplots)
+wcovEx <- calcWcovMets(Vtype_GrCovEx, nplots)
 
 head(wcovEx)
 unique(wcovEx$METRIC)

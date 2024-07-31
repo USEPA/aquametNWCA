@@ -54,15 +54,17 @@ Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
    }
 }
 \description{
-This function calculates C of C 
+This function calculates C of C
 metrics, including variations based on native status,
 if NWCA_NATSTAT is present in the input data frame.
 }
 \examples{
 head(VascPlantEx)
- exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
- inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
- inWIS = wisNWCA, cValReg='STATE')
+exPlant <- prepareData(VascPlantEx,
+  taxon_name = "USDA_NAME",
+  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA,
+  inWIS = wisNWCA, cValReg = "STATE"
+)
 
 ccEx <- calcCC(exPlant$byUIDspp)
 
@@ -70,8 +72,8 @@ head(ccEx)
 unique(ccEx$PARAMETER)
 }
 \references{
-US Environmental Protection Agency. 2016. National Wetland 
-  Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US 
+US Environmental Protection Agency. 2016. National Wetland
+  Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
   Environmental Protection Agency, Washington, DC.
 }
 \author{

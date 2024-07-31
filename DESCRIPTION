@@ -2,7 +2,7 @@ Package: aquametNWCA
 Type: Package
 Title: NWCA Metrics and Indices
 Date: 2024-07-01
-Version: 2.4.3
+Version: 2.4.4
 Depends: R (>= 4.1)
 Imports:
     ecodist,
@@ -26,4 +26,4 @@ Suggests:
     testthat
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2

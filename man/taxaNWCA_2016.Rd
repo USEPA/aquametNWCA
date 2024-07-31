@@ -7,24 +7,24 @@
 \format{
 A data frame with 5044 observations on the following 28 variables.
 \describe{
-  \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA taxonomic 
+  \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA taxonomic
   ID number}
-  \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name 
+  \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name
     where not available}
   \item{ACCEPTED_SYMBOL}{Accepted symbol for taxon from USDA
   PLANTS or NWCA 2016 if not in USDA PLANTS}
   \item{TAXON_LEVEL}{Taxonomic level of name: CL (class), F (Family),
-  G (Genus), GH (Growth habit), H (), NV (Nonvascular), 
-  SC (), SF (), 
-  SSP (Subspecies), SP (Species), T (), U (), 
+  G (Genus), GH (Growth habit), H (), NV (Nonvascular),
+  SC (), SF (),
+  SSP (Subspecies), SP (Species), T (), U (),
   VAR (Variety)}
-  \item{DIVISION}{Division level of taxonomy} 
-  \item{CLASS}{Class level of taxonomy} 
+  \item{DIVISION}{Division level of taxonomy}
+  \item{CLASS}{Class level of taxonomy}
   \item{SUBCLASS}{Subclass level of taxonomy}
-  \item{ORDER}{Order level of taxonomy}  
+  \item{ORDER}{Order level of taxonomy}
   \item{FAMILY}{Family level of taxonomy}
-  \item{GENUS}{Genus level of taxonomy}  
-  \item{CATEGORY}{Plant category of taxon, including MONOCOT, GYMNOSPERM, 
+  \item{GENUS}{Genus level of taxonomy}
+  \item{CATEGORY}{Plant category of taxon, including MONOCOT, GYMNOSPERM,
   DICOT, FERN, LICHEN, HORSETAIL, MOSS, LYCOPOD, and LIVERWORT}
   \item{GROWTH_HABIT}{Growth habit of taxon as provided by USDA PLANTS}
   \item{DURATION}{Lifecycle duration of taxon as provided by USDA PLANTS}
@@ -33,20 +33,19 @@ A data frame with 5044 observations on the following 28 variables.
   \item{SHRUB_COMB}{Indicator value for all types of shrubs (1/0)}
   \item{TREE_COMB}{Indicator value for all types of trees (1/0)}
   }
-  @note This dataset is the taxa list used for state-specific CC and 
+  @note This dataset is the taxa list used for state-specific CC and
   native status values used in NWCA 2016.
-  
-  @examples 
-  head(taxaNWCA_2016)
-  str(taxaNWCA_2016)
-  
-  @keywords datasets
 }
 \usage{
 taxaNWCA_2016
 }
 \description{
-A dataset containing taxonomy and basic characteristics for vascular plant 
+A dataset containing taxonomy and basic characteristics for vascular plant
 taxa as used in NWCA 2016.
+}
+\examples{
+head(taxaNWCA_2016)
+str(taxaNWCA_2016)
+
 }
 \keyword{datasets}

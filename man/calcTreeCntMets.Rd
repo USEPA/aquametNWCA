@@ -18,11 +18,11 @@ calcTreeCntMets(treeIn, nPlot, sampID = "UID")
 \item RESULT: measured value
 }
 The following parameters are used in calculating tree metrics:
-'XXTHIN_TREE', 'XTHIN_TREE', 'THIN_TREE', 'JR_TREE', 'THICK_TREE', 
+'XXTHIN_TREE', 'XTHIN_TREE', 'THIN_TREE', 'JR_TREE', 'THICK_TREE',
 'XTHICK_TREE', 'XXTHICK_TREE'. Additional parameters or variables
 are ignored.}
 
-\item{nPlot}{A data frame with the 
+\item{nPlot}{A data frame with the
 number of plots sampled associated with
 each sample, with \emph{sampID} variables and NPLOTS.}
 
@@ -33,9 +33,9 @@ variable(s) necessary to identify unique samples, 'UID' by default}
 Either a character string containing an error message when metric
   calculation is not successful, or a data frame. The data frame contains the
   \emph{sampID} variables, PARAMETER, RESULT, where PARAMETER values include:
-  TOTN_TREES, XN_TREES, TOTN_JR_TREE, TOTN_THICK_TREE, TOTN_THIN_TREE, 
-  TOTN_XTHICK_TREE, TOTN_XTHIN_TREE, TOTN_XXTHICK_TREE, TOTN_XXTHIN_TREE, 
-  XN_JR_TREE, XN_THICK_TREE, XN_THIN_TREE, XN_XTHICK_TREE, XN_XTHIN_TREE, 
+  TOTN_TREES, XN_TREES, TOTN_JR_TREE, TOTN_THICK_TREE, TOTN_THIN_TREE,
+  TOTN_XTHICK_TREE, TOTN_XTHIN_TREE, TOTN_XXTHICK_TREE, TOTN_XXTHIN_TREE,
+  XN_JR_TREE, XN_THICK_TREE, XN_THIN_TREE, XN_XTHICK_TREE, XN_XTHIN_TREE,
   XN_XXTHICK_TREE, XN_XXTHIN_TREE. A list of metric descriptions is provided
   in the document named Tree_Metric_Descriptions.pdf included in the help
   directory for the package.
@@ -51,10 +51,14 @@ calculated due to missing parameters are set to 0.
 }
 \examples{
 head(TreesEx)
-nplots <- aggregate(x = list(NPLOTS = TreesEx$PLOT), by = TreesEx[c('UID')],
-FUN = function(x){length(unique(x))})
+nplots <- aggregate(
+  x = list(NPLOTS = TreesEx$PLOT), by = TreesEx[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
-tcntEx <- calcTreeCntMets(TreesEx, nPlot=nplots, sampID='UID')
+tcntEx <- calcTreeCntMets(TreesEx, nPlot = nplots, sampID = "UID")
 
 head(tcntEx)
 unique(tcntEx$PARAMETER)

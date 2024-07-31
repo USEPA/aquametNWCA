@@ -17,9 +17,9 @@ sampID variables and TAXON, with the following fields:
     \item DURATION: USDA PLANTS DURATION variable, with valid
     values "ANNUAL", "BIENNIAL", "PERENNIAL", combinations
     of these values, or blank
-    
+
     \item DUR_ALT (optional): Combinations of DURATION into
-    ANNUAL, PERENNIAL, ANN_BIEN, and ANN_PEREN, as used in 
+    ANNUAL, PERENNIAL, ANN_BIEN, and ANN_PEREN, as used in
     NWCA. Created in code if not supplied by user.
 
     \item XABCOV: Mean percent cover of taxon across plots
@@ -39,14 +39,14 @@ necessary to identify unique samples, 'UID' by default}
 \value{
 Data frame containing the \emph{sampID} variables, PARAMETER, RESULT,
   where values of PARAMETER consist of the metric name concatenated with
-  trait value (represented as TRAITNM below): 
+  trait value (represented as TRAITNM below):
  \itemize{ \item N_TRAITNM:
   Number of taxa with trait
-  
+
   \item PCTN_TRAITNM: Number of taxa with trait as percentage of \emph{TOTN}
-  
+
   \item XABCOV_TRAITNM: Sum of \emph{XABCOV} values across taxa with trait
-  
+
   \item XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 }
 If NWCA_NATSTAT is in the input data frame, the same set except
@@ -64,14 +64,16 @@ Both DURATION and NWCA_NATSTAT variables are recoded to fewer
 categories. Taxa with 'UND' as native status are excluded.
 }
 \examples{
- head(VascPlantEx)
- exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
- inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
- inWIS = wisNWCA, cValReg='STATE')
+head(VascPlantEx)
+exPlant <- prepareData(VascPlantEx,
+  taxon_name = "USDA_NAME",
+  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA,
+  inWIS = wisNWCA, cValReg = "STATE"
+)
 
- durEx <- calcDuration(exPlant$byUIDspp)
- head(durEx)
- unique(durEx$PARAMETER)
+durEx <- calcDuration(exPlant$byUIDspp)
+head(durEx)
+unique(durEx$PARAMETER)
 }
 \references{
 US Environmental Protection Agency. 2016. National Wetland

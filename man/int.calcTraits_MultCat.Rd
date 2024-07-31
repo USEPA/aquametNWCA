@@ -7,34 +7,34 @@
 int.calcTraits_MultCat(vascIn, trait, sampID)
 }
 \arguments{
-\item{vascIn}{Input data frame with \emph{sampID} variables, TAXON, TOTN, 
-XABCOV, sXRCOV, and variable with name in \emph{trait} argument. TOTN is 
+\item{vascIn}{Input data frame with \emph{sampID} variables, TAXON, TOTN,
+XABCOV, sXRCOV, and variable with name in \emph{trait} argument. TOTN is
 the total number of taxa at the lowest level for a \emph{sampID} variables.
 XABCOV is the mean absolute cover of taxon. sXRCOV is the percentage of the
 total sum of absolute cover across all taxa for \emph{sampID} variables.}
 
-\item{trait}{Character string with name of variable containing traits of 
+\item{trait}{Character string with name of variable containing traits of
 interest}
 
-\item{sampID}{A character vector containing the name(s) of variable(s) 
+\item{sampID}{A character vector containing the name(s) of variable(s)
 necessary to identify unique samples}
 }
 \value{
-Data frame containing \emph{sampID} variables, PARAMETER, RESULT, 
+Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
   where values of PARAMETER consist of the metric name concatenated with each
   value of the trait (represented as TRAITVAL below):
-  
+
   N_TRAITVAL: Number of taxa with trait value
-  
+
   PCTN_TRAITVAL: Number of taxa with trait value as percentage of TOTN
-  
+
   XABCOV_TRAITVAL: Sum of XABCOV values across taxa with trait value
-  
+
   XRCOV_TRAITVAL: Sum of sXRCOV values across taxa with trait value
 }
 \description{
 This internal function calculates metrics using traits with more
-  than two categories as values. Used in \code{calcDuration()}, \code{calcGrowthHabit()}, 
+  than two categories as values. Used in \code{calcDuration()}, \code{calcGrowthHabit()},
   \code{calcCategory()}, \code{calcWIS()} functions.
 }
 \section{Warning}{

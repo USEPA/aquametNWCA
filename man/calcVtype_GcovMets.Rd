@@ -32,7 +32,7 @@ calculating tree metrics: 'SANDT_CLASS','SUBMERGED_AQ',
 'WD_COARSE','TOTAL_LITTER'. Additional parameters or variables
 are ignored.}
 
-\item{nPlotIn}{A data frame with the 
+\item{nPlotIn}{A data frame with the
 number of plots sampled associated with
 each sample, with \emph{sampID} variables and NPLOTS.}
 
@@ -40,16 +40,16 @@ each sample, with \emph{sampID} variables and NPLOTS.}
 variable(s) necessary to identify unique samples, 'UID' by default}
 
 \item{survyear}{A string with the survey year. Some parameters only
-measured in 2011, applies to water cover metrics and bare ground 
+measured in 2011, applies to water cover metrics and bare ground
 and litter metrics.}
 }
 \value{
-Either a character string containing an error message when metric 
-  calculation is not successful, or a data frame. The first column of the 
+Either a character string containing an error message when metric
+  calculation is not successful, or a data frame. The first column of the
   data frame is the \emph{sampID} variables and subsequent columns are named
-  for each metric and contain metric values. A list of vegetation type and 
-  ground cover metrics is installed with the package. Use 
-  system.file("VegTypes_GrdCover_Metric_Descriptions.pdf", package="aquametNWCA") 
+  for each metric and contain metric values. A list of vegetation type and
+  ground cover metrics is installed with the package. Use
+  system.file("VegTypes_GrdCover_Metric_Descriptions.pdf", package="aquametNWCA")
   to locate the file.
 }
 \description{
@@ -69,13 +69,17 @@ value.
 \examples{
 head(Vtype_GrCovEx)
 
-subVtype_GrCovEx <- subset(Vtype_GrCovEx, PARAMETER!='SANDT_CLASS') 
+subVtype_GrCovEx <- subset(Vtype_GrCovEx, PARAMETER != "SANDT_CLASS")
 
-nplots <- aggregate(x = list(NPLOTS = subVtype_GrCovEx$PLOT), 
-by = subVtype_GrCovEx[c('UID')],
-FUN = function(x){length(unique(x))})
+nplots <- aggregate(
+  x = list(NPLOTS = subVtype_GrCovEx$PLOT),
+  by = subVtype_GrCovEx[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
-exOut <- calcVtype_GcovMets(Vtype_GrCovEx, nPlotIn=nplots, sampID='UID')
+exOut <- calcVtype_GcovMets(Vtype_GrCovEx, nPlotIn = nplots, sampID = "UID")
 
 str(exOut)
 head(exOut)

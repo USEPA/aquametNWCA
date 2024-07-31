@@ -5,16 +5,16 @@
 \alias{nativeNWCA_2016}
 \title{NWCA 2016 Native Status Values}
 \format{
-A data frame containing 21356 observations on the 
+A data frame containing 21356 observations on the
 following variables
 \describe{
- \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA 
+ \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA
  taxonomic ID number}
- \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name 
+ \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name
  where not available}
- \item{GEOG_ID}{Geographic unit to which value applies, which is 
+ \item{GEOG_ID}{Geographic unit to which value applies, which is
  the two-letter state abbreviation in this dataset}
- \item{NWCA_NATSTAT}{Native status of taxon. Valid values: 
+ \item{NWCA_NATSTAT}{Native status of taxon. Valid values:
  ADV (Adventive), CRYP (Cryptogenic), INTR (introduced),
  NAT (native), UND (Undetermined).}
  \item{NATSTAT_ALT}{Combined native status values as used in calculations.
@@ -28,12 +28,12 @@ following variables
 nativeNWCA_2016
 }
 \description{
-A data frame containing NWCA 2016 state-specific  
+A data frame containing NWCA 2016 state-specific
 native status values for vascular plant taxa
 }
 \note{
-This dataset is the list of native status values used 
-for site-specific and #' taxon-specific assignments for 
+This dataset is the list of native status values used
+for site-specific and #' taxon-specific assignments for
 NWCA 2016.
 }
 \examples{

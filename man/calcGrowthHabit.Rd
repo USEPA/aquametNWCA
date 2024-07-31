@@ -17,20 +17,20 @@ UID and TAXON, with the following fields:
     \item GROWTH_HABIT: USDA PLANTS GROWTH_HABIT variable with valid
     values FORB, GRAMINOID, HERB, SHRUB, SUBSHRUB, TREE, VINE,
     NONVASCULAR, combinations of these, or blank
-    
+
     \item GRH_ALT (optional): Combinations of GROWTH_HABIT variable
     as used in NWCA. Created in code if not supplied by user. Valid
     values include FORB, GRAMINOID, SHRUB, SSHRUB_FORB, SSHRUB_SHRUB,
     TREE, TREE_SHRUB, VINE, VINE_SHRUB.
-    
-    \item TREE_COMB (optional): Indicator (1/0) for values of  
+
+    \item TREE_COMB (optional): Indicator (1/0) for values of
     TREE or TREE_SHRUB in GRH_ALT.
     If not supplied by user, will be created in code
-    
-    \item SHRUB_COMB (optional): Indicator value (0/1) for GRH_ALT 
+
+    \item SHRUB_COMB (optional): Indicator value (0/1) for GRH_ALT
     values of SHRUB, SSHRUB_FORB, or SSHRUB_SHRUB. Created in code
     if not supplied by user.
-    
+
     \item HERB (optional): Indicator value (0/1) for GRH_ALT values
     of GRAMINOID or FORB. Created in code if not supplied by user.
 
@@ -51,7 +51,7 @@ necessary to identify unique samples, 'UID' by default}
 \value{
 Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
   where values of PARAMETER consist of the metric name concatenated with
-  trait value (represented as TRAITNM below): 
+  trait value (represented as TRAITNM below):
 \itemize{
 \item N_TRAITNM: Number of taxa with trait
 
@@ -77,9 +77,11 @@ categories. Taxa with 'UND' as native status are excluded.
 }
 \examples{
 head(VascPlantEx)
- exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
- inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
- inWIS = wisNWCA, cValReg='STATE')
+exPlant <- prepareData(VascPlantEx,
+  taxon_name = "USDA_NAME",
+  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA,
+  inWIS = wisNWCA, cValReg = "STATE"
+)
 
 ghEx <- calcGrowthHabit(exPlant$byUIDspp)
 

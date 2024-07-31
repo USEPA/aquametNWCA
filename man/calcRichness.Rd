@@ -26,7 +26,7 @@ and TAXON level, with the following variables:
 
 \item DISTINCT: Distinctness (0/1) of taxon within sample, where
 taxa above species level are not distinct (0) if taxa
-at a lower level are also included in sample. 
+at a lower level are also included in sample.
 }}
 
 \item{byPlotspp}{Data frame containing species data summarized
@@ -46,7 +46,7 @@ at a lower level are also included in sample.
 }}
 
 \item{byUIDgen}{Data frame containing genus-level data summarized to the
-sampID variables and TAXON level and containing the same variables as 
+sampID variables and TAXON level and containing the same variables as
 byUIDspp (described above).}
 
 \item{byPlotgen}{Data frame containing genus-level data summarized to the
@@ -106,16 +106,20 @@ the function createDFs() creates a list with a data frame summarized
 by UID and one by sampID variables and PLOT.
 }
 \examples{
-  head(VascPlantEx)
- exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
- inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
- inWIS = wisNWCA, cValReg='STATE')
+head(VascPlantEx)
+exPlant <- prepareData(VascPlantEx,
+  taxon_name = "USDA_NAME",
+  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA,
+  inWIS = wisNWCA, cValReg = "STATE"
+)
 
-  richEx <- calcRichness(exPlant$byUIDspp,exPlant$byPlotspp,
-         exPlant$byUIDgen,exPlant$byPlotgen,exPlant$byUIDfam,exPlant$byPlotfam)
+richEx <- calcRichness(
+  exPlant$byUIDspp, exPlant$byPlotspp,
+  exPlant$byUIDgen, exPlant$byPlotgen, exPlant$byUIDfam, exPlant$byPlotfam
+)
 
-  head(richEx)
-  unique(richEx$PARAMETER)
+head(richEx)
+unique(richEx$PARAMETER)
 }
 \references{
 US Environmental Protection Agency. 2016. National

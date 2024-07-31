@@ -9,35 +9,35 @@ int.calcIndices(vascIn, subgrp = NULL, sampID)
 \arguments{
 \item{vascIn}{Input data frame containing:
 
-sampID: Variables identified in \emph{sampID} argument
+  sampID: Variables identified in \emph{sampID} argument
 
-TAXON: Taxon name
+  TAXON: Taxon name
 
-XABCOV: Mean absolute cover of taxon}
+  XABCOV: Mean absolute cover of taxon}
 
-\item{subgrp}{Character string of subgroup abbreviation to add as suffix to 
+\item{subgrp}{Character string of subgroup abbreviation to add as suffix to
 metric name. Default value is NULL.}
 
-\item{sampID}{A character vector containing the name(s) of variable(s) 
+\item{sampID}{A character vector containing the name(s) of variable(s)
 necessary to identify unique samples}
 }
 \value{
-Data frame containing sampID variables, PARAMETER, and RESULT, where 
-  values for PARAMETER consist of name below concatenated with subgrp value 
+Data frame containing sampID variables, PARAMETER, and RESULT, where
+  values for PARAMETER consist of name below concatenated with subgrp value
   as suffix (represented as SUBGRP below):
-  
-  H_SUBGRP: Shannon-Wiener Diversity Index H' = -1*sum(pi*ln(pi)), where pi 
+
+  H_SUBGRP: Shannon-Wiener Diversity Index H' = -1*sum(pi*ln(pi)), where pi
   is proportion of species i
-  
-  J_SUBGRP: Eveness (Pielou). J = H'/ln(S), where S is number of species 
+
+  J_SUBGRP: Eveness (Pielou). J = H'/ln(S), where S is number of species
   observed
-  
+
 D_SUBGRP: Simpson Diversity Index. D = 1 - sum(pi^2), where pi is
 proportion of species i
 }
 \description{
-This internal function calculates several variations of Mean C 
-  and FQAI, based on cover, frequency, and number of taxa. Used in 
+This internal function calculates several variations of Mean C
+  and FQAI, based on cover, frequency, and number of taxa. Used in
   \code{calcDiversity()} function.
 }
 \section{Warning}{

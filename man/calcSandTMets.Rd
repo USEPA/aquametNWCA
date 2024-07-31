@@ -18,11 +18,11 @@ calcSandTMets(dataIn, nPlot, sampID = "UID")
 \item RESULT: measured value
 }
 The following parameters are used in calculating
-wetland type metrics: 'SANDT_CLASS' and 'PAL_FARMED', or 
+wetland type metrics: 'SANDT_CLASS' and 'PAL_FARMED', or
 'WETLAND_TYPE' (2016).
 Additional parameters or variables are ignored.}
 
-\item{nPlot}{A data frame with the 
+\item{nPlot}{A data frame with the
 number of plots sampled associated with
 each sample, with \emph{sampID} variables and NPLOTS}
 
@@ -33,10 +33,10 @@ by default.}
 \value{
 Either a character string containing an error message when metric
   calculation is not successful, or a data frame. Data frame contains
-  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER
   consist of the metric name concatenated with trait value, with valid values
   of: N_SANDT, DOM_SANDT, D_SANDT, H_SANDT, J_SANDT. A list of metric
-  descriptions is provided in the document named 
+  descriptions is provided in the document named
   VegTypes_GrdCover_Metric_Descriptions.pdf included in the help directory
   for the package.
 }
@@ -54,10 +54,10 @@ set to a standardized value.
 \examples{
 head(Vtype_GrCovEx)
 # Create data frame with number of plots sampled for each sampID
-nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
+nplots <- data.frame(UID = seq(1:10), NPLOTS = rep(5, 10), stringsAsFactors = F)
 # alternative approach to creating this data frame
 
-sandtEx <- calcSandTMets(Vtype_GrCovEx,nplots)
+sandtEx <- calcSandTMets(Vtype_GrCovEx, nplots)
 
 head(sandtEx)
 unique(sandtEx$PARAMETER)

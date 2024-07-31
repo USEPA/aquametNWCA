@@ -55,31 +55,31 @@ suffixes ALL and NAT, respectively. WIS values recoded as numeric
 with OBL=1, FACW=2, FAC=3, FACU=4, UPL=5 for WETIND metrics and as
 OBL=5, FACW=4, FAC=3 FACU=2, and UPD=1 for WETIND2 metrics:
 \itemize{ \item WETIND_COV_ALL, WETIND_COV_NAT: Wetland Index, weighted by
-taxon cover, based on numeric conversion of WIS, with lower numbers 
+taxon cover, based on numeric conversion of WIS, with lower numbers
 indicating wetter conditions
 
-\item WETIND_FREQ_ALL, WETIND_FREQ_NAT: Wetland Index, weight by frequency, 
-based on numeric conversion of WIS, with lower numbers 
-indicating wetter conditions } 
+\item WETIND_FREQ_ALL, WETIND_FREQ_NAT: Wetland Index, weight by frequency,
+based on numeric conversion of WIS, with lower numbers
+indicating wetter conditions }
 
 \itemize{ \item WETIND2_COV_ALL, WETIND2_COV_NAT: Wetland Index, weighted by
-taxon cover, based on numeric conversion of WIS, with higher numbers 
+taxon cover, based on numeric conversion of WIS, with higher numbers
 indicating wetter conditions
 
-\item WETIND2_FREQ_ALL, WETIND2_FREQ_NAT: Wetland Index, weight by frequency, 
-based on numeric conversion of WIS, with higher numbers 
-indicating wetter conditions } 
+\item WETIND2_FREQ_ALL, WETIND2_FREQ_NAT: Wetland Index, weight by frequency,
+based on numeric conversion of WIS, with higher numbers
+indicating wetter conditions }
 
 If NWCA_NATSTAT is provided in the input data frame, the following metrics
-are calculated based on Alien + Cryptogenic species: 
+are calculated based on Alien + Cryptogenic species:
 \itemize{ \item
 N_OBLFACW_AC: Number of alien and cryptogenic taxa with WIS of either OBL or
 FACW.
 
-\item XABCOV_OBLFACW_AC: Mean absolute cover of alien and cryptogenic taxa 
+\item XABCOV_OBLFACW_AC: Mean absolute cover of alien and cryptogenic taxa
 with WIS of either OBL or FACW.
 
-\item XRCOV_OBLFACW_AC: Mean relative cover of alien and cryptogenic taxa 
+\item XRCOV_OBLFACW_AC: Mean relative cover of alien and cryptogenic taxa
 with WIS of either OBL or FACW. }
 }
 \description{
@@ -89,9 +89,11 @@ if NWCA_NATSTAT is present in the input data frame.
 }
 \examples{
 head(VascPlantEx)
- exPlant <- prepareData(VascPlantEx, taxon_name = 'USDA_NAME', 
- inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA, 
- inWIS = wisNWCA, cValReg='STATE')
+exPlant <- prepareData(VascPlantEx,
+  taxon_name = "USDA_NAME",
+  inTaxa = taxaNWCA, inNat = ccNatNWCA, inCVal = ccNatNWCA,
+  inWIS = wisNWCA, cValReg = "STATE"
+)
 
 wisEx <- calcWIS(exPlant$byUIDspp)
 

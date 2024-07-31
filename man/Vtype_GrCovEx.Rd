@@ -17,11 +17,11 @@ A data frame with 1775 observations on the following  variables.
 Vtype_GrCovEx
 }
 \description{
-A dataset containing vegetation type and ground surface attributes data 
+A dataset containing vegetation type and ground surface attributes data
 for use in vtype_gcovMets() example.
 }
 \note{
-This dataset is a small subset of actual NWCA 2011 data, with UIDs 
+This dataset is a small subset of actual NWCA 2011 data, with UIDs
  recoded.
 }
 \examples{

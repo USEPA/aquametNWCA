@@ -7,25 +7,25 @@
 int.calcTraits_Indicator.alt(vascIn, trait, sampID)
 }
 \arguments{
-\item{vascIn}{Input data frame with \emph{sampID} variables, TAXON, TOTN, 
-XABCOV, sXRCOV, sRFREQ, and variable with name in argument trait. 
+\item{vascIn}{Input data frame with \emph{sampID} variables, TAXON, TOTN,
+XABCOV, sXRCOV, sRFREQ, and variable with name in argument trait.
 \emph{TOTN} is the total number of taxa at the lowest level for each sample
 (combination of sampID variables). \emph{XABCOV} is the mean absolute cover
-of taxon. sXRCOV is the percentage of the total sum of absolute cover 
-across all taxa for a sample. sRFREQ is the relative frequency of a taxon, 
-calculated as the percentage of the total frequency of taxon occurrence 
+of taxon. sXRCOV is the percentage of the total sum of absolute cover
+across all taxa for a sample. sRFREQ is the relative frequency of a taxon,
+calculated as the percentage of the total frequency of taxon occurrence
 across all taxa for a sample.}
 
 \item{trait}{Character string containing name of binary trait variable.}
 
-\item{sampID}{A character vector containing the name(s) of variable(s) 
+\item{sampID}{A character vector containing the name(s) of variable(s)
 necessary to identify unique samples}
 }
 \value{
-Data frame containing \emph{sampID} variables, PARAMETER, RESULT, 
-  where values of PARAMETER consist of the metric name concatenated with 
+Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
+  where values of PARAMETER consist of the metric name concatenated with
   trait name (represented as TRAITNM below):
-  
+
   N_TRAITNM: Number of taxa with trait value
 
 PCTN_TRAITNM: Number of taxa with trait value as percentage of \emph{TOTN}
@@ -40,8 +40,8 @@ RIMP_TRAITNM: Relative importance ((RFREQ_TRAITVAL + XRCOV_TRAITVAL)/2)
 of taxa with trait value
 }
 \description{
-This internal function calculates metrics for traits that are 
-  indicator values (0 or 1), specifically for alien and cryptogenic species 
+This internal function calculates metrics for traits that are
+  indicator values (0 or 1), specifically for alien and cryptogenic species
   groups. Used by \code{calcNative()} function.
 }
 \section{Warning}{

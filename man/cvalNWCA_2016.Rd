@@ -5,17 +5,17 @@
 \alias{cvalNWCA_2016}
 \title{NWCA 2016 Coefficient of Conservation Values (C-values)}
 \format{
-A data frame containing 24206 observations on the 
+A data frame containing 24206 observations on the
 following variables
 \describe{
- \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA 
+ \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA
  taxonomic ID number}
- \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name 
+ \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name
  where not available}
  \item{GEOG_TYPE}{Type of Geographic Unit}
- \item{GEOG_ID}{Geographic unit to which value applies, which is NWC_CREG16 
+ \item{GEOG_ID}{Geographic unit to which value applies, which is NWC_CREG16
  in this dataset}
- \item{NWCA_CVAL}{C-value region-specific Coefficient of 
+ \item{NWCA_CVAL}{C-value region-specific Coefficient of
  Conservatism value as used in NWCA 2016}
 }
 }
@@ -23,11 +23,11 @@ following variables
 cvalNWCA_2016
 }
 \description{
-A data frame containing NWCA 2016 state- or region-specific  
+A data frame containing NWCA 2016 state- or region-specific
 Coefficient of Conservatism values for vascular plant taxa
 }
 \note{
-This dataset is the list of C-values used for site-specific and 
+This dataset is the list of C-values used for site-specific and
 taxon-specific assignments for NWCA 2016.
 }
 \examples{

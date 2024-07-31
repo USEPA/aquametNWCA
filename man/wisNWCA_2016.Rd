@@ -7,16 +7,16 @@
 \format{
 A data frame with 9584 observations on the following 5 variables.
 \describe{
-    \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA taxonomic 
+    \item{SPECIES_NAME_ID}{A numeric vector containing the NWCA taxonomic
     ID number}
-    \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name 
+    \item{NWCA_NAME}{Accepted USDA PLANTS name, or the official NWCA name
     where not available}
-    \item{GEOG_ID}{Geographic unit to which value applies, which is US Army 
+    \item{GEOG_ID}{Geographic unit to which value applies, which is US Army
     Corps region in this dataset}
     \item{WIS}{USAC-specific Wetland Indicator Status as used for NWCA 2016}
-    \item{ECOIND1}{Wetland indicator status converted to numeric value, with 
+    \item{ECOIND1}{Wetland indicator status converted to numeric value, with
     lower numbers more characteristic of wetlands}
-    \item{ECOIND2}{Wetland indicator status converted to numeric value, with 
+    \item{ECOIND2}{Wetland indicator status converted to numeric value, with
     higher numbers more characteristic of wetlands}
 }
 }
@@ -24,11 +24,11 @@ A data frame with 9584 observations on the following 5 variables.
 wisNWCA_2016
 }
 \description{
-A dataset containing NWCA 2016 USAC-specific Wetland Indicator Status 
+A dataset containing NWCA 2016 USAC-specific Wetland Indicator Status
 values for vascular plant taxa
 }
 \note{
-This dataset is the taxa list used for USAC-specific Wetland Indicator 
+This dataset is the taxa list used for USAC-specific Wetland Indicator
 Status values used in NWCA 2016.
 }
 \examples{

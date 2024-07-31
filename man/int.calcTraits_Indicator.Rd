@@ -8,7 +8,7 @@ int.calcTraits_Indicator(vascIn, trait, sampID)
 }
 \arguments{
 \item{vascIn}{Input data frame with \emph{sampID} variables, TAXON, TOTN,
-XABCOV, sXRCOV, and a binary variable with name in \emph{trait} argument 
+XABCOV, sXRCOV, and a binary variable with name in \emph{trait} argument
 and possible values of 0 and 1, with 1 indicating trait present for taxon.}
 
 \item{trait}{Character string with name of variable containing traits of
@@ -32,8 +32,8 @@ XRCOV_TRAITNM: Sum of \emph{sXRCOV} values across taxa with trait
 }
 \description{
 This internal function calculates metrics for traits
-that are indicator values (0 or 1). Output feeds into 
-\code{int.combTraits()} function. Used in 
+that are indicator values (0 or 1). Output feeds into
+\code{int.combTraits()} function. Used in
 \code{calcWIS()} function.
 }
 \section{Warning}{

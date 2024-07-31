@@ -18,36 +18,36 @@ calcVascPlantMets(
 )
 }
 \arguments{
-\item{vascIn}{A data frame with the following variables (at a minimum): 
+\item{vascIn}{A data frame with the following variables (at a minimum):
   \itemize{ \item sampID: Variable(s) identified in \emph{sampID} argument,
   'UID' by default
-  
+
   \item PLOT: plot number
-  
+
   \item Variable named in \emph{state}: Two-letter state postal code of site, used to link
 native status to taxa in native status taxalist (inNat)
 
   \item Variable named in \emph{coeReg}: U.S. Army Corps of Engineers region abbreviation for
   sample, to correspond to GEOG_ID in Wetland Indicator Status taxalist (inWIS)
-  
+
   \item Variable named in \emph{cValReg}: NWCA C-value regions: values must match GEOG_ID
   in C-value taxalist (inCVal)
  \item Variable named in \emph{taxon_name}: Taxon name, must match with taxa data frame
-  
+
   \item COVER: value from 0 to 100 indicating relative cover of taxon within
   plot). Data should already be summed by UID, PLOT, and USDA_NAME. }}
 
 \item{taxon_name}{String containing the name of variable for taxon name in}
 
-\item{taxaIn}{A data frame containing taxonomy of all taxa found in vascIn, 
-  with the following variables at a minimum: 
+\item{taxaIn}{A data frame containing taxonomy of all taxa found in vascIn,
+  with the following variables at a minimum:
   \itemize{ \item USDA_NAME: USDA
   accepted name of taxon in sample
-  
+
   \item FAMILY: family name of taxon
-  
+
   \item GENUS: genus name of taxon
-  
+
 \item CATEGORY: USDA PLANTS category
 
 \item GROWTH_HABIT: growth habit as designated in USDA PLANTS
@@ -70,7 +70,7 @@ variables, at a minimum:
 If this data frame is not supplied, the data set ccNWCA included in
 the package is used.}
 
-\item{taxaCC}{A data frame containing Coefficient of Conservatism 
+\item{taxaCC}{A data frame containing Coefficient of Conservatism
 as assigned for NWCA for all taxa in vascIn, with the following
 variables, at a minimum:
 \itemize{
@@ -99,11 +99,11 @@ package is used.}
 \item{sampID}{A character vector containing the name(s) of
 variable(s) necessary to identify unique samples, 'UID' by default}
 
-\item{state}{String containing the name of the state in \emph{vascIn}, 
+\item{state}{String containing the name of the state in \emph{vascIn},
 with default value of 'STATE'}
 
 \item{coeReg}{String containing the name of the U.S. Army Corps of Engineers
-region in \emph{vascIn} associated with Wetland Indicator Status, 
+region in \emph{vascIn} associated with Wetland Indicator Status,
 with default value of 'USAC_REGION'}
 
 \item{cValReg}{String containing the name of the variable in \emph{taxaCC}
@@ -112,25 +112,27 @@ which specifies the C-value region.}
 \value{
 Either a character string containing an error message when metric
 calculation is not successful, or a data frame. The first column(s) of the
-data frame contain the \emph{sampID} variables, and subsequent columns are 
+data frame contain the \emph{sampID} variables, and subsequent columns are
 named for each metric and
-contain metric values. A list of vascular plant metrics is 
-installed with the package. Use 
-system.file("Vascular_Plant_Metric_Descriptions.pdf", package="aquametNWCA") 
+contain metric values. A list of vascular plant metrics is
+installed with the package. Use
+system.file("Vascular_Plant_Metric_Descriptions.pdf", package="aquametNWCA")
 to locate the file.
 }
 \description{
-This function calculates the NWCA 2011 vascular plant metrics. 
-  It assumes input data are organized so that each row represents the cover 
+This function calculates the NWCA 2011 vascular plant metrics.
+  It assumes input data are organized so that each row represents the cover
   for a single taxon within a single plot at a site. It also assumes a single
   column is used to identify each unique sample.
 }
 \examples{
 head(VascPlantEx)
 
-exOut <- calcVascPlantMets(VascPlantEx, taxon_name = 'USDA_NAME',
-taxaIn = taxaNWCA, taxaNat = ccNatNWCA,
- taxaCC = ccNatNWCA, taxaWIS = wisNWCA, cValReg ='STATE')
+exOut <- calcVascPlantMets(VascPlantEx,
+  taxon_name = "USDA_NAME",
+  taxaIn = taxaNWCA, taxaNat = ccNatNWCA,
+  taxaCC = ccNatNWCA, taxaWIS = wisNWCA, cValReg = "STATE"
+)
 
 str(exOut)
 head(exOut)

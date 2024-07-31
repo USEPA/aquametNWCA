@@ -19,12 +19,12 @@ variables:
 \item RESULT: measured value
 }
 The following parameters are used in
-calculating vascular strata metrics: 'SUBMERGED_AQ', 'FLOATING_AQ', 
-'LIANAS', 'VTALL_VEG', 'TALL_VEG', 'HMED_VEG', 'MED_VEG', 
+calculating vascular strata metrics: 'SUBMERGED_AQ', 'FLOATING_AQ',
+'LIANAS', 'VTALL_VEG', 'TALL_VEG', 'HMED_VEG', 'MED_VEG',
 'SMALL_VEG', 'VSMALL_VEG'.
 Additional parameters or variables are ignored.}
 
-\item{nPlot}{A data frame with the 
+\item{nPlot}{A data frame with the
 number of plots sampled associated with each
 sample with \emph{sampID} variables and NPLOTS}
 
@@ -35,13 +35,13 @@ variable(s) necessary to identify unique samples,
 \value{
 Either a character string containing an error message when metric
   calculation is not successful, or a data frame. Data frame contains
-  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER
   consist of the metric name concatenated with trait value, with valid values
   of: FREQ_FLOATING_AQ, FREQ_HMED_VEG, FREQ_LIANAS, FREQ_MED_VEG,
   FREQ_SMALL_VEG, FREQ_SUBMERGED_AQ, FREQ_TALL_VEG, FREQ_VSMALL_VEG,
   FREQ_VTALL_VEG, IMP_FLOATING_AQ, IMP_HMED_VEG, IMP_LIANAS, IMP_MED_VEG,
   IMP_SMALL_VEG, IMP_SUBMERGED_AQ, IMP_TALL_VEG, IMP_VSMALL_VEG,
-  IMP_VTALL_VEG, XCOV_FLOATING_AQ, XCOV_HMED_VEG, XCOV_LIANAS, XCOV_MED_VEG, 
+  IMP_VTALL_VEG, XCOV_FLOATING_AQ, XCOV_HMED_VEG, XCOV_LIANAS, XCOV_MED_VEG,
   XCOV_SMALL_VEG, XCOV_SUBMERGED_AQ, XCOV_TALL_VEG, XCOV_VSMALL_VEG,
   XCOV_VTALL_VEG, XRCOV_FLOATING_AQ, XRCOV_HMED_VEG, XRCOV_LIANAS,
   XRCOV_MED_VEG, XRCOV_SMALL_VEG, XRCOV_SUBMERGED_AQ, XRCOV_TALL_VEG,
@@ -64,13 +64,17 @@ parameters are set to a standardized value.
 \examples{
 head(Vtype_GrCovEx)
 # Create data frame with number of plots sampled for each UID
-nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
+nplots <- data.frame(UID = seq(1:10), NPLOTS = rep(5, 10), stringsAsFactors = F)
 # alternative approach to creating this data frame
-nplots <- aggregate(x = list(NPLOTS = Vtype_GrCovEx$PLOT), 
-by = Vtype_GrCovEx[c('UID')],
-FUN = function(x){length(unique(x))})
+nplots <- aggregate(
+  x = list(NPLOTS = Vtype_GrCovEx$PLOT),
+  by = Vtype_GrCovEx[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
-stratEx <- calcVascStratMets(Vtype_GrCovEx,nplots)
+stratEx <- calcVascStratMets(Vtype_GrCovEx, nplots)
 
 head(stratEx)
 unique(stratEx$METRIC)

@@ -18,11 +18,11 @@ calcSnagMets(treeIn, nPlot, sampID = "UID")
 \item RESULT: measured value
 }
 The following parameters are used in
-calculating tree metrics: 'XXTHIN_SNAG', 'XTHIN_SNAG', 'THIN_SNAG', 
+calculating tree metrics: 'XXTHIN_SNAG', 'XTHIN_SNAG', 'THIN_SNAG',
 'JR_SNAG', 'THICK_SNAG', 'XTHICK_SNAG', 'XXTHICK_SNAG'.
 Additional parameters or variables are ignored.}
 
-\item{nPlot}{A data frame with the 
+\item{nPlot}{A data frame with the
 number of plots sampled associated with
 each sample, with \emph{sampID} variables and NPLOTS.}
 
@@ -53,10 +53,14 @@ cannot be calculated due to missing parameters are set to 0.
 \examples{
 head(TreesEx)
 
-nplots <- aggregate(x = list(NPLOTS = TreesEx$PLOT), by = TreesEx[c('UID')],
-FUN = function(x){length(unique(x))})
+nplots <- aggregate(
+  x = list(NPLOTS = TreesEx$PLOT), by = TreesEx[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
-snagEx <- calcSnagMets(TreesEx, nPlot=nplots, sampID='UID')
+snagEx <- calcSnagMets(TreesEx, nPlot = nplots, sampID = "UID")
 
 head(snagEx)
 unique(snagEx$PARAMETER)

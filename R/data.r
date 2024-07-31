@@ -57,7 +57,7 @@
 #' head(taxaNWCA)
 #' str(taxaNWCA)
 #'
-#'   @keywords datasets
+#' @keywords datasets
 "taxaNWCA"
 
 #' NWCA 2011 Wetland Indicator Status
@@ -285,7 +285,7 @@
 #' head(taxaNWCA_2016)
 #' str(taxaNWCA_2016)
 #'
-#'   @keywords datasets
+#' @keywords datasets
 "taxaNWCA_2016"
 
 #' NWCA 2016 Wetland Indicator Status

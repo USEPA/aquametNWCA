@@ -18,16 +18,16 @@ calcBareGround_LitterMets(dataIn, nPlot, sampID = "UID", survyear = "2011")
 \item RESULT (measured value)
 }
 The following parameters are used in
-calculating ground cover metrics: 'LITTER_THATCH', 'LITTER_FORB', 
-'LITTER_CONIFER', 'LITTER_DECID', 'LITTER_BROADLEAF', 
-'LITTER_DEPTH_SW', 'LITTER_DEPTH_NE', 'DEPTH_SW' (2016), 
-'DEPTH_NE' (2016), TOTAL_LITTER', 'WD_FINE', 
+calculating ground cover metrics: 'LITTER_THATCH', 'LITTER_FORB',
+'LITTER_CONIFER', 'LITTER_DECID', 'LITTER_BROADLEAF',
+'LITTER_DEPTH_SW', 'LITTER_DEPTH_NE', 'DEPTH_SW' (2016),
+'DEPTH_NE' (2016), TOTAL_LITTER', 'WD_FINE',
 'WD_COARSE', 'EXPOSED_SOIL', 'EXPOSED_GRAVEL', 'EXPOSED_ROCK',
  'PREDOMINANT_LITTER' (2016).
 
 Additional parameters or variables are ignored.}
 
-\item{nPlot}{A data frame with the 
+\item{nPlot}{A data frame with the
 number of plots sampled associated with each sample,
 including \emph{sampID} variables and NPLOTS.}
 
@@ -43,14 +43,14 @@ replaced LITTER_DEPTH_NE and LITTER_DEPTH_SW.}
 \value{
 Either a character string containing an error message when metric
   calculation is not successful, or a data frame. Data frame contains
-  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER 
+  \emph{sampID} variables, PARAMETER, RESULT, where values of PARAMETER
   consist of the metric name concatenated with trait value, with valid values
   of: FREQ_BAREGD, FREQ_EXPOSED_GRAVEL, FREQ_EXPOSED_ROCK, FREQ_EXPOSED_SOIL,
   FREQ_LITTER, FREQ_WD_COARSE, FREQ_WD_FINE, IMP_BAREGD, IMP_EXPOSED_GRAVEL,
   IMP_EXPOSED_ROCK, IMP_EXPOSED_SOIL, IMP_LITTER, IMP_WD_COARSE, IMP_WD_FINE,
   XCOV_BAREGD, XCOV_EXPOSED_GRAVEL, XCOV_EXPOSED_ROCK, XCOV_EXPOSED_SOIL,
   XCOV_LITTER, XCOV_WD_COARSE, XCOV_WD_FINE. A list of metric descriptions is
-  provided in the document named VegTypes_GrdCover_Metric_Descriptions.pdf 
+  provided in the document named VegTypes_GrdCover_Metric_Descriptions.pdf
   included in the help directory for the package.
 }
 \description{
@@ -66,13 +66,17 @@ standardized value.
 \examples{
 head(Vtype_GrCovEx)
 # Create data frame with number of plots sampled for each UID
-nplots <- data.frame(UID=seq(1:10),NPLOTS=rep(5,10),stringsAsFactors=F)
+nplots <- data.frame(UID = seq(1:10), NPLOTS = rep(5, 10), stringsAsFactors = F)
 # alternative approach to creating this data frame
-nplots <- aggregate(x = list(NPLOTS = Vtype_GrCovEx$PLOT), 
-by = Vtype_GrCovEx[c('UID')],
-FUN = function(x){length(unique(x))})
+nplots <- aggregate(
+  x = list(NPLOTS = Vtype_GrCovEx$PLOT),
+  by = Vtype_GrCovEx[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
-bgEx <- calcBareGround_LitterMets(Vtype_GrCovEx,nplots)
+bgEx <- calcBareGround_LitterMets(Vtype_GrCovEx, nplots)
 
 head(bgEx)
 unique(bgEx$PARAMETER)

@@ -30,7 +30,7 @@ calculating tree metrics: 'XXTHIN_SNAG','XTHIN_SNAG','THIN_SNAG',
 'TALL_TREE','VTALL_TREE'. Additional parameters or variables are
 ignored.}
 
-\item{nPlotIn}{A data frame with the 
+\item{nPlotIn}{A data frame with the
 number of plots sampled associated with
 each sample, with \emph{sampID} variables and NPLOTS.}
 
@@ -41,9 +41,9 @@ variable(s) necessary to identify unique samples, 'UID' by default}
 Either a character string containing an error message when metric
   calculation is not successful, or a data frame. The first columns of the
   data frame are the sampID variables and subsequent columns are named for
-  each metric and contain metric values. A list of tree metrics is 
-  installed with the package. Use 
-  system.file("Tree_Metric_Descriptions.pdf", package="aquametNWCA") to 
+  each metric and contain metric values. A list of tree metrics is
+  installed with the package. Use
+  system.file("Tree_Metric_Descriptions.pdf", package="aquametNWCA") to
   locate the file.
 }
 \description{
@@ -60,10 +60,14 @@ calculated due to missing parameters are set to 0.
 \examples{
 head(TreesEx)
 
-nplots <- aggregate(x = list(NPLOTS = TreesEx$PLOT), by = TreesEx[c('UID')],
-FUN = function(x){length(unique(x))})
+nplots <- aggregate(
+  x = list(NPLOTS = TreesEx$PLOT), by = TreesEx[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
-exOut <- calcTreeMets(TreesEx, nPlotIn=nplots, sampID='UID')
+exOut <- calcTreeMets(TreesEx, nPlotIn = nplots, sampID = "UID")
 
 head(exOut)
 str(exOut)

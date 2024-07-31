@@ -134,7 +134,7 @@ calcVascPlantMets <- function(vascIn, taxon_name, taxaIn = taxaNWCA, taxaNat = c
   richMets <- calcRichness(prepDat$byUIDspp, prepDat$byPlotspp, prepDat$byUIDgen,
     prepDat$byPlotgen, prepDat$byUIDfam,
     prepDat$byPlotfam,
-    sampID = "UID"
+    sampID = sampID
   )
 
   print("Done calculating richness metrics.")

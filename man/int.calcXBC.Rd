@@ -9,28 +9,28 @@ int.calcXBC(x, sampID)
 \arguments{
 \item{x}{Data frame containing:
 
-sampID: A character vector containing the name(s) of variable(s) necessary 
-to identify unique samples
+  sampID: A character vector containing the name(s) of variable(s) necessary
+  to identify unique samples
 
-PLOT: Plot number of sample
+  PLOT: Plot number of sample
 
-SPECIES: Character code for taxon with no spaces
+  SPECIES: Character code for taxon with no spaces
 
-COVER: Percentage vegetative cover for a given taxon}
+  COVER: Percentage vegetative cover for a given taxon}
 
-\item{sampID}{A character vector containing the name(s) of variable(s) 
+\item{sampID}{A character vector containing the name(s) of variable(s)
 necessary to identify unique samples}
 }
 \value{
-Data frame consisting of \emph{sampID} variables and XCDIST_SPP, 
+Data frame consisting of \emph{sampID} variables and XCDIST_SPP,
   defined as:
-  
+
   Within AA dissimilarity based on species composition = Mean of between plot
   Bray-Curtis Distance (Dissimilarity)
 }
 \description{
-This internal function calculates the mean Bray-Curtis distance 
-  among plots based on species composition. Used in \code{calcBCmets()} 
+This internal function calculates the mean Bray-Curtis distance
+  among plots based on species composition. Used in \code{calcBCmets()}
   function.
 }
 \section{Warning}{

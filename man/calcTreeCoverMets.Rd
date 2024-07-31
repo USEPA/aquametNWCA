@@ -26,7 +26,7 @@ calculating tree metrics: 'VSMALL_TREE', 'SMALL_TREE', 'LMED_TREE'
 , 'HMED_TREE', 'TALL_TREE', 'VTALL_TREE'.  Additional parameters
 or variables are ignored.}
 
-\item{nPlot}{A data frame with the 
+\item{nPlot}{A data frame with the
 number of plots sampled associated with
 each sample, with \emph{sampID} variables and NPLOTS.}
 
@@ -54,10 +54,14 @@ cannot be calculated due to missing parameters are set to 0.
 }
 \examples{
 head(TreesEx)
-nplots <- aggregate(x = list(NPLOTS = TreesEx$PLOT), by = TreesEx[c('UID')],
-FUN = function(x){length(unique(x))})
+nplots <- aggregate(
+  x = list(NPLOTS = TreesEx$PLOT), by = TreesEx[c("UID")],
+  FUN = function(x) {
+    length(unique(x))
+  }
+)
 
-tcvrEx <- calcTreeCoverMets(TreesEx, nPlot=nplots, sampID='UID')
+tcvrEx <- calcTreeCoverMets(TreesEx, nPlot = nplots, sampID = "UID")
 
 head(tcvrEx)
 unique(tcvrEx$PARAMETER)

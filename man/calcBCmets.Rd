@@ -7,7 +7,7 @@
 calcBCmets(vascIn, sampID = "UID")
 }
 \arguments{
-\item{vascIn}{Data frame containing cover data summarized by 
+\item{vascIn}{Data frame containing cover data summarized by
 \emph{sampID} variables, PLOT, and
 DISTINCT at the species level. Must also contain at least one of the
 following: TAXON (taxon name) or SPECIES_NAME_ID (numeric code

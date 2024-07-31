@@ -12,7 +12,7 @@ A data frame with 1200 observations on the following 6 variables.
   \item{USAC_REGION}{US Army Corps region of sample site}
   \item{PLOT}{Plot number of measurement}
   \item{USDA_NAME}{Taxon name corresponding to input taxa tables}
-  \item{COVER}{A numeric vector representing the percent cover of a 
+  \item{COVER}{A numeric vector representing the percent cover of a
   taxon within a plot}
   }
 }
@@ -23,11 +23,11 @@ VascPlantEx
 A dataset containing vascular plant data for use in vascPlantMets() example.
 }
 \note{
-This dataset is a small subset of actual NWCA 2011 data, with UIDs 
+This dataset is a small subset of actual NWCA 2011 data, with UIDs
 recoded.
 }
 \examples{
 head(VascPlantEx)
-str(VascPlantEx) 
+str(VascPlantEx)
 }
 \keyword{datasets}
