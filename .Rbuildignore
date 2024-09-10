@@ -1,10 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^README-.*\.png$
-^README\.Rmd$
 ^doc$
 ^Meta$
-NWCA_TestTreeMetricCode.r
-NWCA_TestPlantMetricsCode.r
-NWCA_TestVegType-GrndCover_MetricCode.r
-NWCA_Test_VMMI_Code.r
+^inst/extras$
