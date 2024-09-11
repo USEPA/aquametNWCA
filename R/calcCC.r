@@ -3,8 +3,9 @@
 #'
 #' @title Calculate Coefficient of Conservatism metrics
 #'
-#' @description This function calculates C of C
-#' metrics, including variations based on native status,
+#' @description This function calculates coefficient of
+#' conservatism (c-value) metrics, including 
+#' variations based on native status,
 #' if NWCA_NATSTAT is present in the input data frame.
 #'
 #' @param vascIn Data frame containing cover data summarized by

@@ -2,7 +2,7 @@
 % Please edit documentation in R/VascPlantMetric_functions.r
 \name{int.calcIndices}
 \alias{int.calcIndices}
-\title{Calculate Mean C and FQAI indices}
+\title{Calculate diversity indices}
 \usage{
 int.calcIndices(vascIn, subgrp = NULL, sampID)
 }
@@ -32,13 +32,13 @@ Data frame containing sampID variables, PARAMETER, and RESULT, where
   J_SUBGRP: Eveness (Pielou). J = H'/ln(S), where S is number of species
   observed
 
-D_SUBGRP: Simpson Diversity Index. D = 1 - sum(pi^2), where pi is
-proportion of species i
+  D_SUBGRP: Simpson Diversity Index. D = 1 - sum(pi^2), where pi is
+  proportion of species i
 }
 \description{
-This internal function calculates several variations of Mean C
-  and FQAI, based on cover, frequency, and number of taxa. Used in
-  \code{calcDiversity()} function.
+This internal function calculates several variations 
+of Shannon Diversity, Pielou's Evenness, and Simpson Diversity. Used in 
+`calcDiversity()` function.
 }
 \section{Warning}{
  This function not intended for use on its own

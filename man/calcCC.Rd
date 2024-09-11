@@ -54,8 +54,9 @@ Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
    }
 }
 \description{
-This function calculates C of C
-metrics, including variations based on native status,
+This function calculates coefficient of
+conservatism (c-value) metrics, including 
+variations based on native status,
 if NWCA_NATSTAT is present in the input data frame.
 }
 \examples{

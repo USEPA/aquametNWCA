@@ -1,7 +1,7 @@
-#' NWCA 2011 Plant CC and Native Status
+#' NWCA 2011 Plant Coefficient of Conservatism and Native Status
 #'
-#' A dataset containing NWCA 2011 state-specific Coefficient
-#' of Conservatism and native status values for vascular plant taxa
+#' A dataset containing NWCA 2011 state-specific Coefficients
+#' of Conservatism (C-values) and native status values for vascular plant taxa
 #'
 #' @name ccNatNWCA
 #' @format A data frame with 13203 observations on the following 5 variables:
@@ -16,7 +16,7 @@
 #'  determined for NWCA 2011}
 #'  \item{NWCA_NATSTAT}{State-specific Native status as determined for NWCA 2011}
 #' }
-#' @note This dataset is the taxa list used for state-specific CC and native
+#' @note This dataset is the taxa list used for state-specific C-values and native
 #' status values used in NWCA 2011.
 #' @keywords datasets
 #' @examples
@@ -62,7 +62,7 @@
 
 #' NWCA 2011 Wetland Indicator Status
 #'
-#' A dataset containing NWCA 2011 USAC-specific Wetland Indicator Status
+#' A dataset containing NWCA 2011 USAC-specific Wetland Indicator Status (WIS)
 #' values for vascular plant taxa
 #'
 #' @name wisNWCA
@@ -290,7 +290,7 @@
 
 #' NWCA 2016 Wetland Indicator Status
 #'
-#' A dataset containing NWCA 2016 USAC-specific Wetland Indicator Status
+#' A dataset containing NWCA 2016 USAC-specific Wetland Indicator Status (WIS)
 #' values for vascular plant taxa
 #'
 #' @name wisNWCA_2016

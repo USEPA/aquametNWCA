@@ -1,6 +1,5 @@
 ---
 title: "Calculate VMMI"
-author: "Karen Blocksom"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -11,19 +10,22 @@ vignette: >
 
 ## 1 Preliminaries
 
-The Vegetation Multimetric Index (VMMI) is a measure of biological condition for wetlands and was developed based on NWCA 2011 vegetation data. The VMMI consists of 4 metrics, all calculated from vascular plant data. These are: Floristic Quality Assessment Index based on all species (FQAI\_ALL), number of tolerant species (N\_TOL), relative importance of native species (RIMP\_NATSPP), and relative cover of native monocots (XRCOV\_MONOCOTS\_NAT). The scoring, or rescaling, of metrics, is based on interpolating between the 5th and 95th percentiles across all NWCA sites sampled nationwide. Then the scored metrics are summed and rescaled to a 100-point range for the VMMI score. 
+The Vegetation Multimetric Index (VMMI) is a measure of biological condition for wetlands and was developed based on NWCA 2011 vegetation data. The VMMI consists of 4 metrics, all calculated from vascular plant data. These are: Floristic Quality Assessment Index based on all species (FQAI_ALL), number of tolerant species (N_TOL), relative importance of native species (RIMP_NATSPP), and relative cover of native monocots (XRCOV_MONOCOTS_NAT). The scoring, or rescaling, of metrics is based on interpolating between the 5th and 95th percentiles across all NWCA sites sampled nationwide. Then the scored metrics are summed and rescaled to a 100-point range for the VMMI score.
 
-Assuming we are starting with raw plant data, we can use the function `calcVMMImets()` to calculate only the 4 metrics included in the VMMI. Then we can use the function `calcVMMI_fromMets()` to calculate the VMMI from the metric output. 
+Assuming we are starting with raw plant data, we can use the function `calcVMMImets()` to calculate only the 4 metrics included in the VMMI. Then we can use the function `calcVMMI_fromMets()` to calculate the VMMI from the metric output.
 
-Condition classes for the VMMI are based on combinations of aggregated wetland type and aggregated ecoregions. In order to obtain condition class assignments from the VMMI scores calculated in this function, we also need to include one of the following in the input data frame: 
-        
-- **NWCA_ECO4** (NWCA aggregated ecoregions) *and* **NWCA_WET_GRP** (NWCA aggregated wetland types)
-- **ECO_X_WETGRP** (Combinations of ecoregions and wetland types in the two variables above)
+Condition classes for the VMMI are based on combinations of aggregated wetland type and aggregated ecoregions. In order to obtain condition class assignments from the VMMI scores calculated in this function, we also need to include one of the following in the input data frame:
+
+-   **NWCA_ECO4** (NWCA aggregated ecoregions) *and* **NWCA_WET_GRP** (NWCA aggregated wetland types)
+-   **ECO_X_WETGRP** (Combinations of ecoregions and wetland types in the two variables above)
 
 If none of these variables is present in the input data frame, the VMMI will be calculated but a warning will be generated, and no condition will be assigned.
 
+**NOTE:** This example only calculates the original 2011 vegetation MMI. To calculate the ***2016*** version of the VMMI (which was applied to both 2011 and 2016 data), use the `calcVMMI_2016_fromMets()` function. It requires different metrics, depending on aggregated wetland class (PRLH, PRLW, EH, EW) and NWCA reporting unit. Both are required to determine the metrics to include in the VMMI and assign condition. For 2016, there is no function that calculates only VMMI metrics, so use other functions to obtain metrics necessary for VMMI calculation.
+
 ## 2 Calculating the VMMI metrics
-Using the vascular plant example dataset, `VascPlantEx` and the taxa lists included in the package, we first need to prepare the data for use in the `calcVMMImets()` function. 
+
+Using the vascular plant example dataset, `VascPlantEx` and the taxa lists included in the package, we first need to prepare the data for use in the `calcVMMImets()` function.
 
 ```{r mets.1}
 library(aquametNWCA)
@@ -36,38 +38,42 @@ exPlant <- nwcaVegData(VascPlantEx,
 ```
 
 Now we can use the `byUIDspp` data frame from the output above to calculate the VMMI. Then we need to cast the data frame into wide format.
+
 ```{r mets.2}
 mets <- calcVMMImets(exPlant$byUIDspp, sampID = "UID")
 
 head(mets) # Already in wide format
 ```
+
 ## 3 Calculating the VMMI
+
 Now we are ready to calculate the VMMI and assign a condition class. We need to merge a data frame with the necessary site-related variables. For the purposes of illustration, we will create that data frame here, but ideally it would be available in a separate data set or included in the input data frame above.
+
 ```{r mmi.1}
 sites <- data.frame(
-  UID = seq(1, 10), NWCA_ECO4 = c("CPL", "CPL", "IPL", "CPL", "CPL", "IPL", "CPL", "CPL", "CPL", "CPL"),
+  UID = seq(1, 10), 
+  NWCA_ECO4 = c("CPL", "CPL", "IPL", "CPL", "CPL", "IPL", "CPL", "CPL", "CPL", "CPL"),
   NWCA_WET_GRP = c("PRLW", "PRLW", "PRLH", "PRLW", "PRLH", "PRLW", "EH", "EH", "PRLH", "PRLH"),
   ECO_X_WETGRP = c(
     "CPL-PRLW", "CPL-PRLW", "IPL-PRLH", "CPL-PRLW", "CPL-PRLH", "IPL-PRLW", "ALL-EH",
     "ALL-EH", "CPL-PRLH", "CPL-PRLH"
-  ), stringsAsFactors = F
-)
+  )
+  )
 
 mets.1 <- merge(sites, mets, by = "UID")
 
 vmmi <- calcVMMI_fromMets(mets.1, sampID = "UID")
 head(vmmi)
 ```
-If we lack the ecoregion or wetland type information in the input data frame, the function still calculates the VMMI but generates 
-a warning.
+
+If we lack the ecoregion or wetland type information in the input data frame, the function still calculates the VMMI but generates a warning.
+
 ```{r mmi.2}
 vmmi.alt <- calcVMMI_fromMets(mets, sampID = "UID")
 
 head(vmmi.alt)
 ```
 
-
 ## 4 Reference
-US Environmental Protection Agency. 2016. National Wetland Condition 
-Assessment: 2011 Technical Report. EPA-843-R-15-006. US Environmental 
-Protection Agency, Washington, DC.
+
+US Environmental Protection Agency. 2016. National Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US Environmental Protection Agency, Washington, DC.

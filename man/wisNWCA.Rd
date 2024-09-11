@@ -20,7 +20,7 @@ A data frame with 19818 observations on the following 5 variables.
 wisNWCA
 }
 \description{
-A dataset containing NWCA 2011 USAC-specific Wetland Indicator Status
+A dataset containing NWCA 2011 USAC-specific Wetland Indicator Status (WIS)
 values for vascular plant taxa
 }
 \note{

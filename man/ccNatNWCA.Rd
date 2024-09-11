@@ -3,7 +3,7 @@
 \docType{data}
 \name{ccNatNWCA}
 \alias{ccNatNWCA}
-\title{NWCA 2011 Plant CC and Native Status}
+\title{NWCA 2011 Plant Coefficient of Conservatism and Native Status}
 \format{
 A data frame with 13203 observations on the following 5 variables:
 \describe{
@@ -22,11 +22,11 @@ A data frame with 13203 observations on the following 5 variables:
 ccNatNWCA
 }
 \description{
-A dataset containing NWCA 2011 state-specific Coefficient
-of Conservatism and native status values for vascular plant taxa
+A dataset containing NWCA 2011 state-specific Coefficients
+of Conservatism (C-values) and native status values for vascular plant taxa
 }
 \note{
-This dataset is the taxa list used for state-specific CC and native
+This dataset is the taxa list used for state-specific C-values and native
 status values used in NWCA 2011.
 }
 \examples{
