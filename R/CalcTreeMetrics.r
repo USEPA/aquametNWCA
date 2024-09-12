@@ -48,10 +48,14 @@
 #'   system.file("Tree_Metric_Descriptions.pdf", package="aquametNWCA") to
 #'   locate the file.
 #'
-#' @references US Environmental Protection Agency. 2016. National
-#' Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006.
-#' US Environmental Protection Agency, Washington, DC.
+#' @references US Environmental Protection Agency. 2016. National Wetland
+#' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
+#' Environmental Protection Agency, Washington, DC. \url{https://www.epa.gov/national-aquatic-resource-surveys/national-wetland-condition-assessment-2011-technical-report}
 #'
+#' @references US Environmental Protection Agency. 2023. National Wetland 
+#' Condition Assessment: 2016 Technical Support Document. EPA-841-B-23-001. 
+#' \url{https://www.epa.gov/national-aquatic-resource-surveys/national-wetland-condition-assessment-2016-technical-support}
+#' 
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
 #'
 #' @examples

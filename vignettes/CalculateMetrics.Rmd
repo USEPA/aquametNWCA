@@ -10,11 +10,13 @@ vignette: >
 
 # 1 Preliminaries
 
-One of the main goals of this package is to calculate vegetation metrics as used in the National Wetlands Condition Assessment conducted in 2011 by EPA's Office of Water. Vegetation data were collected in the field on three forms: V-2 (vascular plants), V-3 (Vegetation types and ground cover), and V-4 (Trees). There is one wrapper function for data from each field form, each of which calls other functions that calculate a subset of metrics by type. When the outputs of the three functions are combined, the result is the full set of candidate metrics examined in developing the Vegetation Multimetric Index (VMMI) and the Non-native Plant Species Index (NPSI). This vignette will describe how to use the various functions, along with the example datasets provided and the included taxa lists, to obtain this full set of metrics or a subset of them based on metric type.
+One of the main goals of this package is to calculate vegetation metrics as used in the National Wetlands Condition Assessment conducted in 2011 and 2016 by EPA's Office of Water. Vegetation data were collected in the field on three forms: V-2 (vascular plants), V-3 (Vegetation types and ground cover), and V-4 (Trees). There is one wrapper function for data from each field form, each of which calls other functions that calculate a subset of metrics by type. When the outputs of the three functions are combined, the result is the full set of candidate metrics examined in developing the Vegetation Multimetric Index (VMMI) and the Non-native Plant Species Index (NPSI). This vignette will describe how to use the various functions, along with the example datasets provided and the included taxa lists, to obtain this full set of metrics or a subset of them based on metric type.
 
 The functions in this package assume a specific data structure for input datasets, with standardized names, as described in the help files for individual functions. The data used in this vignette come from the NWCA 2011 study, and so are formatted as expected. Functions will look for specific types of inconsistencies, like missing variables, and either provide a warning or will fail to run, depending on the issue.
 
 Note that if 2016 data are used, or to calculate the 2016 VMMI, the 2016 versions of taxalists and the 2016 data structure must be used, even for 2011 cover data. The 2016-specific taxalists have \_2016 at the end of the name, and for 2016, native status and coefficients of conservatism (c-values) are in separate taxalists. This is mainly because the region used for c-values is state in 2011 but at a finer level for 2016.
+
+The definitions of all metrics can be found in Appendix E of the NWCA 2016 Technical Support Document, available [here](https://www.epa.gov/national-aquatic-resource-surveys/national-wetland-condition-assessment-2016-technical-support). 
 
 ------------------------------------------------------------------------
 
@@ -50,8 +52,6 @@ outdf <- calcVascPlantMets(
 
 names(outdf)
 ```
-
-The definitions of all metrics can be found in the help document **Vascular_Plant_Metric_Descriptions.pdf** found in this package.
 
 ## 2.2 Subsets of metrics
 
@@ -239,3 +239,5 @@ head(outAllVG.wide)
 # 5 Reference
 
 US Environmental Protection Agency. 2016. National Wetland Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US Environmental Protection Agency, Washington, DC.
+
+US Environmental Protection Agency. 2023. National Wetland Condition Assessment: 2016 Technical Support Document. EPA-841-B-23-001. US Environmental Protection Agency, Washington, DC.
