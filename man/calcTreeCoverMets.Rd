@@ -40,7 +40,7 @@ Either a character string containing an error message when metric
   N_TREESPP, N_TALL_TREE, N_HMED_TREE, N_LMED_TREE, N_SMALL_TREE,
   N_VSMALL_TREE, N_VTALL_TREE, N_TREE_UPPER, N_TREE_MID, N_TREE_GROUND,
   PCTN_TREE_UPPER, PCTN_TREE_MID, PCTN_TREE_GROUND. A list of metric
-  descriptions is provided in the document named Tree_Metric_Descriptions.pdf
+  descriptions is provided in the document named \href{https://github.com/USEPA/aquametNWCA/blob/main/inst/Tree_Metric_Descriptions.pdf}{Tree_Metric_Descriptions.pdf}
   included in the help directory for the package.
 }
 \description{

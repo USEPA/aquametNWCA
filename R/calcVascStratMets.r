@@ -49,7 +49,7 @@
 #'   XRCOV_MED_VEG, XRCOV_SMALL_VEG, XRCOV_SUBMERGED_AQ, XRCOV_TALL_VEG,
 #'   XRCOV_VSMALL_VEG, XRCOV_VTALL_VEG, H_VASC_STRATA, J_VASC_STRATA,
 #'   D_VASC_STRATA. A list of metric descriptions is provided in the document
-#'   VegTypes_GrdCover_Metric_Descriptions.pdf included in the help directory
+#'   \href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VType_GrdCvr_Metric_Descriptions.pdf}{VegTypes_GrdCover_Metric_Descriptions.pdf} included in the help directory
 #'   for the package.
 #'
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}

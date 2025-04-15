@@ -41,7 +41,7 @@
 #'   IMP_BRYOPHYTES, IMP_LICHENS, IMP_MACROALGAE, XCOV_ALGAE, XCOV_ARBOREAL,
 #'   XCOV_BRYOPHYTES, XCOV_LICHENS, XCOV_MACROALGAE, N_PEAT_MOSS_DOM,
 #'   FREQ_PEAT_MOSS_DOM. A list of metric descriptions is provided in the
-#'   document named VegTypes_GrdCover_Metric_Descriptions.pdf included in the
+#'   document named \href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VType_GrdCvr_Metric_Descriptions.pdf}{VegTypes_GrdCover_Metric_Descriptions.pdf} included in the
 #'   help directory for the package.
 #'
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}

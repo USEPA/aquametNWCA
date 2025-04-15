@@ -48,6 +48,8 @@
 #' }
 #' For metrics using native status, the metric name has a suffix
 #' of NAT, ALIEN, AC, INTR, or CRYP.
+#' A list of metric descriptions is provided in the document named 
+#' \href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VascPlant_Metric_Descriptions.pdf}{VascPlant_Metric_Descriptions.pdf}
 #'
 #' @author Karen Blocksom \email{Blocksom.karen@epa.gov}
 #'

@@ -47,6 +47,8 @@ Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
 }
 For metrics using native status, the metric name has a suffix
 of NAT, ALIEN, AC, INTR, or CRYP.
+A list of metric descriptions is provided in the document named 
+\href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VascPlant_Metric_Descriptions.pdf}{VascPlant_Metric_Descriptions.pdf}
 }
 \description{
 This function calculates all category-based metrics, including

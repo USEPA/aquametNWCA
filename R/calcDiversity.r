@@ -56,7 +56,8 @@
 #'
 #' \item J_AC: Pielou's evenness index based on alien and cryptogenic taxa
 #' }
-#'
+#' A list of metric descriptions is provided in the document named 
+#' \href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VascPlant_Metric_Descriptions.pdf}{VascPlant_Metric_Descriptions.pdf}
 #' @references US Environmental Protection Agency. 2016. National Wetland
 #' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US
 #' Environmental Protection Agency, Washington, DC.

@@ -59,6 +59,8 @@ cryptogenic species
 
 \item J_AC: Pielou's evenness index based on alien and cryptogenic taxa
 }
+A list of metric descriptions is provided in the document named 
+\href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VascPlant_Metric_Descriptions.pdf}{VascPlant_Metric_Descriptions.pdf}
 }
 \description{
 Calculate Simpson Diversity, Shannon-Wiener

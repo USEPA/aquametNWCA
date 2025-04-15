@@ -37,7 +37,7 @@ Either a character string containing an error message when metric
   TOTN_XTHICK_SNAG, TOTN_XTHIN_SNAG, TOTN_XXTHIN_SNAG, XN_JR_SNAG,
   XN_THICK_SNAG, XN_THIN_SNAG, XN_XTHICK_SNAG, XN_XTHIN_SNAG, and
   XN_XXTHIN_SNAG. A list of metric descriptions is provided in the document
-  named Tree_Metric_Descriptions.pdf included in the help directory for the
+  named \href{https://github.com/USEPA/aquametNWCA/blob/main/inst/Tree_Metric_Descriptions.pdf}{Tree_Metric_Descriptions.pdf} included in the help directory for the
   package.
 }
 \description{

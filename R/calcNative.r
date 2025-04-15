@@ -45,7 +45,8 @@
 #'   \item RIMP_TRAITNM: Relative importance ((RFREQ_TRAITVAL + XRCOV_TRAITVAL)/2)
 #'   of taxa with trait value
 #'   }
-#'
+#' A list of metric descriptions is provided in the document named 
+#' \href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VascPlant_Metric_Descriptions.pdf}{VascPlant_Metric_Descriptions.pdf}
 #' @author Karen Blocksom \email{Blocksom.karen@epa.gov}
 #'
 #' @references US Environmental Protection Agency. 2016. National Wetland

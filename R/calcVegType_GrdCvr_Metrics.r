@@ -53,7 +53,7 @@
 #'   for each metric and contain metric values. A list of vegetation type and
 #'   ground cover metrics is installed with the package. Use
 #'   system.file("VegTypes_GrdCover_Metric_Descriptions.pdf", package="aquametNWCA")
-#'   to locate the file.
+#'   to locate the file or use this link: \href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VType_GrdCvr_Metric_Descriptions.pdf}{VegTypes_GrdCover_Metric_Descriptions.pdf}
 #'
 #' @references US Environmental Protection Agency. 2016. National Wetland
 #' Condition Assessment: 2011 Technical Report. EPA-843-R-15-006. US

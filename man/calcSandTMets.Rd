@@ -37,7 +37,7 @@ Either a character string containing an error message when metric
   consist of the metric name concatenated with trait value, with valid values
   of: N_SANDT, DOM_SANDT, D_SANDT, H_SANDT, J_SANDT. A list of metric
   descriptions is provided in the document named
-  VegTypes_GrdCover_Metric_Descriptions.pdf included in the help directory
+  \href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VType_GrdCvr_Metric_Descriptions.pdf}{VegTypes_GrdCover_Metric_Descriptions.pdf} included in the help directory
   for the package.
 }
 \description{

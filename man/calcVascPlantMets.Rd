@@ -114,7 +114,9 @@ Either a character string containing an error message when metric
 calculation is not successful, or a data frame. The first column(s) of the
 data frame contain the \emph{sampID} variables, and subsequent columns are
 named for each metric and
-contain metric values.
+contain metric values. 
+A list of metric descriptions is provided in the document named 
+\href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VascPlant_Metric_Descriptions.pdf}{VascPlant_Metric_Descriptions.pdf}
 }
 \description{
 This function calculates the NWCA 2011 vascular plant metrics.

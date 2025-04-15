@@ -48,6 +48,8 @@ Data frame containing \emph{sampID} variables, PARAMETER, RESULT,
   \item RIMP_TRAITNM: Relative importance ((RFREQ_TRAITVAL + XRCOV_TRAITVAL)/2)
   of taxa with trait value
   }
+A list of metric descriptions is provided in the document named 
+\href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VascPlant_Metric_Descriptions.pdf}{VascPlant_Metric_Descriptions.pdf}
 }
 \description{
 This function calculates all metrics based

@@ -53,6 +53,8 @@ If NWCA_NATSTAT is in the input data frame, the same set except
 'N_' metrics is calculated for native species and
 alien + cryptogenic species, with metric names suffixes of
 _NAT and _AC, respectively.
+A list of metric descriptions is provided in the document named 
+\href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VascPlant_Metric_Descriptions.pdf}{VascPlant_Metric_Descriptions.pdf}
 }
 \description{
 This function calculates all duration metrics, with

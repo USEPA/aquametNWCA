@@ -94,6 +94,8 @@ native status values of NAT, ADV, CRYP, INTR, and subsets ALIEN
 
 \item SDN_GRP: Standard deviation of number of taxa per plot
 }
+A list of metric descriptions is provided in the document named 
+\href{https://github.com/USEPA/aquametNWCA/blob/main/inst/VascPlant_Metric_Descriptions.pdf}{VascPlant_Metric_Descriptions.pdf}
 }
 \description{
 This function calculates richness metrics using plot- and

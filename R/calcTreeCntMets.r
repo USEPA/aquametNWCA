@@ -37,7 +37,7 @@
 #'   TOTN_XTHICK_TREE, TOTN_XTHIN_TREE, TOTN_XXTHICK_TREE, TOTN_XXTHIN_TREE,
 #'   XN_JR_TREE, XN_THICK_TREE, XN_THIN_TREE, XN_XTHICK_TREE, XN_XTHIN_TREE,
 #'   XN_XXTHICK_TREE, XN_XXTHIN_TREE. A list of metric descriptions is provided
-#'   in the document named Tree_Metric_Descriptions.pdf included in the help
+#'   in the document named \href{https://github.com/USEPA/aquametNWCA/blob/main/inst/Tree_Metric_Descriptions.pdf}{Tree_Metric_Descriptions.pdf} included in the help
 #'   directory for the package.
 #'
 #' @author Karen Blocksom \email{blocksom.karen@epa.gov}
